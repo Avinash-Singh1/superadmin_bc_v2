@@ -1,0 +1,36 @@
+<div class="profile">
+    <div class="contentHeader mt-4 ">
+        <span class="profileHeader">Profile</span>
+    </div>
+    <hr>
+    <form class="mt-4 ps-4 profileForm" [formGroup]="profileForm" (ngSubmit)="updateProfile()">
+        <div>
+            <span class="profilePhotoHeader"> Profile Photo</span>
+            <div class="mt-2">
+                <img class="image-container" [src]="control['profilePic'].value" alt="">
+                <label for="file-ip-1" class="cursor chnagePhoto ms-3">Change Photo</label>
+                <input class="form-control uploadImage" id="file-ip-1" type="file" (change)="onChange($event)" formControlName="profilePic">
+                <div *ngIf="submitted && control.profilePic?.errors?.required"  class="emailerror">Please upload image</div>
+
+            </div>
+        </div>
+        <div class="mt-5">
+            <div class="d-flex flex-column">
+                <label class="profileDetail ">Full Name</label>
+                <input type="text" class=" mt-2 form-control inputHeight" placeholder="Full Name" formControlName="fullName">
+            </div>
+            <div *ngIf="submitted && control.fullName?.errors?.required"  class="emailerror">Full name is required</div>
+            <div class="d-flex flex-column mt-3">
+                <label class="profileDetail">Email</label>
+                <input type="email" class=" mt-2 form-control inputHeight" placeholder="Email" formControlName="email">
+            </div>
+            <div *ngIf="submitted && control.email?.errors?.required"  class="emailerror">Email is required</div>
+
+        </div>
+       <button class="saveProfile mt-4">Save</button>
+    </form>
+
+</div>
+
+
+

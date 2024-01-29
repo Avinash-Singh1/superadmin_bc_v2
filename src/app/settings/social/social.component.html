@@ -1,0 +1,23 @@
+<div class="profile">
+    <div class="contentHeader my-3 d-flex justify-content-between">
+        <span class="profileHeader">Social</span>
+        <img class="addFaq cursor" src="assets/images/svg/adddata.svg" alt="" (click)="addreview('Add','')">
+
+    </div>
+    <hr>
+    <div class="p-3 ">
+        <div class=" questionAnswer mt-3 p-3 d-flex justify-content-between align-items-center" *ngFor="let data of socialData">
+        <div class="d-flex align-items-center">
+           <!-- <img src="../../../assets/images/png/ateeqahmad.jpg" alt="" class="socialLogo"> -->
+
+           <img class="socialLogo"  [src]="data?.logo" alt=""  onError="this.src='assets/images/svg/nectorIcon.svg'">
+           
+
+           <span class="ms-2 socialName">{{data?.master?.name | titlecase}}</span>
+        </div>
+        <img class="editFaq cursor" src="assets/images/svg/editdata.svg" alt=""  (click)="addreview('Edit',data?._id)">
+    </div>
+</div>
+
+</div>
+

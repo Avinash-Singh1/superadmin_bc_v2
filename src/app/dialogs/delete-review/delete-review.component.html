@@ -1,0 +1,20 @@
+<div>
+    <div class="d-flex justify-content-between p-4">
+        <p class="p-0 m-0 deleteHeader">Delete from Admin?</p>
+        <img src="assets/images/svg/close.svg" alt=""  class="cursor" (click)="closeModal()">
+    </div>
+    <hr>
+    <div class="p-4 mainContent">
+        The review will be removed permanently. Do you want to delete?
+    </div>
+    <hr>
+    <div class="d-flex justify-content-end pb-3 pe-3">
+        <button class="cancel cursor" (click)="closeModal()" >
+            Cancel
+        </button>
+        <button class="delete ms-2" (click)="DeleteReviewComponent()">
+            Delete
+        </button>
+    </div>
+
+</div>

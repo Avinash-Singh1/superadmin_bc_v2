@@ -1,0 +1,9 @@
+@import '../../../assets/scss/main.scss';
+
+p{
+@include font($primaryFont,400,18px);
+}
+.commentdata{
+    overflow-y: scroll;
+    overflow: hidden;
+}

@@ -1,0 +1,14 @@
+<main>
+  <header class="p-24 border-bottom text-24 font-600">Delete ?</header>
+  <section class="p-24 border-bottom text-18">
+    {{ data.heading }}
+  </section>
+  <footer class="delete-modal-footer p-24 d-flex justify-content-end gap-3">
+    <button class="cancel text-18" (click)="matdialogRef.close(false)">
+      Cancel
+    </button>
+    <button class="delete text-18 font-600" (click)="matdialogRef.close(true)">
+      Delete
+    </button>
+  </footer>
+</main>

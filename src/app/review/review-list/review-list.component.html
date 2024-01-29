@@ -1,0 +1,415 @@
+<app-header>Review</app-header>
+<div class="d-flex justify-content-between align-items-center patientsHeader">
+  <span class="patientdetail d-flex align-items-center gap-4">
+    <div [ngClass]="doctorsList?'activepage':'cursor'" (click)="chnageDoctorList('doctors');reviewList()">Approved<span class="ms-2" [ngClass]="doctorsList==true?'counterdata':'nocounter'">{{totalLength || '0'}}</span>
+    </div>
+    <div [ngClass]="hospitalsList?'activepage':'cursor'" (click)="chnageDoctorList('hospitals');reviewList()">Requested<span class="ms-2 " [ngClass]="hospitalsList==true?'counterdata':'nocounter'">{{requestedLength || '0'}}</span>
+    </div>
+    <div [ngClass]="patientList?'activepage':'cursor'" (click)="chnageDoctorList('patient');reviewList()">Rejected<span class="ms-2 " [ngClass]="patientList==true?'counterdata':'nocounter'">{{rejectedLength ||'0'}}</span>
+
+    </div>
+
+
+  </span>
+  <div class="d-flex otherFeatures" *ngIf=" doctorsList || hospitalsList">
+    <div class="filter d-flex align-items-center" [matMenuTriggerFor]="menu"><img src="assets/images/svg/filter.svg"
+        alt=""><span class="ms-2">Add filter</span></div>
+    <mat-menu #menu="matMenu" class="mt-2 menu">
+      <button mat-menu-item class="d-flex justify-content-between align-items-center mt-2"
+        (click)="changeGender('age');$event.stopPropagation()">Rating <img *ngIf="!age"
+          src="assets/images/svg/rightblackarrow.svg" alt=""><img *ngIf="age" src="assets/images/svg/blackdropdown.svg"
+          alt=""></button>
+      <div class="ms-4 pb-3 d-flex flex-column" *ngIf="age ">
+        <ng-container *ngFor="let stars of Stars; let i=index">
+          <mat-checkbox color='primary' (click)="$event.stopPropagation()"
+            (change)="starFilter($event,stars?.count,i,stars?.id);selected = i"
+            [checked]="stars?.selected && selected === i">
+            <form [formGroup]="form" class="d-flex align-items-center ">
+              <!-- <p class="ratingNumber m-0 p-0">{{element?.totalPoint}}</p> -->
+              <div class="cont">
+                <div class="stars ">
+                  <!-- <ngx-star-rating [(ngModel)]="stars.count" [ngModelOptions]=" 
+                  {standalone: true}" [id]="stars.id" [disabled]="true"></ngx-star-rating> -->
+                  <star-rating [rating]="stars.count|| 0"
+                  [step]="0.1"
+                  [showHalfStars]="true"
+                  [readOnly]="true"
+      ></star-rating>
+                </div>
+              </div>
+              <div class="moreStars mb-2 ">
+                {{stars?.moreValue}}
+              </div>
+            </form>
+
+          </mat-checkbox>
+        </ng-container>
+        <div class="cancel-ok-btn mt-3">
+          <button class="cancel">Cancel</button>
+          <button class="ok ms-2" (click)="reviewList()">Ok</button>
+        </div>
+      </div>
+
+    </mat-menu>
+  </div>
+</div>
+<div class="table-responsive w-100 scrolldata mb-5" *ngIf="doctorsList">
+  <table mat-table  [dataSource]="approvedReview" class="mat-elevation-z8 " >
+    <ng-container matColumnDef="date">
+      <th mat-header-cell *matHeaderCellDef class="ps-5  headers ">Date/Time
+         
+        </th>
+      <td mat-cell *matCellDef="let element" class="ps-5  tabledata">{{element.createdAt |
+        date:'dd/MM/yy'}}<ng-container *ngIf="element.createdAt">,</ng-container> {{element.createdAt | date:'hh:mm a'}}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="review">
+      <th mat-header-cell *matHeaderCellDef class=" headers cursor" (click)="sortData('patientName')"> Review 
+        <img
+          class="cursor"
+          *ngIf="
+            !sortBy.sortOrder ||
+            sortBy.sortOrder == 'DESC' ||
+            sortBy.sort != 'patientName'
+          "
+          src="assets/images/svg/sort.svg"
+          alt=""
+        />
+        <img
+          *ngIf="sortBy.sortOrder == 'ASC' && sortBy.sort == 'patientName'"
+          src="assets/images/svg/sort.svg"
+          class="asce cursor"
+          alt=""
+        />
+        <!-- <img class="cursor" *ngIf="fullNameASC" src="assets/images/svg/sort.svg" alt="" > 
+        <img *ngIf="fullNameDESC" src="assets/images/svg/sort.svg"  class="asce cursor" alt="">      -->
+        </th>
+      <td mat-cell *matCellDef="let element" class=" tabledata">
+        <div class="d-flex align-items-center">
+          <img class="patientimg "
+            *ngIf="element?.patientProfilePic!=null || element?.patientProfilePic!=undefined ||  element?.patientProfilePic; else intial"
+            [src]="element?.patientProfilePic" alt="">
+          <ng-template #intial>
+            <div class="imageintial ">
+              {{element?.name?.[0]?.[0] | uppercase}}{{element?.name?.[1]?.[0] | uppercase}}
+            </div>
+          </ng-template>
+          <div class="ms-2">
+            <p class="m-0  doctorName">
+              {{element?.patientName || 'N/A'}}
+            </p>
+            <p class="m-0 doctorReview" [title]="element?.feedback">
+              {{element?.feedback}}
+            </p>
+          </div>
+
+        </div>
+
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="rating">
+      <th mat-header-cell *matHeaderCellDef class=" headers"> Ratings
+       
+        </th>
+      <td mat-cell *matCellDef="let element; let i = index" class=" tabledata">
+        <form [formGroup]="form" class="d-flex align-items-center ">
+          <p class="ratingNumber m-0 mb-2 p-0">{{element?.totalPoint}}</p>
+
+          <div class="cont">
+            <div class="stars">
+              <!-- <ngx-star-rating [(ngModel)]="starArr[i]" 
+              [ngModelOptions]=" {standalone: true}" [id]="element?._id" [disabled]="true"></ngx-star-rating> -->
+            <star-rating [rating]="starArr[i]|| 0"
+            [step]="0.1"
+            [showHalfStars]="true"
+            [readOnly]="true"od
+></star-rating>
+
+            </div>
+          </div>
+        </form>
+
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="detail">
+      <th mat-header-cell *matHeaderCellDef class=" headers"> Details</th>
+      <td mat-cell *matCellDef="let element" class=" tabledata change-text" >
+        <button class="viewApprovedDetail" (click)="viewDeatil('approved',element?._id)">
+          View Detail
+        </button>
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="action">
+      <th mat-header-cell *matHeaderCellDef class="text-center headers"> Action </th>
+      <td mat-cell *matCellDef="let element" class="text-center tabledata"><img class="cursor"
+          src="assets/images/svg/deleterequest.svg" alt="" (click)="DeleteReview('approved',element?._id)"> </td>
+    </ng-container>
+    <tr mat-header-row *matHeaderRowDef="displayedApprovedColumns"></tr>
+    <tr mat-row
+      *matRowDef="let row; columns: displayedApprovedColumns | paginate:{itemsPerPage:itemPerPage,currentPage:page,totalItems: totalLength}; let i=index">
+    </tr>
+  </table>
+  <div class="nodata text-center" *ngIf="totalLength==0">
+    No Data Found.
+  </div>
+</div>
+<div class="text-center" *ngIf="totalLength>0 && doctorsList">
+  <pagination-controls (pageChange)="updatePageForHospital($event)" previousLabel="&lsaquo;"
+    nextLabel="&rsaquo;"></pagination-controls>
+</div>
+
+
+
+
+
+
+
+
+<div class="table-responsive w-100 scrolldata mb-5" *ngIf="hospitalsList">
+  <table mat-table  [dataSource]="requestedReview" class="mat-elevation-z8 ">
+
+    <ng-container matColumnDef="date">
+      <th mat-header-cell *matHeaderCellDef class="ps-5 headers"> Date/Time
+        
+        </th>
+      <td mat-cell *matCellDef="let element" class="ps-5 tabledata">{{element.createdAt |
+        date:'dd/MM/yy'}}<ng-container *ngIf="element.createdAt">,</ng-container> {{element.createdAt | date:'hh:mm a'}}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="review">
+      <th mat-header-cell *matHeaderCellDef class="ps-5 headers cursor" (click)="sortData('patientName')"> Review
+        <img
+          class="cursor"
+          *ngIf="
+            !sortBy.sortOrder ||
+            sortBy.sortOrder == 'DESC' ||
+            sortBy.sort != 'patientName'
+          "
+          src="assets/images/svg/sort.svg"
+          alt=""
+        />
+        <img
+          *ngIf="sortBy.sortOrder == 'ASC' && sortBy.sort == 'patientName'"
+          src="assets/images/svg/sort.svg"
+          class="asce cursor"
+          alt=""
+        />
+        <!-- <img class="cursor" *ngIf="requestedNameASC" src="assets/images/svg/sort.svg" alt="" > 
+        <img *ngIf="requestedNameDESC" src="assets/images/svg/sort.svg"  class="asce cursor" alt="">      -->
+        </th>
+      <td mat-cell *matCellDef="let element" class="ps-5 tabledata">
+        <div class="d-flex align-items-center">
+          <img class="patientimg "
+            *ngIf="element?.patientProfilePic!=null || element?.patientProfilePic!=undefined ||  element?.patientProfilePic; else intial"
+            [src]="element?.patientProfilePic" alt="">
+          <ng-template #intial>
+            <div class="imageintial ">
+              {{element?.name?.[0]?.[0] | uppercase}}{{element?.name?.[1]?.[0] | uppercase}}
+            </div>
+          </ng-template>
+          <div class="ms-2">
+            <p class="m-0  doctorName">
+              {{element?.patientName || 'N/A'}}
+            </p>
+            <p class="m-0 doctorReview" [title]="element?.feedback">
+              {{element?.feedback}}
+            </p>
+          </div>
+
+        </div>
+
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="rating">
+      <th mat-header-cell *matHeaderCellDef class="ps-5 headers"> Ratings 
+       
+        </th>
+      <td mat-cell *matCellDef="let element; let i = index" class="ps-5 tabledata change-text">
+        <form [formGroup]="form" class="d-flex align-items-center ">
+          <p class="ratingNumber m-0 mb-2 p-0">{{element?.totalPoint}}</p>
+          <div class="cont">
+            <div class="stars">
+              <!-- <ngx-star-rating [(ngModel)]="requestedStarArr[i]" [ngModelOptions]=" 
+                {standalone: true}" [id]="element?._id" [disabled]="true"></ngx-star-rating> -->
+                <star-rating [rating]="requestedStarArr[i]|| 0"
+                [step]="0.1"
+                [showHalfStars]="true"
+                [readOnly]="true"od
+    ></star-rating>
+    
+            </div>
+          </div>
+        </form>
+
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="detail">
+      <th mat-header-cell *matHeaderCellDef class="ps-5 headers"> Details </th>
+      <td mat-cell *matCellDef="let element" class="ps-5 tabledata" >
+        <button class="viewApprovedDetail cursor" (click)="viewDeatil('requested',element?._id)">
+          View Detail
+        </button>
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="action">
+      <th mat-header-cell *matHeaderCellDef class="ps-5  headers ">Action </th>
+      <td mat-cell *matCellDef="let element" class="ps-5  tabledata curosr" [matMenuTriggerFor]="menu">
+        <span class="cursor">
+          Pending
+          <!-- {{element?.isVerified==1?'Pending':element?.isVerified==2?'Accepted':element?.isVerified==3?'Rejected':''}} -->
+        </span>
+        <img class="ms-2 cursor" src="assets/images/svg/blackdropdown.svg" alt="">
+        <mat-menu #menu="matMenu" class="mt-2 menus">
+          <!-- (click)="viewDoctor('AcceptRejectComponent','',element?.userId,'doctorAccept');$event.stopPropagation();" -->
+          <button mat-menu-item class="d-flex align-items-center accept" (click)="acceptRequestedReview(element?._id)"><img src="assets/images/svg/acceptReview.svg"
+              class="me-2" alt="" >Accept </button>
+          <!-- (click)="viewDoctor('AcceptRejectComponent',true,element?.userId,'doctorReject');$event.stopPropagation();" -->
+
+          <button mat-menu-item class="d-flex align-items-center reject" (click)="rejectReview('rejectRequested',true,element?._id)"><img src="assets/images/svg/reject.svg"
+              class="me-2" alt="" >Reject </button>
+        </mat-menu>
+
+
+
+
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedRequestedColumns"></tr>
+    <tr mat-row
+      *matRowDef="let row; columns: displayedRequestedColumns | paginate:{itemsPerPage:itemPerPageReqested,currentPage:pageRequested,totalItems: requestedLength}; let i=index">
+    </tr>
+  </table>
+  <div class="nodata text-center" *ngIf="requestedLength==0">
+    No Data Found.
+  </div>
+</div>
+<div class="text-center" *ngIf="requestedLength>0 && hospitalsList">
+  <pagination-controls (pageChange)="updatePgeRequested($event)" previousLabel="&lsaquo;"
+    nextLabel="&rsaquo;"></pagination-controls>
+</div>
+
+
+
+
+
+
+
+
+<div class="table-responsive w-100 scrolldata mb-5" *ngIf="patientList">
+  <table mat-table  [dataSource]="rejectedReview" class="mat-elevation-z8 " >
+
+    <ng-container matColumnDef="date">
+      <th mat-header-cell *matHeaderCellDef class="ps-5 headers"> Date/Time
+         
+        </th>
+      <td mat-cell *matCellDef="let element" class="ps-5  tabledata"> {{element.createdAt |
+        date:'dd/MM/yy'}}<ng-container *ngIf="element.createdAt">,</ng-container> {{element.createdAt | date:'hh:mm a'}}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="review">
+      <th mat-header-cell *matHeaderCellDef class="ps-5 headers cursor" (click)="sortData('patientName')"> Review
+        <img
+          class="cursor"
+          *ngIf="
+            !sortBy.sortOrder ||
+            sortBy.sortOrder == 'DESC' ||
+            sortBy.sort != 'patientName'
+          "
+          src="assets/images/svg/sort.svg"
+          alt=""
+        />
+        <img
+          *ngIf="sortBy.sortOrder == 'ASC' && sortBy.sort == 'patientName'"
+          src="assets/images/svg/sort.svg"
+          class="asce cursor"
+          alt=""
+        />
+        <!-- <img class="cursor" *ngIf="rejectedNameASC" src="assets/images/svg/sort.svg" alt="" > 
+        <img *ngIf="rejectedNameDESC" src="assets/images/svg/sort.svg"  class="asce cursor" alt="">      -->
+        </th>
+      <td mat-cell *matCellDef="let element" class="ps-5 tabledata">
+
+
+        <div class="d-flex align-items-center">
+          <img class="patientimg "
+            *ngIf="element?.patientProfilePic!=null || element?.patientProfilePic!=undefined ||  element?.patientProfilePic; else intial"
+            [src]="element?.patientProfilePic" alt="">
+          <ng-template #intial>
+            <div class="imageintial ">
+              {{element?.name?.[0]?.[0] | uppercase}}{{element?.name?.[1]?.[0] | uppercase}}
+            </div>
+          </ng-template>
+          <div class="ms-2">
+            <p class="m-0  doctorName">
+              {{element?.patientName || 'N/A'}}
+            </p>
+            <p class="m-0 doctorReview" [title]="element?.feedback">
+              {{element?.feedback}}
+            </p>
+          </div>
+
+        </div>
+
+
+
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="rating">
+      <th mat-header-cell *matHeaderCellDef class="ps-5 headers"> Ratings
+        
+        </th>
+      <td mat-cell *matCellDef="let element; let i=index" class="ps-5 tabledata change-text">
+        <form [formGroup]="form" class="d-flex align-items-center ">
+          <p class="ratingNumber mb-2 m-0 p-0">{{element?.totalPoint}}</p>
+          <div class="cont">
+            <div class="stars">
+              <!-- <ngx-star-rating [(ngModel)]="rejectedStarArr[i]" [ngModelOptions]=" 
+                    {standalone: true}" [id]="element?._id" [disabled]="true"></ngx-star-rating> -->
+                    <star-rating [rating]="rejectedStarArr[i]|| 0"
+                    [step]="0.1"
+                    [showHalfStars]="true"
+                    [readOnly]="true"od
+        ></star-rating>
+            </div>
+          </div>
+        </form>
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="detail">
+      <th mat-header-cell *matHeaderCellDef class="ps-5 headers"> Details </th>
+      <td mat-cell *matCellDef="let element" class="ps-5 tabledata">
+        <button class="viewApprovedDetail" (click)="viewRejectedReason(element?._id)">
+          View Detail
+        </button>
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="action">
+      <th mat-header-cell *matHeaderCellDef class="ps-5  headers ">Action </th>
+      <td mat-cell *matCellDef="let element" class="ps-5  tabledata">
+        <span class="viewApprovedDetail">
+          Rejected
+        </span>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedRequestedColumns"></tr>
+    <tr mat-row
+      *matRowDef="let row; columns: displayedRequestedColumns | paginate:{itemsPerPage:itemPerPageRejectd,currentPage:pageRejected,totalItems: rejectedLength}; let i=index">
+    </tr>
+  </table>
+  <div class="nodata text-center" *ngIf="rejectedLength==0">
+    No Data Found.
+  </div>
+</div>
+<div class="text-center" *ngIf="rejectedLength>0 && patientList">
+  <pagination-controls (pageChange)="updatePageForHospital($event)" previousLabel="&lsaquo;"
+    nextLabel="&rsaquo;"></pagination-controls>
+</div>

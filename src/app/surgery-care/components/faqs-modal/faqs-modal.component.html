@@ -1,0 +1,79 @@
+<main class="settings-add-header">
+  <header class="font-600 text-24 py-3">
+    {{ "FAQs" }}
+  </header>
+  <mat-dialog-content class="settings-add-content">
+    <form [formGroup]="faqForm" class="d-flex flex-column gap-4">
+      <div class="form-item d-flex flex-column gap-2">
+        <label htmlFor="" class="font-600">
+          {{ "Question" }}
+          <span class="required-hint">*</span>
+        </label>
+        <input
+          nectarError
+          type="text"
+          formControlName="question"
+          class="form-input w-100"
+          placeholder="Question"
+        />
+        <div
+          class="error-hint"
+          *ngIf="control['question'].touched && control['question'].errors?.['required']"
+        >
+          Question is required.
+        </div>
+        <div
+          class="error-hint"
+          *ngIf="control['question'].touched && (control['question'].errors?.['minlength'] || control['question'].errors?.['maxlength'])"
+        >
+          Question must be between 10 to 200 characters.
+        </div>
+      </div>
+      <div class="form-item d-flex flex-column gap-2">
+        <label htmlFor="" class="font-600">
+          {{ "Answer" }}
+          <span class="required-hint">*</span>
+        </label>
+
+        <input
+          nectarError
+          type="text"
+          formControlName="answer"
+          class="form-input w-100"
+          placeholder="Answer"
+        />
+        <div
+          class="error-hint"
+          *ngIf="control['answer'].touched && control['answer'].errors?.['required']"
+        >
+          Answer is required.
+        </div>
+        <div
+          class="error-hint"
+          *ngIf="control['answer'].touched && (control['answer'].errors?.['minlength'] || control['answer'].errors?.['maxlength'])"
+        >
+          Answer must be between 2 to 500 characters.
+        </div>
+      </div>
+    </form>
+  </mat-dialog-content>
+  <mat-dialog-actions class="settings-add">
+    <div
+      class="buttongroup d-flex justify-content-between gap-6 border-top-style w-100"
+    >
+      <div>
+        <button class="delete" *ngIf="data.edit" (click)="onDelete()">
+          <span class="">
+            {{ "Delete" }}
+          </span>
+        </button>
+      </div>
+      <div class="d-flex gap-4">
+        <button type="button" class="cancel" (click)="matdialogRef.close()">
+          Cancel
+        </button>
+        <button class="save" (click)="onSubmit()">Save</button>
+      </div>
+    </div>
+  </mat-dialog-actions>
+</main>

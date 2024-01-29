@@ -1,0 +1,8 @@
+@import '../../../assets/scss/main.scss';
+.medicalProof{
+width: 670px;
+height: 520px;
+}
+span{
+    @include font($primaryFont,600,24px);
+}

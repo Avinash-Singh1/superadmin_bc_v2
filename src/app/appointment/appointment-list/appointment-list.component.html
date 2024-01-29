@@ -1,0 +1,373 @@
+<app-header></app-header>
+<div class="d-flex justify-content-between align-items-center patientsHeader">
+  <span class="patientdetail"> Appointment </span>
+  <div class="d-flex otherFeatures" [formGroup]="patientForm">
+    <button
+      class="me-2 reset"
+      (click)="resetFilters()"
+      [disabled]="disableResetFilter == false"
+      [ngClass]="disableResetFilter == true ? 'nofadebutton' : 'fadebutton'"
+    >
+      Reset Filters
+    </button>
+
+    <div class="filter d-flex align-items-center" [matMenuTriggerFor]="menu">
+      <img src="assets/images/svg/filter.svg" alt="" /><span class="ms-2"
+        >Add filter</span
+      >
+    </div>
+    <mat-menu #menu="matMenu" class="mt-2 appointment-filter-menu">
+      <button
+        mat-menu-item
+        class="d-flex justify-content-between align-items-center px-3"
+        (click)="changeGender('gender', $event); $event.stopPropagation()"
+      >
+        Date Range
+        <img
+          *ngIf="!gender"
+          src="assets/images/svg/rightblackarrow.svg"
+          alt=""
+        />
+        <img *ngIf="gender" src="assets/images/svg/blackdropdown.svg" alt="" />
+      </button>
+      <mat-radio-group
+        aria-label="Select an option"
+        class="d-flex flex-column"
+        *ngIf="gender"
+        formControlName="gender"
+      >
+        <ng-container *ngFor="let gender of genders">
+          <mat-radio-button
+            [value]="gender.value"
+            class="ms-3 mt-3 px-3"
+            (change)="selectedDates($event, '', '')"
+            (click)="$event.stopPropagation()"
+            >{{ gender?.gender }}</mat-radio-button
+          >
+        </ng-container>
+      </mat-radio-group>
+      <mat-form-field *ngIf="gender">
+        <mat-date-range-input [rangePicker]="picker" style="display: none">
+          <input matStartDate (dateChange)="startDate($event)" />
+          <input matEndDate (dateChange)="endDate($event)" />
+        </mat-date-range-input>
+        <mat-datepicker-toggle
+          matIconSuffix
+          [for]="picker"
+          class="custom-datepicker-icon"
+        >
+        </mat-datepicker-toggle>
+        <mat-date-range-picker #picker></mat-date-range-picker>
+      </mat-form-field>
+      <button
+        mat-menu-item
+        class="d-flex justify-content-between align-items-center mt-2 px-3"
+        (click)="changeGender('age', $event); $event.stopPropagation()"
+      >
+        Status
+        <img *ngIf="!age" src="assets/images/svg/rightblackarrow.svg" alt="" />
+        <img *ngIf="age" src="assets/images/svg/blackdropdown.svg" alt="" />
+      </button>
+      <div class="ms-4" *ngIf="age">
+        <mat-radio-group
+          aria-label="Select an option"
+          formControlName="age"
+          class="d-flex flex-column"
+        >
+          <mat-radio-button
+            *ngFor="let status of appointmentStatus"
+            class="mt-3 statusContent cursor"
+            (click)="$event.stopPropagation(); selectStatus(status?.value)"
+            [value]="status?.value"
+          >
+            <img [src]="status?.img" alt="" /><span class="ms-2">{{
+              status?.content
+            }}</span>
+          </mat-radio-button>
+        </mat-radio-group>
+      </div>
+      <div class="cancel-ok-btn my-3 d-flex justify-content-center px-3">
+        <button class="cancel">Cancel</button>
+        <button
+          class="ok ms-2"
+          (click)="patientList('', '', '', true); downloadPatient()"
+        >
+          Ok
+        </button>
+      </div>
+    </mat-menu>
+    <div
+      class="export mx-3 d-flex align-items-center cursor"
+      (click)="exportToCSV()"
+    >
+      <img src="assets/images/svg/export.svg" alt="" /><span class="ms-2"
+        >Export</span
+      >
+    </div>
+    <div class="search d-flex align-items-center">
+      <img src="assets/images/svg/search.svg" alt="" /><input
+        type="text"
+        [formControl]="search"
+        class="form-control"
+        placeholder="Search by Name, Number"
+      />
+    </div>
+  </div>
+</div>
+<div class="table-responsive w-100 scrolldata mb-5">
+  <table mat-table [dataSource]="dataSource" class="">
+    <caption></caption>
+    <ng-container matColumnDef="position">
+      <th mat-header-cell *matHeaderCellDef class="text-center headers">
+        Image
+      </th>
+      <td
+        mat-cell
+        *matCellDef="let element"
+        class="text-center tabledata intialName"
+      >
+        <img
+          class="patientimg"
+          *ngIf="
+            element?.patientProfilePic != null ||
+              element?.patientProfilePic != undefined ||
+              element?.patientProfilePic;
+            else intial
+          "
+          [src]="element?.patientProfilePic"
+          alt=""
+        />
+        <ng-template #intial>
+          <div class="imageintial">
+            {{element?.name?.[0]?.[0] | uppercase }}
+            {{element?.name?.[1]?.[0] | uppercase}}
+          </div>
+        </ng-template>
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="Address">
+      <th
+        mat-header-cell
+        *matHeaderCellDef
+        class="headers cursor"
+        (click)="sortData('slot')"
+      >
+        Date/Time
+        <img
+          class="cursor"
+          *ngIf="
+            !sortBy.sortOrder ||
+            sortBy.sortOrder == 'DESC' ||
+            sortBy.sort != 'slot'
+          "
+          src="assets/images/svg/sort.svg"
+          alt=""
+        />
+        <img
+          *ngIf="sortBy.sortOrder == 'ASC' && sortBy.sort == 'slot'"
+          src="assets/images/svg/sort.svg"
+          class="asce cursor"
+          alt=""
+        />
+      </th>
+      <td mat-cell *matCellDef="let element" class="tabledata">
+        {{ (element?.slot | date : "dd/MM/yyyy") || "N/A"
+        }}<ng-container *ngIf="element?.slot">,</ng-container
+        >{{ (element?.slot | date : "hh:mm aa") || "N/A" }}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="name">
+      <th
+        mat-header-cell
+        *matHeaderCellDef
+        class="headers cursor"
+        (click)="sortData('patientName')"
+      >
+        Name
+        <img
+          class="cursor"
+          *ngIf="
+            !sortBy.sortOrder ||
+            sortBy.sortOrder == 'DESC' ||
+            sortBy.sort != 'patientName'
+          "
+          src="assets/images/svg/sort.svg"
+          alt=""
+        />
+        <img
+          *ngIf="sortBy.sortOrder == 'ASC' && sortBy.sort == 'patientName'"
+          src="assets/images/svg/sort.svg"
+          class="asce cursor"
+          alt=""
+        />
+      </th>
+      <td mat-cell *matCellDef="let element" class="tabledata">
+        {{ element?.patientName || "N/A" }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="Gender">
+      <th mat-header-cell *matHeaderCellDef class="headers">Gender</th>
+      <td mat-cell *matCellDef="let element" class="tabledata">
+        <span [ngClass]="element.patientGender == 1 ? 'male' : 'female'">
+          {{
+            element?.patientGender == 1
+              ? "Male"
+              : element?.patientGender == 2
+              ? "Female"
+              : "N/A" || "N/A"
+          }}
+        </span>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="Mobile">
+      <th mat-header-cell *matHeaderCellDef class="headers">Patient Mobile</th>
+      <td mat-cell *matCellDef="let element" class="tabledata">
+        <span
+          *ngIf="
+            element?.patientPhone != null ||
+            element?.patientPhone != undefined ||
+            element?.patientPhone
+          "
+          >+91</span
+        >{{ element?.patientPhone || "N/A" }}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="Email">
+      <th
+        mat-header-cell
+        *matHeaderCellDef
+        class="headers cursor"
+        (click)="sortData('doctorName')"
+      >
+        Consulting Doctor
+        <img
+          class="cursor"
+          *ngIf="
+            !sortBy.sortOrder ||
+            sortBy.sortOrder == 'DESC' ||
+            sortBy.sort != 'doctorName'
+          "
+          src="assets/images/svg/sort.svg"
+          alt=""
+        />
+        <img
+          *ngIf="sortBy.sortOrder == 'ASC' && sortBy.sort == 'doctorName'"
+          src="assets/images/svg/sort.svg"
+          class="asce cursor"
+          alt=""
+        />
+      </th>
+
+      <td mat-cell *matCellDef="let element" class="tabledata">
+        {{ element?.doctorName || "N/A" }}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="Age">
+      <th mat-header-cell *matHeaderCellDef class="headers cursor">
+        Doctor Mobile
+      </th>
+      <td mat-cell *matCellDef="let element" class="tabledata">
+        <span
+          *ngIf="
+            element?.doctorPhone != null ||
+            element?.doctorPhone != undefined ||
+            element?.doctorPhone
+          "
+          >+91</span
+        >{{ element?.doctorPhone || "N/A" }}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="HospitalName">
+      <th mat-header-cell *matHeaderCellDef class="headers cursor">
+        Hospital Name
+      </th>
+      <td mat-cell *matCellDef="let element" class="tabledata">
+        {{ element?.establishmentName || "N/A" }}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="Locality">
+      <th mat-header-cell *matHeaderCellDef class="headers cursor">Locality</th>
+      <td mat-cell *matCellDef="let element" class="tabledata">
+        {{ element?.establishmentLocality || "N/A" }}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="City">
+      <th mat-header-cell *matHeaderCellDef class="headers cursor">City</th>
+      <td mat-cell *matCellDef="let element" class="tabledata">
+        {{ element?.establishmentCity || "N/A" }}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="BloodGroup">
+      <th mat-header-cell *matHeaderCellDef class="pe-4 headers">Status</th>
+      <td mat-cell *matCellDef="let element" class="pe-4 tabledata">
+        <p
+          [ngClass]="
+            element?.status == 0
+              ? 'Pending'
+              : element?.status == 1
+              ? 'Completed'
+              : element?.status == -1
+              ? 'Cancel'
+              : element?.status == -2
+              ? 'reschedule'
+              : ''
+          "
+          class="d-flex align-items-center justify-content-center"
+        >
+          <img
+            class="imgSize"
+            [src]="
+              element?.status == 0
+                ? 'assets/images/svg/pending.svg'
+                : element?.status == 1
+                ? 'assets/images/svg/completed.svg'
+                : element?.status == -1
+                ? 'assets/images/png/cancel.jpeg'
+                : element?.status == -2
+                ? 'assets/images/svg/completed.svg'
+                : ''
+            "
+            alt=""
+          />
+          <span class="ms-2">{{
+            element?.status == 0
+              ? "Pending"
+              : element?.status == 1
+              ? "Completed"
+              : element?.status == -1
+              ? "Cancel"
+              : element?.status == -2
+              ? "Reschedule"
+              : ""
+          }}</span>
+        </p>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row nodatacontent *matHeaderRowDef="displayedColumns"></tr>
+    <tr
+      mat-row
+      *matRowDef="
+        let row;
+        columns: displayedColumns
+          | paginate
+            : {
+                itemsPerPage: itemsPerPage,
+                currentPage: page,
+                totalItems: totalLength
+              };
+        let i = index
+      "
+    ></tr>
+  </table>
+  <div class="nodata text-center" *ngIf="totalLength == 0">No Data Found.</div>
+</div>
+<div class="text-center" *ngIf="totalLength > 0">
+  <pagination-controls
+    (pageChange)="updatePageNumer($event)"
+    previousLabel="&lsaquo;"
+    nextLabel="&rsaquo;"
+  ></pagination-controls>
+</div>

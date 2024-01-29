@@ -1,0 +1,800 @@
+<app-header>Welcome, Admin!</app-header>
+<div class="mainSec">
+  <div class="leftSide">
+    <!-- select filter -->
+
+    <div class="dropdown-div">
+      <input
+        class="cursor"
+        style="outline: none"
+        type="text"
+        [(ngModel)]="selected"
+        readonly
+        (click)="openDropdown()"
+      />
+      <img
+        class="dropdownImage cursor"
+        src="assets/images/svg/blackdropdown.svg"
+        alt=""
+        (click)="openDropdown()"
+      />
+      <div
+        class="dashboardFilter"
+        *ngIf="dropdown"
+        (clickOutside)="closeDropdown()"
+        [exclusionSelector]="'#cdk-overlay-1'"
+      >
+        <ul>
+          <li
+            class="dateRange"
+            *ngFor="let dateFilter of globalFilter"
+            (click)="selectedDates(dateFilter?.value, '', '')"
+          >
+            {{ dateFilter?.time }}
+          </li>
+          <div id="exclusionDiv">
+            <mat-form-field>
+              <mat-date-range-input
+                [rangePicker]="picker"
+                style="display: none"
+              >
+                <input matStartDate (dateChange)="startDate($event)" />
+                <input
+                  matEndDate
+                  (dateChange)="endDate($event); selectedDates('', '', '')"
+                />
+              </mat-date-range-input>
+              <mat-datepicker-toggle
+                matIconSuffix
+                [for]="picker"
+                class="custom-datepicker-icon"
+              >
+              </mat-datepicker-toggle>
+              <mat-date-range-picker #picker></mat-date-range-picker>
+            </mat-form-field>
+          </div>
+        </ul>
+      </div>
+    </div>
+    <!-- <mat-form-field class="pt-3 ps-3">
+      <mat-select [(value)]="selected" class="ps-5">
+        <mat-option [ngClass]="dateFilter?.id==1?'dateRange':''" *ngFor="let dateFilter of globalFilter"  [value]="dateFilter?.value"
+          (click)="selectedDates(dateFilter?.value,'','')">{{dateFilter?.time}}
+          <ng-container *ngIf="dateFilter?.id==1">
+            <mat-date-range-input [rangePicker]="picker" style="display: none">
+              <input matStartDate (dateChange)="startDate($event)">
+              <input matEndDate  (dateChange)="endDate($event);selectedDates('','','')">
+            </mat-date-range-input>
+            <mat-datepicker-toggle matIconSuffix [for]="picker" class="custom-datepicker-icon">
+            </mat-datepicker-toggle>
+            <mat-date-range-picker #picker></mat-date-range-picker>
+          </ng-container>
+        </mat-option>
+      </mat-select>
+    </mat-form-field> -->
+
+    <!-- cards div -->
+
+    <div>
+      <div class="d-flex cardDetail pt-3">
+        <div
+          *ngFor="let cards of ListedCards"
+          class="px-3 ms-3 py-3 cardsBackground"
+        >
+          <p class="cardHeader">{{ cards?.header }}</p>
+          <div class="d-flex justify-content-between align-items-center">
+            <h3 class="count">{{ cards?.count }}</h3>
+            <img [src]="cards?.img" alt="" />
+          </div>
+          <p>
+            <span
+              class="me-2 mt-2"
+              [ngClass]="cards?.percentage < 0.0 ? 'negative' : 'positive'"
+              >{{ cards?.percentage }} %</span
+            >from <br />
+
+            <span>{{ fromdata ? fromdata : "yesterday" }}</span>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="appointmentdetail m-3">
+      <div class="d-flex justify-content-between">
+        <div class="d-flex">
+          <p
+            class="AppointmentCheck cursor"
+            [ngClass]="
+              appointmentHeader == true ? 'currentHeader' : 'previoudHeader'
+            "
+            (click)="appointmetSurgeryLead('appointment'); appointmentChart()"
+          >
+            Appointment
+          </p>
+          <p
+            class="ms-3 AppointmentCheck cursor"
+            [ngClass]="
+              surgeryLeadHeader == true ? 'currentHeader' : 'previoudHeader'
+            "
+            (click)="appointmetSurgeryLead('surgeryLead'); appointmentChart()"
+          >
+            Surgery Lead
+          </p>
+        </div>
+        <div class="d-flex align-items-center me-3">
+          <form>
+            <div class="d-flex otherFeatures">
+              <div
+                class="filter d-flex align-items-center"
+                [matMenuTriggerFor]="menu"
+              >
+                <img src="assets/images/svg/filter.svg" alt="" /><span
+                  class="ms-2"
+                  >Add filter</span
+                >
+              </div>
+              <mat-menu #menu="matMenu" class="mt-2 menu">
+                <button
+                  mat-menu-item
+                  *ngIf="appointmentHeader == true"
+                  class="d-flex justify-content-between align-items-center mt-2"
+                  (click)="changeGender('age'); $event.stopPropagation()"
+                >
+                  Speciality
+                  <img
+                    *ngIf="!age"
+                    src="assets/images/svg/rightblackarrow.svg"
+                    alt=""
+                  /><img
+                    *ngIf="age"
+                    src="assets/images/svg/blackdropdown.svg"
+                    alt=""
+                  />
+                </button>
+                <div class="ms-4 d-flex flex-column" *ngIf="age && doctorsList">
+                  <mat-checkbox
+                    color="primary"
+                    (click)="$event.stopPropagation()"
+                    (change)="
+                      specilaizationCitiesFilter($event, 'specialization')
+                    "
+                    [checked]="Specialization?.selected"
+                    [value]="Specialization?._id"
+                    *ngFor="let Specialization of OccupationList"
+                    >{{ Specialization?.name }}</mat-checkbox
+                  >
+                </div>
+                <button
+                  mat-menu-item
+                  *ngIf="appointmentHeader == true"
+                  class="d-flex justify-content-between align-items-center mt-2"
+                  (click)="changeGender('hospital'); $event.stopPropagation()"
+                >
+                  Doctor
+                  <img
+                    *ngIf="!hospital"
+                    src="assets/images/svg/rightblackarrow.svg"
+                    alt=""
+                  /><img
+                    *ngIf="hospital"
+                    src="assets/images/svg/blackdropdown.svg"
+                    alt=""
+                  />
+                </button>
+                <div
+                  class="ms-4 d-flex flex-column"
+                  *ngIf="hospital && hospitalsList"
+                >
+                  <mat-checkbox
+                    color="primary"
+                    (click)="$event.stopPropagation()"
+                    [value]="doctor?.doctorId"
+                    (change)="specilaizationCitiesFilter($event, 'Doctor')"
+                    [checked]="doctor?.selected"
+                    *ngFor="let doctor of typeOfHospital"
+                    >{{ doctor?.name }}</mat-checkbox
+                  >
+                </div>
+                <button
+                  mat-menu-item
+                  class="d-flex justify-content-between align-items-center mt-2"
+                  *ngIf="appointmentHeader == true"
+                  (click)="changeGender('bloodGroup'); $event.stopPropagation()"
+                >
+                  Hospital
+                  <img
+                    *ngIf="!bloodGroup"
+                    src="assets/images/svg/rightblackarrow.svg"
+                    alt=""
+                  /><img
+                    *ngIf="bloodGroup"
+                    src="assets/images/svg/blackdropdown.svg"
+                    alt=""
+                  />
+                </button>
+                <div class="ms-4 d-flex flex-column" *ngIf="bloodGroup">
+                  <mat-checkbox
+                    color="primary"
+                    (click)="$event.stopPropagation()"
+                    [value]="hospital?.establishmentId"
+                    (change)="specilaizationCitiesFilter($event, 'Hospital')"
+                    [checked]="hospital?.selected"
+                    *ngFor="let hospital of dataSourceHospital"
+                    >{{ hospital?.hospitalName }}</mat-checkbox
+                  >
+                </div>
+                <button
+                  mat-menu-item
+                  *ngIf="surgeryLeadHeader == true"
+                  class="d-flex justify-content-between align-items-center mt-2"
+                  (click)="changeGender('surgery'); $event.stopPropagation()"
+                >
+                  Surgery
+                  <img
+                    *ngIf="!hospital"
+                    src="assets/images/svg/rightblackarrow.svg"
+                    alt=""
+                  /><img
+                    *ngIf="hospital"
+                    src="assets/images/svg/blackdropdown.svg"
+                    alt=""
+                  />
+                </button>
+                <div class="ms-4 d-flex flex-column" *ngIf="surgery">
+                  <mat-checkbox
+                    color="primary"
+                    (click)="$event.stopPropagation()"
+                    [value]="surgery?._id"
+                    [checked]="surgery?.selected"
+                    (change)="specilaizationCitiesFilter($event, 'surgery')"
+                    *ngFor="let surgery of surgeryList"
+                    >{{ surgery?.title }}</mat-checkbox
+                  >
+                </div>
+                <div class="cancel-ok-btn text-center mt-3">
+                  <button class="cancel">Cancel</button>
+                  <button
+                    class="ok ms-2"
+                    (click)="appointmentChart(); downloadPatient()"
+                  >
+                    Ok
+                  </button>
+                </div>
+              </mat-menu>
+            </div>
+          </form>
+          <div
+            class="mx-2 cursor exportcsv"
+            (click)="
+              appointmentHeader == true ? exportToCSV() : surgeryExport()
+            "
+          >
+            <!-- <img src="assets/images/svg/appointmentexport.svg" alt=""> -->
+            <img src="assets/images/svg/downloadArrow.svg" alt="" />
+            <span class="ms-2">Export CSV</span>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <canvas id="appointment"></canvas>
+      </div>
+    </div>
+
+    <!-- Registration and Notification -->
+
+    <div class="NotificationRegistraion ms-3 mt-3 d-flex">
+      <div class="gradientChart">
+        <div class="d-flex align-items-center justify-content-between p-3">
+          <span class="bold">Registration</span>
+          <img
+            src="assets/images/svg/downloadArrow.svg"
+            class="cursor"
+            alt=""
+            (click)="registrationExport()"
+          />
+        </div>
+        <hr class="p-0 m-0" />
+        <canvas class="p-3" id="registration"></canvas>
+      </div>
+
+      <div class="notifications gradientChart">
+        <div class="p-3">
+          <span class="bold">Notification</span>
+        </div>
+        <hr class="p-0 m-0" />
+        <div class="d-flex px-2 py-2">
+          <p
+            class="ms-2 cursor"
+            [ngClass]="
+              all == true ? 'activenotification' : 'deactiveNotificatiom'
+            "
+            (click)="
+              changeNotification('all');
+              notification();
+              $event.stopPropagation()
+            "
+          >
+            All
+          </p>
+          <p
+            class="ms-2 cursor"
+            [ngClass]="
+              doctor == true ? 'activenotification' : 'deactiveNotificatiom'
+            "
+            (click)="
+              changeNotification('doctor');
+              notification();
+              $event.stopPropagation()
+            "
+          >
+            Doctor
+          </p>
+          <p
+            class="ms-2 cursor"
+            [ngClass]="
+              hospitaldata == true
+                ? 'activenotification'
+                : 'deactiveNotificatiom'
+            "
+            (click)="
+              changeNotification('hospital');
+              notification();
+              $event.stopPropagation()
+            "
+          >
+            Hospital
+          </p>
+        </div>
+
+        <div class="overflowdata py-2">
+          <ng-container *ngIf="all">
+            <div
+              class="mt-1 d-flex align-items-center"
+              *ngFor="let element of getNotificationList"
+            >
+              <div class="maxdata">
+                <div class="d-flex align-items-center ps-3">
+                  <img
+                    class="patientimg"
+                    *ngIf="
+                      element?.doctor?.profilePic != null ||
+                        element?.doctor?.profilePic != undefined ||
+                        element?.doctor?.profilePic;
+                      else intial
+                    "
+                    [src]="element?.doctor?.profilePic"
+                    alt=""
+                  />
+                  <ng-template #intial>
+                    <div class="imageinitials">
+                      {{element?.name?.[0]?.[0] | uppercase
+
+
+
+                      }}{{element?.name?.[1]?.[0] | uppercase}}
+                    </div>
+                  </ng-template>
+                  <div class="ms-2">
+                    <p class="m-0 doctorName">
+                      {{
+                        element?.userType == 3
+                          ? element?.hospital?.name
+                          : element?.doctor?.name
+                      }}
+                    </p>
+                    <p class="m-0 doctorReview" [title]="element?.feedback">
+                      {{
+                        element?.userType == 3
+                          ? element?.hospital?.hospitalType[0]?.name
+                          : element?.doctor?.specialization[0]?.name
+                      }}
+                    </p>
+                  </div>
+                </div>
+
+                <div class="address ps-3">
+                  <img
+                    src="assets/images/svg/notificationLocation.svg"
+                    alt=""
+                  />
+                  <span>
+                    {{
+                      element?.userType == 3
+                        ? element?.hospital?.address?.landmark
+                        : element?.doctor?.address?.landmark
+                    }},{{
+                      element?.userType == 3
+                        ? element?.hospital?.address?.city
+                        : element?.doctor?.address?.city
+                    }},
+                    {{
+                      element?.userType == 3
+                        ? element?.hospital?.address?.country
+                        : element?.doctor?.address?.country
+                    }},{{
+                      element?.userType == 3
+                        ? element?.hospital?.address?.pincode
+                        : element?.doctor?.address?.pincode
+                    }}
+                  </span>
+                </div>
+              </div>
+
+              <div>
+                <span
+                  mat-cell
+                  class="text-center tabledata cursor"
+                  [matMenuTriggerFor]="menu"
+                  >Pending
+                  <img
+                    class="ms-2"
+                    src="assets/images/svg/blackdropdown.svg"
+                    alt=""
+                  />
+                  <mat-menu #menu="matMenu" class="mt-2 notificationmenu">
+                    <button
+                      mat-menu-item
+                      class="d-flex align-items-center accept"
+                      (click)="
+                        element?.userType == 3
+                          ? hospitalAccept(
+                              'AcceptRejectComponent',
+                              '',
+                              element?.hospital?.hospitalId,
+                              'doctorAccept',
+                              'doctor'
+                            )
+                          : acceptRejectNotification(
+                              'AcceptRejectComponent',
+                              '',
+                              element?.doctor?.doctorId,
+                              'doctorAccept',
+                              'doctor'
+                            );
+                        $event.stopPropagation()
+                      "
+                    >
+                      <img
+                        src="assets/images/svg/accept.svg"
+                        class="me-2"
+                        alt=""
+                      />Accept
+                    </button>
+                    <button
+                      mat-menu-item
+                      class="d-flex align-items-center reject"
+                      (click)="
+                        element?.userType == 3
+                          ? hospitalAccept(
+                              'AcceptRejectComponent',
+                              true,
+                              element?.hospital?.hospitalId,
+                              'hospitalReject',
+                              'hospital'
+                            )
+                          : acceptRejectNotification(
+                              'AcceptRejectComponent',
+                              true,
+                              element?.doctor?.doctorId,
+                              'doctorReject',
+                              'doctor'
+                            );
+                        $event.stopPropagation()
+                      "
+                    >
+                      <img
+                        src="assets/images/svg/reject.svg"
+                        class="me-2"
+                        alt=""
+                      />Reject
+                    </button>
+                  </mat-menu>
+                </span>
+              </div>
+
+              <hr />
+            </div>
+          </ng-container>
+
+          <ng-container *ngIf="doctor">
+            <div
+              class="mt-1 d-flex align-items-center"
+              *ngFor="let element of getdoctorNotiicationList"
+            >
+              <div class="maxdata">
+                <div class="d-flex align-items-center ps-3">
+                  <img
+                    class="patientimg"
+                    *ngIf="
+                      element?.doctor?.profilePic != null ||
+                        element?.doctor?.profilePic != undefined ||
+                        element?.doctor?.profilePic;
+                      else intial
+                    "
+                    [src]="element?.doctor?.profilePic"
+                    alt=""
+                  />
+                  <ng-template #intial>
+                    <div class="imageinitials">
+                      {{element?.name?.[0]?.[0] | uppercase
+
+
+
+                      }}{{element?.name?.[1]?.[0] | uppercase}}
+                    </div>
+                  </ng-template>
+                  <div class="ms-2">
+                    <p class="m-0 doctorName">
+                      {{ element?.doctor?.name || "N/A" }}
+                    </p>
+                    <p class="m-0 doctorReview" [title]="element?.feedback">
+                      {{ element?.doctor?.specialization[0]?.name }}
+                    </p>
+                  </div>
+                </div>
+                <div class="address ps-3">
+                  <img
+                    src="assets/images/svg/notificationLocation.svg"
+                    alt=""
+                  />
+                  <span>
+                    {{ element?.doctor?.address?.landmark }},{{
+                      element?.doctor?.address?.city
+                    }}, {{ element?.doctor?.address?.country }},{{
+                      element?.doctor?.address?.pincode
+                    }}
+                  </span>
+                </div>
+              </div>
+
+              <div>
+                <span
+                  mat-cell
+                  class="text-center tabledata cursor"
+                  [matMenuTriggerFor]="menu"
+                  >Pending
+                  <img
+                    class="ms-2"
+                    src="assets/images/svg/blackdropdown.svg"
+                    alt=""
+                  />
+                  <mat-menu #menu="matMenu" class="mt-2 notificationmenu">
+                    <button
+                      mat-menu-item
+                      class="d-flex align-items-center accept"
+                      (click)="
+                        acceptRejectNotification(
+                          'AcceptRejectComponent',
+                          '',
+                          element?.doctor?.doctorId,
+                          'doctorAccept',
+                          'doctor'
+                        );
+                        $event.stopPropagation()
+                      "
+                    >
+                      <img
+                        src="assets/images/svg/accept.svg"
+                        class="me-2"
+                        alt=""
+                      />Accept
+                    </button>
+                    <button
+                      mat-menu-item
+                      class="d-flex align-items-center reject"
+                      (click)="
+                        acceptRejectNotification(
+                          'AcceptRejectComponent',
+                          true,
+                          element?.doctor?.doctorId,
+                          'doctorReject',
+                          'doctor'
+                        );
+                        $event.stopPropagation()
+                      "
+                    >
+                      <img
+                        src="assets/images/svg/reject.svg"
+                        class="me-2"
+                        alt=""
+                      />Reject
+                    </button>
+                  </mat-menu>
+                </span>
+              </div>
+              <hr />
+            </div>
+          </ng-container>
+
+          <ng-container *ngIf="hospitaldata">
+            <div
+              class="mt-1 d-flex align-items-center"
+              *ngFor="let element of getHospitalNotificationList"
+            >
+              <div class="maxdata">
+                <div class="d-flex align-items-center ps-3">
+                  <img
+                    class="patientimg"
+                    *ngIf="
+                      element?.doctor?.profilePic != null ||
+                        element?.doctor?.profilePic != undefined ||
+                        element?.doctor?.profilePic;
+                      else intial
+                    "
+                    [src]="element?.doctor?.profilePic"
+                    alt=""
+                  />
+                  <ng-template #intial>
+                    <div class="imageinitials">
+                      {{element?.name?.[0]?.[0] | uppercase
+
+
+
+                      }}{{element?.name?.[1]?.[0] | uppercase}}
+                    </div>
+                  </ng-template>
+                  <div class="ms-2">
+                    <p class="m-0 doctorName">
+                      {{ element?.hospital?.name || "N/A" }}
+                    </p>
+                    <p class="m-0 doctorReview" [title]="element?.feedback">
+                      {{ element?.hospital?.hospitalType[0]?.name || "N/A" }}
+                    </p>
+                  </div>
+                </div>
+                <div class="address ps-3">
+                  <img
+                    src="assets/images/svg/notificationLocation.svg"
+                    alt=""
+                  />
+                  <span>
+                    {{ element?.hospital?.address?.landmark }},{{
+                      element?.hospital?.address?.city
+                    }}, {{ element?.hospital?.address?.country }},{{
+                      element?.hospital?.address?.pincode
+                    }}
+                  </span>
+                </div>
+              </div>
+              <div>
+                <span
+                  mat-cell
+                  class="text-center tabledata cursor"
+                  [matMenuTriggerFor]="menu"
+                  >Pending
+                  <img
+                    class="ms-2"
+                    src="assets/images/svg/blackdropdown.svg"
+                    alt=""
+                  />
+                  <mat-menu #menu="matMenu" class="mt-2 notificationmenu">
+                    <button
+                      mat-menu-item
+                      class="d-flex align-items-center accept"
+                      (click)="
+                        hospitalAccept(
+                          'AcceptRejectComponent',
+                          '',
+                          element?.hospital?.hospitalId,
+                          'doctorAccept',
+                          'doctor'
+                        );
+                        $event.stopPropagation()
+                      "
+                    >
+                      <img
+                        src="assets/images/svg/accept.svg"
+                        class="me-2"
+                        alt=""
+                      />Accept
+                    </button>
+                    <button
+                      mat-menu-item
+                      class="d-flex align-items-center reject"
+                      (click)="
+                        hospitalAccept(
+                          'AcceptRejectComponent',
+                          true,
+                          element?.hospital?.hospitalId,
+                          'hospitalReject',
+                          'hospital'
+                        );
+                        $event.stopPropagation()
+                      "
+                    >
+                      <img
+                        src="assets/images/svg/reject.svg"
+                        class="me-2"
+                        alt=""
+                      />Reject
+                    </button>
+                  </mat-menu>
+                </span>
+              </div>
+              <hr />
+            </div>
+          </ng-container>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- <div class="rightSide">
+
+    <div class="dougnnutdetail mx-3 my-4">
+      <div class="d-flex align-items-center justify-content-between p-3">
+        <span class="chartHeader">Appointments by Cities</span>
+        <img src="assets/images/svg/downloadArrow.svg" alt="" class="cursor" (click)="appointmentCitiesExport()">
+      </div>
+      <hr class="p-0 m-0">
+      <div class="d-flex align-items-center justify-content-between px-5">
+        <div class="dougnnut">
+          <canvas id="canvas"></canvas>
+        </div>
+        <div >
+          <div class="percentageofcharrt">
+          <p *ngFor="let data of appointmentPercentage" class="p-0 m-0 ms-3">{{data}}%</p>
+        </div>
+        </div>
+      </div>
+
+    </div>
+
+
+
+    <div class="dougnnutdetail mx-3 my-4">
+      <div class="d-flex align-items-center justify-content-between p-3">
+        <span class="chartHeader">Appointments by OS</span>
+        <img src="assets/images/svg/downloadArrow.svg" class="cursor" (click)="OSExport()" alt="">
+      </div>
+      <hr class="p-0 m-0">
+      <div class="">
+        <canvas id="appointmentByOS"></canvas>
+      </div>
+    </div>
+
+
+    <div class="dougnnutdetail mx-3 my-4">
+      <div class="d-flex align-items-center justify-content-between p-3">
+        <span class="chartHeader">Appointments by Browser</span>
+        <img src="assets/images/svg/downloadArrow.svg" class="cursor" (click)="browserExport()" alt="">
+      </div>
+      <hr class="p-0 m-0">
+      <div class="">
+        <canvas id="appointmentByBrowser"></canvas>
+      </div>
+    </div>
+
+
+
+
+     <div class="dougnnutdetail mx-3 my-4">
+      <div class="d-flex align-items-center justify-content-between p-3">
+        <span class="chartHeader">Appointments by Gender</span>
+        <img src="assets/images/svg/downloadArrow.svg" class="cursor" alt="" (click)="genderExport()">
+      </div>
+      <hr class="p-0 m-0">
+      <div class="">
+        <canvas id="appointmentByGender"></canvas>
+      </div>
+    </div> 
+
+
+
+    <div class="dougnnutdetail mx-3 my-4">
+      <div class="d-flex align-items-center justify-content-between p-3">
+        <span class="chartHeader">Appointments by Devices</span>
+        <img src="assets/images/svg/downloadArrow.svg" alt="" class="cursor" (click)="deviceExport()">
+      </div>
+      <hr class="p-0 m-0">
+      <div class="">
+        <canvas id="appointmentByDevice"></canvas>
+      </div>
+    </div>
+
+
+
+
+  </div> -->
+</div>

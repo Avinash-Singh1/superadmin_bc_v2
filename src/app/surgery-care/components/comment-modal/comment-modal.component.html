@@ -1,0 +1,35 @@
+<main class="comment-modal">
+  <header class="comment-header">Add Comment</header>
+  <mat-dialog-content class="modal-content">
+    <div class="d-flex flex-column gap-3">
+      <label htmlFor="comment"> Comment </label>
+      <textarea
+        id="comment"
+        class="comment-textarea form-control"
+        rows="5"
+        [formControl]="comments"
+        placeholder="Comment"
+      ></textarea>
+    </div>
+    <div
+      class="error-hint"
+      *ngIf="comments.touched && comments.errors?.['required']"
+    >
+      Comment is required.
+    </div>
+    <!-- <div
+      class="error-hint"
+      *ngIf="comments.touched && (comments.errors?.['minlength'] || comments.errors?.['maxlength'])"
+    >
+      Comment should be between 5 to 200 characters.
+    </div> -->
+  </mat-dialog-content>
+  <mat-dialog-actions class="comment-modal-actions">
+    <div class="button-group d-flex justify-content-end gap-4 w-100">
+      <button class="modal-button cancel" (click)="matdialogRef.close()">
+        Cancel
+      </button>
+      <button class="modal-button save" (click)="onSave()">Save</button>
+    </div>
+  </mat-dialog-actions>
+</main>

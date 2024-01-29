@@ -1,0 +1,12 @@
+@import '../../../assets/scss/main.scss';
+::ng-deep .mat-dialog-container{
+    padding: 0 !important;
+}
+.rejectdHeader{
+    @include font($primaryFont,600,24px)
+}
+.rejectedReason{
+    @include font($primaryFont,400,18px)
+
+}
+

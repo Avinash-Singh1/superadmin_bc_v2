@@ -1,0 +1,107 @@
+
+@import '../../../assets/scss/main.scss';
+
+    .profile-details {
+        padding: 23px 0 23px 33px;
+
+        .registration,
+        .education,
+        .document {
+            @include font($primaryFont, 600, 18px);
+            color: $black;
+        }
+
+        .other-details {
+            @include font($primaryFont, 400, 18px);
+            color: $black;
+
+        }
+
+        .image {
+            img {
+                width: 72px;
+                height: 72px;
+                border-radius: 100%;
+            }
+        }
+
+        .details {
+            margin-left: 12px;
+
+            .username {
+                @include font($primaryFont, 600, 24px);
+                color: $black
+            }
+
+            .occupation {
+                @include font($primaryFont, 400, 18px);
+                color: $filtercolor;
+            }
+        }
+    }
+    .hospitalDetail{
+        padding: 23px 23px 23px 33px;
+        .userdata{
+            width:46%;
+            border: 1px solid rgba(0, 0, 0, 0.3);
+            border-radius: 5px;   
+            .heading{
+                @include font($primaryFont, 400, 18px);
+                color:$doctorView;
+            }
+            .content{
+                @include font($primaryFont, 400, 18px);
+                color:$black;
+
+            }
+             }
+
+    }
+
+.startRating{
+    height: 20px;
+}
+.goodReview{
+    @include font($primaryFont, 400, 18px);
+    border: 1px solid rgba(0, 0, 0, 0.3);
+    color:$doctorView;
+    border-radius: 10px;
+    padding:10px 10px;
+}
+.recommendation{
+    @include font($primaryFont, 400, 18px);
+    border: 1px solid rgba(0, 0, 0, 0.3);
+    color:$black;
+    border-radius: 10px;
+    padding:10px 10px;
+    width:220px
+}
+.cancel,.delete{
+    border: none;
+    background: none;
+}
+.cancel{
+    @include font($primaryFont, 400, 18px);
+    border: 1px solid rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+    padding:8px 25px;
+}
+.delete{
+    @include font($primaryFont, 400, 18px);
+    border-radius: 10px;
+    padding:8px 25px;
+    background-color:$okBackground;
+    color:$white;
+}
+.viewHeader{
+    @include font($primaryFont, 600, 24px);
+
+}
+.ratingNumber{
+    @include font($primaryFont, 700, 24px);
+
+}
+.goodReview:not(:first-child){
+    margin-left: 10px;
+
+}

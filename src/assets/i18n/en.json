@@ -1,0 +1,17 @@
+{
+  "DASHBOARD": "Dashboard",
+  "APPOINTMENT": "Appointment",
+  "PATIENTS": "Patients",
+  "DOCTORS/HOSPITALS": "Doctors/Hospitals",
+  "REQUEST_FOR_APPROVAL": "Request for approval",
+  "DELETED/REJECTED/INACTIVE": "Deleted/Rejected/Inactive",
+  "REVIEW": "Review",
+  "SPECIALITY/PROCEDURE": "Speciality/Procedure",
+  "SURGERY_CARE": "Surgery Care",
+  "SURGERY_LEAD": "Surgery Lead",
+  "ADD_SURGERY": "Add Surgery",
+  "SURGERY_LIST": "Surgery List",
+  "DEPARTMENT": "Department",
+  "SETTINGS": "Settings",
+  "LOG_OUT": "Log Out"
+}

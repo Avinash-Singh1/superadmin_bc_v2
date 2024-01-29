@@ -1,0 +1,88 @@
+@import "../../../assets/scss/main.scss";
+
+.profile {
+  .contentHeader {
+    .profileHeader {
+      padding-left: 30px;
+      @include font($primaryFont, 600, 24px);
+    }
+  }
+  .profileDetail {
+    @include font($primaryFont, 400, 18px);
+    color: #151515;
+  }
+  .inputHeight {
+    height: 45px;
+    align-items: center;
+    border-radius: 5px;
+  }
+  .NgxEditor__Wrapper {
+    border-radius: 5px !important;
+  }
+
+  .cancel {
+    border: none;
+    @include font($primaryFont, 400, 18px);
+    border-radius: 5px;
+    background-color: transparent;
+    border: 1px solid #d9d9d9;
+    color: black;
+    padding: 10px 35px;
+  }
+  .save {
+    border: none;
+    @include font($primaryFont, 600, 18px);
+    border-radius: 5px;
+    background-color: $light_black;
+    border: 1px solid #d9d9d9;
+    color: $white;
+    padding: 10px 35px;
+  }
+  .edit {
+    display: flex;
+    justify-content: space-between;
+  }
+  .add {
+    margin-top: 18px;
+    display: flex;
+    justify-content: end;
+    border-top: 1px solid black;
+  }
+}
+
+.socialForm {
+  @include font($primaryFont, 500, 18px);
+  color: $black;
+}
+.footerbtns {
+  margin-top: 100px !important;
+}
+.hr {
+  border: 1px solid black !important;
+}
+.profilePhotoHeader {
+  @include font($primaryFont, 600, 18px);
+  color: #7f7f7f;
+}
+.image-container {
+  border-radius: 100%;
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  background-color: #eeeeee;
+}
+.chnagePhoto {
+  @include font($primaryFont, 600, 18px);
+  color: #45197c;
+}
+.uploadImage {
+  display: none;
+}
+.emailerror {
+  text-align: end;
+}
+::placeholder {
+  /* Chrome, Firefox, Opera, Safari 10.1+ */
+  color: #7a7a7a !important;
+  opacity: 1; /* Firefox */
+}

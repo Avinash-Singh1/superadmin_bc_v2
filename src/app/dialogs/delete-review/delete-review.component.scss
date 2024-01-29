@@ -1,0 +1,32 @@
+@import '../../../assets/scss/main.scss';
+::ng-deep .mat-dialog-container{
+    padding: 0 !important;
+}
+.deleteHeader{
+    @include font($primaryFont, 600, 24px);
+    color:$black
+
+}
+.mainContent{
+    @include font($primaryFont, 400, 18px);
+    color:$black
+}
+.cancel{
+    background: none;
+    border: none;
+    padding:17px 51px;
+    border: 1px solid $doctorView;
+    border-radius: 10px;
+    @include font($primaryFont, 400, 18px);
+
+   
+}
+.delete{
+    padding:17px 51px;
+    border-radius: 10px;
+    background-color: #FF0000;
+    border: none;
+    color: $white;
+    @include font($primaryFont, 600, 18px);
+
+}

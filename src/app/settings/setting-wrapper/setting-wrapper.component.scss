@@ -1,0 +1,38 @@
+@import '../../../assets/scss/main.scss';
+.sidenav{
+    width: 384px;
+    padding-top:20px;
+    @media (max-width:991px) {
+      width: 100%;
+  }
+  .settingHeader{
+    @include font($primaryFont,600,24px);
+    padding-left: 30px;
+
+  }
+    
+  }
+  .wrapper{
+    width: calc( 100% - 384px );
+    min-height: 100%;
+    @media (max-width:991px) {
+      width: 100%;
+  }
+  
+  }
+  .galaxy{
+   min-height: 100%;
+    @media (max-width:991px) {
+      flex-direction: column;
+  }
+  .onlySpace{
+    width:20px;
+    background-color: #EEEEEE;
+  }
+
+  }
+  .horizontalrow{
+    margin-top: 12px;
+
+  }
+  

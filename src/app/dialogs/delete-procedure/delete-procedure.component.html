@@ -1,0 +1,16 @@
+<div>
+    <p class="deletedata  ms-3">
+        Delete from Admin?
+    </p>
+    <hr>
+    <p class="deletecontent ms-3">The {{deleteType}} will be removed permanently. Do you want to delete?</p>
+    <hr >
+    <div class="d-flex align-items-center justify-content-end me-4 mx-4">
+        <button class="me-3 cancel" (click)="cancelmodal()">
+            Cancel
+        </button>
+        <button class="delete" (click)="closeModal()">
+            Delete
+        </button>
+    </div>
+</div>

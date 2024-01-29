@@ -1,0 +1,681 @@
+<div *ngIf="addDoctor">
+  <form [formGroup]="docorName">
+    <p class="m-0 p-4 dialogHeader">{{ data?.data }} Doctor</p>
+    <hr class="p-0 m-0" />
+    <div class="p-4">
+      <div>
+        <p class="m-0 userLabel">Full Name<span class="mandatory">*</span></p>
+        <input
+          class="mt-3 userDetail form-control"
+          type="text"
+          placeholder="Full Name"
+          formControlName="name"
+          maxlength="500"
+          [(ngModel)]="inputText"
+        />
+        <div
+          *ngIf="submitted && docorcontrols.name?.errors?.required"
+          class="submiterror"
+        >
+          Email address is required
+        </div>
+      </div>
+      <div class="mt-4">
+        <p class="m-0 userLabel">
+          Mobile Number<span class="mandatory">*</span>
+        </p>
+        <input
+          class="mt-3 userDetail form-control"
+          type="text"
+          placeholder="Mobile Number"
+          formControlName="mobile"
+          maxlength="10"
+          appOnlyNumber
+        />
+        <div
+          *ngIf="submitted && docorcontrols.mobile?.errors?.required"
+          class="submiterror"
+        >
+          Mobile Number is required
+        </div>
+      </div>
+      <div class="specialization">
+        <p class="m-0 userLabel">
+          Specialization<span class="mandatory">*</span>
+        </p>
+
+        <!-- <mat-select class=" mt-3 userDetail  form-control" placeholder="Specialization" formControlName="specialization">
+                <mat-option *ngFor="let specialization of OccupationList" [value]="specialization">
+                  {{specialization?.name}}
+                </mat-option>
+              </mat-select> -->
+        <ng-multiselect-dropdown
+          class="mt-3 userDetail form-control"
+          [placeholder]="'Specialization'"
+          [settings]="dropdownSettings"
+          [data]="OccupationList"
+          [(ngModel)]="selectedItems"
+          (onSelect)="onItemSelect($event)"
+          (onSelectAll)="onSelectAll($event)"
+          formControlName="specialization"
+        >
+        </ng-multiselect-dropdown>
+
+        <div
+          *ngIf="submitted && docorcontrols.specialization?.errors?.required"
+          class="submiterror"
+        >
+          Specialization is required
+        </div>
+      </div>
+      <div>
+        <p class="m-0 userLabel">Gender<span class="mandatory">*</span></p>
+        <mat-radio-group
+          aria-label="Select an option"
+          class="d-flex align-items-center mt-3"
+          formControlName="gender"
+        >
+          <mat-radio-button
+            *ngFor="let gender of gender"
+            class="ms-4"
+            [value]="gender?.type"
+            >{{ gender?.value }}</mat-radio-button
+          >
+        </mat-radio-group>
+        <div
+          *ngIf="submitted && docorcontrols.gender?.errors?.required"
+          class="submiterror"
+        >
+          Gender is required
+        </div>
+      </div>
+      <div>
+        <input
+          class="userDetail continue-btn bottomdoctorLast"
+          type="button"
+          value="Continue"
+          (click)="medicalRegistration('medical'); checkExistNumber()"
+        />
+      </div>
+    </div>
+  </form>
+</div>
+
+<!-- medicalRegistration -->
+
+<div *ngIf="medicalRegistar && registerDetail">
+  <form [formGroup]="registration">
+    <p class="m-0 p-4 dialogHeader">Medical Registration</p>
+    <hr class="p-0 m-0" />
+    <div class="p-4 medicaldata">
+      <div>
+        <div>
+          <p class="m-0 userLabel">Registration Number</p>
+          <input
+            class="mt-3 userDetail form-control"
+            type="text"
+            placeholder="Registration Number"
+            formControlName="regNumber"
+            maxlength="500"
+          />
+          <div
+            *ngIf="
+              submitted && registrationControls.regNumber?.errors?.required
+            "
+            class="submiterror"
+          >
+            Registration Number is required
+          </div>
+        </div>
+        <div class="specialization">
+          <p class="m-0 userLabel">Registration Council</p>
+          <input
+            class="mt-3 userDetail form-control"
+            type="text"
+            placeholder="Registration Council"
+            formControlName="regCouncil"
+            maxlength="500"
+          />
+          <div
+            *ngIf="
+              submitted && registrationControls.regCouncil?.errors?.required
+            "
+            class="submiterror"
+          >
+            Registration Council is required
+          </div>
+        </div>
+        <div>
+          <p class="m-0 userLabel">Registration Year</p>
+          <mat-select
+            class="mt-3 userDetail form-control"
+            placeholder="Registration Year"
+            formControlName="regYear"
+          >
+            <mat-option *ngFor="let dummy of yearList" [value]="dummy">
+              {{ dummy }}
+            </mat-option>
+          </mat-select>
+
+          <div
+            *ngIf="submitted && registrationControls.regYear?.errors?.required"
+            class="submiterror"
+          >
+            Registration Year is Required
+          </div>
+        </div>
+      </div>
+      <div class="d-flex justify-content-between bottomLast">
+        <input
+          class="cancel1"
+          type="button"
+          value="Back"
+          (click)="cancelForm('medical')"
+        />
+        <input
+          class="next"
+          type="button"
+          value="Next"
+          (click)="medicalRegistration('education')"
+        />
+      </div>
+    </div>
+  </form>
+</div>
+
+<!-- Education Qualification -->
+
+<div *ngIf="education">
+  <form [formGroup]="educationDetail">
+    <p class="m-0 p-4 dialogHeader">Education Qualification</p>
+    <hr class="p-0 m-0" />
+    <div class="p-4">
+      <div>
+        <p class="m-0 userLabel">Degree</p>
+
+        <input
+          class="mt-3 userDetail form-control"
+          type="text"
+          placeholder="Type degree"
+          formControlName="degree"
+          maxlength="500"
+        />
+
+        <!-- <mat-select class=" mt-3 userDetail  form-control" placeholder="Type and select Degree" formControlName="degree">
+                <mat-option *ngFor="let specialization of getdegreeList" [value]="specialization?._id">
+                  {{specialization?.name}}
+                </mat-option>
+              </mat-select>     -->
+        <div
+          *ngIf="submitted && educationDetailControls.degree?.errors?.required"
+          class="submiterror"
+        >
+          Degree is Required
+        </div>
+      </div>
+      <div class="specialization">
+        <p class="m-0 userLabel">College/Institute</p>
+        <input
+          class="mt-3 userDetail form-control"
+          type="text"
+          placeholder="Type college/institute"
+          formControlName="college"
+          maxlength="100"
+        />
+
+        <!-- <mat-select class=" mt-3 userDetail  form-control" placeholder="Type and select College/Institute" formControlName="college">
+                <mat-option *ngFor="let specialization of getCollegeList" [value]="specialization?._id">
+                  {{specialization?.name}}
+                </mat-option>
+              </mat-select>     -->
+
+        <div
+          *ngIf="submitted && educationDetailControls.college?.errors?.required"
+          class="submiterror"
+        >
+          Registration Year is Required
+        </div>
+      </div>
+      <div>
+        <p class="m-0 userLabel">Year of Completion</p>
+        <mat-select
+          class="mt-3 userDetail form-control"
+          placeholder="Select Year of Completion"
+          formControlName="completionYear"
+        >
+          <mat-option *ngFor="let dummy of yearList" [value]="dummy">
+            {{ dummy }}
+          </mat-option>
+        </mat-select>
+        <div
+          *ngIf="
+            submitted &&
+            educationDetailControls.completionYear?.errors?.required
+          "
+          class="submiterror"
+        >
+          Year of Completion is Required
+        </div>
+      </div>
+      <div class="mt-3">
+        <p class="m-0 userLabel">Years of experience</p>
+        <mat-select
+          class="mt-3 userDetail form-control"
+          placeholder="Select years of experience (Between 0 to 70 Years)"
+          formControlName="experienceYear"
+        >
+          <mat-option
+            *ngFor="let dummy of ' '.repeat(71).split(''); let x = index"
+            [value]="x"
+          >
+            {{ x }}
+          </mat-option>
+        </mat-select>
+        <div
+          *ngIf="
+            submitted &&
+            educationDetailControls.experienceYear?.errors?.required
+          "
+          class="submiterror"
+        >
+          Years of experience is Required
+        </div>
+      </div>
+      <div class="d-flex justify-content-between bottomdoctorLast">
+        <input
+          class="cancel1"
+          type="button"
+          value="Back"
+          (click)="cancelForm('education')"
+        />
+        <input
+          class="next"
+          type="button"
+          value="Next"
+          (click)="medicalRegistration('practice')"
+        />
+      </div>
+    </div>
+  </form>
+</div>
+
+<!-- connect practice -->
+
+<div *ngIf="practice">
+  <form [formGroup]="connectPractice">
+    <p class="m-0 p-4 dialogHeader">Connect practice</p>
+    <hr class="p-0 m-0" />
+    <div class="p-4">
+      <p class="p-0 m-0">Please select any one of the following</p>
+      <div class="mt-3 getPractice">
+        <mat-radio-group
+          aria-label="Select an option"
+          formControlName="establishment"
+          class="d-flex flex-column"
+        >
+          <mat-radio-button
+            [value]="connect?.type"
+            class="ms-4 mt-2"
+            class="establishment"
+            [ngClass]="connect.class ? 'newLine' : ''"
+            (click)="
+              $event.stopPropagation();
+              visitEstablishment(connect?.type);
+              disableMapForm()
+            "
+            *ngFor="let connect of connectpractice"
+            >{{ connect?.value }}</mat-radio-button
+          >
+        </mat-radio-group>
+      </div>
+      <div
+        *ngIf="
+          submitted && connectPracticeControls.establishment?.errors?.required
+        "
+        class="submiterror"
+      >
+        Connect Practice is Required
+      </div>
+
+      <div class="d-flex justify-content-between bottomLast getmoreheight">
+        <input
+          class="cancel1"
+          type="button"
+          value="Back"
+          (click)="cancelForm('practice')"
+        />
+        <input
+          class="next"
+          type="button"
+          value="Next"
+          (click)="medicalRegistration('establishment')"
+        />
+      </div>
+    </div>
+  </form>
+</div>
+
+<!-- establishment -->
+
+<div *ngIf="establishment">
+  <form [formGroup]="establishmentDetail">
+    <p class="m-0 p-4 dialogHeader">Establishment Basic Details</p>
+    <hr class="p-0 m-0" />
+    <div class="p-4">
+      <div>
+        <p class="m-0 userLabel">Establishment Name</p>
+        <input
+          class="mt-3 userDetail form-control"
+          type="text"
+          placeholder="Establishment Name"
+          [formControl]="myControls"
+          [matAutocomplete]="auto"
+          (input)="getVisitEstablishment($event)"
+        />
+        <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
+          <ng-container *ngIf="visitType == false">
+            <mat-option
+              *ngFor="let option of filteredOption | async"
+              [value]="option"
+              (click)="getEstablismentDeatil($event)"
+            >
+              {{ option }}
+            </mat-option>
+          </ng-container>
+        </mat-autocomplete>
+        <div
+          *ngIf="
+            submitted && establishmentDetailControls.estName?.errors?.required
+          "
+          class="submiterror"
+        >
+          Establishment Name is Required
+        </div>
+      </div>
+      <div class="specialization">
+        <p class="m-0 userLabel">Establishment Type</p>
+        <!-- <select class=" mt-3 userDetail  form-control">
+                <option>Select</option>
+                <option *ngFor=" let specialization of specialization">{{specialization}}</option>
+
+            </select> -->
+
+        <mat-select
+          class="mt-3 userDetail form-control"
+          placeholder="Select"
+          formControlName="estType"
+          [disabled]="visitType == false"
+        >
+          <mat-option
+            *ngFor="let establishMentType of typeOfHospital"
+            [value]="establishMentType?._id"
+          >
+            {{ establishMentType?.name }}
+          </mat-option>
+        </mat-select>
+        <div
+          *ngIf="
+            submitted && establishmentDetailControls.estType?.errors?.required
+          "
+          class="submiterror"
+        >
+          Establishment Type is Required
+        </div>
+      </div>
+      <div
+        class="d-flex justify-content-between bottomLast getclinicmoreheight"
+      >
+        <input
+          class="cancel1"
+          type="button"
+          value="Back"
+          (click)="cancelForm('establishment')"
+        />
+        <input
+          class="next"
+          type="button"
+          value="Next"
+          (click)="medicalRegistration('location')"
+        />
+      </div>
+    </div>
+  </form>
+</div>
+
+<!-- Map Location -->
+<div *ngIf="location">
+  <form [formGroup]="mapLocation">
+    <div class="d-flex align-items-center justify-content-between">
+      <p class="m-0 p-4 dialogHeader">Map Location</p>
+      <button (click)="clearMap()" class="sampleCsv" *ngIf="visitType == true">
+        Clear All
+      </button>
+    </div>
+    <hr class="p-0 m-0" />
+    <div class="px-3 pt-2 row m-0">
+      <div class="col-md-6 mapdata">
+        <p class="m-0 userLabel">
+          Street Address<span class="mandatory">*</span>
+        </p>
+        <input
+          class="mt-3 userDetail form-control"
+          type="text"
+          placeholder="Street Address"
+          [disabled]="visitType == false"
+          [(ngModel)]="searchAddress"
+          [ngModelOptions]="{ standalone: true }"
+          (input)="search()"
+          [matAutocomplete]="auto1"
+        />
+        <mat-autocomplete autoActiveFirstOption #auto1="matAutocomplete">
+          <mat-option
+            *ngFor="let result of autocompleteResults"
+            [value]="result?.description"
+            (click)="getAddressDetail(result?.description, result)"
+          >
+            {{ result?.description }}
+          </mat-option>
+        </mat-autocomplete>
+        <!-- <div *ngIf="submitted && mapLocationControls.street?.errors?.required"  class="submiterror">Street Address is Required</div> -->
+      </div>
+      <div class="col-md-6 mapdata">
+        <p class="m-0 userLabel">Locality<span class="mandatory">*</span></p>
+        <input
+          class="mt-3 userDetail form-control"
+          type="text"
+          placeholder="Locality"
+          [ngClass]="visitType == false ? 'disbaled' : ''"
+          formControlName="locality"
+        />
+        <div
+          *ngIf="submitted && mapLocationControls.locality?.errors?.required"
+          class="submiterror"
+        >
+          Locality is Required
+        </div>
+      </div>
+
+      <div class="col-md-6 mapdata">
+        <p class="m-0 userLabel">State<span class="mandatory">*</span></p>
+        <!-- <input class="mt-3 userDetail form-control" type="text" placeholder="State" formControlName="state"> -->
+        <mat-select
+          class="mt-3 userDetail form-control"
+          placeholder="State"
+          formControlName="state"
+          [disabled]="visitType == false"
+        >
+          <mat-option
+            *ngFor="let establishMentType of stateList"
+            [value]="establishMentType?._id"
+          >
+            {{ establishMentType?.name }}
+          </mat-option>
+        </mat-select>
+        <div
+          *ngIf="submitted && mapLocationControls.state?.errors?.required"
+          class="submiterror"
+        >
+          State is Required
+        </div>
+      </div>
+      <div class="col-md-6 mapdata">
+        <p class="m-0 userLabel">City<span class="mandatory">*</span></p>
+        <input
+          class="mt-3 userDetail form-control"
+          type="text"
+          placeholder="City"
+          [disabled]="visitType == false"
+          [(ngModel)]="searchCity"
+          [ngModelOptions]="{ standalone: true }"
+          (input)="searchCities()"
+          [matAutocomplete]="auto2"
+        />
+        <mat-autocomplete autoActiveFirstOption #auto2="matAutocomplete">
+          <mat-option
+            *ngFor="let result of autocompleteResults"
+            [value]="result?.description"
+            (click)="getAddressDetail(result?.description, result)"
+          >
+            {{ result?.description }}
+          </mat-option>
+        </mat-autocomplete>
+        <!-- <div *ngIf="submitted && mapLocationControls.city?.errors?.required"  class="submiterror">City is Required</div> -->
+      </div>
+      <div class="col-md-6 mapdata">
+        <p class="m-0 userLabel">Pin code<span class="mandatory">*</span></p>
+        <input
+          class="mt-3 userDetail form-control"
+          [ngClass]="visitType == false ? 'disbaled' : ''"
+          type="text"
+          placeholder="Pin code"
+          formControlName="pinCode"
+          maxlength="6"
+        />
+        <div
+          *ngIf="submitted && mapLocationControls.pinCode?.errors?.required"
+          class="submiterror"
+        >
+          Pin code is Required
+        </div>
+      </div>
+      <div class="col-md-6 mapdata">
+        <p class="m-0 readonly">Country<span class="mandatory">*</span></p>
+        <input
+          readonly
+          class="mt-3 userDetail countryColor form-control"
+          type="text"
+          placeholder="India"
+        />
+      </div>
+      <div class="mt-4">
+        <p class="m-0 mb-3 userLabel">Map View</p>
+        <agm-map
+          [latitude]="lat"
+          [longitude]="lng"
+          style="height: 200px"
+          (mapClick)="mapClicked($event)"
+        >
+          <agm-marker [latitude]="lat" [longitude]="lng"></agm-marker>
+        </agm-map>
+      </div>
+
+      <div>
+        <input
+          class="userDetail continue-btn my-5"
+          type="button"
+          value="Continue"
+          (click)="medicalRegistration('validform'); addDoctorDetails()"
+        />
+      </div>
+    </div>
+  </form>
+</div>
+
+<!-- add hospital -->
+
+<div *ngIf="newEstablishment">
+  <form [formGroup]="hospitalEstablishment">
+    <p class="m-0 p-4 dialogHeader">{{ data?.data }} Establishment</p>
+    <hr class="p-0 m-0" />
+    <div class="p-4">
+      <div>
+        <p class="m-0 userLabel">
+          Establishment Name<span class="mandatory">*</span>
+        </p>
+        <input
+          class="mt-3 userDetail form-control"
+          type="text"
+          placeholder="Establishment Name*"
+          [formControl]="myControl"
+          [matAutocomplete]="auto"
+        />
+
+        <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
+          <mat-option
+            *ngFor="let option of filteredOptions | async"
+            [value]="option"
+          >
+            {{ option }}
+          </mat-option>
+        </mat-autocomplete>
+
+        <div
+          *ngIf="submitted && hospitalControls.name?.errors?.required"
+          class="submiterror"
+        >
+          Name is Required
+        </div>
+      </div>
+      <div class="mt-4">
+        <p class="m-0 userLabel">Mobile<span class="mandatory">*</span></p>
+        <input
+          class="mt-3 userDetail form-control"
+          type="text"
+          placeholder="Mobile"
+          formControlName="mobile"
+          maxlength="10"
+          appOnlyNumber
+        />
+        <div
+          *ngIf="submitted && hospitalControls.mobile?.errors?.required"
+          class="submiterror"
+        >
+          Mobile is required
+        </div>
+      </div>
+      <div class="specialization">
+        <p class="m-0 userLabel">Type of Hospital/Clinic</p>
+        <!-- <input class="mt-3 userDetail form-control" type="text" placeholder="Type Locality" formControlName="type"> -->
+        <mat-select
+          class="mt-3 userDetail form-control"
+          placeholder="Select Hospital/Clinic"
+          formControlName="type"
+        >
+          <mat-option
+            *ngFor="let establishMentType of typeOfHospital"
+            [value]="establishMentType?._id"
+          >
+            {{ establishMentType?.name }}
+          </mat-option>
+        </mat-select>
+        <div
+          *ngIf="submitted && hospitalControls.type?.errors?.required"
+          class="submiterror"
+        >
+          Type is Required
+        </div>
+      </div>
+
+      <div>
+        <input
+          class="userDetail continue-btn getmoreheights"
+          type="button"
+          value="Continue"
+          (click)="
+            medicalRegistration('newEstablishment'); checkExistNumberHospital()
+          "
+        />
+      </div>
+    </div>
+  </form>
+</div>

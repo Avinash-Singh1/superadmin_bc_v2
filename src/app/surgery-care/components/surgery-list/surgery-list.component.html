@@ -1,0 +1,27 @@
+<main>
+  <app-header>Surgery List</app-header>
+  <section class="surgery-list-wrapper d-flex flex-column">
+    <ng-container *ngFor="let surgery of surgeryList">
+      <div
+        class="surgery-item d-flex justify-content-between align-items-center gap-4"
+      >
+        <div class="d-flex gap-3 align-items-center">
+          <div class="image-wrapper">
+            <img [src]="surgery.imageUrl" />
+          </div>
+          <span class="text-24">{{ surgery.title | titlecase }}</span>
+        </div>
+        <div class="button-group d-flex gap-4">
+          <button class="edit" (click)="onEdit(surgery)">
+            <img src="assets/images/svg/editdate.svg" />
+            <span>Edit</span>
+          </button>
+          <button class="delete" (click)="onDelete(surgery._id)">
+            <img src="assets/images/svg/trash.svg" />
+            <span> Delete </span>
+          </button>
+        </div>
+      </div>
+    </ng-container>
+  </section>
+</main>

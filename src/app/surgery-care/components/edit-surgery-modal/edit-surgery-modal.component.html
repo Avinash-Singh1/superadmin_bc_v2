@@ -1,0 +1,288 @@
+<main>
+  <header
+    class="surgery-modal-header d-flex justify-content-between align-items-center text-24 font-600"
+  >
+    <span> Edit Surgery</span>
+
+    <div class="cursor-pointer" (click)="matdialogRef.close()">
+      <img src="assets/images/svg/close.svg" alt="" />
+    </div>
+  </header>
+  <mat-dialog-content class="surgery-modal-content">
+    <form [formGroup]="surgeryForm" class="d-flex">
+      <section class="surgery-content w-75">
+        <ng-container
+          *ngFor="let component of componentArray.controls; let i = index"
+          formArrayName="components"
+        >
+          <div
+            *ngIf="i == 0"
+            class="surgery-description d-flex gap-4 align-items-start"
+            [formGroupName]="i"
+          >
+            <div class="content d-flex flex-column w-100">
+              <header
+                class="d-flex gap-3 justify-content-between align-items-center"
+              >
+                <div class="d-flex gap-3 align-items-center">
+                  <div
+                    class="image-wrapper position-relative"
+                    (click)="surgeryIcon.click()"
+                  >
+                    <img
+                      class="surgery-icon"
+                      [src]="control['imageUrl'].value"
+                      alt=""
+                    />
+
+                    <div class="edit-button position-absolute">
+                      <img src="assets/images/svg/editdate.svg" alt="" />
+                    </div>
+                  </div>
+                  <span class="text-24 font-600">{{
+                    component.value.title | titlecase
+                  }}</span>
+                </div>
+                <input
+                  accept="image/jpeg, image/jpg, image/png"
+                  #surgeryIcon
+                  type="file"
+                  style="display: none"
+                  (change)="onUploadFile($event, 'imageUrl', false)"
+                />
+                <button class="edit" (click)="onEdit(i)">
+                  <img src="assets/images/svg/editdate.svg" alt="" />
+                  <span> Edit </span>
+                </button>
+              </header>
+              <div class="position-relative banner-image-wrapper">
+                <img
+                  *ngIf="componentArray.get('0')?.value.image[0]"
+                  [src]="componentArray.get('0')?.value.image[0]"
+                  alt=""
+                  class="banner-image"
+                />
+                <img
+                  *ngIf="!componentArray.get('0')?.value.image[0]"
+                  src="assets/images/png/dummy-banner.png"
+                  alt=""
+                  class="banner-image"
+                />
+                <button
+                  class="upload position-absolute"
+                  (click)="bannerImage.click()"
+                >
+                  <img src="assets/images/svg/fileupload.svg" alt="" />
+                  <span>Upload</span>
+                </button>
+                <input
+                  accept="image/jpeg, image/jpg, image/png"
+                  type="file"
+                  #bannerImage
+                  style="display: none"
+                  (change)="onUploadFile($event, '0')"
+                />
+                <span
+                  class="error-hint mt-2"
+                  *ngIf="imageArray(0).touched && imageArray(0).errors?.['imagesRequired']"
+                  >Required</span
+                >
+              </div>
+              <div
+                class="description"
+                [innerHTML]="component.value.description | htmlSanitize"
+              ></div>
+            </div>
+          </div>
+          <div
+            *ngIf="i != 0"
+            class="surgery-description d-flex gap-4 align-items-start"
+            [formGroupName]="i"
+          >
+            <div class="content d-flex flex-column w-100">
+              <header
+                class="d-flex gap-3 justify-content-between align-items-center"
+              >
+                <span class="text-24 font-600">{{
+                  component.value.title | titlecase
+                }}</span>
+                <button class="edit" (click)="onEdit(i)">
+                  <img src="assets/images/svg/editdate.svg" alt="" />
+                  <span> Edit </span>
+                </button>
+              </header>
+              <div
+                class="description"
+                [innerHTML]="component.value.description | htmlSanitize"
+              ></div>
+              <div class="d-flex flex-column gap-2" *ngIf="i == 3">
+                <div class="d-flex gap-3 image-container w-100">
+                  <ng-container
+                    *ngFor="
+                      let image of component.get('image')?.value;
+                      let j = index
+                    "
+                  >
+                    <div
+                      class="d-flex align-items-center justify-content-center symptoms-image-wrapper position-relative"
+                    >
+                      <img [src]="image" alt="" />
+                      <div
+                        class="button-group flex-column gap-2 position-absolute"
+                      >
+                        <button class="change" (click)="symptomsInput.click()">
+                          Change
+                        </button>
+                        <button class="delete" (click)="onDelete(i, j)">
+                          Delete
+                        </button>
+                        <input
+                          style="display: none"
+                          accept="image/jpeg, image/jpg, image/png"
+                          type="file"
+                          #symptomsInput
+                          (change)="onChangeImage($event, i, j)"
+                        />
+                      </div>
+                    </div>
+                  </ng-container>
+                  <div
+                    class="d-flex align-items-center justify-content-center symptoms-image-wrapper add-more"
+                    (click)="symptomImage.click()"
+                  >
+                    <div class="text-center">
+                      <span class="text-32 add-icon">+</span>
+                      <span class="">Add more</span>
+                    </div>
+                  </div>
+                  <input
+                    accept="image/jpeg, image/jpg, image/png"
+                    type="file"
+                    style="display: none"
+                    #symptomImage
+                    (change)="onUploadFile($event, i, true, true)"
+                  />
+                </div>
+                <span
+                  class="error-hint"
+                  *ngIf="imageArray(i).errors?.['imagesRequired'] && imageArray(i).touched"
+                  >At least one image is required.</span
+                >
+              </div>
+            </div>
+          </div>
+        </ng-container>
+        <div class="d-flex flex-column gap-4" formArrayName="faq">
+          <div
+            class="d-flex gap-3 justify-content-between w-100 align-items-center"
+          >
+            <span class="text-24 font-600">Frequently Asked Questions</span>
+            <div
+              class="d-flex align-items-center cursor-pointer"
+              (click)="onAddFaqs()"
+            >
+              <svg-icon src="assets/images/svg/add-faqs.svg"></svg-icon>
+              <span class="ms-2 mt-1"> Add </span>
+            </div>
+          </div>
+          <div class="" *ngIf="!faqArray.controls.length">No Faqs</div>
+          <div class="d-flex flex-column gap-4">
+            <ng-container
+              *ngFor="let component of faqArray.controls; let i = index"
+            >
+              <div
+                class="border rounded-1 p-3 d-flex justify-content-between align-items-center"
+                [formGroupName]="i"
+              >
+                <div class="d-flex flex-column gap-1">
+                  <span class="font-600"
+                    ><strong>Q</strong>: {{ component.value.question }}</span
+                  >
+                  <span><strong>A</strong>: {{ component.value.answer }}</span>
+                </div>
+                <button class="edit" (click)="onAddFaqs(true, i)">
+                  <img src="assets/images/svg/editdate.svg" alt="" />
+                  <span> Edit </span>
+                </button>
+              </div>
+            </ng-container>
+          </div>
+        </div>
+      </section>
+      <div class="w-25 seo-container">
+        <div class="w-100">Option</div>
+        <div class="d-flex flex-column">
+          <div
+            class="w-100 accordion-item d-flex justify-content-between align-items-center"
+            (click)="
+              activeAccordion && activeAccordion == 'seoTitle'
+                ? (activeAccordion = '')
+                : (activeAccordion = 'seoTitle')
+            "
+          >
+            <span> SEO Title </span>
+            <img
+              src="assets/images/svg/rightblackarrow.svg"
+              alt=""
+              [ngClass]="{ 'active-accordion': activeAccordion == 'seoTitle' }"
+            />
+          </div>
+          <textarea
+            formControlName="seoTitle"
+            class="seo-textarea"
+            *ngIf="activeAccordion == 'seoTitle'"
+          ></textarea>
+        </div>
+        <div class="d-flex flex-column">
+          <div
+            class="w-100 accordion-item d-flex justify-content-between align-items-center"
+            (click)="
+              activeAccordion && activeAccordion == 'seoDescription'
+                ? (activeAccordion = '')
+                : (activeAccordion = 'seoDescription')
+            "
+          >
+            <span> SEO Description </span>
+            <img
+              src="assets/images/svg/rightblackarrow.svg"
+              alt=""
+              [ngClass]="{
+                'active-accordion': activeAccordion == 'seoDescription'
+              }"
+            />
+          </div>
+          <textarea
+            formControlName="seoDescription"
+            class="seo-textarea"
+            *ngIf="activeAccordion == 'seoDescription'"
+          ></textarea>
+        </div>
+        <div class="">Select Department</div>
+        <mat-select
+          class="department-select"
+          placeholder="Select Department"
+          formControlName="departmentId"
+        >
+          <mat-option
+            *ngFor="let department of departmentList"
+            [value]="department._id"
+          >
+            {{ department.name }}
+          </mat-option>
+        </mat-select>
+        <div
+          class="error-hint"
+          *ngIf="control['departmentId'].errors?.['required'] && control['departmentId'].touched"
+        >
+          Department is required
+        </div>
+      </div>
+    </form>
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <div class="button-group w-100 d-flex justify-content-end gap-2">
+      <button class="save" (click)="onSubmit()">Save</button>
+      <button class="cancel" (click)="matdialogRef.close()">Cancel</button>
+    </div>
+  </mat-dialog-actions>
+</main>

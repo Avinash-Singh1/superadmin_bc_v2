@@ -1,0 +1,194 @@
+<app-header>Speciality/Procedure</app-header>
+<div class="d-flex justify-content-between align-items-center patientsHeader">
+  <span class="patientdetail d-flex align-items-center gap-1">
+    <div
+      [ngClass]="doctorsList ? 'activepage' : 'cursor'"
+      (click)="chnageDoctorList('doctors')"
+    >
+      Speciality
+      <span
+        class="ms-2"
+        [ngClass]="doctorsList == true ? 'counterdata' : 'nocounter'"
+        >{{ totalLength || "0" }}</span
+      >
+    </div>
+    <div
+      [ngClass]="hospitalsList ? 'activepage' : 'cursor'"
+      (click)="chnageDoctorList('hospitals')"
+    >
+      Procedure
+      <span
+        class="ms-2"
+        [ngClass]="hospitalsList == true ? 'counterdata' : 'nocounter'"
+        >{{ totalLengthProcedure || "0" }}</span
+      >
+    </div>
+  </span>
+  <div class="d-flex align-items-center">
+    <div class="d-flex otherFeatures">
+      <div class="search d-flex align-items-center">
+        <img src="assets/images/svg/search.svg" alt="" /><input
+          type="text"
+          class="form-control"
+          [formControl]="search"
+          placeholder="Search by Name"
+        />
+      </div>
+    </div>
+    <div class="ms-3 cursor">
+      <img
+        src="assets/images/svg/addDoctor.svg"
+        alt=""
+        (click)="
+          addEditSpeciaityProcedure(
+            doctorsList ? 'Speciality' : 'Procedure',
+            'Add'
+          )
+        "
+      />
+    </div>
+  </div>
+</div>
+
+<div class="table-responsive w-100 scrolldata mb-5" *ngIf="doctorsList">
+  <table mat-table matSort [dataSource]="dataSource" class="mat-elevation-z8">
+    <ng-container matColumnDef="Name">
+      <th
+        mat-header-cell
+        *matHeaderCellDef
+        class="specaildata ps-5 name cursor"
+        (click)="
+          aseImage
+            ? sortData('fullName', 'ASC', 'Specaility')
+            : descImage
+            ? sortData('fullName', 'DESC', 'Specaility')
+            : sortData('fullName', 'nosort', 'Specaility')
+        "
+      >
+        Name
+        <img *ngIf="aseImage" src="assets/images/svg/sort.svg" alt="" />
+        <img
+          *ngIf="descImage"
+          class="asce"
+          src="assets/images/svg/sort.svg"
+          alt=""
+        />
+        <img *ngIf="nosortImage" src="assets/images/svg/sort.svg" alt="" />
+      </th>
+      <td mat-cell *matCellDef="let element" class="tabledata cursor ps-5 name">
+        {{ element?.name }}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="Action">
+      <th mat-header-cell *matHeaderCellDef class="specaildata action ps-5">
+        Action
+      </th>
+      <td mat-cell *matCellDef="let element" class="tabledata cursor action">
+        <div class="d-flex">
+          <img
+            src="assets/images/svg/Edits.svg"
+            alt=""
+            (click)="
+              addEditSpeciaityProcedure(
+                'Speciality',
+                'Edit',
+                element?._id,
+                element?.name,
+                element?.image,
+                element?.description,
+                element?.links
+              )
+            "
+          />
+          <img
+            src="assets/images/svg/Deletes.svg"
+            alt=""
+            (click)="deleteData(element?._id, 'Speciality')"
+          />
+        </div>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr
+      mat-row
+      *matRowDef="let row; columns: displayedColumns; let i = index"
+    ></tr>
+  </table>
+  <div class="nodata text-center" *ngIf="totalLength == 0">No Data Found.</div>
+</div>
+
+<div class="table-responsive w-100 scrolldata mb-5" *ngIf="hospitalsList">
+  <table
+    mat-table
+    matSort
+    [dataSource]="dataSourceProcedure"
+    class="mat-elevation-z8"
+  >
+    <ng-container matColumnDef="Name">
+      <th
+        mat-header-cell
+        *matHeaderCellDef
+        class="specaildata ps-5 name cursor"
+        (click)="
+          aseProcedure
+            ? sortData('fullNameProcedure', 'ASC', 'Procedure')
+            : descProcedure
+            ? sortData('fullNameProcedure', 'DESC', 'Procedure')
+            : sortData('fullNameProcedure', 'nosort', 'Procedure')
+        "
+      >
+        Name
+        <img *ngIf="aseProcedure" src="assets/images/svg/sort.svg" alt="" />
+        <img
+          *ngIf="descProcedure"
+          class="asce"
+          src="assets/images/svg/sort.svg"
+          alt=""
+        />
+        <img *ngIf="noProcedure" src="assets/images/svg/sort.svg" alt="" />
+      </th>
+      <td mat-cell *matCellDef="let element" class="tabledata cursor ps-5 name">
+        {{ element?.name }}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="Action">
+      <th mat-header-cell *matHeaderCellDef class="specaildata action ps-5">
+        Action
+      </th>
+      <td mat-cell *matCellDef="let element" class="tabledata cursor action">
+        <div class="d-flex">
+          <img
+            src="assets/images/svg/Edits.svg"
+            alt=""
+            (click)="
+              addEditSpeciaityProcedure(
+                'Procedure',
+                'Edit',
+                element?._id,
+                element?.name,
+                '',
+                element?.description,
+                element?.links
+              )
+            "
+          />
+          <img
+            src="assets/images/svg/Deletes.svg"
+            alt=""
+            (click)="deleteData(element?._id, 'Procedure')"
+          />
+        </div>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr
+      mat-row
+      *matRowDef="let row; columns: displayedColumns; let i = index"
+    ></tr>
+  </table>
+  <div class="nodata text-center" *ngIf="totalLengthProcedure == 0">
+    No Data Found.
+  </div>
+</div>

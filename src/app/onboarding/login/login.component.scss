@@ -1,0 +1,85 @@
+@import "../../../assets/scss/main.scss";
+
+.welcomeText {
+  @include font($primaryFont, 700, 2.25rem);
+  color: $white;
+}
+
+.loginUser {
+  background-color: $white;
+  hr{
+    border-bottom: 1px solid rgba(0, 0, 0, 0.3);
+  }
+  .login-content {
+    padding: 23px 32px 32px 32px;
+
+    .email,
+    .password {
+      width: 420px;
+      height: 48px;
+      margin-top: 12px;
+    }
+    .parentpassword{
+      margin-top: 20px;
+      position: relative;
+      .showhide{
+        background: none;;
+      
+      .securepassword{
+        position: absolute;
+      right:20px;
+      top:52px;
+      }
+    }
+      
+    }
+  }
+
+  .admin-login,
+  .passwordheader,
+  .emailheader {
+    @include font($primaryFont, 400, 18px);
+    color: #000000;
+  }
+
+  .admin-login {
+    padding: 20px 32px 20px 32px;
+  }
+
+  .forgotpassword {
+    margin-top: 28px;
+
+    .rememberme {
+      .keeplogin {
+        @include font($primaryFont, 400, 18px);
+        color: #000000;
+      }
+
+      .checkuncheck {
+        width: 18px;
+        height: 18px;
+      }
+    }
+
+    .forgetpass {
+      @include font($primaryFont, 400, 18px);
+      color: #000000;
+      text-decoration: none;
+    }
+  }
+  .login{
+    button{
+    width: 100%;
+    background-color:$purple;
+    color:$white;
+    margin-top:18px;
+    @include font($primaryFont, 600, 18px);
+    padding: 8px 0;
+    border: none;
+
+    }
+  }
+}
+input[type=checkbox] {
+  accent-color: $purple;
+}

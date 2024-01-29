@@ -1,0 +1,85 @@
+<p class="welcomeText">Welcome to Nectar</p>
+<div class="loginUser">
+  <p class="admin-login m-0">Admin Login</p>
+  <hr class="m-0" />
+  <form
+    class="login-content"
+    [formGroup]="emailloginForm"
+    (ngSubmit)="onSubmit()"
+  >
+    <div>
+      <p class="emailheader m-0">Email ID</p>
+      <input
+        type="text"
+        class="email form-control"
+        placeholder="Email ID"
+        (keydown)="validationService.avoidSpace($event)"
+        formControlName="email"
+        maxlength="40"
+      />
+      <div *ngIf="submitted && f.email?.errors?.required" class="emailerror">
+        Email address is required
+      </div>
+      <!-- <div *ngIf="submitted && emailloginForm.get('email').hasError('required') && emailloginForm.get('email').touched"  class="emailerror">Email is invalid</div> -->
+      <div
+        *ngIf="
+          ((submitted || f['email'].touched) && f.email?.errors?.email) ||
+          f.email.errors?.pattern
+        "
+        class="emailerror"
+      >
+        Email is invalid
+      </div>
+    </div>
+    <div class="parentpassword">
+      <p class="passwordheader m-0">Password</p>
+      <a (click)="onClick()" class="showhide">
+        <img
+          class="securepassword cursor"
+          *ngIf="!show"
+          src="assets/images/png/lock@1x.png"
+          alt=""
+        />
+        <img
+          class="securepassword cursor"
+          *ngIf="show"
+          src="assets/images/png/unlock.png"
+          alt=""
+        />
+      </a>
+      <input
+        [type]="password"
+        class="password form-control"
+        placeholder="Password"
+        (keydown)="validationService.avoidSpace($event)"
+        formControlName="password"
+        minlength="8"
+        maxlength="16"
+      />
+      <div *ngIf="submitted && f.password?.errors?.required" class="emailerror">
+        Password is required
+      </div>
+      <!-- <div *ngIf="emailloginForm.get('password').hasError('required') && emailloginForm.get('password').touched"  class="emailerror">Password is invalid</div> -->
+      <div
+        *ngIf="
+          (submitted && f.password?.errors?.password) ||
+          f.password.errors?.pattern
+        "
+        class="emailerror"
+      >
+        Password must contain 8 digits,atleast 1 upper, 1 lower,1 special
+        character
+      </div>
+    </div>
+    <div class="forgotpassword d-flex justify-content-between">
+      <div class="d-flex rememberme justify-content-center align-items-center">
+        <input type="checkbox" class="checkuncheck" />
+        <label class="keeplogin ms-2">Keep login</label>
+      </div>
+      <a class="forgetpass" routerLink="/forgotpassword"> Forgot Password ? </a>
+    </div>
+    <div class="login d-flex justify-content-center">
+      <button>Login</button>
+    </div>
+  </form>
+</div>

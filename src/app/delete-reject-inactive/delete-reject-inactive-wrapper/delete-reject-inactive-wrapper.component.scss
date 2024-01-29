@@ -1,0 +1,14 @@
+@import '../../../assets/scss/main.scss';
+.wrapper{
+    padding:13px 24px;
+}
+.deleteduser{
+    @include font($primaryFont,400,24px);
+    color:$filtercolor;
+}
+.active{
+    color:$white;
+    background-color: $okBackground;
+    padding: 9px 24px;
+    border-radius: 8px;
+}

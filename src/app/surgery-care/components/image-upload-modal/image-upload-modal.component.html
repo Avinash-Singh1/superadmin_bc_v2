@@ -1,0 +1,33 @@
+<main class="position-relative d-flex flex-column gap-3">
+  <header>Insert Image</header>
+  <button
+    class="svg-icon-button position-absolute top-3 right-3"
+    (click)="matdialogRef.close()"
+  >
+    <svg-icon src="assets/images/svg/Close1.svg"></svg-icon>
+  </button>
+  <div
+    class="image-wrapper d-flex justify-content-center align-items-center flex-column gap-2"
+  >
+    <p *ngIf="url" class="text-center m-0">{{ url }}</p>
+
+    <button (click)="fileUpload.click()">Browse</button>
+    <p *ngIf="!url && submitted">Please select image</p>
+    <input
+      type="file"
+      accept="image/png,image/jpeg,image/jpg"
+      style="display: none"
+      #fileUpload
+      (change)="onFileUpload($event)"
+    />
+  </div>
+  <div class="button-group d-flex justify-content-end gap-3 align-items-center">
+    <button>Cancel</button>
+    <button
+      class="insert"
+      (click)="submitted = true; url ? matdialogRef.close(url) : false"
+    >
+      Insert
+    </button>
+  </div>
+</main>

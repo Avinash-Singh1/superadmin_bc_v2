@@ -1,0 +1,27 @@
+@import '../../../assets/scss/main.scss';
+.acceptreject-popup{
+.acceptance {
+    @include font($primaryFont, 600, 24px);
+    color: $black;
+}
+
+.closeimg {
+    width: 15px;
+    height: 15px;
+}
+
+.custom {
+    @include font($primaryFont, 400, 18px);
+    color: $customcolor;
+}
+.reportedreason{
+    width: 100%;
+    border: none;
+    border: 1px solid $border;
+    border-radius: 8px;
+    height: 384px;
+}
+.reject{
+    margin-top: 68px;
+}
+}

@@ -1,0 +1,63 @@
+@import '../../../assets/scss/main.scss';
+table{
+    max-width:3000px;
+    width:100%;
+}
+.change-text{
+    color: $blue!important;
+}
+.patientdetail{
+    .activepage{
+        // background-color: $light_black;
+        // color:$white;
+        border-bottom: 1px solid $black;
+        // border-radius: 8px;
+        @include font($primaryFont,400,24px)
+
+    }
+    .userTables{
+        padding: 9px 10px;
+    }
+    .cursor{
+        color:$filtercolor;
+        @include font($primaryFont,400,24px)
+    }
+
+}
+.import,.export{
+    color:$filtercolor;
+}
+.active{
+    color:$green;
+
+}
+
+.inactive{
+    color:$red;
+}
+
+.scrolldata {
+    overflow-x: scroll;
+
+}
+::-webkit-scrollbar {
+    height: 4px;
+}
+::-webkit-scrollbar-thumb {
+    background: $black;
+    border-radius: 10px;
+    ;
+}
+::ng-deep {
+    .menu1 {  
+    width: 150px !important;
+    padding: 0 16px !important; 
+}
+.menu{
+    width: 250px !important;
+    padding: 0 16px !important; 
+}
+}
+.asce{
+    transform: rotate(180deg);
+}

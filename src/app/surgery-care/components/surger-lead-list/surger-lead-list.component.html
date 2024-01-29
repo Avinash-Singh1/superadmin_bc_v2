@@ -1,0 +1,525 @@
+<main>
+  <app-header>Surgery Lead</app-header>
+  <header
+    class="d-flex align-items-center justify-content-between surgery-header"
+  >
+    <div class="patientdetail d-flex align-items-center gap-2">
+      <button
+        class="view-button"
+        type="button"
+        [ngClass]="{ active: control['typeOfList'].value == 1 }"
+        (click)="onChangeList(1)"
+      >
+        Today
+        <span class="ms-2" [ngClass]="control['typeOfList'].value == 1?'counterdata':'nocounter'">{{todayCount || '0'}}</span>
+      </button>
+      <button
+        class="view-button"
+        type="button"
+        [ngClass]="{ active: control['typeOfList'].value == 2 }"
+        (click)="onChangeList(2)"
+      >
+        Upcoming
+        <span class="ms-2" [ngClass]="control['typeOfList'].value == 2?'counterdata':'nocounter'">{{upcomingCount || '0'}}</span>
+
+      </button>
+      <button
+        class="view-button"
+        type="button"
+        [ngClass]="{ active: control['typeOfList'].value == 3 }"
+        (click)="onChangeList(3)"
+      >
+        All
+        <!-- <span class="ms-2" [ngClass]="control['typeOfList'].value == 3?'counterdata':'nocounter'">{{totalItems || '0'}}</span> -->
+
+      </button>
+    </div>
+    <form class="d-flex gap-3 align-items-center" [formGroup]="filterForm">
+      <div class="search-wrapper d-flex gap-2 align-items-center">
+        <img src="assets/images/svg/search.svg" />
+        <input
+          type="text"
+          class="surgery-lead-search"
+          placeholder="Search"
+          formControlName="search"
+        />
+      </div>
+      <button
+        [matMenuTriggerFor]="filterMenu"
+        (menuOpened)="onFilterMenuOpen()"
+        type="button"
+        class="icon-button d-flex gap-3 align-items-center justify-content-center"
+      >
+        <img src="assets/images/svg/filter.svg" />
+        <span> Add Filter </span>
+      </button>
+      <button
+        [matMenuTriggerFor]="importMenu"
+        type="button"
+        class="icon-button d-flex gap-3 align-items-center justify-content-center"
+      >
+        <img src="assets/images/svg/export.svg" />
+        <span class=""> Export </span>
+      </button>
+    </form>
+  </header>
+  <section>
+    <div class="surgery-lead-table table-responsive w-100 scrolldata">
+      <table mat-table [dataSource]="dataSource" class="mat-elevation-z8 w-100">
+        <ng-container matColumnDef="leadId">
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+            class=" headers ps-5"
+            (click)="onSorting('leadId')"
+          >
+            Lead ID
+            <img
+              class="cursor"
+              *ngIf="
+                control['sortOrder'].value == 'DESC' ||
+                !control['sortOrder'].value ||
+                control['sort'].value != 'leadId'
+              "
+              src="assets/images/svg/sort.svg"
+              alt=""
+            />
+            <img
+              *ngIf="
+                control['sort'].value == 'leadId' &&
+                control['sortOrder'].value == 'ASC'
+              "
+              src="assets/images/svg/sort.svg"
+              class="asce cursor"
+              alt=""
+            />
+          </th>
+          <td
+            mat-cell
+            *matCellDef="let element"
+            class=" tabledata intialName ps-5"
+          >
+            {{ element.leadId }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="timeDate">
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+            class=" headers cursor"
+            (click)="onSorting('timeDate')"
+          >
+            Time & Date
+            <img
+              class="cursor"
+              *ngIf="
+                control['sortOrder'].value == 'DESC' ||
+                !control['sortOrder'].value ||
+                control['sort'].value != 'timeDate'
+              "
+              src="assets/images/svg/sort.svg"
+              alt=""
+            />
+            <img
+              *ngIf="
+                control['sort'].value == 'timeDate' &&
+                control['sortOrder'].value == 'ASC'
+              "
+              src="assets/images/svg/sort.svg"
+              class="asce cursor"
+              alt=""
+            />
+          </th>
+
+          <td mat-cell *matCellDef="let element" class=" tabledata">
+            {{ element.createdAt | date : "dd/MM/yyyy, hh:mm:ss" }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="source">
+          <th mat-header-cell *matHeaderCellDef class=" headers">
+            Source
+          </th>
+          <td mat-cell *matCellDef="let element" class=" tabledata">
+            {{ element.source | titlecase }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="name">
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+            class=" headers"
+            (click)="onSorting('name')"
+          >
+            Name
+            <img
+              class="cursor"
+              *ngIf="
+                control['sortOrder'].value == 'DESC' ||
+                !control['sortOrder'].value ||
+                control['sort'].value != 'name'
+              "
+              src="assets/images/svg/sort.svg"
+              alt=""
+            />
+            <img
+              *ngIf="
+                control['sort'].value == 'name' &&
+                control['sortOrder'].value == 'ASC'
+              "
+              src="assets/images/svg/sort.svg"
+              class="asce cursor"
+              alt=""
+            />
+          </th>
+          <td
+            mat-cell
+            *matCellDef="let element"
+            class=" tabledata change-text"
+          >
+            {{ (element?.name | titlecase) || "N/A" }}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="phone">
+          <th mat-header-cell *matHeaderCellDef class=" headers">
+            Mobile
+          </th>
+          <td mat-cell *matCellDef="let element" class=" tabledata">
+            <span>
+              {{element?.countryCode ? element?.countryCode :"+91"}}
+              {{ element.phone ? element.phone : "N/A" }}
+            </span>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="surgeryMasterName">
+          <th mat-header-cell *matHeaderCellDef class=" headers">
+            Surgery Type
+          </th>
+          <td mat-cell *matCellDef="let element" class=" tabledata">
+            <span>
+              {{ (element.surgeryMasterName | titlecase) ?? "N/A" }}
+            </span>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="city">
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+            class=" headers"
+            (click)="onSorting('city')"
+          >
+            Location
+            <img
+              class="cursor"
+              *ngIf="
+                control['sortOrder'].value == 'DESC' ||
+                !control['sortOrder'].value ||
+                control['sort'].value != 'city'
+              "
+              src="assets/images/svg/sort.svg"
+              alt=""
+            />
+            <img
+              *ngIf="
+                control['sort'].value == 'city' &&
+                control['sortOrder'].value == 'ASC'
+              "
+              src="assets/images/svg/sort.svg"
+              class="asce cursor"
+              alt=""
+            />
+          </th>
+          <td mat-cell *matCellDef="let element" class=" tabledata">
+            {{ element.city || "N/A" }}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="claimByUserType">
+          <th mat-header-cell *matHeaderCellDef class=" headers">
+            Claimed by
+          </th>
+          <td mat-cell *matCellDef="let element" class=" tabledata">
+            <div
+              class="status-menu d-flex justify-content-between gap-2 cursor-pointer"
+              [mat-menu-trigger-for]="claimedUser"
+              #userTypeMenuButton
+            >
+              {{ claimedUserType[element?.claimByUserType] || "Select" }}
+              <img src="assets/images/svg/blackdropdown.svg" />
+            </div>
+            <mat-menu #claimedUser="matMenu" class="status-menu">
+              <button
+                [style.minWidth.px]="userTypeMenuButton.offsetWidth"
+                mat-menu-item
+                *ngFor="let userType of claimedUserType | keyvalue"
+                (click)="onClaimed(userType.key, element._id)"
+              >
+                {{ userType.value }}
+              </button>
+            </mat-menu>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="claimedDate">
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+            class=" headers"
+            (click)="onSorting('claimedDate')"
+          >
+            Time/Date lead claimed
+            <img
+              class="cursor"
+              *ngIf="
+                control['sortOrder'].value == 'DESC' ||
+                !control['sortOrder'].value ||
+                control['sort'].value != 'claimedDate'
+              "
+              src="assets/images/svg/sort.svg"
+              alt=""
+            />
+            <img
+              *ngIf="
+                control['sort'].value == 'claimedDate' &&
+                control['sortOrder'].value == 'ASC'
+              "
+              src="assets/images/svg/sort.svg"
+              class="asce cursor"
+              alt=""
+            />
+          </th>
+          <td
+            mat-cell
+            *matCellDef="let element"
+            class=" tabledata cursor"
+          >
+            {{ (element.claimedDate | date : "dd/MM/yyyy, hh:mm:ss") || "N/A" }}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef class="me-3 headers">Status</th>
+          <td
+            mat-cell
+            *matCellDef="let element; let i = index"
+            class="me-3 tabledata"
+          >
+            <div
+              class="status-menu d-flex justify-content-between gap-2 cursor-pointer"
+              [mat-menu-trigger-for]="statusMenu"
+              #statusMenuTrigger
+            >
+              {{ statusList[element.status] || "Invalid Status" }}
+              <img src="assets/images/svg/blackdropdown.svg" />
+            </div>
+            <mat-menu #statusMenu="matMenu" class="status-menu">
+              <button
+                [style.minWidth.px]="statusMenuTrigger.offsetWidth"
+                mat-menu-item
+                *ngFor="let status of statusList | keyvalue; let i = index"
+                (click)="onChangeStatus(status.key, element._id, i)"
+                [ngClass]="{ selected: status.key == element.status }"
+              >
+                {{ status.value }}
+              </button>
+            </mat-menu>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="followUpDate">
+          <th mat-header-cell *matHeaderCellDef class="headers">Follow up</th>
+          <td
+            mat-cell
+            *matCellDef="let element"
+            class=" tabledata cursor"
+          >
+            <div
+              class="status-menu d-flex justify-content-between gap-2 cursor-pointer"
+              [mat-menu-trigger-for]="followUpDateMenu"
+              #followUpDateMenuButton
+            >
+              {{
+                (element.followUpDate | date : "dd/MM/yyyy, hh:mm:ss") ??
+                  "Select"
+              }}
+              <img src="assets/images/svg/blackdropdown.svg" />
+            </div>
+            <mat-menu #followUpDateMenu="matMenu" class="status-menu">
+              <button
+                mat-menu-item
+                (click)="onSetFollowUpDate(2, element._id)"
+                [style.minWidth.px]="followUpDateMenuButton.offsetWidth"
+              >
+                In 2 days
+              </button>
+              <button
+                mat-menu-item
+                (click)="onSetFollowUpDate(7, element._id)"
+                [style.minWidth.px]="followUpDateMenuButton.offsetWidth"
+              >
+                In 7 days
+              </button>
+              <button
+                mat-menu-item
+                (click)="onSetFollowUpDate(15, element._id)"
+                [style.minWidth.px]="followUpDateMenuButton.offsetWidth"
+              >
+                In 15 days
+              </button>
+              <button
+                mat-menu-item
+                (click)="onSelectDate(element._id, element.followUpDate)"
+                [style.minWidth.px]="followUpDateMenuButton.offsetWidth"
+              >
+                Select date
+              </button>
+            </mat-menu>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="comments">
+          <th mat-header-cell *matHeaderCellDef class=" headers ps-5">
+            Comments
+          </th>
+          <td
+            mat-cell
+            *matCellDef="let element"
+            class=" tabledata cursor "
+          >
+            <div
+              class="d-flex  gap-2 justify-content-center"
+              (click)="onAddComment(element._id, element.comments)"
+            >
+            <span class="commentdata" *ngIf="element.comments">      
+             {{ element.comments }} 
+          </span>
+          <br>
+
+              <img src="assets/images/svg/Mode edit.svg" alt="" />
+            </div>
+            <span class="ms-3 readMore" (click)="readMore(element.comments)" *ngIf="element?.comments?.length>50">... Read More</span>
+
+          </td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr
+          mat-row
+          *matRowDef="
+            let row;
+            columns: displayedColumns
+              | paginate
+                : {
+                    itemsPerPage: control['size'].value,
+                    currentPage: control['page'].value,
+                    totalItems: totalItems
+                  };
+            let i = index
+          "
+        ></tr>
+      </table>
+      <div
+        class="nodata text-center"
+        *ngIf="totalItems == 0 && control['size'].value > totalItems"
+      >
+        No Data Found.
+      </div>
+    </div>
+    <div class="text-center" *ngIf="totalItems > 0">
+      <pagination-controls
+        (pageChange)="onPageChange($event)"
+        previousLabel="&lsaquo;"
+        nextLabel="&rsaquo;"
+      ></pagination-controls>
+    </div>
+  </section>
+</main>
+<mat-menu
+  #filterMenu="matMenu"
+  class="mt-2 menu"
+  class="surgery-lead-filter"
+  xPosition="after"
+  (closed)="onFilterMenuClosed()"
+>
+  <form [formGroup]="filterForm">
+    <mat-accordion>
+      <mat-expansion-panel
+        (click)="$event.stopPropagation()"
+        formArrayName="service"
+      >
+        <mat-expansion-panel-header class="bsortOrder-bottom-style">
+          <mat-panel-title>
+            <div class="d-flex align-items-center gap-3">
+              <span class="text-18 font-400">Service</span>
+            </div>
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        <div class="d-flex flex-column gap-2">
+          <ng-container *ngFor="let service of serviceList; let i = index">
+            <mat-checkbox
+              color="primary"
+              class="surgery-lead-checkbox"
+              [value]="service?._id"
+              [formControlName]="i"
+              >{{ service.title | titlecase }}</mat-checkbox
+            >
+          </ng-container>
+        </div>
+      </mat-expansion-panel>
+      <mat-expansion-panel
+        (click)="$event.stopPropagation()"
+        formArrayName="status"
+      >
+        <mat-expansion-panel-header class="bsortOrder-bottom-style">
+          <mat-panel-title>
+            <div class="d-flex align-items-center gap-3">
+              <span class="text-18 font-400">Status</span>
+            </div>
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        <div class="d-flex flex-column gap-2 w-100">
+          <ng-container
+            *ngFor="let status of statusList | keyvalue; let i = index"
+          >
+            <mat-checkbox
+              color="primary"
+              class="surgery-lead-checkbox"
+              [value]="status.key"
+              [formControlName]="i"
+              >{{ status.value | titlecase }}</mat-checkbox
+            >
+          </ng-container>
+        </div>
+      </mat-expansion-panel>
+      <mat-expansion-panel
+        (click)="$event.stopPropagation()"
+        formArrayName="source"
+      >
+        <mat-expansion-panel-header class="bsortOrder-bottom-style">
+          <mat-panel-title>
+            <div class="d-flex align-items-center gap-3">
+              <span class="text-18 font-400">Source</span>
+            </div>
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        <div class="d-flex flex-column gap-2 w-100">
+          <ng-container *ngFor="let source of sourceList; let i = index">
+            <mat-checkbox
+              color="primary"
+              class="surgery-lead-checkbox"
+              [value]="source?._id"
+              [formControlName]="i"
+              >{{ source.name | titlecase }}</mat-checkbox
+            >
+          </ng-container>
+        </div>
+      </mat-expansion-panel>
+    </mat-accordion>
+    <div class="cancel-ok-btn d-flex align-items-center gap-4 py-3 px-6">
+      <button class="cancel" (click)="onClearFilter()">Cancel</button>
+      <button class="ok" (click)="onFilter()">Ok</button>
+    </div>
+  </form>
+</mat-menu>
+<mat-menu #importMenu="matMenu" class="surgery-import-menu">
+  <button mat-menu-item style="min-width: 140px" (click)="onCSVExport()">
+    CSV
+  </button>
+</mat-menu>

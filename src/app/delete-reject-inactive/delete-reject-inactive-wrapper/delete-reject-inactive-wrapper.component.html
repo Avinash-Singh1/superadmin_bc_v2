@@ -1,0 +1,14 @@
+<app-header>Deleted/Rejected/Inactive</app-header>
+<div class="d-flex justify-content-between align-items-center">
+<div class="d-flex align-items-center wrapper gap-3">
+    <p *ngFor="let list of deleteRejectInactiveList"  class="cursor deleteduser m-0" (click)="clearSearch()"
+    routerLink="{{list.routerLink}}" routerLinkActive="active" [ngClass]="{'active': checkCurrentRoute(list.routerLink)}">{{list?.link}}</p>
+</div>
+<div class="search me-5 d-flex align-items-center"><img  src="assets/images/svg/search.svg" alt="">
+    <input type="text" class="form-control" placeholder="Search by Name, Number" [(ngModel)]="searchTerm" (keyup)="search()">
+</div>
+</div>
+<hr class="m-0 p-0">
+<div>
+    <router-outlet></router-outlet>
+</div>

@@ -1,0 +1,73 @@
+<main class="editor-modal">
+  <header
+    class="editor-modal-header text-24 font-600 d-flex justify-content-between align-items-center"
+  >
+    <span>Edit</span>
+    <div class="cursor-pointer" (click)="matdialogRef.close()">
+      <img src="assets/images/svg/close.svg" alt="" />
+    </div>
+  </header>
+  <form [formGroup]="editorForm">
+    <mat-dialog-content class="editor-modal-container">
+      <div class="d-flex flex-column gap-3">
+        <label class="text-18 font-600" htmlFor="title-input">Title</label>
+        <input
+          type="text"
+          class="title-input form-control"
+          id="title-input"
+          placeholder="Title"
+          formControlName="title"
+        />
+      </div>
+      <div class="text-18 font-600">Description</div>
+      <div class="d-flex gap-2">
+        <div
+          class="text-18 font-600 border px-2 py-1 cursor-pointer"
+          (click)="htmlEditor = false"
+          [ngClass]="{ active: !htmlEditor }"
+        >
+          Text Editor
+        </div>
+        <div
+          class="text-18 font-600 border px-2 py-1 cursor-pointer"
+          (click)="htmlEditor = true"
+          [ngClass]="{ active: htmlEditor }"
+        >
+          HTML Editor
+        </div>
+      </div>
+      <div class="NgxEditor__Wrapper" *ngIf="!htmlEditor">
+        <ngx-editor-menu
+          (change)="onEditorContentChange($event)"
+          [editor]="editor"
+          [toolbar]="toolbar"
+          [customMenuRef]="customMenu"
+        >
+        </ngx-editor-menu>
+        <ng-template #customMenu>
+          <div class="svg-icon-button" (click)="onInsertImage()">
+            <svg-icon src="assets/images/svg/gallery-add.svg"></svg-icon>
+          </div>
+          <!-- <app-custom-menu [editor]="editor"></app-custom-menu> -->
+        </ng-template>
+        <ngx-editor
+          [editor]="editor"
+          formControlName="description"
+          [placeholder]="'Type here'"
+        >
+        </ngx-editor>
+      </div>
+      <div class="" *ngIf="htmlEditor">
+        <textarea
+          placeholder="Type html content"
+          class="w-100 html-textarea"
+          rows="8"
+          formControlName="description"
+        ></textarea>
+      </div>
+    </mat-dialog-content>
+  </form>
+  <mat-dialog-actions>
+    <button class="save" (click)="onSave()">Save</button>
+  </mat-dialog-actions>
+</main>

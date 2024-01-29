@@ -1,0 +1,42 @@
+.surgery-list-wrapper {
+  padding: 48px;
+  gap: 24px;
+  .surgery-item {
+    border: 1px solid rgba($color: #000000, $alpha: 0.3);
+    border-radius: 8px;
+    .image-wrapper {
+      border-right: 1px solid rgba($color: #000000, $alpha: 0.3);
+      padding: 18px;
+      img {
+        width: 60px;
+        height: 60px;
+        object-fit: contain;
+      }
+    }
+    .button-group {
+      padding-right: 48px;
+      button {
+        padding: 12px 24px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+        font-size: 18px;
+        &.edit {
+          border: 1px solid rgba($color: #000000, $alpha: 0.3);
+          border-radius: 5px;
+          background-color: #eee;
+        }
+        &.delete {
+          border: none;
+          background: transparent;
+        }
+      }
+    }
+  }
+}
+::ng-deep {
+  .delete-modal .mat-dialog-container {
+    padding: 0;
+  }
+}

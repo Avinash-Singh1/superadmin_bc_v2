@@ -1,0 +1,5 @@
+<mat-calendar
+  [minDate]="today"
+  (selectedChange)="onSelectDate($event)"
+  [selected]="data.followUpDate || today"
+></mat-calendar>

@@ -1,0 +1,260 @@
+@import "../../../assets/scss/main.scss";
+.dougnnutdetail {
+  background-color: #f7f9fb;
+  border-radius: 20px;
+  .dougnnut {
+    width: 200px;
+    height: 200px;
+  }
+}
+.cardDetail {
+  overflow-x: scroll;
+  //  width:70%;
+
+  .cardsBackground {
+    background-color: $cardBackground;
+    min-width: 18.3%;
+    height: 160px;
+    border-left: 3px solid $black;
+    border-radius: 10px;
+    .cardHeader {
+      @include font($primaryFont, 400, 18px);
+      color: #7a7a7a;
+    }
+    .count {
+      @include font($primaryFont, 600, 24px);
+      color: #1c1c1c;
+    }
+  }
+}
+.cardDetail::-webkit-scrollbar {
+  display: none;
+}
+.appointmentdetail {
+  border: 1px solid #d9d9d9;
+  border-radius: 20px;
+  padding: 30px 30px;
+  width: 97%;
+  .AppointmentCheck {
+    // @include font($primaryFont,600,18px)
+  }
+  .otherFeatures {
+    cursor: pointer;
+    border: 2px solid #d9d9d9;
+    padding: 8px 10px;
+    border-radius: 10px;
+  }
+  #appointment {
+    width: 100%;
+    padding-right: 0px !important;
+  }
+}
+::ng-deep {
+  .mat-menu-content {
+    min-width: 250px !important;
+  }
+}
+.NotificationRegistraion {
+  // width: 64%;
+  .gradientChart {
+    width: 48%;
+    height: 324px;
+    border: 1px solid #d9d9d9;
+    border-radius: 20px;
+  }
+}
+
+.mainSec {
+  display: flex;
+  height: calc(100vh - 80px);
+}
+.rightSide {
+  width: 30%;
+  // height:   100%;
+  // overflow-y: scroll;
+  border-left: 1px solid #b3b3b3;
+  .rightSideInner {
+  }
+}
+.leftSide {
+  width: 100%;
+  // height: 100%;
+  // overflow-y: scroll;
+  ::ng-deep {
+    .mat-form-field-underline {
+      display: none !important;
+    }
+  }
+}
+.notifications {
+  margin-left: 26px;
+}
+.custom-datepicker-icon::after {
+  content: "Date Range";
+  display: inline-block;
+  color: $black;
+  margin-right: 30px;
+  // margin-left:10px;
+  @include font($primaryFont, 400, 18px);
+}
+::ng-deep {
+  .dateRange {
+    .mat-focus-indicator {
+      display: none !important;
+    }
+  }
+}
+.negative {
+  color: red;
+}
+.positive {
+  color: green;
+}
+.currentHeader {
+  @include font($primaryFont, 600, 18px);
+  color: #1c1c1c;
+}
+.previoudHeader {
+  @include font($primaryFont, 400, 18px);
+  color: #616161;
+}
+.chartHeader {
+  @include font($primaryFont, 600, 16px);
+  color: #1c1c1c;
+}
+.imageinitials {
+  background-color: #d9d9d9;
+  border-radius: 100%;
+  height: 50px;
+  width: 50px;
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  @include font($primaryFont, 600, 18px);
+  color: #b5b5b5;
+  // margin:auto;
+}
+.overflowdata {
+  height: 200px;
+  overflow-y: scroll;
+}
+#registration {
+  height: 258px !important;
+}
+.address {
+  color: #3c72fe;
+  @include font($primaryFont, 500, 16px);
+}
+.doctorName {
+  @include font($primaryFont, 600, 18px);
+}
+.doctorReview {
+  @include font($primaryFont, 400, 18px);
+}
+.activenotification {
+  @include font($primaryFont, 600, 18px);
+}
+.deactiveNotificatiom {
+  @include font($primaryFont, 400, 18px);
+}
+.accept {
+  background-color: $lightgreen;
+  color: $green;
+  @include font($primaryFont, 600, 18px);
+}
+.reject {
+  background-color: $lightred;
+  color: $red;
+  @include font($primaryFont, 600, 18px);
+}
+.accepteddata {
+  color: $green;
+}
+.percentageofcharrt {
+  max-height: 166px;
+  overflow-y: scroll;
+  text-align: center;
+  // width: 100px;
+}
+::-webkit-scrollbar {
+  width: 4px;
+}
+::-webkit-scrollbar-thumb {
+  background: $black;
+  border-radius: 10px;
+}
+.maxdata {
+  width: 75%;
+}
+.bold {
+  @include font($primaryFont, 600, 18px);
+}
+.exportcsv {
+  padding: 7px 15px;
+  border: 2px solid #d9d9d9;
+  border-radius: 10px;
+  @include font($primaryFont, 400, 18px);
+}
+.dropdown-div {
+  position: relative;
+  margin-left: 30px;
+  margin-bottom: 20px;
+  margin-top: 20px;
+  input {
+    border: none !important;
+  }
+}
+.dropdownImage {
+  position: absolute;
+  // left:30px;
+  top: 10px;
+  left: 225px;
+  // z-index: 999;
+}
+.dashboardFilter {
+  width: 250px;
+  height: 250px;
+  box-sizing: border-box;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background-color: #ffffff;
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 0;
+  cursor: pointer;
+  z-index: 9999;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px -1px #0003, 0 4px 5px #00000024, 0 1px 10px #0000001f;
+
+  ul li {
+    margin-top: 20px;
+    list-style: none;
+    @include font($primaryFont, 400, 18px);
+    color: $black;
+  }
+}
+::ng-deep {
+  .mat-form-field-type-mat-date-range-input .mat-form-field-infix {
+    border: none !important;
+    padding: 20px 0 0 0 !important;
+  }
+  .mat-icon-button {
+    @include font($primaryFont, 400, 18px);
+  }
+  .mat-button-wrapper {
+    .mat-datepicker-toggle-default-icon {
+      display: none !important;
+    }
+  }
+  .mat-datepicker-popup {
+    .mat-datepicker-content {
+      top: 0px !important;
+      left: 225px !important;
+      background: #ffffff !important;
+      position: absolute;
+    }
+  }
+  .mat-form-field-infix {
+    margin-left: -38px;
+  }
+}

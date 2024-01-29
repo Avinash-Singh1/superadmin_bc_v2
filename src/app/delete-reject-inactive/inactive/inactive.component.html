@@ -1,0 +1,254 @@
+<div class="d-flex justify-content-between  ps-4 pt-2 align-items-center ">
+  <span class="patientdetail d-flex align-items-center gap-3">
+    <div [ngClass]="doctorsList?'activepage':'cursor'" (click)="chnageDoctorList('doctors')" class="userTables">Doctors
+    </div>
+    <div [ngClass]="hospitalsList?'activepage':'cursor'" (click)="chnageDoctorList('hospitals')" class="userTables">
+      Hospitals</div>
+  </span>
+
+</div>
+<div class="table-responsive w-100 scrolldata mb-5" *ngIf="doctorsList">
+  <table mat-table  [dataSource]="rejectedDoctorList" class="mat-elevation-z8">
+    <ng-container matColumnDef="position">
+      <th mat-header-cell *matHeaderCellDef class="ps-1 text-center headers "> </th>
+      <td mat-cell *matCellDef="let element" class="ps-1 text-center tabledata">
+        <img class="patientimg "
+          *ngIf="element?.doctorProfilePic!=null || element?.doctorProfilePic!=undefined ||  element?.doctorProfilePic; else intial"
+          [src]="element?.doctorProfilePic" alt="" onError="this.src='assets/images/svg/nectorIcon.svg'">
+        <ng-template #intial>
+          <div class="imageintial ">
+            {{element?.name?.[0]?.[0] | uppercase}}{{element?.name?.[1]?.[0] | uppercase}}
+          </div>
+        </ng-template>
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="date">
+      <th mat-header-cell *matHeaderCellDef class="text-center headers"> Date/Time 
+        </th>
+      <td mat-cell *matCellDef="let element" class="text-center tabledata">{{element.createdAt |
+        date:'dd/MM/yy'}}<ng-container *ngIf="element.createdAt">,</ng-container> {{element.createdAt | date:'hh:mm a'}}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef class="text-center headers cursor" (click)="sortData('lowerDoctorName')"> Name 
+        <img
+          class="cursor"
+          *ngIf="
+            !sortBy.sortOrder ||
+            sortBy.sortOrder == 'DESC' ||
+            sortBy.sort != 'lowerDoctorName'
+          "
+          src="assets/images/svg/sort.svg"
+          alt=""
+        />
+        <img
+          *ngIf="sortBy.sortOrder == 'ASC' && sortBy.sort == 'lowerDoctorName'"
+          src="assets/images/svg/sort.svg"
+          class="asce cursor"
+          alt=""
+        />
+
+      </th>
+      <td mat-cell *matCellDef="let element" class="text-center tabledata"> {{element?.doctorName || 'N/A'}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="specialization">
+      <th mat-header-cell *matHeaderCellDef class="text-center headers"> Specialization</th>
+      <td mat-cell *matCellDef="let element" class="text-center tabledata">
+
+        <div *ngIf="element?.doctorSpecialization?.length>0;else nodata">
+          <ng-container *ngFor="let specialization of element?.doctorSpecialization">{{specialization?.name
+            ||'N/A'}}<br></ng-container>
+        </div>
+        <ng-template #nodata>
+          <span>N/A</span>
+        </ng-template>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="Address">
+      <th mat-header-cell *matHeaderCellDef class="text-center headers cursor" (click)="sortData('doctorAddress.city')"> Locality 
+<img
+          class="cursor"
+          *ngIf="
+            !sortBy.sortOrder ||
+            sortBy.sortOrder == 'DESC' ||
+            sortBy.sort != 'doctorAddress.city'
+          "
+          src="assets/images/svg/sort.svg"
+          alt=""
+        />
+        <img
+          *ngIf="sortBy.sortOrder == 'ASC' && sortBy.sort == 'doctorAddress.city'"
+          src="assets/images/svg/sort.svg"
+          class="asce cursor"
+          alt=""
+        />
+             
+      </th>
+      <td mat-cell *matCellDef="let element" class="text-center tabledata change-text"> {{element?.doctorAddress?.city ||
+        'N/A'}} </td>
+    </ng-container>
+    <ng-container matColumnDef="degree">
+      <th mat-header-cell *matHeaderCellDef class="text-center headers"> Degree </th>
+      <td mat-cell *matCellDef="let element" class="text-center tabledata">
+        <div *ngIf="element?.degree.length>0;else nodata">
+          <ng-container *ngFor="let degree of element?.degree">{{degree?.degree ||'N/A'}}<br></ng-container>
+        </div>
+        <ng-template #nodata>
+          <span>N/A</span>
+        </ng-template>
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="Mobile">
+      <th mat-header-cell *matHeaderCellDef class="text-center headers"> Mobile </th>
+      <td mat-cell *matCellDef="let element" class="text-center tabledata"> +91{{element.doctorPhone || 'N/A'}} </td>
+    </ng-container>
+    <ng-container matColumnDef="email">
+      <th mat-header-cell *matHeaderCellDef class="text-center headers"> Email ID </th>
+      <td mat-cell *matCellDef="let element" class="text-center tabledata">{{element?.email || 'N/A'}}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="status">
+      <th mat-header-cell *matHeaderCellDef class="text-center headers"> Status </th>
+      <td mat-cell *matCellDef="let element" class="text-center tabledata ">
+        <span class="status">Inactive</span>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row
+      *matRowDef="let row; columns: displayedColumns | paginate:{itemsPerPage:itemPerPage,currentPage:page,totalItems:rejectedDoctorLength}; let i=index">
+    </tr>
+  </table>
+  <div class="nodata text-center" *ngIf="rejectedDoctorLength==0">
+    No Data Found.
+  </div>
+</div>
+<div class="text-center" *ngIf="rejectedDoctorLength>0 && doctorsList">
+  <pagination-controls (pageChange)="updatePage($event)" previousLabel="&lsaquo;"
+    nextLabel="&rsaquo;"></pagination-controls>
+</div>
+
+
+
+
+
+
+
+
+
+<div class="table-responsive w-100 scrolldata mb-5" *ngIf="hospitalsList">
+  <table mat-table  [dataSource]="rejectedHospitalList" class="mat-elevation-z8 "
+   >
+    <ng-container matColumnDef="position">
+      <th mat-header-cell *matHeaderCellDef class="ps-1 text-center headers "> </th>
+      <td mat-cell *matCellDef="let element" class="ps-1 text-center tabledata">
+        <img class="patientimg "
+          *ngIf="element?.hospitalProfilePic!=null || element?.hospitalProfilePic!=undefined ||  element?.hospitalProfilePic; else intial"
+          [src]="element?.hospitalProfilePic" alt="" onError="this.src='assets/images/svg/nectorIcon.svg'">
+        <ng-template #intial>
+          <div class="imageintial ">
+            {{element?.name?.[0]?.[0] | uppercase}}{{element?.name?.[1]?.[0] | uppercase}}
+          </div>
+        </ng-template>
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="date">
+      <th mat-header-cell *matHeaderCellDef class="text-center headers">Date/Time </th>
+      <td mat-cell *matCellDef="let element" class="text-center tabledata"> {{element.createdAt |
+        date:'dd/MM/yy'}}<ng-container *ngIf="element.createdAt">,</ng-container> {{element.createdAt | date:'hh:mm a'}}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef class="text-center headers cursor" (click)="sortData('establishmentName')"> Name
+        <img
+          class="cursor"
+          *ngIf="
+            !sortBy.sortOrder ||
+            sortBy.sortOrder == 'DESC' ||
+            sortBy.sort != 'establishmentName'
+          "
+          src="assets/images/svg/sort.svg"
+          alt=""
+        />
+        <img
+          *ngIf="sortBy.sortOrder == 'ASC' && sortBy.sort == 'establishmentName'"
+          src="assets/images/svg/sort.svg"
+          class="asce cursor"
+          alt=""
+        />
+        <!-- <img class="cursor" *ngIf="deletedDoctorASC" src="assets/images/svg/sort.svg" alt="" > 
+        <img *ngIf="deletedDoctorDESC" src="assets/images/svg/sort.svg"  class="asce cursor" alt="">      -->
+      </th>
+      <td mat-cell *matCellDef="let element" class="text-center tabledata"> {{element.establishmentName || 'N/A'}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="typeOf">
+      <th mat-header-cell *matHeaderCellDef class="text-center headers"> Type of Hospital</th>
+      <td mat-cell *matCellDef="let element" class="text-center tabledata">
+        <ng-container *ngIf="element?.hospitalType?.length>0; else block">
+          <span *ngFor="let data of element?.hospitalType">
+            {{data?.name}}
+          </span>
+        </ng-container>
+        <ng-template #block>
+          N/A
+        </ng-template>      
+         </td>
+    </ng-container>
+
+    <ng-container matColumnDef="Address">
+      <th mat-header-cell *matHeaderCellDef class="text-center headers cursor" (click)="sortData('address')"> Locality 
+        <img
+          class="cursor"
+          *ngIf="
+            !sortBy.sortOrder ||
+            sortBy.sortOrder == 'DESC' ||
+            sortBy.sort != 'address'
+          "
+          src="assets/images/svg/sort.svg"
+          alt=""
+        />
+        <img
+          *ngIf="sortBy.sortOrder == 'ASC' && sortBy.sort == 'address'"
+          src="assets/images/svg/sort.svg"
+          class="asce cursor"
+          alt=""
+        />
+        <!-- <img class="cursor" *ngIf="deletedDoctorLocalityASC" src="assets/images/svg/sort.svg" alt="" > 
+            <img *ngIf="deletedDoctorLocalityDESC" src="assets/images/svg/sort.svg"  class="asce cursor" alt="">     -->
+      </th>
+      <td mat-cell *matCellDef="let element" class="text-center tabledata change-text"> {{element?.address?.city ||
+        'N/A'}} </td>
+    </ng-container>
+    <ng-container matColumnDef="totolDoctor">
+      <th mat-header-cell *matHeaderCellDef class="text-center headers"> Total Doctor </th>
+      <td mat-cell *matCellDef="let element" class="text-center tabledata">{{element?.totalDoctors}}</td>
+    </ng-container>
+    <ng-container matColumnDef="Mobile">
+      <th mat-header-cell *matHeaderCellDef class="text-center headers"> Mobile </th>
+      <td mat-cell *matCellDef="let element" class="text-center tabledata"> +91{{element.mobile || 'N/A'}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="status">
+      <th mat-header-cell *matHeaderCellDef class=" text-center headers"> Status </th>
+      <td mat-cell *matCellDef="let element" class="text-center tabledata pe-5">
+        <span class="status text-center">Inactive</span>
+
+      </td>
+    </ng-container>
+    <tr mat-header-row *matHeaderRowDef="displayedhospitalColumns"></tr>
+    <tr mat-row
+      *matRowDef="let row; columns: displayedhospitalColumns | paginate:{itemsPerPage:HospitalItemPerPage,currentPage:hospitalPage,totalItems:rejectedHospitalLength}; let i=index">
+    </tr>
+  </table>
+  <div class="nodata text-center" *ngIf="rejectedHospitalLength==0">
+    No Data Found.
+  </div>
+</div>
+<div class="text-center" *ngIf="rejectedHospitalLength>0 && hospitalsList">
+  <pagination-controls (pageChange)="updateHospitalPage($event)" previousLabel="&lsaquo;"
+    nextLabel="&rsaquo;"></pagination-controls>
+</div>

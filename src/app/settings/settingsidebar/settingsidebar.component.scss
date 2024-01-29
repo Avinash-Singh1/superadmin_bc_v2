@@ -1,0 +1,25 @@
+@import '../../../assets/scss/main.scss';
+
+.sidenavdata{
+    height: 100vh;
+    padding-top: 30px;
+    .navbar-nav{
+        padding-left: 20px;
+    }
+
+.nav-item{
+    margin-bottom: 10px;
+    padding:23px 0 23px 52px;
+    background-color: $mat;
+    cursor: pointer;
+    @include font($primaryFont,600,18px);
+
+   
+    &.active{
+        background-color: rgba(255, 255, 255, 0.1);
+        color: $white;
+        @include font($primaryFont,600,18px);
+         background-color: $light_black;  
+    }
+}
+}

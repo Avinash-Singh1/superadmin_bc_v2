@@ -1,0 +1,458 @@
+<div class="headerBack">
+  <div class="d-flex justify-content-between">
+    <div class="headershead">
+      <ng-content></ng-content>
+    </div>
+    <div class="superdata">
+      <button mat-button [matMenuTriggerFor]="menu">
+        <img
+          src="assets/images/svg/notification.svg"
+          alt=""
+          style="position: relative"
+        />
+        <span class="request-number" *ngIf="unreadNotificationCount">
+          {{ unreadNotificationCount > 9 ? 9 + "+" : unreadNotificationCount }}
+        </span>
+      </button>
+      <mat-menu #menu="matMenu" class="menusdata">
+        <div
+          class="px-3 notificationHeader d-flex justify-content-between align-items-center"
+        >
+          <span> {{ notifiactionCount }} New Notifications </span>
+          <button
+            class="border-0 bg-transparent opacity-50"
+            (click)="clearNoti({ isClear: true }); $event.stopPropagation()"
+          >
+            Clear All
+          </button>
+        </div>
+        <hr />
+
+        <div class="d-flex px-2 py-2">
+          <p
+            class="ms-2 cursor"
+            [ngClass]="
+              all == true ? 'activenotification' : 'deactiveNotificatiom'
+            "
+            (click)="
+              changeNotification('all');
+              notification();
+              $event.stopPropagation()
+            "
+          >
+            All
+          </p>
+          <p
+            class="ms-2 cursor"
+            [ngClass]="
+              doctor == true ? 'activenotification' : 'deactiveNotificatiom'
+            "
+            (click)="
+              changeNotification('doctor');
+              notification();
+              $event.stopPropagation()
+            "
+          >
+            Doctor
+          </p>
+          <p
+            class="ms-2 cursor"
+            [ngClass]="
+              hospitaldata == true
+                ? 'activenotification'
+                : 'deactiveNotificatiom'
+            "
+            (click)="
+              changeNotification('hospital');
+              notification();
+              $event.stopPropagation()
+            "
+          >
+            Hospital
+          </p>
+        </div>
+
+        <div class="overflowdata py-2">
+          <ng-container *ngIf="all">
+            <div
+              class="mt-1"
+              *ngFor="let element of getNotificationList; let i = index"
+            >
+              <div>
+                <div class="d-flex align-items-center ps-3 position-relative">
+                  <img
+                    class="patientimg"
+                    *ngIf="
+                      element?.doctor?.profilePic != null ||
+                        element?.doctor?.profilePic != undefined ||
+                        element?.doctor?.profilePic;
+                      else intial
+                    "
+                    [src]="element?.doctor?.profilePic"
+                    alt=""
+                  />
+                  <ng-template #intial>
+                    <div class="imageinitials">
+                      {{element?.name?.[0]?.[0] | uppercase }}
+                      {{element?.name?.[1]?.[0] | uppercase}}
+                    </div>
+                  </ng-template>
+                  <div class="ms-2">
+                    <p class="m-0 doctorName">
+                      {{
+                        element?.userType == 3
+                          ? element?.hospital?.name
+                          : element?.doctor?.name
+                      }}
+                    </p>
+                    <p class="m-0 doctorReview" [title]="element?.feedback">
+                      {{
+                        element?.userType == 3
+                          ? element?.hospital?.hospitalType[0]?.name
+                          : element?.doctor?.specialization[0]?.name
+                      }}
+                    </p>
+                  </div>
+                  <button
+                    class="svg-icon-button position-absolute top-0 right-12"
+                    (click)="
+                      clearNoti({ isDeleted: true }, element._id, i);
+                      $event.stopPropagation()
+                    "
+                  >
+                    <svg-icon src="assets/images/svg/close.svg"></svg-icon>
+                  </button>
+                </div>
+
+                <div class="address ps-3">
+                  <img
+                    src="assets/images/svg/notificationLocation.svg"
+                    alt=""
+                  />
+                  <span>
+                    {{
+                      element?.userType == 3
+                        ? element?.hospital?.address?.landmark
+                        : element?.doctor?.address?.landmark
+                    }},{{
+                      element?.userType == 3
+                        ? element?.hospital?.address?.city
+                        : element?.doctor?.address?.city
+                    }},
+                    {{
+                      element?.userType == 3
+                        ? element?.hospital?.address?.country
+                        : element?.doctor?.address?.country
+                    }},{{
+                      element?.userType == 3
+                        ? element?.hospital?.address?.pincode
+                        : element?.doctor?.address?.pincode
+                    }}
+                  </span>
+                </div>
+              </div>
+              <div
+                class="d-flex align-items-center justify-content-center gap-4 mx-3 mt-2"
+              >
+                <button
+                  class="views"
+                  (click)="
+                    element?.userType == 3
+                      ? viewdoctorHospital(
+                          'hospitalpopup',
+                          element?.hospital?.hospitalId
+                        )
+                      : viewdoctorHospital(
+                          'doctorpopup',
+                          element?.doctor?.doctorId
+                        )
+                  "
+                >
+                  View
+                </button>
+
+                <button
+                  class="accepts"
+                  (click)="
+                    element?.userType == 3
+                      ? hospitalAccept(
+                          'AcceptRejectComponent',
+                          '',
+                          element?.hospital?.hospitalId,
+                          'doctorAccept',
+                          'doctor'
+                        )
+                      : acceptRejectNotification(
+                          'AcceptRejectComponent',
+                          '',
+                          element?.doctor?.doctorId,
+                          'doctorAccept',
+                          'doctor'
+                        );
+                    $event.stopPropagation()
+                  "
+                >
+                  Accept
+                </button>
+              </div>
+              <div
+                class="d-flex align-items-center justify-content-center gap-4 mx-3 mt-2"
+              >
+                <span>
+                  {{ element.createdAt | date : "EE" }},
+
+                  {{ element.createdAt | date : "hh:mm aa" }}
+                </span>
+                <span>
+                  {{ element.createdAt | date : "dd/MM/yyyy" }}
+                </span>
+              </div>
+              <hr />
+            </div>
+          </ng-container>
+
+          <ng-container *ngIf="doctor">
+            <div
+              class="mt-1"
+              *ngFor="let element of getdoctorNotiicationList; let i = index"
+            >
+              <div>
+                <div class="d-flex align-items-center ps-3 position-relative">
+                  <img
+                    class="patientimg"
+                    *ngIf="
+                      element?.doctor?.profilePic != null ||
+                        element?.doctor?.profilePic != undefined ||
+                        element?.doctor?.profilePic;
+                      else intial
+                    "
+                    [src]="element?.doctor?.profilePic"
+                    alt=""
+                  />
+                  <ng-template #intial>
+                    <div class="imageinitials">
+                      {{element?.name?.[0]?.[0] | uppercase}}
+                      {{element?.name?.[1]?.[0] | uppercase}}
+                    </div>
+                  </ng-template>
+                  <div class="ms-2">
+                    <p class="m-0 doctorName">
+                      {{ element?.doctor?.name || "N/A" }}
+                    </p>
+                    <p class="m-0 doctorReview" [title]="element?.feedback">
+                      {{ element?.doctor?.specialization[0]?.name }}
+                    </p>
+                  </div>
+                  <button
+                    class="svg-icon-button position-absolute top-0 right-12"
+                    (click)="
+                      clearNoti({ isDeleted: true }, element._id, i);
+                      $event.stopPropagation()
+                    "
+                  >
+                    <svg-icon src="assets/images/svg/close.svg"></svg-icon>
+                  </button>
+                </div>
+                <div class="address ps-3">
+                  <img
+                    src="assets/images/svg/notificationLocation.svg"
+                    alt=""
+                  />
+                  <span>
+                    {{ element?.doctor?.address?.landmark }},{{
+                      element?.doctor?.address?.city
+                    }}, {{ element?.doctor?.address?.country }},{{
+                      element?.doctor?.address?.pincode
+                    }}
+                  </span>
+                </div>
+              </div>
+
+              <div
+                class="d-flex align-items-center justify-content-center gap-4 mx-3 mt-2"
+              >
+                <button
+                  class="views"
+                  (click)="
+                    viewdoctorHospital('doctorpopup', element?.doctor?.doctorId)
+                  "
+                >
+                  View
+                </button>
+                <button
+                  class="accepts"
+                  (click)="
+                    acceptRejectNotification(
+                      'AcceptRejectComponent',
+                      '',
+                      element?.doctor?.doctorId,
+                      'doctorAccept',
+                      'doctor'
+                    )
+                  "
+                >
+                  Accept
+                </button>
+              </div>
+              <div
+                class="d-flex align-items-center justify-content-center gap-4 mx-3 mt-2"
+              >
+                <span>
+                  {{ element.createdAt | date : "EE" }},
+
+                  {{ element.createdAt | date : "hh:mm aa" }}
+                </span>
+                <span>
+                  {{ element.createdAt | date : "dd/MM/yyyy" }}
+                </span>
+              </div>
+              <hr />
+            </div>
+          </ng-container>
+
+          <ng-container *ngIf="hospitaldata">
+            <div
+              class="mt-1"
+              *ngFor="let element of getHospitalNotificationList; let i = index"
+            >
+              <div>
+                <div class="d-flex align-items-center ps-3 position-relative">
+                  <img
+                    class="patientimg"
+                    *ngIf="
+                      element?.doctor?.profilePic != null ||
+                        element?.doctor?.profilePic != undefined ||
+                        element?.doctor?.profilePic;
+                      else intial
+                    "
+                    [src]="element?.doctor?.profilePic"
+                    alt=""
+                  />
+                  <ng-template #intial>
+                    <div class="imageinitials">
+                      {{element?.name?.[0]?.[0] | uppercase}}
+                      {{element?.name?.[1]?.[0] | uppercase}}
+                    </div>
+                  </ng-template>
+                  <div class="ms-2">
+                    <p class="m-0 doctorName">
+                      {{ element?.hospital?.name || "N/A" }}
+                    </p>
+                    <p class="m-0 doctorReview" [title]="element?.feedback">
+                      {{ element?.hospital?.hospitalType[0]?.name || "N/A" }}
+                    </p>
+                  </div>
+                  <button
+                    class="svg-icon-button position-absolute top-0 right-12"
+                    (click)="
+                      clearNoti({ isDeleted: true }, element._id, i);
+                      $event.stopPropagation()
+                    "
+                  >
+                    <svg-icon src="assets/images/svg/close.svg"></svg-icon>
+                  </button>
+                </div>
+                <div class="address ps-3">
+                  <img
+                    src="assets/images/svg/notificationLocation.svg"
+                    alt=""
+                  />
+                  <span>
+                    {{ element?.hospital?.address?.landmark }},{{
+                      element?.hospital?.address?.city
+                    }}, {{ element?.hospital?.address?.country }},{{
+                      element?.hospital?.address?.pincode
+                    }}
+                  </span>
+                </div>
+              </div>
+              <div
+                class="d-flex align-items-center justify-content-center gap-4 mx-3 mt-2"
+              >
+                <button
+                  class="views"
+                  (click)="
+                    viewdoctorHospital(
+                      'hospitalpopup',
+                      element?.hospital?.hospitalId
+                    )
+                  "
+                >
+                  View
+                </button>
+                <button
+                  class="accepts"
+                  (click)="
+                    hospitalAccept(
+                      'AcceptRejectComponent',
+                      '',
+                      element?.hospital?.hospitalId,
+                      'doctorAccept',
+                      'doctor'
+                    )
+                  "
+                >
+                  Accept
+                </button>
+              </div>
+              <div
+                class="d-flex align-items-center justify-content-center gap-4 mx-3 mt-2"
+              >
+                <span>
+                  {{ element.createdAt | date : "EE" }},
+                  {{ element.createdAt | date : "hh:mm aa" }}
+                </span>
+                <span>
+                  {{ element.createdAt | date : "dd/MM/yyyy" }}
+                </span>
+              </div>
+              <hr />
+            </div>
+          </ng-container>
+        </div>
+      </mat-menu>
+      <button mat-button [matMenuTriggerFor]="menu1">
+        <img class="userprofile" [src]="profileDetail?.profilePic" alt="" />
+        <img
+          class="dropdown"
+          src="assets/images/svg/blackdropdown.svg"
+          alt=""
+        />
+      </button>
+      <mat-menu #menu1="matMenu">
+        <div
+          class="d-flex align-items-center ms-2 cursor"
+          routerLink="/theme/settings"
+        >
+          <div class="ms-2">
+            <img class="getdetail" [src]="profileDetail?.profilePic" alt="" />
+          </div>
+          <div class="ms-2">
+            <p class="p-0 m-0 doctorName">{{ profileDetail?.fullName }}</p>
+            <span class="doctorReview">{{ profileDetail?.email }}</span>
+          </div>
+        </div>
+        <hr />
+        <div
+          class="ms-4 d-flex align-items-center cursor"
+          routerLink="/theme/settings"
+        >
+          <img src="assets/images/svg/settings.svg" alt="" />
+          <span class="ms-2 settings">Settings</span>
+        </div>
+        <hr />
+        <div class="ms-4 cursor" (click)="logout()">
+          <img src="assets/images/svg/Logouts.svg" alt="" />
+          <span class="logout ms-2">Logout</span>
+        </div>
+      </mat-menu>
+    </div>
+  </div>
+  <app-sidebar [toggle]="toggleValue"></app-sidebar>
+  <img
+    class="cursor toggle_icon"
+    src="assets/images/png/toggle.png"
+    alt=""
+    (click)="toggleSideBar()"
+  />
+</div>

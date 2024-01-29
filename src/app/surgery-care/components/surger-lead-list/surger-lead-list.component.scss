@@ -1,0 +1,163 @@
+@import "../../../../assets/scss/main.scss";
+
+.surgery-header {
+  padding: 21px 32px 21px 24px;
+
+  .view-button {
+    color: $filtercolor;
+    @include font($primaryFont, 400, 24px);
+    border: none;
+    background: transparent;
+    padding: 6px 24px;
+
+    &.active {
+      background-color: $light_black;
+      padding: 6px 24px;
+      color: $white;
+      border-radius: 8px;
+      @include font($primaryFont, 400, 24px);
+    }
+  }
+  .search-wrapper {
+    border: 1px solid rgba($color: #000000, $alpha: 0.3);
+    padding: 12px 24px;
+    border-radius: 5px;
+    .surgery-lead-search {
+      border: none;
+      max-width: 120px;
+      outline: none;
+      &::placeholder {
+        color: rgba($color: #000000, $alpha: 0.5) !important;
+      }
+    }
+  }
+  .icon-button {
+    border: 1px solid rgba($color: #000000, $alpha: 0.3);
+    background: transparent;
+    color: rgba($color: #000000, $alpha: 0.5);
+    padding: 12px 24px;
+    border-radius: 5px;
+  }
+}
+.surgery-lead-table {
+  .headers {
+    background-color: $mat;
+    min-width: 200px;
+    padding: 22px 10px;
+    color: $black;
+    @include font($primaryFont, 600, 18px);
+    white-space: nowrap;
+    .asce {
+      transform: rotate(180deg);
+    }
+    cursor: pointer;
+  }
+  .tabledata {
+    padding: 22px 10px;
+    @include font($primaryFont, 400, 18px);
+    color: $black;
+  }
+  .status-menu {
+    border: 1px solid rgba($color: #000000, $alpha: 0.3);
+    padding: 6px 24px;
+    white-space: nowrap;
+    border-radius: 5px;
+  }
+}
+.px-6 {
+  padding-left: 24px;
+  padding-right: 24px;
+}
+.cursor-pointer {
+  cursor: pointer;
+}
+::ng-deep {
+  .surgery-lead-filter {
+    .mat-expansion-panel {
+      width: 100% !important;
+      box-shadow: none !important;
+    }
+    .mat-expansion-panel-header.mat-expanded {
+      height: 48px !important;
+    }
+    .mat-expansion-panel-body {
+      padding: 0px 24px !important;
+    }
+    .mat-expansion-panel-header {
+      font-size: 18px;
+      border-radius: 0 !important;
+    }
+    .mat-expansion-panel-spacing {
+      margin: 0 !important;
+    }
+    .mat-mdc-menu-content {
+      padding: 0 !important;
+    }
+    .surgery-lead-checkbox.mat-checkbox {
+      margin-top: unset !important;
+      font-size: 18px !important;
+      .mat-checkbox-layout .mat-checkbox-label {
+        margin-left: 6px !important;
+      }
+    }
+    &.mat-menu-panel {
+      margin-top: 6px;
+    }
+  }
+  .surgery-import-menu.mat-menu-panel {
+    margin-top: 6px !important;
+  }
+  .status-menu {
+    button.mat-menu-item {
+      &.selected {
+        background: rgba($color: #000000, $alpha: 0.3) !important;
+      }
+    }
+  }
+  .comment-modal-container .mat-dialog-container {
+    padding: 24px 0px !important;
+  }
+  .date-modal-container .mat-dialog-container {
+    padding: 0 !important;
+  }
+}
+.counterdata{
+  background-color: white;
+  color: black;
+  border-radius: 10px;
+  padding: 3px 10px;
+  @include font($primaryFont,400,18px)    
+}
+.nocounter{
+  background-color: #BBBBBB;
+  color: black;
+  border-radius: 10px;
+  padding: 3px 10px;
+  @include font($primaryFont,400,18px)   
+}
+td{
+  // padding-left: 10px !important;
+}
+.scrolldata{
+  max-height: calc(100vh - 200px);
+}
+
+::-webkit-scrollbar {
+  height: 4px;
+}
+::-webkit-scrollbar-vertical {
+  display: none;
+}
+
+::-webkit-scrollbar-thumb:horizontal {
+  background: $black;
+    border-radius: 5px;
+}
+.commentdata{
+  width:200px;
+  height: 56px;
+  overflow: hidden;
+}
+.readMore{
+  color: blue;
+}

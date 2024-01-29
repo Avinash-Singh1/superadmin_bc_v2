@@ -1,0 +1,21 @@
+@import '../../../assets/scss/main.scss';
+
+.deletedata{
+    padding-top: 12px;
+    @include font($primaryFont,600,24px)
+
+}
+.deletecontent{
+    padding-top: 12px;
+    @include font($primaryFont,400,18px)
+}
+.cancel,.delete{
+    padding: 16px 40px;
+    border-radius: 10px;
+    margin-bottom: 12px;
+}
+.delete{
+    background-color: #FF0000;
+    color: $white;
+    border: none;
+}

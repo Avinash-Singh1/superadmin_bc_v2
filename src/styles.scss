@@ -1,0 +1,53 @@
+/* You can add global styles to this file, and also import other style files */
+@import url("./assets/fonts/stylesheet.css");
+@import "./assets/scss/main.scss";
+@import "~ngx-toastr/toastr";
+@import "@angular/material/prebuilt-themes/indigo-pink.css";
+@import "css-star-rating/scss/star-rating";
+
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  @include font($primaryFont, 400, 1rem);
+}
+
+.text-24 {
+  font-size: 24px;
+}
+.text-18 {
+  font-size: 18px;
+}
+.text-32 {
+  font-size: 32px;
+}
+.font-600 {
+  font-weight: 600;
+}
+.cursor-pointer {
+  cursor: pointer;
+}
+.error-hint {
+  color: red;
+}
+.border-red {
+  border: 1px solid red;
+}
+.w-90 {
+  width: 90%;
+}
+.w-85 {
+  width: 85%;
+}
+a {
+  color: #45197c !important;
+}
+
+// toaster position
+.toast-top-right {
+  position: fixed !important;
+  right: 0;
+  bottom: 0;
+}

@@ -1,0 +1,35 @@
+
+.sidenav{
+  width: 320px;
+  transition: 0.2s width ease-in;
+  @media (max-width:991px) {
+    width: 100%;
+}
+  
+}
+.wrapper{
+  transition: 0.2s width ease-in;
+
+  width: calc( 100% - 320px );
+  // width: 100%;
+  min-height: 100%;
+  @media (max-width:991px) {
+    width: 100%;
+}
+
+}
+.galaxy{
+ min-height: 100%;
+  @media (max-width:991px) {
+    flex-direction: column;
+}
+}
+.nosidenav{
+  width: 0px;
+  transition: 0.2s width ease-in;
+
+}
+.nowrapper{
+
+  width: 100%;
+}

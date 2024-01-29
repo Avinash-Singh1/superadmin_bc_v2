@@ -1,0 +1,670 @@
+<app-header>Doctors/Hospitals</app-header>
+<div class="d-flex justify-content-between align-items-center patientsHeader">
+  <span class="patientdetail d-flex align-items-center gap-3">
+    <div
+      [ngClass]="doctorsList ? 'activepage' : 'cursor'"
+      (click)="chnageDoctorList('doctors')"
+    >
+      Doctors
+    </div>
+    <div
+      [ngClass]="hospitalsList ? 'activepage' : 'cursor'"
+      (click)="chnageDoctorList('hospitals')"
+    >
+      Hospitals
+    </div>
+  </span>
+  <form [formGroup]="filterForm">
+    <div class="d-flex otherFeatures">
+      <div>
+        <button
+          type="button"
+          class="sampleCsv me-2"
+          (click)="doctorsList ? SampleCSVDoctor() : SampleCSVHospital()"
+        >
+          Sample CSV
+        </button>
+      </div>
+      <div class="filter d-flex align-items-center" [matMenuTriggerFor]="menu">
+        <img src="assets/images/svg/filter.svg" alt="" /><span class="ms-2"
+          >Add filter</span
+        >
+      </div>
+      <mat-menu #menu="matMenu" class="mt-2 menu">
+        <button
+          mat-menu-item
+          *ngIf="doctorsList"
+          class="d-flex justify-content-between align-items-center mt-2"
+          (click)="changeGender('age'); $event.stopPropagation()"
+        >
+          Specialization
+          <img
+            *ngIf="!age"
+            src="assets/images/svg/rightblackarrow.svg"
+            alt=""
+          /><img *ngIf="age" src="assets/images/svg/blackdropdown.svg" alt="" />
+        </button>
+        <div class="ms-4 d-flex flex-column" *ngIf="age && doctorsList">
+          <mat-checkbox
+            color="primary"
+            (click)="$event.stopPropagation()"
+            [checked]="Specialization?.selected"
+            [value]="Specialization?._id"
+            (change)="specilaizationCitiesFilter($event, 'specialization')"
+            *ngFor="let Specialization of OccupationList"
+            >{{ Specialization?.name }}</mat-checkbox
+          >
+          <div class="cancel-ok-btn mt-3 mb-3">
+            <button class="cancel">Cancel</button>
+            <button class="ok ms-2" (click)="doctorList('', '')">Ok</button>
+          </div>
+        </div>
+        <hr *ngIf="doctorsList" />
+        <button
+          mat-menu-item
+          *ngIf="hospitalsList"
+          class="d-flex justify-content-between align-items-center mt-2"
+          (click)="changeGender('hospital'); $event.stopPropagation()"
+        >
+          Type of hospital
+          <img
+            *ngIf="!hospital"
+            src="assets/images/svg/rightblackarrow.svg"
+            alt=""
+          /><img
+            *ngIf="hospital"
+            src="assets/images/svg/blackdropdown.svg"
+            alt=""
+          />
+        </button>
+        <div class="ms-4 d-flex flex-column" *ngIf="hospital && hospitalsList">
+          <mat-checkbox
+            color="primary"
+            (click)="$event.stopPropagation()"
+            [value]="hospitals?._id"
+            (change)="specilaizationCitiesFilter($event, 'hospital')"
+            *ngFor="let hospitals of typeOfHospital"
+            >{{ hospitals?.name }}</mat-checkbox
+          >
+          <div class="cancel-ok-btn mt-3 mb-3">
+            <button class="cancel">Cancel</button>
+            <button class="ok ms-2" (click)="hospitalList('')">Ok</button>
+          </div>
+        </div>
+        <button
+          mat-menu-item
+          class="d-flex justify-content-between align-items-center mt-2"
+          (click)="changeGender('bloodGroup'); $event.stopPropagation()"
+        >
+          Cities
+          <img
+            *ngIf="!bloodGroup"
+            src="assets/images/svg/rightblackarrow.svg"
+            alt=""
+          /><img
+            *ngIf="bloodGroup"
+            src="assets/images/svg/blackdropdown.svg"
+            alt=""
+          />
+        </button>
+        <div class="ms-4 d-flex flex-column" *ngIf="bloodGroup">
+          <mat-checkbox
+            color="primary"
+            (click)="$event.stopPropagation()"
+            [value]="cities?._id"
+            (change)="specilaizationCitiesFilter($event, 'cities')"
+            *ngFor="let cities of cityListing"
+            formControlName="cities"
+            >{{ cities?.name }}</mat-checkbox
+          >
+          <div class="cancel-ok-btn mt-3 mb-3">
+            <button class="cancel">Cancel</button>
+            <button
+              class="ok ms-2"
+              (click)="doctorsList ? doctorList('', '') : hospitalList('')"
+            >
+              Ok
+            </button>
+          </div>
+        </div>
+      </mat-menu>
+      <div
+        class="export mx-3 d-flex align-items-center cursor"
+        [matMenuTriggerFor]="file"
+      >
+        <img src="assets/images/svg/file.svg" alt="" /><span class="ms-2"
+          >File</span
+        >
+      </div>
+      <mat-menu #file="matMenu" class="mt-2 menu1">
+        <button mat-menu-item class="d-flex align-items-center">
+          <!-- <label for="myfile">Select a file:</label>
+          <input type="file" id="myfile" name="myfile"> -->
+          <label for="myfile">
+            <img src="assets/images/svg/import.svg" alt="" /><span
+              class="ms-2 import"
+              >Import</span
+            >
+          </label>
+          <input
+            type="file"
+            id="myfile"
+            #uploadFile
+            name="myfile"
+            class="importInput"
+            (change)="
+              doctorsList == true ? onChange($event) : importHospital($event)
+            "
+            accept=".csv"
+          />
+        </button>
+        <hr class="m-0 p-0" />
+        <button
+          mat-menu-item
+          class="d-flex align-items-center"
+          (click)="
+            doctorsList == true
+              ? downloadDoctorList('doctorList')
+              : downloadHospitalList('hospitalList')
+          "
+        >
+          <img src="assets/images/svg/export.svg" alt="" /><span
+            class="ms-2 export"
+            >Export</span
+          >
+        </button>
+      </mat-menu>
+
+      <div class="search d-flex align-items-center">
+        <img src="assets/images/svg/search.svg" alt="" /><input
+          type="text"
+          [formControl]="search"
+          class="form-control"
+          placeholder="Search by Name, Number"
+        />
+      </div>
+      <div class="ms-3 cursor" (click)="addDoctor('Add New', '', '')">
+        <img src="assets/images/svg/addDoctor.svg" alt="" />
+      </div>
+    </div>
+  </form>
+</div>
+<div *ngIf="doctorsList">
+  <div class="table-responsive w-100 scrolldata mb-5">
+    <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+      <ng-container matColumnDef="position">
+        <th mat-header-cell *matHeaderCellDef class="text-center headers">
+          Image
+        </th>
+        <td
+          mat-cell
+          *matCellDef="let element"
+          class="text-center tabledata intialName"
+        >
+          <img
+            class="patientimg"
+            [src]="element?.profilePic"
+            alt=""
+            onError="this.src='assets/images/svg/nectorIcon.svg'"
+            *ngIf="
+              element?.profilePic != null ||
+                element?.profilePic != undefined ||
+                element?.profilePic;
+              else intial
+            "
+          />
+          <ng-template #intial>
+            <span class="imageintial">
+              {{element?.name?.[0]?.[0] | uppercase }}
+              {{element?.name?.[1]?.[0] | uppercase}}
+            </span>
+          </ng-template>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="name">
+        <th
+          mat-header-cell
+          *matHeaderCellDef
+          (click)="sortData('fullName')"
+          class="headers cursor"
+        >
+          Name
+          <img
+            class="cursor"
+            *ngIf="
+              !sortBy.order ||
+              sortBy.order == 'DESC' ||
+              sortBy.sortBy != 'fullName'
+            "
+            src="assets/images/svg/sort.svg"
+            alt=""
+          />
+          <img
+            *ngIf="sortBy.order == 'ASC' && sortBy.sortBy == 'fullName'"
+            src="assets/images/svg/sort.svg"
+            class="asce cursor"
+            alt=""
+          />
+        </th>
+        <td mat-cell *matCellDef="let element" class="tabledata">
+          <a
+            href="javascript:void(0)"
+            (click)="redirectToDoctorDetails(element)"
+            *ngIf="element?.profileSlug && element?.localityDetails?.[0]?.address?.city"
+          >
+            {{ element?.doctorDetails?.fullName || "N/A" }}
+          </a>
+          <span
+            *ngIf="!(element?.profileSlug && element?.localityDetails?.[0]?.address?.city)"
+            >{{ element?.doctorDetails?.fullName || "N/A" }}</span
+          >
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="Gender">
+        <th mat-header-cell *matHeaderCellDef class="headers">
+          Specialization
+        </th>
+        <td mat-cell *matCellDef="let element" class="tabledata">
+          <div *ngIf="element?.specialization.length > 0; else nodata">
+            <ng-container *ngFor="let specialization of element?.specialization"
+              >{{ specialization?.name || "N/A" }}<br
+            /></ng-container>
+          </div>
+          <ng-template #nodata>
+            <span>N/A</span>
+          </ng-template>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="Address">
+        <th mat-header-cell *matHeaderCellDef class="headers">Locality</th>
+        <td mat-cell *matCellDef="let element" class="tabledata change-text">
+          {{ element?.city || "N/A" }}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="Mobile">
+        <th mat-header-cell *matHeaderCellDef class="headers">Degree</th>
+        <td mat-cell *matCellDef="let element" class="tabledata">
+          <span *ngFor="let degree of element?.education; let last = last">
+            {{ degree?.degree || "N/A"
+            }}<ng-container *ngIf="!last">,</ng-container>
+          </span>
+          <span *ngIf="element?.education == 0">N/A</span>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="Email">
+        <th mat-header-cell *matHeaderCellDef class="headers">Mobile</th>
+        <td mat-cell *matCellDef="let element" class="tabledata">
+          <span
+            *ngIf="
+              element?.doctorDetails?.phone != null ||
+              element?.doctorDetails?.phone != undefined ||
+              element?.doctorDetails?.phone
+            "
+            >+91</span
+          >{{ element?.doctorDetails?.phone || "N/A" }}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="Age">
+        <th mat-header-cell *matHeaderCellDef class="headers">Email ID</th>
+        <td mat-cell *matCellDef="let element" class="tabledata">
+          {{ element.email || "N/A" }}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="BloodGroup">
+        <th mat-header-cell *matHeaderCellDef class="headers">Joining Date</th>
+        <td mat-cell *matCellDef="let element" class="tabledata">
+          {{ element?.createdAt | date : "dd/MM/yyyy" }}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="requestStatus">
+        <th mat-header-cell *matHeaderCellDef class="headers">
+          Requested Status
+        </th>
+        <td mat-cell *matCellDef="let element" class="tabledata cursor">
+          {{
+            element?.approvalStatus == 1
+              ? "Pending"
+              : element?.approvalStatus == 2
+              ? "Approved"
+              : element?.approvalStatus == 3
+              ? "Rejected"
+              : "N/A"
+          }}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="Action">
+        <th mat-header-cell *matHeaderCellDef class="headers">Action</th>
+        <td
+          mat-cell
+          *matCellDef="let element"
+          class="tabledata cursor"
+          (click)="addDoctor('Edit', element?.userId, page)"
+        >
+          <img src="assets/images/svg/edit.svg" alt="" />
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="Status">
+        <th mat-header-cell *matHeaderCellDef class="me-3 headers">Status</th>
+        <td mat-cell *matCellDef="let element" class="me-3 tabledata">
+          <span
+            *ngIf="element?.doctorDetails?.status == 2"
+            class="mt-1"
+            [ngClass]="element?.doctorDetails?.status == 2 ? 'active' : ''"
+            >Active
+          </span>
+          <span
+            *ngIf="
+              element?.doctorDetails?.status == 5 ||
+              element?.doctorDetails?.status == 1 ||
+              element?.doctorDetails?.status == 4 ||
+              element?.doctorDetails?.status == 3
+            "
+            class="mt-1"
+            [ngClass]="
+              element?.doctorDetails?.status == 5 ||
+              element?.doctorDetails?.status == 1 ||
+              element?.doctorDetails?.status == 3 ||
+              element?.doctorDetails?.status == 4
+                ? 'inactive'
+                : ''
+            "
+            >Inactive</span
+          >
+          <label class="switch ms-5">
+            <input
+              type="checkbox"
+              [checked]="element?.doctorDetails?.status == 2 ? true : false"
+              (click)="
+                toggleCheckboxdoctors($event, element?.userId);
+                activeInactiveDoctor(
+                  element?.doctorDetails?.status,
+                  element?.userId
+                )
+              "
+            />
+            <span class="slider round"></span>
+          </label>
+        </td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr
+        mat-row
+        *matRowDef="
+          let row;
+          columns: displayedColumns
+            | paginate
+              : {
+                  itemsPerPage: itemsPerPage,
+                  currentPage: page,
+                  totalItems: totalLength
+                };
+          let i = index
+        "
+      ></tr>
+    </table>
+    <div
+      class="nodata text-center"
+      *ngIf="totalLength == 0 || getLength?.length == 0"
+    >
+      No Data Found.
+    </div>
+  </div>
+  <div class="text-center" *ngIf="totalLength > 0">
+    <pagination-controls
+      (pageChange)="updatePageNumer($event)"
+      previousLabel="&lsaquo;"
+      nextLabel="&rsaquo;"
+    ></pagination-controls>
+  </div>
+</div>
+
+<div *ngIf="hospitalsList">
+  <div class="table-responsive w-100 scrolldata mb-5">
+    <table mat-table [dataSource]="dataSourceHospital" class="mat-elevation-z8">
+      <ng-container matColumnDef="position">
+        <th mat-header-cell *matHeaderCellDef class="text-center headers">
+          Image
+        </th>
+        <td
+          mat-cell
+          *matCellDef="let element"
+          class="text-center tabledata intialName"
+        >
+          <img
+            class="patientimg"
+            [src]="element?.profilePic"
+            alt=""
+            onError="this.src='assets/images/svg/nectorIcon.svg'"
+            *ngIf="
+              element?.profilePic != null ||
+                element?.profilePic != undefined ||
+                element?.profilePic;
+              else intial
+            "
+          />
+          <ng-template #intial>
+            <div class="imageintial">
+              {{element?.name?.[0]?.[0] | uppercase
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+              }}{{element?.name?.[1]?.[0] | uppercase}}
+            </div>
+          </ng-template>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="name">
+        <th
+          mat-header-cell
+          *matHeaderCellDef
+          class="headers cursor"
+          (click)="sortData('fullName')"
+        >
+          Name
+          <img
+            class="cursor"
+            *ngIf="
+              !sortByHospital.sortOrder ||
+              sortByHospital.sortOrder == 'DESC' ||
+              sortByHospital.sort != 'fullName'
+            "
+            src="assets/images/svg/sort.svg"
+            alt=""
+          />
+          <img
+            *ngIf="
+              sortByHospital.sortOrder == 'ASC' &&
+              sortByHospital.sort == 'fullName'
+            "
+            src="assets/images/svg/sort.svg"
+            class="asce cursor"
+            alt=""
+          />
+        </th>
+        <td mat-cell *matCellDef="let element" class="tabledata">
+          <a
+            [href]="
+              baseurl +
+              createSlug(element?.address?.city) +
+              '/hospital/' +
+              element.profileSlug
+            "
+            target="_blank"
+            *ngIf="element.profileSlug && element?.address?.city"
+          >
+            {{ element?.hospitalName || "N/A" }}
+          </a>
+          <span *ngIf="!(element?.profileSlug && element?.address?.city)">{{
+            element?.hospitalName || "N/A"
+          }}</span>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="Gender">
+        <th mat-header-cell *matHeaderCellDef class="headers">
+          Type of hospital
+        </th>
+        <td mat-cell *matCellDef="let element" class="tabledata">
+          {{ element?.hospitalType || "N/A" }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="Address">
+        <th mat-header-cell *matHeaderCellDef class="headers">Locality</th>
+        <td mat-cell *matCellDef="let element" class="tabledata change-text">
+          {{ element?.locality || "N/A" }}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="Mobile">
+        <th mat-header-cell *matHeaderCellDef class="headers">Total Doctors</th>
+        <td mat-cell *matCellDef="let element" class="tabledata">
+          {{ element?.totalDoctors || "N/A" }}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="Email">
+        <th mat-header-cell *matHeaderCellDef class="headers">Mobile</th>
+        <td mat-cell *matCellDef="let element" class="tabledata">
+          <span
+            *ngIf="
+              element?.phone != null ||
+              element?.phone != undefined ||
+              element?.phone
+            "
+            >+91</span
+          >{{ element?.phone || "N/A" }}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="BloodGroup">
+        <th mat-header-cell *matHeaderCellDef class="headers">Joining Date</th>
+        <td mat-cell *matCellDef="let element" class="tabledata">
+          {{ element?.joiningDate | date : "dd/MM/yyyy" }}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="requestStatus">
+        <th mat-header-cell *matHeaderCellDef class="headers">
+          Requested Status
+        </th>
+        <td mat-cell *matCellDef="let element" class="tabledata cursor">
+          {{
+            element?.approvalStatus == 1
+              ? "Pending"
+              : element?.approvalStatus == 2
+              ? "Approved"
+              : element?.approvalStatus == 3
+              ? "Rejected"
+              : "N/A"
+          }}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="Action">
+        <th mat-header-cell *matHeaderCellDef class="headers">Action</th>
+        <td
+          mat-cell
+          *matCellDef="let element"
+          class="tabledata"
+          (click)="addDoctor('Edit', element?._id, '')"
+        >
+          <img src="assets/images/svg/edit.svg" alt="" />
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="Status">
+        <th mat-header-cell *matHeaderCellDef class="headers pe-5">Status</th>
+        <td mat-cell *matCellDef="let element" class="tabledata pe-5">
+          <span
+            *ngIf="element?.status == 2"
+            [ngClass]="element?.status == 2 ? 'active' : ''"
+            >Active
+          </span>
+          <span
+            *ngIf="
+              element?.status == 5 ||
+              element?.status == null ||
+              element?.status == 1 ||
+              element?.status == 3 ||
+              element?.status == 4
+            "
+            [ngClass]="
+              element?.status == 5 ||
+              element?.status == null ||
+              element?.status == 1 ||
+              element?.status == 3 ||
+              element?.status == 4
+                ? 'inactive'
+                : ''
+            "
+            >Inactive</span
+          >
+
+          <label class="switch ms-4">
+            <input
+              type="checkbox"
+              [checked]="element?.status == 2 ? true : false"
+              (click)="
+                toggleCheckboxhospitalss($event, element?._id);
+                activeInactiveHospital(element?.status, element?._id)
+              "
+            />
+            <span class="slider round"></span>
+          </label>
+        </td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="displayedHospitalColumns"></tr>
+      <tr
+        mat-row
+        *matRowDef="
+          let row;
+          columns: displayedHospitalColumns
+            | paginate
+              : {
+                  itemsPerPage: itemPerPageOfHospital,
+                  currentPage: pageOfHospital,
+                  totalItems: totalLengthHospital
+                };
+          let i = index
+        "
+      ></tr>
+    </table>
+    <div class="nodata text-center" *ngIf="totalLengthHospital == 0">
+      No Data Found.
+    </div>
+  </div>
+  <div class="text-center" *ngIf="totalLengthHospital > 0">
+    <pagination-controls
+      (pageChange)="updateHospitalPageNumer($event)"
+      previousLabel="&lsaquo;"
+      nextLabel="&rsaquo;"
+    ></pagination-controls>
+  </div>
+</div>

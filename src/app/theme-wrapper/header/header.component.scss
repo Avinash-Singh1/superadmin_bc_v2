@@ -1,0 +1,145 @@
+@import "../../../assets/scss/main.scss";
+@import "../../../assets/scss/variable";
+
+.headerBack {
+  position: sticky;
+  z-index: 20;
+  top: 0;
+  background: $white;
+  padding: 21px 32px 21px 24px;
+  border-bottom: 1px solid rgba($color: #000000, $alpha: 0.3);
+  .headershead {
+    @include font($primaryFont, 600, 24px);
+    color: $black;
+  }
+
+  .userprofile {
+    border-radius: 100%;
+    width: 50px;
+    height: 50px;
+    margin-left: 42px;
+  }
+  .dropdown {
+    margin-left: 12px;
+  }
+}
+.closemenu {
+  height: 15px;
+  width: 15px;
+}
+.notificationHeader {
+  @include font($primaryFont, 600, 18px);
+}
+
+.activenotification {
+  @include font($primaryFont, 600, 18px);
+}
+.deactiveNotificatiom {
+  @include font($primaryFont, 400, 18px);
+}
+.accept {
+  background-color: $lightgreen;
+  color: $green;
+  @include font($primaryFont, 600, 18px);
+}
+.reject {
+  background-color: $lightred;
+  color: $red;
+  @include font($primaryFont, 600, 18px);
+}
+.doctorName {
+  @include font($primaryFont, 600, 18px);
+}
+.doctorReview {
+  @include font($primaryFont, 400, 18px);
+}
+.address {
+  color: #3c72fe;
+  @include font($primaryFont, 500, 16px);
+}
+
+.imageinitials {
+  background-color: #d9d9d9;
+  border-radius: 100%;
+  height: 50px;
+  width: 50px;
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  @include font($primaryFont, 600, 18px);
+  color: #b5b5b5;
+  // margin:auto;
+}
+::ng-deep {
+  .mat-menu-panel.menusdata {
+    width: 360px !important;
+    max-width: 360px !important;
+
+    max-height: 400px;
+    overflow-y: scroll;
+  }
+}
+
+.views {
+  border: 1px solid gray;
+  padding: 7px 28px;
+  background-color: transparent;
+  border-radius: 10px;
+}
+.accepts {
+  background-color: #49387b;
+  padding: 7px 25px;
+  color: white;
+  border-radius: 10px;
+}
+.settings {
+  @include font($primaryFont, 600, 18px);
+}
+.logout {
+  color: red;
+  @include font($primaryFont, 400, 18px);
+}
+.getdetail {
+  height: 50px;
+  width: 50px;
+}
+.toggle_icon {
+  height: 32px;
+  width: 32px;
+}
+.svg-icon-button {
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  &:hover {
+    background-color: #d9d9d9 !important;
+  }
+  // padding: 2px;
+  border-radius: 2px;
+  svg {
+    width: 14px !important;
+    height: 14px !important;
+    path {
+      fill: rgba($color: #000000, $alpha: 0.5);
+    }
+  }
+}
+.right-12 {
+  right: 12px;
+}
+
+.request-number {
+  position: absolute;
+  top: 3px;
+  left: 35px;
+  z-index: 2;
+  border-radius: 50%;
+  width: 18px;
+  height: 15px;
+  background: #f00;
+  color: $white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 12px !important;
+}

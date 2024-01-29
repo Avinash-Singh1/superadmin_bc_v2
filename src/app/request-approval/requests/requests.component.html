@@ -1,0 +1,211 @@
+<app-header>Request For Approval</app-header>
+<div class="d-flex justify-content-between align-items-center patientsHeader">
+  <span class="patientdetail d-flex align-items-center gap-1">
+    <div [ngClass]="doctorsList?'activepage':'cursor'" (click)="chnageDoctorList('doctors')">Doctors
+      <span class="ms-2" [ngClass]="doctorsList==true?'counterdata':'nocounter'">{{totalLength || '0'}}</span></div>
+    <div [ngClass]="hospitalsList?'activepage':'cursor'" (click)="chnageDoctorList('hospitals')">Hospitals<span
+        class="ms-2 " [ngClass]="hospitalsList==true?'counterdata':'nocounter'">{{totalLengthHospital || '0'}}</span>
+    </div>
+  </span>
+  <div class="d-flex otherFeatures">
+    <div class="search d-flex align-items-center"><img src="assets/images/svg/search.svg" alt=""><input type="text"
+        class="form-control" [formControl]="search" placeholder="Search by Name, Number"></div>
+  </div>
+</div>
+<div class="table-responsive w-100 scrolldata mb-5" *ngIf="doctorsList">
+  <table mat-table matSort [dataSource]="dataSource" class="mat-elevation-z8 ">
+
+    <ng-container matColumnDef="img">
+      <th mat-header-cell *matHeaderCellDef class="text-center  headers"> </th>
+      <td mat-cell *matCellDef="let element" class=" text-center tabledata ">
+        <img class="useimg ms-2"
+          *ngIf="element?.profilePic!=null || element?.profilePic!=undefined ||  element?.profilePic; else intial"
+          [src]="element?.profilePic" alt="">
+        <ng-template #intial>
+          <div class="imageintial ">
+            {{element?.name?.[0]?.[0] | uppercase}}{{element?.name?.[1]?.[0] | uppercase}}
+          </div>
+        </ng-template>
+
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="date">
+      <th mat-header-cell *matHeaderCellDef class=" headers"> Date/Time </th>
+      <td mat-cell *matCellDef="let element" class=" tabledata"> {{(element?.createdAt |date:'dd/MM/yyyy') ||
+        'N/A'}}<ng-container *ngIf="element?.createdAt">,</ng-container>{{(element?.createdAt | date:'hh:mm aa') ||
+        'N/A'}} </td>
+    </ng-container>
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef class=" headers cursor" (click)="sortData('fullName')"> Name
+        <img class="cursor" *ngIf="!sortBy.order || sortBy.order == 'DESC' || sortBy.sortBy != 'fullName'" src="assets/images/svg/sort.svg" alt="" />
+        <img *ngIf="sortBy.order == 'ASC' && sortBy.sortBy == 'fullName'" src="assets/images/svg/sort.svg" class="asce cursor" alt="" />
+      </th>
+      <td mat-cell *matCellDef="let element" class=" tabledata"> {{element?.doctorDetails[0]?.fullName}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="specialization">
+      <th mat-header-cell *matHeaderCellDef class=" headers"> Specialization</th>
+      <td mat-cell *matCellDef="let element" class=" tabledata">
+        <div *ngIf="element?.specializationDetails.length>0;else nodata">
+          <ng-container *ngFor="let specialization of element?.specializationDetails">{{specialization?.name
+            ||'N/A'}}<br></ng-container>
+        </div>
+        <ng-template #nodata>
+          <span>N/A</span>
+        </ng-template>
+
+
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="locality">
+      <th mat-header-cell *matHeaderCellDef class=" headers"> Locality
+      </th>
+      <td mat-cell *matCellDef="let element" class=" tabledata change-text"> {{element?.city || 'N/A'}} </td>
+    </ng-container>
+    <ng-container matColumnDef="Mobile">
+      <th mat-header-cell *matHeaderCellDef class=" headers"> Mobile </th>
+      <td mat-cell *matCellDef="let element" class=" tabledata"> <span
+          *ngIf="element?.doctorDetails[0]?.phone!=null || element?.doctorDetails[0]?.phone!=undefined || element?.doctorDetails[0]?.phone">+91</span>{{element?.doctorDetails[0]?.phone}}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="document">
+      <th mat-header-cell *matHeaderCellDef class=" headers"> Document </th>
+      <td mat-cell *matCellDef="let element" class=" tabledata cursor"
+        (click)="viewDoctor('ViewDoctorHospitalComponent','doctorpopup',element?.userId,'','')"> <span
+          class="view">View</span> </td>
+    </ng-container>
+    <ng-container matColumnDef="Action">
+      <th mat-header-cell *matHeaderCellDef class=" headers"> Action</th>
+      <td mat-cell *matCellDef="let element" class=" tabledata cursor" [matMenuTriggerFor]="menu">
+        <span>{{element?.isVerified==1?'Pending':element?.isVerified==2?'Accepted':element?.isVerified==3?'Rejected':''}}</span>
+        <img class="ms-2" src="assets/images/svg/blackdropdown.svg" alt="">
+        <mat-menu #menu="matMenu" class="mt-2 menus">
+          <button mat-menu-item class="d-flex align-items-center accept"
+            (click)="viewDoctor('AcceptRejectComponent','',element?.userId,'doctorAccept','doctor');$event.stopPropagation();"><img
+              src="assets/images/svg/accept.svg" class="me-2" alt="">Accept </button>
+          <button mat-menu-item class="d-flex align-items-center reject"
+            (click)="viewDoctor('AcceptRejectComponent',true,element?.userId,'doctorReject','doctor');$event.stopPropagation();"><img
+              src="assets/images/svg/reject.svg" class="me-2" alt="">Reject </button>
+        </mat-menu>
+      </td>
+
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row
+      *matRowDef="let row; columns: displayedColumns| paginate:{itemsPerPage:itemsPerPage,currentPage:page,totalItems: totalLength}; let i=index">
+    </tr>
+  </table>
+  <div class="nodata text-center" *ngIf="totalLength==0">
+    No Data Found.
+  </div>
+</div>
+<div class="text-center" *ngIf="totalLength>0 && doctorsList">
+  <pagination-controls (pageChange)="updatePageNumer($event)" previousLabel="&lsaquo;"
+    nextLabel="&rsaquo;"></pagination-controls>
+</div>
+
+
+
+
+
+
+
+<div class="table-responsive w-100 scrolldata mb-5" *ngIf="hospitalsList">
+  <table mat-table matSort [dataSource]="dataSourceHospital" class="mat-elevation-z8 ">
+    <!-- <ng-container matColumnDef="position">
+      <th mat-header-cell *matHeaderCellDef class="ps-5  headers "><input type="checkbox"
+          *ngIf="selectHospital" class="cursor" (click)="selectHospitals(true)"><input type="checkbox"
+          [checked]="deselectHospital" *ngIf="deselectHospital" class="cursor" (click)="selectHospitals(false)"> </th>
+      <td mat-cell *matCellDef="let element" class="ps-5  tabledata "><input type="checkbox" value="1"
+          name="hospital" class="cursor"></td>
+    </ng-container> -->
+    <ng-container matColumnDef="img">
+      <th mat-header-cell *matHeaderCellDef class="text-center  headers"> </th>
+      <td mat-cell *matCellDef="let element" class="text-center  tabledata ">
+        <!-- <img class="useimg ms-4" src="assets/images/png/ateeqahmad.jpg" alt=""> -->
+
+        <img class="useimg ms-2"
+          *ngIf="element?.profilePic!=null || element?.profilePic!=undefined ||  element?.profilePic; else intial"
+          [src]="element?.profilePic" alt="">
+        <ng-template #intial>
+          <div class="imageintial ">
+            {{element?.name?.[0]?.[0] | uppercase}}{{element?.name?.[1]?.[0] | uppercase}}
+          </div>
+        </ng-template>
+
+
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="date">
+      <th mat-header-cell *matHeaderCellDef class=" headers"> Date/Time </th>
+      <td mat-cell *matCellDef="let element" class=" tabledata"> {{element?.createdAt | date:'dd/MM/yyyy'}}<ng-container
+          *ngIf="element?.createdAt">,</ng-container>{{element?.createdAt | date:'hh:mm a'}}</td>
+    </ng-container>
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef class=" headers cursor" (click)="sortData('fullName')"> Name
+        <img class="cursor" *ngIf="
+            !sortBy.order ||
+            sortBy.order == 'DESC' ||
+            sortBy.sortBy != 'fullName'
+          " src="assets/images/svg/sort.svg" alt="" />
+        <img *ngIf="sortBy.order == 'ASC' && sortBy.sortBy == 'fullName'" src="assets/images/svg/sort.svg"
+          class="asce cursor" alt="" />
+      </th>
+      <td mat-cell *matCellDef="let element" class=" tabledata"> {{element?.hospitalName || 'N/A'}} </td>
+    </ng-container>
+    <ng-container matColumnDef="typeOfHospital">
+      <th mat-header-cell *matHeaderCellDef class=" headers"> Type of Hospital</th>
+      <td mat-cell *matCellDef="let element" class=" tabledata"> {{element?.hospitalTypeDetails[0]?.name || 'N/A'}}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="locality">
+      <th mat-header-cell *matHeaderCellDef class=" headers"> Locality
+
+      </th>
+      <td mat-cell *matCellDef="let element" class=" tabledata change-text"> {{element?.address?.landmark}}<ng-container
+          *ngIf="element?.address?.locality">,</ng-container>{{element?.address?.locality}} </td>
+    </ng-container>
+    <ng-container matColumnDef="Mobile">
+      <th mat-header-cell *matHeaderCellDef class=" headers"> Mobile </th>
+      <td mat-cell *matCellDef="let element" class=" tabledata"> <span
+          *ngIf="element?.userTableDetails?.phone!=null || element?.userTableDetails?.phone!=undefined || element?.userTableDetails?.phone">+91</span>{{element?.userTableDetails?.phone
+        || 'N/A'}} </td>
+    </ng-container>
+    <ng-container matColumnDef="document">
+      <th mat-header-cell *matHeaderCellDef class=" headers">Document </th>
+      <td mat-cell *matCellDef="let element" class=" tabledata cursor"
+        (click)="viewDoctor('ViewDoctorHospitalComponent','hospitalpopup',element?.userId,'','')"> <span
+          class="view">View</span> </td>
+    </ng-container>
+    <ng-container matColumnDef="Action">
+      <th mat-header-cell *matHeaderCellDef class=" headers"> Action </th>
+      <td mat-cell *matCellDef="let element" class=" tabledata cursor" [matMenuTriggerFor]="menu">Pending
+        <img class="ms-2" src="assets/images/svg/blackdropdown.svg" alt="">
+        <mat-menu #menu="matMenu" class="mt-2 menus">
+          <button mat-menu-item class="d-flex align-items-center accept"
+            (click)="viewDoctor('AcceptRejectComponent','',element?.userId,'hospitalAccept','hospital');$event.stopPropagation();"><img
+              src="assets/images/svg/accept.svg" class="me-2" alt="">Accept </button>
+          <button mat-menu-item class="d-flex align-items-center reject"
+            (click)="viewDoctor('AcceptRejectComponent',true,element?.userId,'hospitalReject','hospital');$event.stopPropagation();"><img
+              src="assets/images/svg/reject.svg" class="me-2" alt="">Reject </button>
+        </mat-menu>
+      </td>
+
+    </ng-container>
+    <tr mat-header-row *matHeaderRowDef="displayedHospitalColumns"></tr>
+    <tr mat-row
+      *matRowDef="let row; columns: displayedHospitalColumns | paginate:{itemsPerPage:hospitalItemperPage,currentPage:hospitalPage,totalItems: totalLengthHospital}; let i=index">
+    </tr>
+  </table>
+  <div class="nodata text-center" *ngIf="totalLengthHospital==0 || getLength?.length==0">
+    No Data Found.
+  </div>
+</div>
+
+<div class="text-center" *ngIf="totalLengthHospital>0 && hospitalsList">
+  <pagination-controls (pageChange)="updatePageForHospital($event)" previousLabel="&lsaquo;"
+    nextLabel="&rsaquo;"></pagination-controls>
+</div>

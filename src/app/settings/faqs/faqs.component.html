@@ -1,0 +1,18 @@
+<div class="profile">
+    <div class="contentHeader my-3 d-flex justify-content-between">
+        <span class="profileHeader">Frequently asked questions</span>
+        <img class="addFaq cursor" src="assets/images/svg/adddata.svg" alt="" (click)="addreview('Add','')">
+        
+    </div>
+    <hr>
+    <div class="p-3 ">
+        <div class=" questionAnswer mt-3 p-3 d-flex justify-content-between" *ngFor="let data of faqResult">
+        <div>
+            <p class="question m-0 p-0">Q: <span>{{data?.question}}</span></p>
+            <p class="answer">A: <span>{{data?.answer}}</span></p>
+        </div>
+        <img class="editFaq cursor" src="assets/images/svg/editdata.svg" alt="" (click)="addreview('Edit',data?._id)">
+    </div>
+</div>
+
+</div>

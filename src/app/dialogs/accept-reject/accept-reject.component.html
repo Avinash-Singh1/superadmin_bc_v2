@@ -1,0 +1,27 @@
+<div class="acceptreject-popup">
+
+    <div *ngIf="accepted" class="d-flex align-items-center mx-5 my-4">
+        <img class="me-3" src="assets/images/png/shield.png" alt="">
+        <p class="m-0 acceptance">The {{username}} profile has been accepted.</p>
+    </div>
+    <div *ngIf="rejected" [formGroup]="rejectModal">
+        <div class="d-flex align-items-center justify-content-between">
+            <p class="m-0 p-4 dialogHeader">Rejection Reason</p>
+            <img class="me-4 closeimg cursor" (click)="closeModal()" src="assets/images/svg/close.svg" alt="">
+        </div>
+        <hr class="p-0 m-0">
+        <div class="px-4 py-4">
+            <p class="custom">Custom</p>
+            <textarea class="reportedreason form-control" placeholder="Type" formControlName="reject"></textarea>
+            <div>
+                <input class="userDetail continue-btn reject" type="button"  value="Reject" (click)="rejectRequest()">
+            </div>
+        </div>
+    </div>
+    <div *ngIf="rejectedSuccessfully" class="d-flex align-items-center mx-5 my-4">
+        <img class="me-3" src="assets/images/svg/canecelapproval.svg" alt="">
+        <p class="m-0 acceptance">The {{username}} profile has been rejected.</p>
+    </div>
+
+
+</div>

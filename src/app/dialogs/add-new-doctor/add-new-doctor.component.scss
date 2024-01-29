@@ -1,0 +1,71 @@
+@import '../../../assets/scss/main.scss';
+
+.getPractice{
+    border: 1px solid $filtercolor;
+    border-radius: 8px;
+}
+.establishment{
+    padding:16px 0px 16px 25px;
+
+}
+.getmoreheight{
+    margin-top:362px;
+}
+.getmoreheights{
+    margin-top:210px;
+
+}
+.getclinicmoreheight{
+    margin-top: 316px;
+}
+.mapdata{
+    width:49%;
+    margin-top:20px;
+}
+.readonly{
+    color:$countryColor;
+    border: $countryColor;
+    
+}
+.countryColor::placeholder{   
+        color:$countryColor ;  
+}
+
+.submiterror{
+@include font($primaryFont,500,16px);
+// background-color:$black;
+color:red;
+// text-align: center;
+// margin-top:10px;
+padding:10px;
+// border-radius:40px;
+// max-width: 420px;
+width:100%;
+}
+::ng-deep .multiselect-dropdown .dropdown-btn{
+    border: none !important;
+    
+}
+.newLine{
+    border-bottom: 1px solid $filtercolor;
+}
+.medicaldata{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+}
+.sampleCsv{
+    background-color: none;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 10px;
+    background-color:$purple;
+    color: $white;
+    @include font($primaryFont, 600, 18px);
+    margin-right: 40px;
+}
+.disbaled{
+    background-color: #E9ECEF;
+    pointer-events: none;
+}

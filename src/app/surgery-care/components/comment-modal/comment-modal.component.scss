@@ -1,0 +1,49 @@
+@import "../../../../assets/scss/_variable.scss";
+.comment-modal {
+  font-size: 18px !important;
+  .comment-header {
+    padding: 0 24px 8px;
+    margin-top: -16px;
+    // padding-bottom: 12px;
+    font-size: 24px;
+    font-weight: 500;
+  }
+  .modal-content {
+    padding: 24px;
+    margin: unset;
+    .comment-textarea {
+      padding: 12px 24px;
+      border: 1px solid rgba($color: #000000, $alpha: 0.3);
+      border-radius: 4px;
+      &::placeholder {
+        color: rgba($color: #000000, $alpha: 0.3) !important;
+      }
+    }
+    .error-hint {
+      color: red;
+      font-size: 16px;
+    }
+  }
+  .button-group {
+    padding-right: 24px;
+    .modal-button {
+      padding: 12px 24px;
+      border: 1px solid rgba($color: #000000, $alpha: 0.3);
+      border-radius: 4px;
+      &.cancel {
+        border-color: $cancelborder;
+        background: $white;
+      }
+      &.save {
+        background: $okBackground;
+        color: $white;
+      }
+    }
+  }
+}
+::ng-deep {
+  .modal-content {
+    border-top: 1px solid rgba($color: #000000, $alpha: 0.3);
+    border-bottom: 1px solid rgba($color: #000000, $alpha: 0.3);
+  }
+}

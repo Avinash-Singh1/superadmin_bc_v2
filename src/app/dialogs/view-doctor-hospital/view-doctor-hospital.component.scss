@@ -1,0 +1,62 @@
+@import '../../../assets/scss/main.scss';
+
+:host {
+
+    .view-container {
+        width: 100%;
+
+        .profile-details {
+            padding: 23px 0 23px 33px;
+
+            .registration,
+            .education,
+            .document {
+                @include font($primaryFont, 600, 18px);
+                color: $black;
+            }
+
+            .other-details {
+                @include font($primaryFont, 400, 18px);
+                color: $black;
+
+            }
+
+            .image {
+                img {
+                    width: 72px;
+                    height: 72px;
+                    border-radius: 100%;
+                }
+            }
+
+            .details {
+                margin-left: 12px;
+
+                .username {
+                    @include font($primaryFont, 600, 24px);
+                    color: $black
+                }
+
+                .occupation {
+                    @include font($primaryFont, 400, 18px);
+                    color: $filtercolor;
+                }
+            }
+        }
+    }
+}
+
+::ng-deep {
+    .mat-dialog-container {
+        padding: 0px !important;
+    }
+}
+
+.proof {
+    height: 72px;
+    width: 72px;
+}
+.rejectedReason{
+    @include font($primaryFont, 600, 18px);
+    color:#FF0000;
+}
