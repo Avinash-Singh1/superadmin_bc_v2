@@ -1,6 +1,6 @@
 {
   "name": "nectarplus-admin",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -8,7 +8,7 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "sonar": "sonar-scanner",
-    "deploy": "ng build --prod && aws s3 cp dist s3://admin.nectarplus.health/ --recursive --profile nectar"
+    "deploy": "npm version patch && npm run build && aws s3 cp dist s3://admin.nectarplus.health/ --recursive --exclude '*' --include '*.*' --profile nectar"
   },
   "private": true,
   "dependencies": {
