@@ -7,7 +7,8 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "sonar": "sonar-scanner"
+    "sonar": "sonar-scanner",
+    "deploy": "ng build --prod && aws s3 cp dist s3://admin.nectarplus.health/ --recursive --profile nectar"
   },
   "private": true,
   "dependencies": {
@@ -41,7 +42,7 @@
     "ngx-toastr": "^14.3.0",
     "ngx-ui-loader": "^13.0.0",
     "rxjs": "~7.5.0",
-    "slugify":"^1.6.6",
+    "slugify": "^1.6.6",
     "sonarqube-scanner": "^3.0.1",
     "tslib": "^2.3.0",
     "zone.js": "~0.11.4"
