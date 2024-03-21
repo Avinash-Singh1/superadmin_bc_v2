@@ -929,17 +929,11 @@ export class DoctorhospitallistComponent implements OnInit {
         next: (res: any) => {
           if (res?.success == true) {
             this.loader.stop();
-            if (res?.result?.successCount > 0) {
-              this.toastr.success(
-                res?.result?.successCount + " " + "Records Added"
-              );
-              this.hospitalList("");
-            } else if (res?.result?.successCount == 0) {
-              this.toastr.success(
-                res?.result?.successCount + " " + "Records Added"
-              );
-              this.hospitalList("");
-            }
+            this.hospitalList("");
+
+            this.toastr.success(
+              res?.result?.successCount + " " + "Records Added"
+            );
           }
         },
         error: (err: any) => {
