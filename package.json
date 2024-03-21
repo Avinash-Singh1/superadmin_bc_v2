@@ -8,7 +8,7 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "sonar": "sonar-scanner",
-    "deploy": "npm version patch && npm run build && aws s3 cp dist s3://admin.nectarplus.health/ --recursive --exclude '*' --include '*.*' --profile nectar"
+    "deploy": "git push && npm version patch && npm run build && aws s3 cp dist s3://admin.nectarplus.health/ --recursive --exclude '*' --include '*.*' --profile nectar"
   },
   "private": true,
   "dependencies": {
