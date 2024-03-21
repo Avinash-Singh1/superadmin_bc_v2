@@ -38,6 +38,7 @@ export class InterceptorInterceptor implements HttpInterceptor {
       catchError((error: HttpErrorResponse) => {
         const { status } = error;
         const { message } = error.error || error;
+
         if (status == 401) {
           this.matdialog.closeAll();
           localStorage.clear();

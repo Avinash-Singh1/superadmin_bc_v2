@@ -9,9 +9,9 @@ export const environment = {
   // dev url
   // API_BASE_URL: 'https://dev-api.hmns.xyz/api/v1',
   X_API_KEY: "f68dd92ab05fa026457651a34b7ef4b18cf289a5",
-  API_BASE_URL: "http://65.0.229.173:3000/api/",
+  API_BASE_URL: "http://localhost:3000/api/",
   GOOGLE_API_KEY: "AIzaSyDb7zoRltrfSat3aq7o9EYF5VV4hEKwNUE",
-  BASE_URL: "http://65.0.229.173/web/",
+  BASE_URL: "https://nectarplus.health/",
   SURGERY_IMAGE_URL:
     "https://nectorplus.s3.ap-south-1.amazonaws.com/8b0d08d0-673c-11ee-bfab-6d7e93c1d95a-Surgery%20Desktop%20Banner.png",
   SURGERY_ICON_IMAGE_URL:

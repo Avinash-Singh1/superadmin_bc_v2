@@ -91,6 +91,7 @@ export class HeaderComponent implements OnInit {
       this.hospitaldata = true;
     }
   }
+
   acceptRejectNotification(
     components: any,
     value: any,
@@ -127,6 +128,7 @@ export class HeaderComponent implements OnInit {
         userName: type,
       },
     });
+
     if (status == "doctorReject") {
       console.log("reecyed");
       dialogRef.afterClosed().subscribe((res: any) => {
@@ -150,6 +152,7 @@ export class HeaderComponent implements OnInit {
       });
     }
   }
+
   hospitalAccept(components: any, value: any, id: any, status: any, type: any) {
     let param = {
       hospitalId: id,

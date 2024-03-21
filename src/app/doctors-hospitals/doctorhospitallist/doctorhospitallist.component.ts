@@ -10,6 +10,7 @@ import { ngxCsv } from "ngx-csv/ngx-csv";
 import { NgxUiLoaderService } from "ngx-ui-loader";
 import { environment } from "src/environments/environment";
 import slugify from "slugify";
+import { DeleteConfirmationComponent } from "src/app/dialogs/delete-confirmation/delete-confirmation.component";
 
 export interface PeriodicElement {
   name: string;
@@ -239,6 +240,24 @@ export class DoctorhospitallistComponent implements OnInit {
         this.doctorList("", "");
         this.hospitalList("");
       }
+    });
+  }
+
+  deleteDoctor(id: string, type: string) {
+    this.dialogRef = this.dialog.open(DeleteConfirmationComponent, {
+      data: {
+        id,
+        text: type === "doctor" ? "Doctor" : "Hospital",
+        type,
+      },
+    });
+
+    this.dialogRef.afterClosed().subscribe((data: boolean) => {
+      if (!data) return;
+
+      if (type === "doctor") return this.doctorList("", "");
+
+      this.hospitalList("");
     });
   }
 
