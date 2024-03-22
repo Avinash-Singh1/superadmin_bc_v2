@@ -58,7 +58,6 @@ export class ApiService {
   DeleteData(endpoint: string, payload: any) {
     let params = new HttpParams();
     params = params.appendAll(payload);
-    console.log("🚀 ~ ApiService ~ DeleteData ~ params:", params);
 
     return this.httpClient.delete(`${this.url + endpoint}`, { params: params });
   }
