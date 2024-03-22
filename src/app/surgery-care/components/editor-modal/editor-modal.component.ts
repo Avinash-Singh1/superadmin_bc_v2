@@ -1,5 +1,5 @@
 import { Component, Inject, OnDestroy, OnInit } from "@angular/core";
-import { FormBuilder, FormGroup } from "@angular/forms";
+import { UntypedFormBuilder, UntypedFormGroup } from "@angular/forms";
 import {
   MAT_DIALOG_DATA,
   MatDialog,
@@ -14,12 +14,12 @@ import { ImageUploadModalComponent } from "../image-upload-modal/image-upload-mo
 })
 export class EditorModalComponent implements OnInit, OnDestroy {
   constructor(
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     @Inject(MAT_DIALOG_DATA) public data: any,
     public matdialogRef: MatDialogRef<EditorModalComponent>,
     private matdialog: MatDialog
   ) {}
-  editorForm!: FormGroup;
+  editorForm!: UntypedFormGroup;
   editor: Editor = new Editor({ history: true, keyboardShortcuts: true });
   html: string = "";
   htmlEditor: boolean = false;

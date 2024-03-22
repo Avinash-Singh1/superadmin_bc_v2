@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormControl, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Location } from '@angular/common';
 import { Subject, Subscription, debounceTime, distinctUntilChanged, fromEvent, takeUntil } from 'rxjs';
@@ -52,7 +52,7 @@ export class DeletedComponent implements OnInit {
   doctorsList: boolean = true;
   hospitalsList: boolean = false;
   patientList: boolean = false;
-  toggle = new FormControl();
+  toggle = new UntypedFormControl();
   getToggleEvent: boolean = true;
   getTogglehospital: boolean = true
   patientListData: any;
@@ -78,7 +78,7 @@ export class DeletedComponent implements OnInit {
   constructor(
     private dialog: MatDialog,
     private location: Location,
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     public apiService: ApiService,
     public globalSearch: GlobalsearchService
   ) { }

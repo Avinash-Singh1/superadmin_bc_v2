@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, Input, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { URLConstant } from 'src/app/apisURL/url';
 import { ApiService } from 'src/app/shared/api.service';
@@ -26,7 +26,7 @@ export class ProfileComponent implements OnInit {
     private uploadservice: UploadService,
     private http:HttpClient,
     private apiService:ApiService,
-    private fb:FormBuilder,
+    private fb:UntypedFormBuilder,
     private toastr:ToastrService
     ) { }
 

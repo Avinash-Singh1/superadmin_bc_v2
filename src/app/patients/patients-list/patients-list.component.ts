@@ -1,5 +1,5 @@
 import { Component, OnInit } from "@angular/core";
-import { FormBuilder, FormControl } from "@angular/forms";
+import { UntypedFormBuilder, UntypedFormControl } from "@angular/forms";
 import { MatDialog } from "@angular/material/dialog";
 import { log } from "console";
 import { ToastrService } from "ngx-toastr";
@@ -51,7 +51,7 @@ export class PatientsListComponent implements OnInit {
   ageParam: any = [];
   itemsPerPage: number = 10;
   bloodGroupParam: any = [];
-  search = new FormControl();
+  search = new UntypedFormControl();
   sortBy: any = {
     sort: "",
     sortOrder: "",
@@ -155,7 +155,7 @@ export class PatientsListComponent implements OnInit {
     private dialog: MatDialog,
     public toastr: ToastrService,
     public apiservice: ApiService,
-    public fb: FormBuilder
+    public fb: UntypedFormBuilder
   ) {}
 
   ngOnInit(): void {
@@ -263,7 +263,7 @@ export class PatientsListComponent implements OnInit {
     this.patientList("", "");
   }
   disableResetFilter: boolean = false;
-  resetcheckbox = new FormControl();
+  resetcheckbox = new UntypedFormControl();
   patientList(event: any, value: any, disable?: any) {
     let data: any = {
       page: this.page,

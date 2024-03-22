@@ -1,5 +1,5 @@
 import { Component, OnInit } from "@angular/core";
-import { FormBuilder, FormGroup, Validators } from "@angular/forms";
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from "@angular/forms";
 import { ToastrService } from "ngx-toastr";
 import { URLConstant } from "src/app/apisURL/url";
 import { EventService } from "src/app/services/event.service";
@@ -14,11 +14,11 @@ export class DoctorProfileComponent implements OnInit {
   getimgUrl: any;
   specializationList: any;
   videoSubmitted: boolean = false;
-  profileForm!: FormGroup;
+  profileForm!: UntypedFormGroup;
   experinenceYear: any[] = [];
 
   constructor(
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private apiSerive: ApiService,
     public toastr: ToastrService,
     private eventService: EventService

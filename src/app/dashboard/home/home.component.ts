@@ -1,6 +1,6 @@
 import { DatePipe } from "@angular/common";
 import { Component, OnInit, ViewChild } from "@angular/core";
-import { FormBuilder } from "@angular/forms";
+import { UntypedFormBuilder } from "@angular/forms";
 import { Chart, registerables } from "chart.js";
 import { ToastrService } from "ngx-toastr";
 import { URLConstant } from "src/app/apisURL/url";
@@ -18,7 +18,7 @@ import { MatDatepickerInputEvent } from "@angular/material/datepicker";
 })
 export class HomeComponent implements OnInit {
   constructor(
-    public fb: FormBuilder,
+    public fb: UntypedFormBuilder,
     public apiservice: ApiService,
     public datepipe: DatePipe,
     public toastr: ToastrService,

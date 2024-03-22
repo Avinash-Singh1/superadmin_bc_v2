@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { URLConstant } from 'src/app/apisURL/url';
@@ -13,7 +13,7 @@ import { ApiService } from 'src/app/shared/api.service';
 export class PasswordComponent implements OnInit {
   updatePasswordFrom:any;
   submitted:boolean=false;
-  constructor(public fb:FormBuilder,public apiService:ApiService,private toastr:ToastrService,private route:Router) { }
+  constructor(public fb:UntypedFormBuilder,public apiService:ApiService,private toastr:ToastrService,private route:Router) { }
 
   ngOnInit(): void {
     this.validateForm()

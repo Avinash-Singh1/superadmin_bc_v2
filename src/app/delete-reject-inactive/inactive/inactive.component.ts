@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { UntypedFormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { log } from 'console';
 import { ToastrService } from 'ngx-toastr';
@@ -55,7 +55,7 @@ export class InactiveComponent implements OnInit {
   doctorsList:boolean=true;
   hospitalsList:boolean=false;
   totalLength:any;
-  toggle=new FormControl();
+  toggle=new UntypedFormControl();
   getToggleEvent:boolean=true;
   getTogglehospital:boolean=true
   specialization=['Dental','Orthopaedics','General Surgery','ENT','Obstetrics/Gynaecology']

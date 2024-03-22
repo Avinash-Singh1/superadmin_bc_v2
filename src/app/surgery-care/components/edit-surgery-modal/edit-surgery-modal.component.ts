@@ -1,10 +1,10 @@
 import { Component, Inject, OnInit } from "@angular/core";
 import {
   AbstractControl,
-  FormArray,
-  FormBuilder,
-  FormControl,
-  FormGroup,
+  UntypedFormArray,
+  UntypedFormBuilder,
+  UntypedFormControl,
+  UntypedFormGroup,
   ValidatorFn,
   Validators,
 } from "@angular/forms";
@@ -27,13 +27,13 @@ import { FaqsModalComponent } from "../faqs-modal/faqs-modal.component";
 export class EditSurgeryModalComponent implements OnInit {
   constructor(
     private matdialog: MatDialog,
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private toastr: ToastrService,
     private apiService: ApiService,
     @Inject(MAT_DIALOG_DATA) public data: any,
     public matdialogRef: MatDialogRef<EditSurgeryModalComponent>
   ) {}
-  surgeryForm!: FormGroup;
+  surgeryForm!: UntypedFormGroup;
   acceptedFileType = ["image/jpeg", "image/jpg", "image/png"];
   departmentList: any = [];
   activeAccordion!: string;
@@ -89,7 +89,7 @@ export class EditSurgeryModalComponent implements OnInit {
     });
     const { image } = this.data.patchData.components[3];
     image?.forEach((item: any) => {
-      this.imageArray(3).push(new FormControl(item));
+      this.imageArray(3).push(new UntypedFormControl(item));
     });
   }
   get control() {
@@ -132,13 +132,13 @@ export class EditSurgeryModalComponent implements OnInit {
     ]);
   }
   get componentArray() {
-    return this.surgeryForm.get("components") as FormArray;
+    return this.surgeryForm.get("components") as UntypedFormArray;
   }
   get faqArray() {
-    return this.surgeryForm.get("faq") as FormArray;
+    return this.surgeryForm.get("faq") as UntypedFormArray;
   }
   imageArray(i: number) {
-    return this.componentArray.get(String(i))?.get("image") as FormArray;
+    return this.componentArray.get(String(i))?.get("image") as UntypedFormArray;
   }
   onUploadFile(
     event: any,
@@ -158,7 +158,7 @@ export class EditSurgeryModalComponent implements OnInit {
           if (uri) {
             if (array) {
               previous
-                ? this.imageArray(controlName).push(new FormControl(uri))
+                ? this.imageArray(controlName).push(new UntypedFormControl(uri))
                 : this.componentArray
                     .get(controlName)
                     ?.patchValue({ image: [uri] });
@@ -185,7 +185,7 @@ export class EditSurgeryModalComponent implements OnInit {
           const { uri } = res.result.uri;
           if (uri) {
             this.onDelete(i, j);
-            this.imageArray(i).insert(j, new FormControl(uri));
+            this.imageArray(i).insert(j, new UntypedFormControl(uri));
           }
         },
       });
@@ -305,7 +305,7 @@ export class EditSurgeryModalComponent implements OnInit {
   }
   validateImagesArray(): ValidatorFn {
     return (control: AbstractControl): { [key: string]: any } | null => {
-      const formArray = control as FormArray;
+      const formArray = control as UntypedFormArray;
       const valid = formArray.controls.some(
         (control) => control.value.trim() !== ""
       );

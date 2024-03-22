@@ -1,5 +1,5 @@
 import { Component, OnInit } from "@angular/core";
-import { FormBuilder, Validators } from "@angular/forms";
+import { UntypedFormBuilder, Validators } from "@angular/forms";
 import { Router } from "@angular/router";
 import { CookieService } from "ngx-cookie-service";
 import { ToastrService } from "ngx-toastr";
@@ -31,7 +31,7 @@ export class LoginComponent implements OnInit {
   public version: string = packageJson.version;
 
   constructor(
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     public validationService: ValidationService,
     private apiService: ApiService,
     private toastr: ToastrService,

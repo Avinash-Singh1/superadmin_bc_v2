@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from "@angular/core";
-import { FormBuilder, FormControl } from "@angular/forms";
+import { UntypedFormBuilder, UntypedFormControl } from "@angular/forms";
 import { MatDialog } from "@angular/material/dialog";
 import { log } from "console";
 import { ToastrService } from "ngx-toastr";
@@ -55,7 +55,7 @@ export class AppointmentListComponent implements OnInit {
   ageParam: any = [];
   itemsPerPage: number = 10;
   bloodGroupParam: any = [];
-  search = new FormControl();
+  search = new UntypedFormControl();
   sortBy: any = {
     sortOrder: "",
     sort: "",
@@ -180,7 +180,7 @@ export class AppointmentListComponent implements OnInit {
     private dialog: MatDialog,
     public toastr: ToastrService,
     public apiservice: ApiService,
-    public fb: FormBuilder,
+    public fb: UntypedFormBuilder,
     public datepipe: DatePipe
   ) {}
 

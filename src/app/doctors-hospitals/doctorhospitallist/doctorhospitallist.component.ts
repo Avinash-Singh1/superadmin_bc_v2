@@ -1,5 +1,5 @@
 import { Component, ElementRef, OnInit, ViewChild } from "@angular/core";
-import { FormBuilder, FormControl } from "@angular/forms";
+import { UntypedFormBuilder, UntypedFormControl } from "@angular/forms";
 import { MatDialog } from "@angular/material/dialog";
 import { ToastrService } from "ngx-toastr";
 import { debounceTime, distinctUntilChanged } from "rxjs";
@@ -101,8 +101,8 @@ export class DoctorhospitallistComponent implements OnInit {
   totalLength: any;
   OccupationList: any;
   totalLengthHospital: any;
-  search = new FormControl();
-  toggle = new FormControl();
+  search = new UntypedFormControl();
+  toggle = new UntypedFormControl();
   getToggleEvent: boolean = true;
   getTogglehospital: boolean = true;
   itemsPerPage: number = 10;
@@ -145,7 +145,7 @@ export class DoctorhospitallistComponent implements OnInit {
     private dialog: MatDialog,
     private apiservice: ApiService,
     private toastr: ToastrService,
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private loader: NgxUiLoaderService
   ) {}
 

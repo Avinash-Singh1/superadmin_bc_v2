@@ -11,7 +11,7 @@ import {
   NgZone,
 } from "@angular/core";
 
-import { FormBuilder, FormControl, Validators } from "@angular/forms";
+import { UntypedFormBuilder, UntypedFormControl, Validators } from "@angular/forms";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { ToastrService } from "ngx-toastr";
 import {
@@ -111,7 +111,7 @@ export class AddNewDoctorComponent implements OnInit, AfterViewInit {
   constructor(
     public closeModal: MatDialogRef<AddNewDoctorComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private apiservice: ApiService,
     public validationService: ValidationService,
     public toastr: ToastrService,
@@ -644,7 +644,7 @@ export class AddNewDoctorComponent implements OnInit, AfterViewInit {
       }
     );
   }
-  myControl = new FormControl("");
+  myControl = new UntypedFormControl("");
   options: string[] = this.getHospitalList;
   filteredOptions!: Observable<string[]>;
 
@@ -662,7 +662,7 @@ export class AddNewDoctorComponent implements OnInit, AfterViewInit {
       option.toLowerCase().includes(filterValue)
     );
   }
-  myControls = new FormControl("");
+  myControls = new UntypedFormControl("");
   option: string[] = this.getHospitalList;
   filteredOption!: Observable<string[]>;
 

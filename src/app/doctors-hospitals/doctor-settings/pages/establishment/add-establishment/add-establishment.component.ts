@@ -1,6 +1,6 @@
 import { Component, ElementRef, Inject, OnInit } from "@angular/core";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
-import { FormArray, FormBuilder, FormGroup, Validators } from "@angular/forms";
+import { UntypedFormArray, UntypedFormBuilder, UntypedFormGroup, Validators } from "@angular/forms";
 import { DatePipe } from "@angular/common";
 import { ApiService } from "src/app/services/api.service";
 import { API_ENDPOINTS } from "src/app/config/api.constant";
@@ -23,7 +23,7 @@ export class AddEstablishmentComponent implements OnInit {
   constructor(
     public matdiaRef: MatDialogRef<AddEstablishmentComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     public datepipe: DatePipe,
     private apiService: ApiService,
     private el: ElementRef,
@@ -38,7 +38,7 @@ export class AddEstablishmentComponent implements OnInit {
   subject = new Subject();
   opened: boolean = false;
   heading = "Add Establishment";
-  establishmentForm: FormGroup;
+  establishmentForm: UntypedFormGroup;
   submitted: boolean = false;
   changePhoto: boolean = true;
   zoom: number = 10;
@@ -431,10 +431,10 @@ export class AddEstablishmentComponent implements OnInit {
     }
   }
   dayControl(day: string) {
-    return this.establishmentForm.get(day) as FormArray;
+    return this.establishmentForm.get(day) as UntypedFormArray;
   }
   get addressControl() {
-    return this.control["address"] as FormGroup;
+    return this.control["address"] as UntypedFormGroup;
   }
   onFormValueChanges() {
     this.establishmentForm.valueChanges.subscribe(() => {

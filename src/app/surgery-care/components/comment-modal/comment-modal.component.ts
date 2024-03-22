@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from "@angular/core";
-import { FormControl, Validators } from "@angular/forms";
+import { UntypedFormControl, Validators } from "@angular/forms";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { URLConstant } from "src/app/apisURL/url";
 import { ApiService } from "src/app/shared/api.service";
@@ -15,7 +15,7 @@ export class CommentModalComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: any,
     public matdialogRef: MatDialogRef<CommentModalComponent>
   ) {}
-  comments: FormControl = new FormControl(this.data.comments, [
+  comments: UntypedFormControl = new UntypedFormControl(this.data.comments, [
     Validators.required,
   ]);
   ngOnInit(): void {}

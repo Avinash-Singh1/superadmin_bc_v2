@@ -1,5 +1,5 @@
 import { Component, OnInit } from "@angular/core";
-import { FormControl } from "@angular/forms";
+import { UntypedFormControl } from "@angular/forms";
 import { MatDialog } from "@angular/material/dialog";
 import { ToastrService } from "ngx-toastr";
 import { debounceTime, distinctUntilChanged } from "rxjs";
@@ -41,7 +41,7 @@ export class SpecialityComponent implements OnInit {
   }
   doctorsList: boolean = true;
   hospitalsList: boolean = false;
-  search = new FormControl();
+  search = new UntypedFormControl();
   // sortBy: any = {
   //   order:"",
   //   sortBy:""

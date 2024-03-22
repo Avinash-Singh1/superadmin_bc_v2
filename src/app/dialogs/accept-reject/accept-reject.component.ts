@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { log } from 'console';
 import { URLConstant } from 'src/app/apisURL/url';
@@ -23,7 +23,7 @@ export class AcceptRejectComponent implements OnInit {
   constructor(
   @Inject(MAT_DIALOG_DATA) public data: any,
   public dialogRef: MatDialogRef<AcceptRejectComponent>,
-  private fb:FormBuilder,
+  private fb:UntypedFormBuilder,
   private apiService:ApiService,
   private dialog:MatDialog
   ) { }

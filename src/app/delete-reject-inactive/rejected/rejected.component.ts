@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { UntypedFormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { log } from 'console';
 import { ToastrService } from 'ngx-toastr';
@@ -58,7 +58,7 @@ export class RejectedComponent implements OnInit {
   itemPerPage=10;
   hospitalPage=1;
   HospitalItemPerPage=10
-  toggle=new FormControl();
+  toggle=new UntypedFormControl();
   getToggleEvent:boolean=true;
   getTogglehospital:boolean=true;
   rejectedDoctorList:any;

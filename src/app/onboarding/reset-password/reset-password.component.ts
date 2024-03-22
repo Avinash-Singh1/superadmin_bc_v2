@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { catchError } from 'rxjs';
@@ -21,7 +21,7 @@ export class ResetPasswordComponent implements OnInit {
   hide:boolean=false;
 
 
-  constructor(private fb:FormBuilder,
+  constructor(private fb:UntypedFormBuilder,
     public validationService: ValidationService,
     public apiservice:ApiService,
     public toastr:ToastrService,

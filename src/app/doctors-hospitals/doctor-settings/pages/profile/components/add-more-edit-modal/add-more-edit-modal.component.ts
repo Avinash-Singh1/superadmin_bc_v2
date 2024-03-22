@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from "@angular/core";
-import { FormBuilder, FormGroup, Validators } from "@angular/forms";
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from "@angular/forms";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { URLConstant } from "src/app/apisURL/url";
 import { APP_CONSTANTS } from "src/app/constant/app.constant";
@@ -17,11 +17,11 @@ export class AddMoreEditModalComponent implements OnInit {
     public matdialogRef: MatDialogRef<AddMoreEditModalComponent>,
     @Inject(MAT_DIALOG_DATA) public matdata: any,
     private apiService: ApiService,
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private localStorage: LocalStorageService
   ) {}
 
-  addEditForm!: FormGroup;
+  addEditForm!: UntypedFormGroup;
   formList = {
     1: {
       fields: [

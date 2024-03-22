@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { UntypedFormControl } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { URLConstant } from 'src/app/apisURL/url';
@@ -49,7 +49,7 @@ export class RequestsComponent implements OnInit {
   isChecked:any=false;
   doctorsList:boolean=true;
   hospitalsList:boolean=false;
-  toggle=new FormControl();
+  toggle=new UntypedFormControl();
   getToggleEvent:boolean=true;
   getTogglehospital:boolean=true
   selectAll:boolean=true;
@@ -59,7 +59,7 @@ export class RequestsComponent implements OnInit {
   hospitalItemperPage:number=10
    page=1;
    hospitalPage=1
-   search = new FormControl();
+   search = new UntypedFormControl();
   deselectHospital:boolean=false;
   sortBy: any = {
     order:"",

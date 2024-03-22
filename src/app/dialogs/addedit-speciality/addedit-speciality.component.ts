@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from "@angular/core";
-import { FormBuilder, Validators } from "@angular/forms";
+import { UntypedFormBuilder, Validators } from "@angular/forms";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { Editor, Toolbar } from "ngx-editor";
 import { URLConstant } from "src/app/apisURL/url";
@@ -29,7 +29,7 @@ export class AddeditSpecialityComponent implements OnInit {
     [],
   ];
   constructor(
-    public fb: FormBuilder,
+    public fb: UntypedFormBuilder,
     @Inject(MAT_DIALOG_DATA) public data: any,
     public dialogRef: MatDialogRef<AddeditSpecialityComponent>,
     public apiService: ApiService

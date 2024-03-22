@@ -6,7 +6,7 @@ import {
   OnInit,
   ViewChild,
 } from "@angular/core";
-import { FormArray, FormBuilder, FormControl, FormGroup } from "@angular/forms";
+import { UntypedFormArray, UntypedFormBuilder, UntypedFormControl, UntypedFormGroup } from "@angular/forms";
 import { MatDialog } from "@angular/material/dialog";
 import { MatMenuTrigger } from "@angular/material/menu";
 import { MatTableDataSource } from "@angular/material/table";
@@ -27,14 +27,14 @@ import { ReadMoreComponent } from "src/app/dialogs/read-more/read-more.component
 })
 export class SurgerLeadListComponent implements OnInit {
   constructor(
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private apiService: ApiService,
     private matdialog: MatDialog,
     private toastr: ToastrService,
     private titleCase: TitleCasePipe,
     private datePipe: DatePipe
   ) { }
-  filterForm!: FormGroup;
+  filterForm!: UntypedFormGroup;
   serviceList: any = [];
   statusList: { [key: number]: string } = {
 
@@ -99,13 +99,13 @@ export class SurgerLeadListComponent implements OnInit {
     return this.filterForm.controls;
   }
   get serviceFormArray() {
-    return this.filterForm.controls["service"] as FormArray;
+    return this.filterForm.controls["service"] as UntypedFormArray;
   }
   get statusFormArray() {
-    return this.filterForm.controls["status"] as FormArray;
+    return this.filterForm.controls["status"] as UntypedFormArray;
   }
   get sourceFormArray() {
-    return this.filterForm.controls["source"] as FormArray;
+    return this.filterForm.controls["source"] as UntypedFormArray;
   }
 
   onChangeList(typeOfList: number) {
@@ -229,17 +229,17 @@ export class SurgerLeadListComponent implements OnInit {
         console.log(this.serviceList);
 
         this.serviceList.forEach(() =>
-          this.serviceFormArray.push(new FormControl(false))
+          this.serviceFormArray.push(new UntypedFormControl(false))
         );
         break;
       case "status":
         Object.keys(this.statusList).forEach(() => {
-          this.statusFormArray.push(new FormControl(false));
+          this.statusFormArray.push(new UntypedFormControl(false));
         });
         break;
       case "source":
         this.sourceList.forEach(() => {
-          this.sourceFormArray.push(new FormControl(false));
+          this.sourceFormArray.push(new UntypedFormControl(false));
         });
         break;
     }

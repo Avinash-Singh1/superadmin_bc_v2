@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { log } from 'console';
 import { ToastrService } from 'ngx-toastr';
@@ -57,7 +57,7 @@ export class ReviewListComponent implements OnInit {
   rejectedStarArr: any = []
   pageRejected = 1;
   itemPerPageRejectd = 10
-  toggle = new FormControl();
+  toggle = new UntypedFormControl();
   getToggleEvent: boolean = true;
   getTogglehospital: boolean = true;
   approvedReview: any;
@@ -105,13 +105,13 @@ export class ReviewListComponent implements OnInit {
   hospitals = ['Super-speciality', 'Multi-speciality', 'Super-speciality Clinic', 'Multi-speciality Clinic']
 
 
-  public form: FormGroup;
+  public form: UntypedFormGroup;
   rating3: number
   constructor(
     private dialog: MatDialog,
     private apiservice: ApiService,
     private toastr: ToastrService,
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
   ) {
     this.rating3 = 5;
     this.form = this.fb.group({

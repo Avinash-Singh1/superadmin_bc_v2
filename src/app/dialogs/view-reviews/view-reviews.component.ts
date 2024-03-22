@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { URLConstant } from 'src/app/apisURL/url';
 import { ApiService } from 'src/app/shared/api.service';
@@ -12,7 +12,7 @@ import { ApiService } from 'src/app/shared/api.service';
 export class ViewReviewsComponent implements OnInit {
   public form:any;
   constructor(    
-    private fb:FormBuilder,
+    private fb:UntypedFormBuilder,
     private apiservice:ApiService,
     @Inject(MAT_DIALOG_DATA) public data: any,
     public dialogRef: MatDialogRef<ViewReviewsComponent>,

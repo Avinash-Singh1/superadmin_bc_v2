@@ -1,5 +1,5 @@
 import { Component, Inject } from "@angular/core";
-import { FormBuilder, FormGroup, Validators } from "@angular/forms";
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from "@angular/forms";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 
 @Component({
@@ -8,9 +8,9 @@ import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
   styleUrls: ["./faqs-modal.component.scss"],
 })
 export class FaqsModalComponent {
-  faqForm!: FormGroup;
+  faqForm!: UntypedFormGroup;
   constructor(
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     public matdialogRef: MatDialogRef<FaqsModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {

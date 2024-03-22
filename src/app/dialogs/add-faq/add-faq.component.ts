@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { URLConstant } from 'src/app/apisURL/url';
 import { ApiService } from 'src/app/shared/api.service';
@@ -14,7 +14,7 @@ export class AddFaqComponent implements OnInit {
   addFaqForm:any;
   constructor(
     @Inject(MAT_DIALOG_DATA) public data:any,
-    private fb:FormBuilder,
+    private fb:UntypedFormBuilder,
     private apiService:ApiService,
     private dialog:MatDialog,
     private dialogRef:MatDialogRef<AddFaqComponent>) { }

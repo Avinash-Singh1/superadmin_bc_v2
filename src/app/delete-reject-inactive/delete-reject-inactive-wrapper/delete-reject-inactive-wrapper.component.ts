@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { UntypedFormControl } from '@angular/forms';
 import { Router } from '@angular/router';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { GlobalsearchService } from 'src/app/shared/globalsearch.service';
@@ -31,7 +31,7 @@ export class DeleteRejectInactiveWrapperComponent implements OnInit {
   constructor(private route: Router,private searchService: GlobalsearchService) {
    
    }
-   searchControl=new FormControl
+   searchControl=new UntypedFormControl
   ngOnInit(): void {
   }
 
