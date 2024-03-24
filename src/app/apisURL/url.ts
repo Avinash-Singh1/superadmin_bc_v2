@@ -68,15 +68,20 @@ export class URLConstant {
   public static logout = "v1/auth/logout";
 
   //imported
+  public static updateDoctorProfile = "v1/setting/profile/admin";
+  public static settingList = "v1/setting/list/admin";
+  public static procedures = "v1/doctor/procedure-admin";
   public static doctorVideos = "v1/video/list";
-  public static procedures = "v1/doctor/procedure";
-  public static settingList = "v1/setting/list";
-  public static updateDoctorProfile = "v1/setting/profile";
+  public static establishmentList = "v1/doctor/doctor-establishment-list-admin";
+  public static establishmentRequestList =
+    "v1/doctor/doctor-establishment-request-admin";
+
   public static addfaqList = "v1/faq";
   public static addVideos = "v1/video";
   public static social = "v1/master/social-media";
-  public static establishmentList = "v1/doctor/doctor-establishment-list";
-  public static establishmentRequestList =
-    "v1/doctor/doctor-establishment-request";
   public static editEstablishmentDetail = "v1/doctor/doctor-edit-establishment";
+  public static changeEstablishmentStatus =
+    "v1/doctor/doctor-accept-establishment";
+  public static addEstablishment = "v1/doctor/doctor-add-establishment";
+  public static hospitalType = "v1/master/hospital-type";
 }

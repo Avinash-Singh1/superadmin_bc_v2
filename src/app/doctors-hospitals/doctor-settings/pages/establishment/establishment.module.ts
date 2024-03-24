@@ -1,21 +1,18 @@
-import { NgModule, PLATFORM_ID } from "@angular/core";
+import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
 
 import { EstablishmentRoutingModule } from "./establishment-routing.module";
 import { EstablishmentListComponent } from "./establishment-list/establishment-list.component";
 import { AddEstablishmentComponent } from "./add-establishment/add-establishment.component";
-import { AngularSvgIconModule, SvgLoader } from "angular-svg-icon";
+import { AngularSvgIconModule } from "angular-svg-icon";
 import { SharedModule } from "src/app/shared/shared.module";
-import { NgSelectModule } from "@ng-select/ng-select";
-import { AngularMaterialModule } from "src/app/material.module";
 import { TranslateModule } from "@ngx-translate/core";
 import { EstablishmentRequestComponent } from "./establishment-request/establishment-request.component";
 import { ReactiveFormsModule } from "@angular/forms";
 import { NgxPaginationModule } from "ngx-pagination";
 import { ConfirmEstablishmentComponent } from "./confirm-establishment/confirm-establishment.component";
-import { svgLoaderFactory } from "src/app/shared/loader/svg-common.loader";
-import { HttpClient } from "@angular/common/http";
-import { TransferState } from "@angular/platform-browser";
+import { MatDialogModule } from "@angular/material/dialog";
+import { MatAutocompleteModule } from "@angular/material/autocomplete";
 
 @NgModule({
   declarations: [
@@ -27,19 +24,14 @@ import { TransferState } from "@angular/platform-browser";
   imports: [
     CommonModule,
     EstablishmentRoutingModule,
-    AngularSvgIconModule.forRoot({
-      loader: {
-        provide: SvgLoader,
-        useFactory: svgLoaderFactory,
-        deps: [HttpClient, TransferState, PLATFORM_ID],
-      },
-    }),
+    AngularSvgIconModule.forRoot(),
     SharedModule,
-    NgSelectModule,
-    AngularMaterialModule,
     TranslateModule,
     ReactiveFormsModule,
     NgxPaginationModule,
+    MatDialogModule,
+    SharedModule,
+    MatAutocompleteModule,
   ],
   exports: [EstablishmentRequestComponent],
 })

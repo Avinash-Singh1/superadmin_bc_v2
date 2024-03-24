@@ -3,7 +3,7 @@ import { MatDialog } from "@angular/material/dialog";
 import { AddMoreEditModalComponent } from "../../components/add-more-edit-modal/add-more-edit-modal.component";
 import { ActivatedRoute } from "@angular/router";
 import { LocalStorageService } from "src/app/services/storage.service";
-import { DeleteModalComponent } from "src/app/shared/delete-modal/delete-modal.component";
+import { DeleteModalComponent } from "src/app/shared/components/delete-modal/delete-modal.component";
 import { ApiService } from "src/app/shared/api.service";
 import { URLConstant as API_ENDPOINTS } from "src/app/apisURL/url";
 import { APP_CONSTANTS } from "src/app/constant/app.constant";
@@ -16,6 +16,7 @@ import { APP_CONSTANTS } from "src/app/constant/app.constant";
 export class DoctorEducationComponent implements OnInit {
   data: any;
   edit: boolean = false;
+
   constructor(
     private matdialog: MatDialog,
     private activateRoute: ActivatedRoute,
@@ -25,6 +26,9 @@ export class DoctorEducationComponent implements OnInit {
     this.data =
       this.profileListing[this.activateRoute.snapshot.data["heading"]];
   }
+
+  userId?: string = this.localStorage.getItem("userId");
+
   educationList: any;
   awardsList: any;
   medicalRegistration: any;
@@ -147,7 +151,7 @@ export class DoctorEducationComponent implements OnInit {
 
   getProcedureList() {
     this.apiService
-      .GetData(API_ENDPOINTS.procedures, {})
+      .GetData(API_ENDPOINTS.procedures, { userId: this.userId })
       .subscribe((res: any) => {
         this.procedureList = res?.result?.list;
       });
@@ -155,7 +159,10 @@ export class DoctorEducationComponent implements OnInit {
 
   getListing() {
     this.apiService
-      .GetData(API_ENDPOINTS.settingList, { type: this.data.type })
+      .GetData(API_ENDPOINTS.settingList, {
+        type: this.data.type,
+        userId: this.userId,
+      })
       .subscribe((res: any) => {
         const listName = this.data.listName as keyof DoctorEducationComponent;
         this[listName] = res?.result?.list;

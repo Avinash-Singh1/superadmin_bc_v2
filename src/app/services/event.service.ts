@@ -34,4 +34,14 @@ export class EventService {
     const matched = this.ignoreList.filter((element) => url.includes(element));
     return matched.length > 0 ? false : true;
   }
+
+  private eventSubject = new Subject<string>();
+
+  emitUserIdEvent(id: string) {
+    this.eventSubject.next(id);
+  }
+
+  getUserId() {
+    return this.eventSubject.asObservable();
+  }
 }

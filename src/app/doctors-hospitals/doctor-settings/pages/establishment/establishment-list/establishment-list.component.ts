@@ -8,6 +8,7 @@ import { ConfirmEstablishmentComponent } from "../confirm-establishment/confirm-
 import { GoogleMapsService } from "src/app/services/google-maps.service";
 import { ApiService } from "src/app/shared/api.service";
 import { URLConstant } from "src/app/apisURL/url";
+import { LocalStorageService } from "src/app/services/storage.service";
 
 @Component({
   selector: "nectar-establishment-list",
@@ -19,8 +20,12 @@ export class EstablishmentListComponent implements OnInit, OnDestroy {
     private matdialog: MatDialog,
     private apiService: ApiService,
     private eventService: EventService,
-    public googleMaps: GoogleMapsService
+    public googleMaps: GoogleMapsService,
+    private localStorage: LocalStorageService
   ) {}
+
+  userId?: string = this.localStorage.getItem("userId");
+
   opened: boolean = false;
   requestList = [];
   totalRequest: number = 0;
@@ -71,31 +76,33 @@ export class EstablishmentListComponent implements OnInit, OnDestroy {
   getEsablishmentList() {
     this.ownEstablishment = [];
     this.visitEstablishment = [];
-    this.apiService.GetData(URLConstant.establishmentList, {}).subscribe({
-      next: (res: any) => {
-        this.apiCalled = true;
-        const { count, data } = res.result;
-        if (count) {
-          data.forEach((element: any) => {
-            switch (element.isOwner) {
-              case true:
-                this.ownEstablishment.push(element);
-                break;
-              case false:
-                this.visitEstablishment.push(element);
-                break;
-            }
-          });
-        } else {
-          this.ownEstablishment = [];
-          this.visitEstablishment = [];
-        }
-      },
-      error: (error: any) => {
-        this.apiCalled = true;
-        console.log(error);
-      },
-    });
+    this.apiService
+      .GetData(URLConstant.establishmentList, { userId: this.userId })
+      .subscribe({
+        next: (res: any) => {
+          this.apiCalled = true;
+          const { count, data } = res.result;
+          if (count) {
+            data.forEach((element: any) => {
+              switch (element.isOwner) {
+                case true:
+                  this.ownEstablishment.push(element);
+                  break;
+                case false:
+                  this.visitEstablishment.push(element);
+                  break;
+              }
+            });
+          } else {
+            this.ownEstablishment = [];
+            this.visitEstablishment = [];
+          }
+        },
+        error: (error: any) => {
+          this.apiCalled = true;
+          console.log(error);
+        },
+      });
   }
   onOpenRequestDialog() {
     const requestDialog = this.matdialog.open(EstablishmentRequestComponent, {
@@ -116,7 +123,7 @@ export class EstablishmentListComponent implements OnInit, OnDestroy {
   }
   getRequestList() {
     this.apiService
-      .GetData(URLConstant.establishmentRequestList, {})
+      .GetData(URLConstant.establishmentRequestList, { userId: this.userId })
       .subscribe({
         next: (res: any) => {
           this.requestList = res.result[0].data;

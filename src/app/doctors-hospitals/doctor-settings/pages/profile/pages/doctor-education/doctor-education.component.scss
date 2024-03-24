@@ -1,5 +1,5 @@
-@import "src/styles/scss/variable.scss";
-@import "src/styles/elements/_elements.svg.scss";
+@import "src/assets/scss/variable.scss";
+@import "src/assets/scss/elements/_elements.svg.scss";
 .doctor-education {
   .heading {
     padding: 31px 24px;
@@ -9,7 +9,6 @@
       padding: 8px 8px;
       border: 1px solid $border-color;
       border-radius: 8px;
-      
     }
   }
   .listing {

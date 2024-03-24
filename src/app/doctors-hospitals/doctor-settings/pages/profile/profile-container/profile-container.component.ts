@@ -49,10 +49,10 @@ export class ProfileContainerComponent {
       label: "Social",
       routerLink: "social",
     },
-    {
-      label: "Delete Profile",
-      routerLink: "delete-profile",
-      red: true,
-    },
+    // {
+    //   label: "Delete Profile",
+    //   routerLink: "delete-profile",
+    //   red: true,
+    // },
   ];
 }

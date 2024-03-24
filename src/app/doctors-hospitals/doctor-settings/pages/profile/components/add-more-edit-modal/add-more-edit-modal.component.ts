@@ -1,5 +1,9 @@
 import { Component, Inject, OnInit } from "@angular/core";
-import { UntypedFormBuilder, UntypedFormGroup, Validators } from "@angular/forms";
+import {
+  UntypedFormBuilder,
+  UntypedFormGroup,
+  Validators,
+} from "@angular/forms";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { URLConstant } from "src/app/apisURL/url";
 import { APP_CONSTANTS } from "src/app/constant/app.constant";
@@ -22,7 +26,7 @@ export class AddMoreEditModalComponent implements OnInit {
   ) {}
 
   addEditForm!: UntypedFormGroup;
-  formList = {
+  formList: { [key: number]: { fields: any[]; formGroup: any } } = {
     1: {
       fields: [
         {
@@ -272,6 +276,7 @@ export class AddMoreEditModalComponent implements OnInit {
       },
     },
   };
+
   ngOnInit(): void {
     this.validateForm();
     if (this.matdata.content.type == 8) {
@@ -406,6 +411,7 @@ export class AddMoreEditModalComponent implements OnInit {
         res?.result?.data;
     });
   }
+
   masterProcedureList() {
     this.apiService.GetData(URLConstant.procedure, {}).subscribe((res: any) => {
       this.formList[this.matdata.content.type].fields[0].items =

@@ -1,4 +1,4 @@
-@import "src/styles/scss/variable.scss";
+@import "src/assets/scss/variable.scss";
 .main {
   min-height: calc(100vh - 144px);
   .profile-sidebar {
@@ -32,10 +32,10 @@
   }
 }
 
-.active-link{
+.active-link {
   background-color: $purple;
   color: $white;
-  &.text-red{
+  &.text-red {
     background-color: $red !important;
   }
 }

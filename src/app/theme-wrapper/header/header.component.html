@@ -1,6 +1,12 @@
 <div class="headerBack">
   <div class="d-flex justify-content-between">
     <div class="headershead">
+      <img
+        class="cursor toggle_icon me-4"
+        src="assets/images/png/toggle.png"
+        alt=""
+        (click)="toggleSideBar()"
+      />
       <ng-content></ng-content>
     </div>
     <div class="superdata">
@@ -449,10 +455,4 @@
     </div>
   </div>
   <app-sidebar [toggle]="toggleValue"></app-sidebar>
-  <img
-    class="cursor toggle_icon"
-    src="assets/images/png/toggle.png"
-    alt=""
-    (click)="toggleSideBar()"
-  />
 </div>

@@ -35,6 +35,7 @@ export class ApiService {
     // this.loader.start();
     let params = new HttpParams();
     params = params.appendAll(payload);
+
     return this.httpClient
       .get(`${this.url + endpoint}`, { params: params })
       .pipe(

@@ -16,6 +16,7 @@ export const environment = {
     "https://nectorplus.s3.ap-south-1.amazonaws.com/8b0d08d0-673c-11ee-bfab-6d7e93c1d95a-Surgery%20Desktop%20Banner.png",
   SURGERY_ICON_IMAGE_URL:
     "https://nectorplus.s3.ap-south-1.amazonaws.com/0f7d1d50-2ae1-11ee-9860-d9c6f3b36073-skull-surgery.png",
+  DOCTOR_SLOT_TIME: 900000,
   // API_BASE_URL:'http://3.110.8.230:3000/api/'
 
   //staging build

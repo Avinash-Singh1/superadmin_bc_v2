@@ -1,167 +1,158 @@
-@import './variable';
-@import './mixins';
-.emailerror{
-    @include font($primaryFont,400,16px);
-    // background-color:$purple;
-    color:red;
-    // text-align: center;
-    // margin-top:10px;
-    padding:10px;
-    border-radius:40px;
-    max-width: 420px;
-    width:100%;
-  }
-
-
-  //table and filter css
-
-.patientsHeader {
-    padding: 24px 50px 24px 24px;
-    .patientdetail {
-        @include font($primaryFont, 600, 24px);
-        color: $black;
-    }
-    .otherFeatures {
-        .filter {
-            border: 1px solid $border;
-            padding: 12px;
-            border-radius: 10px;
-            cursor: pointer;
-
-            span {
-                @include font($primaryFont, 400, 18px);
-                color: $filtercolor;
-            }
-        }
-    .export {
-            border: 1px solid $border;
-            padding: 12px;
-            border-radius: 10px;
-            cursor: pointer;
-            span {
-                @include font($primaryFont, 400, 18px);
-                color: $filtercolor
-            }
-        }
-      
-    }
+@import "./variable";
+@import "./mixins";
+.emailerror {
+  @include font($primaryFont, 400, 16px);
+  // background-color:$purple;
+  color: red;
+  // text-align: center;
+  // margin-top:10px;
+  padding: 10px;
+  border-radius: 40px;
+  max-width: 420px;
+  width: 100%;
 }
 
+//table and filter css
+
+.patientsHeader {
+  padding: 24px 50px 24px 24px;
+  .patientdetail {
+    @include font($primaryFont, 600, 24px);
+    color: $black;
+  }
+  .otherFeatures {
+    .filter {
+      border: 1px solid $border;
+      padding: 12px;
+      border-radius: 10px;
+      cursor: pointer;
+
+      span {
+        @include font($primaryFont, 400, 18px);
+        color: $filtercolor;
+      }
+    }
+    .export {
+      border: 1px solid $border;
+      padding: 12px;
+      border-radius: 10px;
+      cursor: pointer;
+      span {
+        @include font($primaryFont, 400, 18px);
+        color: $filtercolor;
+      }
+    }
+  }
+}
 
 //table css
 
-
-
-
 table {
-    // width: 100%;
-    // min-width: 800px;
-    .headers {
-        background-color: $mat;
-         width: 200px;
-         max-width: 300px;
-        padding: 22px 0px;
-        color: $black;
-        @include font($primaryFont, 600, 18px)
-    }
-    .text-headers{
-        background-color: $mat;
-         width: 150px;
-         max-width: 300px;
-        padding: 22px 0px;
-        color: $black;
-        @include font($primaryFont, 600, 18px)
-    }
-    .specaildata{
-        background-color: $mat;
+  // width: 100%;
+  // min-width: 800px;
+  .headers {
+    background-color: $mat;
+    width: 200px;
+    max-width: 300px;
+    padding: 22px 0px;
+    color: $black;
+    @include font($primaryFont, 600, 18px);
+  }
+  .text-headers {
+    background-color: $mat;
+    width: 150px;
+    max-width: 300px;
+    padding: 22px 0px;
+    color: $black;
+    @include font($primaryFont, 600, 18px);
+  }
+  .specaildata {
+    background-color: $mat;
 
-        max-width: 300px;
-        padding: 22px 0px;
-        color: $black;
-        @include font($primaryFont, 600, 18px)
-    }
- .tabledata {
-    
-        padding: 22px 5px;
-        //width: 150px;
-        word-break: break-word  !important;
+    max-width: 300px;
+    padding: 22px 0px;
+    color: $black;
+    @include font($primaryFont, 600, 18px);
+  }
+  .tabledata {
+    padding: 22px 5px;
+    //width: 150px;
+    word-break: break-word !important;
 
-        @include font($primaryFont, 400, 18px);
-        color: $black;
+    @include font($primaryFont, 400, 18px);
+    color: $black;
 
-        .patientimg {
-            height: 42px;
-            width: 42px;
-            border-radius: 100%;
-        }
+    .patientimg {
+      height: 42px;
+      width: 42px;
+      border-radius: 100%;
     }
-    .male,
-    .female {
-        padding: 8px 16px;
-        border-radius: 8px;
-    }
-    .male {
-        background-color: $male;
-    }
-   .female {
-        background-color: $female;
-    }
+  }
+  .male,
+  .female {
+    padding: 8px 16px;
+    border-radius: 8px;
+  }
+  .male {
+    background-color: $male;
+  }
+  .female {
+    background-color: $female;
+  }
 }
 .cancel-ok-btn {
-    .cancel,
-    .ok {
-        background: none;
-        border: none;
-        width: 80px;
-        height: 45px;
-        border-radius: 3px;
-        @include font($primaryFont, 400, 18px)
-    }
-    .cancel {
-        border: 1px solid $cancelborder;
-    }
-    .ok {
-        background-color: $okBackground;
-        color: $white;
-    }
+  .cancel,
+  .ok {
+    background: none;
+    border: none;
+    width: 80px;
+    height: 45px;
+    border-radius: 3px;
+    @include font($primaryFont, 400, 18px);
+  }
+  .cancel {
+    border: 1px solid $cancelborder;
+  }
+  .ok {
+    background-color: $okBackground;
+    color: $white;
+  }
 }
 
 .cursor {
-    cursor: pointer;
+  cursor: pointer;
 }
 ::ng-deep .mat-menu-panel {
-    // width: 256px !important;
-    // padding: 0 16px !important;
+  // width: 256px !important;
+  // padding: 0 16px !important;
 
-    button {
-        @include font($primaryFont, 400, 18px);
-        color: $black;
-    }
+  button {
+    @include font($primaryFont, 400, 18px);
+    color: $black;
+  }
 }
 ::ng-deep {
-    .mat-radio-button.mat-accent.mat-radio-checked .mat-radio-outer-circle {
-        border-color: $black;
-    }
-    .mat-radio-button.mat-accent .mat-radio-inner-circle,
-    .mat-radio-button.mat-accent .mat-radio-ripple .mat-ripple-element:not(.mat-radio-persistent-ripple),
-    .mat-radio-button.mat-accent.mat-radio-checked .mat-radio-persistent-ripple,
-    .mat-radio-button.mat-accent:active .mat-radio-persistent-ripple {
-        background-color: $black;
-    }
-    .mat-checkbox {
-        margin-top: 20px !important;
-    }
-    .mat-radio-label-content {
-        @include font($primaryFont, 400, 18px);
-        color: $black;
-    }
+  .mat-radio-button.mat-accent.mat-radio-checked .mat-radio-outer-circle {
+    border-color: $black;
+  }
+  .mat-radio-button.mat-accent .mat-radio-inner-circle,
+  .mat-radio-button.mat-accent
+    .mat-radio-ripple
+    .mat-ripple-element:not(.mat-radio-persistent-ripple),
+  .mat-radio-button.mat-accent.mat-radio-checked .mat-radio-persistent-ripple,
+  .mat-radio-button.mat-accent:active .mat-radio-persistent-ripple {
+    background-color: $black;
+  }
+  .mat-checkbox {
+    margin-top: 20px !important;
+  }
+  .mat-radio-label-content {
+    @include font($primaryFont, 400, 18px);
+    color: $black;
+  }
 }
 
-
-
 // toggle css
-
-
 
 .switch {
   position: relative;
@@ -170,7 +161,7 @@ table {
   height: 26px;
 }
 
-.switch input { 
+.switch input {
   opacity: 0;
   width: 0;
   height: 0;
@@ -184,8 +175,8 @@ table {
   right: 0;
   bottom: 0;
   background-color: #ccc;
-  -webkit-transition: .4s;
-  transition: .4s;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
 }
 
 .slider:before {
@@ -196,8 +187,8 @@ table {
   left: 4px;
   bottom: 3px;
   background-color: white;
-  -webkit-transition: .4s;
-  transition: .4s;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
 }
 
 input:checked + .slider {
@@ -223,182 +214,159 @@ input:checked + .slider:before {
   border-radius: 50%;
 }
 
-
-
 //popup css
-::ng-deep .mat-dialog-container{
-    padding: 0;
+::ng-deep .mat-dialog-container {
+  padding: 0;
 }
-.specialization{
-    margin: 24px 0;
+.specialization {
+  margin: 24px 0;
 }
-.userDetail{
-    width:100%;
-    height:48px;
-
+.userDetail {
+  width: 100%;
+  height: 48px;
 }
-.dialogHeader{
-    @include font($primaryFont,600,24px);
-    color:$black
+.dialogHeader {
+  @include font($primaryFont, 600, 24px);
+  color: $black;
 }
-.userLabel{
-    @include font($primaryFont,400,18px);
-    color:$filtercolor
-
+.userLabel {
+  @include font($primaryFont, 400, 18px);
+  color: $filtercolor;
 }
-.mandatory{
-    color:$red;
+.mandatory {
+  color: $red;
 }
-::ng-deep .mat-select{
-    padding-top: 11px !important;
+::ng-deep .mat-select {
+  padding-top: 11px !important;
 }
-.bottomLast{
-    margin-top:200px;
-    margin-bottom:20px;
+.bottomLast {
+  margin-top: 200px;
+  margin-bottom: 20px;
 }
-.bottomdoctorLast{
-    margin-top:93px;
-    margin-bottom:20px;
+.bottomdoctorLast {
+  margin-top: 93px;
+  margin-bottom: 20px;
 }
-.continue-btn{
-    border:none;
-    background-color: $black;
-    color:$white;
-    @include font($primaryFont,400,18px);
-    border-radius:8px;
-
+.continue-btn {
+  border: none;
+  background-color: $black;
+  color: $white;
+  @include font($primaryFont, 400, 18px);
+  border-radius: 8px;
 }
-.cancel1,.next{
-    padding: 12px 94px;
-    border: none;
-    border-radius: 5px;
-    @include font($primaryFont,400,18px)
-   
+.cancel1,
+.next {
+  padding: 12px 94px;
+  border: none;
+  border-radius: 5px;
+  @include font($primaryFont, 400, 18px);
 }
-.next{
-    border: none;
-    background-color: $deep_black;
-    color:$white
+.next {
+  border: none;
+  background-color: $deep_black;
+  color: $white;
 }
-.cancel{
-    background: none;
-    border: 1px solid $filtercolor; 
-    color: $black;
+.cancel {
+  background: none;
+  border: 1px solid $filtercolor;
+  color: $black;
 }
-
 
 //pagination css
 
-
-::ng-deep 
-{.ngx-pagination .pagination-next a::after{
+::ng-deep {
+  .ngx-pagination .pagination-next a::after {
     display: none !important;
     border: none !important;
   }
-   .ngx-pagination .pagination-next.disabled::after{
+  .ngx-pagination .pagination-next.disabled::after {
     display: none !important;
   }
-   .ngx-pagination .pagination-previous a::before{
+  .ngx-pagination .pagination-previous a::before {
     display: none !important;
   }
-  .ngx-pagination .pagination-previous.disabled::before{
+  .ngx-pagination .pagination-previous.disabled::before {
     display: none !important;
   }
-   .ngx-pagination {
+  .ngx-pagination {
     margin-left: 0 !important;
     margin-bottom: 1rem !important;
     line-height: 20px !important;
     padding: 7px 15px 7px !important;
     font-size: 24px !important;
-    .current{
-    border-radius: 100% !important;  
-    padding:14px 11px !important;
-    background-color: $purple !important;
-    margin:10px !important;
+    .current {
+      border-radius: 100% !important;
+      padding: 14px 11px !important;
+      background-color: $purple !important;
+      margin: 10px !important;
     }
-    li{
-        border-radius: 100% !important;  
-        padding:10px 1px !important;
-        border: 1px solid $purple !important;
-         margin: 10px !important;
-        //  height:45px !important;
-         width: 45px !important;
-
-
+    li {
+      border-radius: 100% !important;
+      padding: 10px 1px !important;
+      border: 1px solid $purple !important;
+      margin: 10px !important;
+      //  height:45px !important;
+      width: 45px !important;
     }
-    a{
-        text-decoration: none !important;
+    a {
+      text-decoration: none !important;
     }
-    li:first-child{
-        border: none !important;
-        padding: 0px !important;
-        margin: 0px !important;
-
-
+    li:first-child {
+      border: none !important;
+      padding: 0px !important;
+      margin: 0px !important;
     }
-  
-    li:last-child{
-        border: none !important;
-        padding: 0px !important;
-        margin: 0px !important;
 
-
+    li:last-child {
+      border: none !important;
+      padding: 0px !important;
+      margin: 0px !important;
     }
-     a:hover{
-        background: none !important;
-     }
-    
+    a:hover {
+      background: none !important;
+    }
   }
 }
-  .status{
-    padding: 8px 16px;
-    border-radius: 8px;
-    background-color: $female;
+.status {
+  padding: 8px 16px;
+  border-radius: 8px;
+  background-color: $female;
 }
-.view{
-    background-color: $okBackground;
-    padding: 8px 24px;
-    border-radius: 8px;
-    color:$white;
+.view {
+  background-color: $okBackground;
+  padding: 8px 24px;
+  border-radius: 8px;
+  color: $white;
 }
 
-
-//search css 
+//search css
 
 .search {
-    position: relative;
+  position: relative;
 
-    img {
-        position: absolute;
-        left: 20px;
-        top: 17px;
-    }
-    input {
-        height: 51px;
-        width: 300px;
-        border-radius: 10px;
-        border: 1px solid $border;
-        padding-left: 50px;
+  img {
+    position: absolute;
+    left: 20px;
+    top: 17px;
+  }
+  input {
+    height: 51px;
+    width: 300px;
+    border-radius: 10px;
+    border: 1px solid $border;
+    padding-left: 50px;
 
-        ::placeholder {
-            span {
-                @include font($primaryFont, 400, 18px);
-                color: $filtercolor
-            }
-        }
+    ::placeholder {
+      span {
+        @include font($primaryFont, 400, 18px);
+        color: $filtercolor;
+      }
     }
+  }
 }
 
-
-
-
-
-
-
-
-
-// @import "src/styles/settings/settings.colors";
-// @import "src/styles/scss/variable.scss";
+// @import "src/assets/scss/settings/settings.colors";
+// @import "src/assets/scss/variable.scss";
 @mixin ngx-pagination($background, $border) {
   //   background-color: $background;
   //   border: $border;
@@ -428,127 +396,128 @@ input:checked + .slider:before {
   // 	color: $color-red-dark;
   // }
   // .ngx-pagination {
-//   line-height: 24px !important;
-//   font-size: 24px !important;
-//   display: flex;
-//   align-items: center;
-//   justify-content: center;
-//   .current {
-//     border-radius: 100% !important;
-//     background-color: $border !important;
-//     span {
-//       display: inline-block;
-//       transform: translateY(5px);
-//     }
-//   }
-//   li {
-//     border-radius: 100% !important;
-//     height: 45px;
-//     width: 45px;
-//     border: 2px solid !important;
-//     border-color: $background !important;
-//     margin: 10px !important;
-//   }
-//   a {
-//     transform: translateY(5px);
-//     text-decoration: none !important;
-//     &:hover {
-//       background: none !important;
-//     }
-//   }
-//   li {
-//     &:first-child {
-//       border: none !important;
-//       a {
-//         transform: translateY(8px) !important;
-//         display: flex;
-//         align-items: center;
-//         justify-content: center;
-//         &::before {
-//           content: url("../../assets/images/leftarrow.png") !important;
-//         }
-//       }
-//     }
-//     &:last-child {
-//       border: none !important;
-//       a {
-//         transform: translateY(8px) !important;
-//         display: flex;
-//         align-items: center;
-//         justify-content: center;
-//         &::after {
-//           content: url("../../assets/images/rightarow.png") !important;
-//         }
-//       }
-//     }
-//     &.pagination-next.disabled {
-//       display: flex;
-//       align-items: center;
-//       justify-content: center;
-//       &::after {
-//         content: url("../../assets/images/rightarow.png") !important;
-//       }
-//     }
-//     &.pagination-previous.disabled {
-//       display: flex;
-//       align-items: center;
-//       justify-content: center;
-//       &::before {
-//         content: url("../../assets/images/leftarrow.png") !important;
-//       }
-//     }
-//   }
+  //   line-height: 24px !important;
+  //   font-size: 24px !important;
+  //   display: flex;
+  //   align-items: center;
+  //   justify-content: center;
+  //   .current {
+  //     border-radius: 100% !important;
+  //     background-color: $border !important;
+  //     span {
+  //       display: inline-block;
+  //       transform: translateY(5px);
+  //     }
+  //   }
+  //   li {
+  //     border-radius: 100% !important;
+  //     height: 45px;
+  //     width: 45px;
+  //     border: 2px solid !important;
+  //     border-color: $background !important;
+  //     margin: 10px !important;
+  //   }
+  //   a {
+  //     transform: translateY(5px);
+  //     text-decoration: none !important;
+  //     &:hover {
+  //       background: none !important;
+  //     }
+  //   }
+  //   li {
+  //     &:first-child {
+  //       border: none !important;
+  //       a {
+  //         transform: translateY(8px) !important;
+  //         display: flex;
+  //         align-items: center;
+  //         justify-content: center;
+  //         &::before {
+  //           content: url("../../assets/images/leftarrow.png") !important;
+  //         }
+  //       }
+  //     }
+  //     &:last-child {
+  //       border: none !important;
+  //       a {
+  //         transform: translateY(8px) !important;
+  //         display: flex;
+  //         align-items: center;
+  //         justify-content: center;
+  //         &::after {
+  //           content: url("../../assets/images/rightarow.png") !important;
+  //         }
+  //       }
+  //     }
+  //     &.pagination-next.disabled {
+  //       display: flex;
+  //       align-items: center;
+  //       justify-content: center;
+  //       &::after {
+  //         content: url("../../assets/images/rightarow.png") !important;
+  //       }
+  //     }
+  //     &.pagination-previous.disabled {
+  //       display: flex;
+  //       align-items: center;
+  //       justify-content: center;
+  //       &::before {
+  //         content: url("../../assets/images/leftarrow.png") !important;
+  //       }
+  //     }
+  //   }
   // }
 }
-.nodata{
-    @include font($primaryFont,600,32px);
-    color:$black;
-padding:20px 0;
+.nodata {
+  @include font($primaryFont, 600, 32px);
+  color: $black;
+  padding: 20px 0;
 }
-.nodatacontent{
-//    display: flex !important;
-//    align-items: center !important;
-//    align-items: center !important;
+.nodatacontent {
+  //    display: flex !important;
+  //    align-items: center !important;
+  //    align-items: center !important;
 }
-::ng-deep{
-    .mat-checkbox-checked.mat-primary .mat-checkbox-background{
-  background-color: black !important;
-    }
-}
-
-
-.imageintial{
-    background-color:#D9D9D9 ;
-    border-radius: 100%;
-    height:50px;
-    width:50px;
-    align-items: center;
-    display: flex;
-    justify-content: center;
-    @include font($primaryFont,600,18px);
-    color:#B5B5B5;
-    margin:auto;
+::ng-deep {
+  .mat-checkbox-checked.mat-primary .mat-checkbox-background {
+    background-color: black !important;
+  }
 }
 
-::ng-deep{
-    .mat-select-placeholder {
-        color: #000000 !important;
-    }
-    ::placeholder { 
-        color:#000000 !important;
-     }
-     .rating.color-positive .star-container .star svg{
-        fill:#000000 !important;
-     }
-     .rating.color-ok .star-container .star svg   {
-             fill:#000000 !important;
-     }
-     .rating.color-negative .star-container .star svg{
-        fill:#000000 !important;
-
-     }
-     .star.medium, .rating.medium .star.label-value, .rating.medium .rating.star .star.label-value, .rating.medium .rating.label-value .star, .rating.medium .star {
-        margin-left: 5px !important;
-     }
+.imageintial {
+  background-color: #d9d9d9;
+  border-radius: 100%;
+  height: 50px;
+  width: 50px;
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  @include font($primaryFont, 600, 18px);
+  color: #b5b5b5;
+  margin: auto;
 }
 
+::ng-deep {
+  .mat-select-placeholder {
+    color: #000000 !important;
+  }
+  ::placeholder {
+    color: #000000 !important;
+  }
+  .rating.color-positive .star-container .star svg {
+    fill: #000000 !important;
+  }
+  .rating.color-ok .star-container .star svg {
+    fill: #000000 !important;
+  }
+  .rating.color-negative .star-container .star svg {
+    fill: #000000 !important;
+  }
+  .star.medium,
+  .rating.medium .star.label-value,
+  .rating.medium .rating.star .star.label-value,
+  .rating.medium .rating.label-value .star,
+  .rating.medium .star {
+    margin-left: 5px !important;
+  }
+}

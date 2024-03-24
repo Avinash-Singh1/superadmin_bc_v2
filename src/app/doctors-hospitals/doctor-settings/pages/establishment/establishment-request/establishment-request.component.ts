@@ -1,8 +1,8 @@
 import { Component, Inject, OnInit } from "@angular/core";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
-import { API_ENDPOINTS } from "src/app/config/api.constant";
-import { ApiService } from "src/app/services/api.service";
+import { URLConstant } from "src/app/apisURL/url";
 import { EventService } from "src/app/services/event.service";
+import { ApiService } from "src/app/shared/api.service";
 
 @Component({
   selector: "nectar-establishment-request",
@@ -21,7 +21,7 @@ export class EstablishmentRequestComponent implements OnInit {
     size: 10,
   };
   totalItems: number = 0;
-  statusObj = {
+  statusObj: { [key: number]: string } = {
     1: "Pending",
     2: "Accepted",
     3: "Rejected",
@@ -31,6 +31,7 @@ export class EstablishmentRequestComponent implements OnInit {
     { label: "Reject", value: 3 },
   ];
   statusChange: boolean = false;
+
   ngOnInit(): void {
     this.requestList = this.data.tableData;
     this.totalItems = this.data.totalItems;
@@ -45,7 +46,7 @@ export class EstablishmentRequestComponent implements OnInit {
   }
   getRequestList() {
     this.apiService
-      .get(API_ENDPOINTS.doctor.establishmentRequestList, this.payload)
+      .GetData(URLConstant.establishmentRequestList, this.payload)
       .subscribe({
         next: (res: any) => {
           this.requestList = res.result[0].data;
@@ -74,11 +75,7 @@ export class EstablishmentRequestComponent implements OnInit {
       establishmentId: String(details.establishmentId),
     };
     this.apiService
-      .patchParams(
-        API_ENDPOINTS.doctor.changeEstablishmentStatus,
-        payload,
-        params
-      )
+      .patchData(URLConstant.changeEstablishmentStatus, payload, params)
       .subscribe({
         next: (res: any) => {
           details.isVerified = status;

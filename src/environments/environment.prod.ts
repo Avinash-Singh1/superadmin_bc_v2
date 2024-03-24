@@ -11,4 +11,5 @@ export const environment = {
     "https://nector-prod.s3.ap-south-1.amazonaws.com/193853b0-673a-11ee-b72e-f758ecf0cdcc-Surgery%20Desktop%20Banner.png",
   SURGERY_ICON_IMAGE_URL:
     "https://nectorplus.s3.ap-south-1.amazonaws.com/0f7d1d50-2ae1-11ee-9860-d9c6f3b36073-skull-surgery.png",
+  DOCTOR_SLOT_TIME: 900000,
 };

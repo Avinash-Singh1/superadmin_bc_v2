@@ -1,6 +1,6 @@
 import { Component, Inject } from "@angular/core";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
-import { ApiService } from "../api.service";
+import { ApiService } from "../../api.service";
 import { URLConstant } from "src/app/apisURL/url";
 
 @Component({

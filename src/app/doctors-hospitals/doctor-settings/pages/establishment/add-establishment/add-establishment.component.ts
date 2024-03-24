@@ -1,9 +1,12 @@
 import { Component, ElementRef, Inject, OnInit } from "@angular/core";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
-import { UntypedFormArray, UntypedFormBuilder, UntypedFormGroup, Validators } from "@angular/forms";
+import {
+  UntypedFormArray,
+  UntypedFormBuilder,
+  UntypedFormGroup,
+  Validators,
+} from "@angular/forms";
 import { DatePipe } from "@angular/common";
-import { ApiService } from "src/app/services/api.service";
-import { API_ENDPOINTS } from "src/app/config/api.constant";
 import { ToastrService } from "ngx-toastr";
 import { Subject, debounceTime, filter, map } from "rxjs";
 import { EventService } from "src/app/services/event.service";
@@ -11,8 +14,10 @@ import { GoogleMapsService } from "src/app/services/google-maps.service";
 import { LocalStorageService } from "src/app/services/storage.service";
 import { CreateFormService } from "src/app/services/create-form.service";
 import { FormValidationService } from "src/app/services/form-validation.service";
-import { getAddressKeys, prepareDayTiming } from "src/app/utils/helper";
 import { environment } from "src/environments/environment";
+import { ApiService } from "src/app/shared/api.service";
+import { URLConstant } from "src/app/apisURL/url";
+import { getAddressKeys, prepareDayTiming } from "src/app/utils/helper";
 
 @Component({
   selector: "nectar-add-establishment",
@@ -34,15 +39,15 @@ export class AddEstablishmentComponent implements OnInit {
     private createForm: CreateFormService,
     private formValidation: FormValidationService
   ) {}
-  hospitalList: any[];
+  hospitalList!: any[];
   subject = new Subject();
   opened: boolean = false;
   heading = "Add Establishment";
-  establishmentForm: UntypedFormGroup;
+  establishmentForm!: UntypedFormGroup;
   submitted: boolean = false;
   changePhoto: boolean = true;
   zoom: number = 10;
-  timingArray = {
+  timingArray: { [key: number]: any } = {
     0: this.generatTimiListing(
       new Date().setHours(0, 0, 0, 0),
       new Date().setHours(11, 45, 0, 0),
@@ -142,18 +147,19 @@ export class AddEstablishmentComponent implements OnInit {
       this.searchSubject.next({ search, listName });
       return;
     }
+    // @ts-ignore
     this[listName] = [];
   }
   onSearchHospital() {
     this.subject
       .pipe(
-        debounceTime(200),
-        filter((text) => text != ""),
+        debounceTime(200) as any,
+        filter((text: string) => text != ""),
         map((searchtext: string) => searchtext)
       )
       .subscribe((res: any) => {
         this.apiService
-          .get(API_ENDPOINTS.COMMON.hospitalList, { search: res })
+          .GetData(URLConstant.hospitalList, { search: res })
           .subscribe({
             next: (res: any) => {
               this.hospitalList = res.result.data;
@@ -164,20 +170,23 @@ export class AddEstablishmentComponent implements OnInit {
           });
       });
   }
+
   getPrediction() {
     this.searchSubject.pipe(debounceTime(300)).subscribe((res: any) => {
       this.googleMapService
         .getPredication(res.search)
         .then((response: any) => {
+          // @ts-ignore
           this[res.listName] = response;
         })
         .catch((error: any) => {
           console.log(error);
+          // @ts-ignore
           this[res.listName] = [];
         });
     });
   }
-  onSelectPlace(place, i: number = 1) {
+  onSelectPlace(place: any, i: number = 1) {
     this.googleMapService
       .getAddressComponents(place.place_id)
       .then((place: any) => {
@@ -226,7 +235,7 @@ export class AddEstablishmentComponent implements OnInit {
 
     this.establishmentForm.patchValue(patchData);
     this.openAndClosing.forEach((el: any) => {
-      el.opened = patchData[el.formControlName].length;
+      el.opened = (patchData as any)[el.formControlName].length;
     });
     if (this.data.establishmentDetail.isOwner == 0) {
       this.changePhoto = false;
@@ -282,7 +291,7 @@ export class AddEstablishmentComponent implements OnInit {
       }
     }
   }
-  enableFields(setNull: boolean, ...args) {
+  enableFields(setNull: boolean, ...args: any[]) {
     args.forEach((field: string) => {
       this.control[field].enable();
       if (setNull) {
@@ -370,6 +379,7 @@ export class AddEstablishmentComponent implements OnInit {
       sun: this.createForm.createDay(),
     });
     this.establishmentForm.setValidators(
+      // @ts-ignore
       this.formValidation.atleastOneDay(
         "mon",
         "tue",
@@ -389,8 +399,8 @@ export class AddEstablishmentComponent implements OnInit {
       this.enableDisableControl();
       if (this.data.edit) {
         this.apiService
-          .putParams(
-            API_ENDPOINTS.doctor.editEstablishmentDetail,
+          .PutData(
+            URLConstant.editEstablishmentDetail,
             {
               ...this.establishmentForm.value,
               address: this.addressControl.getRawValue(),
@@ -414,10 +424,14 @@ export class AddEstablishmentComponent implements OnInit {
         return;
       }
       this.apiService
-        .post(API_ENDPOINTS.doctor.addEstablishment, {
-          ...this.establishmentForm.value,
-          isOwner: this.data.establishmentDetail.isOwner,
-        })
+        .Postdata(
+          URLConstant.addEstablishment,
+          {
+            ...this.establishmentForm.value,
+            isOwner: this.data.establishmentDetail.isOwner,
+          },
+          {}
+        )
         .subscribe({
           next: (res: any) => {
             this.updated = true;
@@ -479,7 +493,7 @@ export class AddEstablishmentComponent implements OnInit {
     });
   }
   getListing() {
-    this.apiService.get(API_ENDPOINTS.MASTER.hospitalType, {}).subscribe({
+    this.apiService.GetData(URLConstant.hospitalType, {}).subscribe({
       next: (res) => {
         this.hospitalTypeList = res.result.data;
       },
@@ -487,7 +501,7 @@ export class AddEstablishmentComponent implements OnInit {
         this.hospitalTypeList = [];
       },
     });
-    this.apiService.get(API_ENDPOINTS.MASTER.state, {}).subscribe({
+    this.apiService.GetData(URLConstant.state, {}).subscribe({
       next: (res) => {
         this.stateList = res.result.data;
       },
@@ -496,13 +510,13 @@ export class AddEstablishmentComponent implements OnInit {
       },
     });
   }
-  search(evt) {
+  search(evt: any) {
     if (this.data.establishmentDetail.isOwner == 0) {
       const searchText = evt.target.value;
       this.subject.next(searchText);
     }
   }
-  onSelectHospital(hospital) {
+  onSelectHospital(hospital: any) {
     const patchData = {
       address: {
         landmark: hospital?.address?.landmark,
@@ -542,11 +556,11 @@ export class AddEstablishmentComponent implements OnInit {
   patchDisable(patchData: any) {
     Object.keys(patchData).forEach((key: any) => {
       if (patchData[key]) {
-        this.addressControl.get(key).setValue(patchData[key]);
-        this.addressControl.get(key).disable();
+        this.addressControl?.get(key)?.setValue(patchData[key]);
+        this.addressControl?.get(key)?.disable();
       } else {
-        this.addressControl.get(key).enable();
-        this.addressControl.get(key).setValue(null);
+        this.addressControl?.get(key)?.enable();
+        this.addressControl?.get(key)?.setValue(null);
       }
     });
   }

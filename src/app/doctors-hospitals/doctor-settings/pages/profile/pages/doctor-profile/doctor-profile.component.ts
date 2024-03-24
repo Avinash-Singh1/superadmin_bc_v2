@@ -1,30 +1,46 @@
-import { Component, OnInit } from "@angular/core";
-import { UntypedFormBuilder, UntypedFormGroup, Validators } from "@angular/forms";
+import { Component, OnDestroy, OnInit } from "@angular/core";
+import {
+  UntypedFormBuilder,
+  UntypedFormGroup,
+  Validators,
+} from "@angular/forms";
 import { ToastrService } from "ngx-toastr";
+import { Subscription } from "rxjs";
 import { URLConstant } from "src/app/apisURL/url";
 import { EventService } from "src/app/services/event.service";
+import { LocalStorageService } from "src/app/services/storage.service";
 import { ApiService } from "src/app/shared/api.service";
 @Component({
   selector: "nectar-doctor-profile",
   templateUrl: "./doctor-profile.component.html",
   styleUrls: ["./doctor-profile.component.scss"],
 })
-export class DoctorProfileComponent implements OnInit {
+export class DoctorProfileComponent implements OnInit, OnDestroy {
   data: any;
   getimgUrl: any;
   specializationList: any;
   videoSubmitted: boolean = false;
   profileForm!: UntypedFormGroup;
   experinenceYear: any[] = [];
+  eventSubscriptionDP$: Subscription;
 
   constructor(
     private fb: UntypedFormBuilder,
     private apiSerive: ApiService,
     public toastr: ToastrService,
-    private eventService: EventService
-  ) {}
+    private eventService: EventService,
+    private storageService: LocalStorageService
+  ) {
+    this.eventSubscriptionDP$ = this.eventService
+      .getEvent("userId")
+      .subscribe((res: string) => {
+        if (res) this.userId = res;
+      });
+  }
 
+  userId: string = this.storageService.getItem("userId");
   getFormValues: any;
+
   ngOnInit(): void {
     this.generateList();
     this.validateForm();
@@ -72,7 +88,9 @@ export class DoctorProfileComponent implements OnInit {
         }
       });
       this.apiSerive
-        .PutData(URLConstant.updateDoctorProfile, this.profileForm.value, {})
+        .PutData(URLConstant.updateDoctorProfile, this.profileForm.value, {
+          userId: this.userId,
+        })
         .subscribe((res: any) => {
           if (res?.success) {
             this.eventService.broadcastEvent(
@@ -87,7 +105,7 @@ export class DoctorProfileComponent implements OnInit {
 
   editForm() {
     this.apiSerive
-      .GetData(URLConstant.updateDoctorProfile, {})
+      .GetData(URLConstant.updateDoctorProfile, { userId: this.userId })
       .subscribe((res: any) => {
         this.getFormValues = res?.result[0];
         if (this.getFormValues?.doctor?.profilePic) {
@@ -108,5 +126,8 @@ export class DoctorProfileComponent implements OnInit {
       .subscribe((res: any) => {
         this.specializationList = res?.result?.data;
       });
+  }
+  ngOnDestroy(): void {
+    if (this.eventSubscriptionDP$) this.eventSubscriptionDP$.unsubscribe();
   }
 }

@@ -4,11 +4,8 @@ import { CommonModule } from "@angular/common";
 import { DoctorSettingsRoutingModule } from "./doctor-settings-routing.module";
 import { SettingsContainerComponent } from "./settings-container/settings-container.component";
 import { AngularSvgIconModule, SvgLoader } from "angular-svg-icon";
-// import { AngularMaterialModule } from "src/app/material.module";
 import { TranslateModule } from "@ngx-translate/core";
-// import { DoctorHospitalSharedModule } from "../../doctor-hospital-shared/doctor-hospital-shared.module";
-import { HttpClient } from "@angular/common/http";
-import { TransferState } from "@angular/platform-browser";
+import { ThemeWrapperModule } from "src/app/theme-wrapper/theme-wrapper.module";
 import { SharedModule } from "src/app/shared/shared.module";
 
 @NgModule({
@@ -16,11 +13,10 @@ import { SharedModule } from "src/app/shared/shared.module";
   imports: [
     CommonModule,
     DoctorSettingsRoutingModule,
-    // AngularMaterialModule,
-    SharedModule,
     AngularSvgIconModule.forRoot(),
     TranslateModule,
-    // DoctorHospitalSharedModule,
+    ThemeWrapperModule,
+    SharedModule,
   ],
 })
 export class DoctorSettingsModule {}

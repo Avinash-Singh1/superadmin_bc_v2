@@ -4,7 +4,7 @@ import {
   MatDialog,
   MatDialogRef,
 } from "@angular/material/dialog";
-import { AddEstablishmentComponent } from "src/app/modules/doctor/doctor-settings/pages/establishment/add-establishment/add-establishment.component";
+import { AddEstablishmentComponent } from "../add-establishment/add-establishment.component";
 
 @Component({
   selector: "nectar-confirm-establishment",

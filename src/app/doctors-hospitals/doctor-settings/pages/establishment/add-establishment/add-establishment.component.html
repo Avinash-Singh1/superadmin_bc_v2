@@ -319,8 +319,8 @@
                 class="google-maps"
                 [markerDragable]="markerDragable"
                 [zoom]="zoom"
-                [lng]="control['location'].get('coordinates').value[0]"
-                [lat]="control['location'].get('coordinates').value[1]"
+                [lng]="control['location'].get('coordinates')?.value[0]"
+                [lat]="control['location'].get('coordinates')?.value[1]"
                 (mapClicked)="onMapClicked($event)"
                 (markerDrag)="onMarkerDrag($event)"
               ></nectar-google-maps>
@@ -445,7 +445,7 @@
                           <ng-option
                             *ngFor="
                               let time of timingArray[i]
-                                | timecompare : slot.get('to').value : true
+                                | timecompare : slot.get('to')?.value : true
                             "
                             [value]="time.name"
                           >
@@ -463,7 +463,7 @@
                           <ng-option
                             *ngFor="
                               let time of timingArray[i]
-                                | timecompare : slot.get('from').value
+                                | timecompare : slot.get('from')?.value
                             "
                             [value]="time.name"
                           >
@@ -473,13 +473,13 @@
                       </div>
                       <div
                         class="error-hint"
-                        *ngIf="dayControl(week.formControlName).controls[i].get('from').errors?.['mustHaveValue'] && (dayControl(week.formControlName).controls[i].get('from').touched || submitted)"
+                        *ngIf="dayControl(week.formControlName).controls[i].get('from')?.errors?.['mustHaveValue'] && (dayControl(week.formControlName).controls[i].get('from')?.touched || submitted)"
                       >
                         Please select start time
                       </div>
                       <div
                         class="error-hint"
-                        *ngIf="dayControl(week.formControlName).controls[i].get('to').errors?.['mustHaveValue'] && (dayControl(week.formControlName).controls[i].get('to').touched || submitted)"
+                        *ngIf="dayControl(week.formControlName).controls[i].get('to')?.errors?.['mustHaveValue'] && (dayControl(week.formControlName).controls[i].get('to')?.touched || submitted)"
                       >
                         Please select end time
                       </div>

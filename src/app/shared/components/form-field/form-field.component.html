@@ -1,0 +1,9 @@
+<div class="component-wrapper">
+  <ng-content></ng-content>
+  <div *ngIf="errorDirective?.ngControl?.control?.errors" class="error-hint">
+    {{
+      errorDirective && errorDirective.ngControl.control?.errors
+        | error : errorDirective : errorDirective.ngControl.touched
+    }}
+  </div>
+</div>
