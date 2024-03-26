@@ -633,15 +633,30 @@
           <mat-menu #menu="matMenu">
             <button
               mat-menu-item
+              [routerLink]="['hospital', element?._id]"
               class="d-flex align-items-center gap-2"
-              (click)="addDoctor('Edit', element?._id, '')"
             >
               <img
                 class="cursor"
-                src="assets/images/svg/edit.svg"
+                src="assets/images/svg/settings.svg"
                 alt=""
                 width="20"
                 height="20"
+              />
+              <span>Settings</span>
+            </button>
+
+            <button
+              mat-menu-item
+              class="d-flex align-items-center gap-2"
+              (click)="addDoctor('Edit', element?._id, page)"
+            >
+              <img
+                class="cursor"
+                src="assets/images/svg/editdate.svg"
+                alt=""
+                width="20"
+                height="16"
               />
               <span>Edit</span>
             </button>

@@ -323,11 +323,10 @@ export class AddMoreEditModalComponent implements OnInit {
   }
 
   handleType6Submit() {
-    const userId = this.localStorage.getItem("findUserId");
     let data = {
       ...this.addEditForm.value,
       userType: APP_CONSTANTS.USER_TYPES.DOCTOR,
-      userId,
+      userId: this.matdata.userId,
     };
 
     const endpoint = this.matdata.edit
@@ -338,11 +337,10 @@ export class AddMoreEditModalComponent implements OnInit {
   }
 
   handleType7Submit() {
-    const id = this.localStorage.getItem("findUserId");
     let payload = {
-      userId: id,
       ...this.addEditForm.value,
       userType: APP_CONSTANTS.USER_TYPES.DOCTOR,
+      userId: this.matdata.userId,
     };
 
     const endpoint = this.matdata.edit
@@ -424,8 +422,8 @@ export class AddMoreEditModalComponent implements OnInit {
       case 6:
         this.apiService
           .DeleteData(
-            URLConstant.addfaqList,
-            this.matdata.content.patchData?._id
+            `${URLConstant.addfaqList}/${this.matdata.content.patchData._id}`,
+            ""
           )
           .subscribe((res: any) => {
             this.matdialogRef.close(true);
@@ -433,9 +431,10 @@ export class AddMoreEditModalComponent implements OnInit {
         break;
       case 7:
         this.apiService
-          .DeleteData(URLConstant.addVideos, {
-            id: this.matdata.content.patchData._id,
-          })
+          .DeleteData(
+            `${URLConstant.addVideos}/${this.matdata.content.patchData._id}`,
+            ""
+          )
           .subscribe((res: any) => {
             this.matdialogRef.close(true);
           });

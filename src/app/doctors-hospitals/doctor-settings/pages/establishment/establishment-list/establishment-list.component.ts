@@ -146,6 +146,7 @@ export class EstablishmentListComponent implements OnInit, OnDestroy {
         {
           establishmentId,
           hospitalId: hospitalData.hospitalId,
+          userId: this.userId,
         }
       )
       .subscribe((res: any) => {

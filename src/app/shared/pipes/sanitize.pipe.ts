@@ -11,6 +11,6 @@ export class SanitizePipe implements PipeTransform {
   transform(value: string): Observable<SafeResourceUrl> {
     return value
       ? of(this.sanitizer.bypassSecurityTrustResourceUrl(value))
-      : of();
+      : of("");
   }
 }

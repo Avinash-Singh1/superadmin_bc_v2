@@ -80,6 +80,7 @@ export class DoctorEducationComponent implements OnInit {
           type: this.data.type,
           patchData: item,
         },
+        userId: this.userId,
       },
     });
     addEditDialog.afterClosed().subscribe((res: any) => {
@@ -121,15 +122,14 @@ export class DoctorEducationComponent implements OnInit {
     });
   }
   faqListDetail() {
-    let id = this.localStorage.getItem("faqId");
     let faq = {
-      id: id,
       userType: APP_CONSTANTS.USER_TYPES.DOCTOR,
+      userId: this.userId,
     };
     this.apiService
-      .GetData(API_ENDPOINTS.faqList, faq)
+      .GetData(API_ENDPOINTS.faqListDoctor, faq)
       .subscribe((res: any) => {
-        this.faqsList = res?.result?.data;
+        this.faqsList = res?.result;
       });
   }
 

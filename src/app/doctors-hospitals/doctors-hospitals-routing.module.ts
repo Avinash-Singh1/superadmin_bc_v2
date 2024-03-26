@@ -14,6 +14,13 @@ const routes: Routes = [
         (m) => m.DoctorSettingsModule
       ),
   },
+  {
+    path: "hospital/:userId",
+    loadChildren: () =>
+      import("./hospital-settings/hosptial-settings.module").then(
+        (m) => m.HosptialSettingsModule
+      ),
+  },
 ];
 
 @NgModule({

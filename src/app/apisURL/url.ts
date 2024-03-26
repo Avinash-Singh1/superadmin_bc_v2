@@ -75,13 +75,45 @@ export class URLConstant {
   public static establishmentList = "v1/doctor/doctor-establishment-list-admin";
   public static establishmentRequestList =
     "v1/doctor/doctor-establishment-request-admin";
+  public static addEstablishment = "v1/doctor/doctor-add-establishment-admin";
+  public static editEstablishmentDetail =
+    "v1/doctor/doctor-edit-establishment-admin";
+  public static changeEstablishmentStatus =
+    "v1/doctor/doctor-accept-establishment-admin";
+  public static hospitalProfileDetail = "v1/hospital/hospital-profile-admin";
+  public static updateHospitalProfile =
+    "v1/hospital/hospital-update-profile-admin";
+  public static serviceList = "v1/hospital/hospital-get-service-admin";
+  public static addService = "v1/hospital/hospital-add-service-admin";
+  public static deleteService = "v1/hospital/hospital-delete-service-admin";
+  public static listFaqsHospital = "v1/hospital/hospital-faq-list-admin";
+  public static faqListDoctor = "v1/doctor/doctor-faq-list-admin";
+  public static addFaqs = "v1/hospital/hospital-add-faq-admin";
+  public static editFaq = "v1/hospital/hospital-update-faq-admin";
+  public static deleteFaq = "v1/hospital/hospital-delete-faq-admin";
+  public static videoList = "v1/hospital/hospital-video-list-admin";
+  public static addVideo = "v1/hospital/hospital-add-videos-admin";
+  public static editVideo = "v1/hospital/hospital-update-videos-admin";
+  public static deleteVideo = "v1/hospital/hospital-delete-videos-admin";
+  public static hospitalTiming = "v1/hospital/hospital-get-timing-admin";
+  public static addHospitalTiming = "v1/hospital/hospital-add-timing-admin";
+  public static editHospitalTiming = "v1/hospital/hospital-update-timing-admin";
+  public static getAddress = "v1/hospital/hospital-get-address-admin";
+  public static editAddress = "v1/hospital/hospital-update-address-admin";
+  public static getImagesList = "v1/hospital/hospital-get-images-admin";
+  public static addImages = "v1/hospital/hospital-add-images-admin";
+  public static deleteImages = "v1/hospital/hospital-delete-images-admin";
 
   public static addfaqList = "v1/faq";
   public static addVideos = "v1/video";
   public static social = "v1/master/social-media";
-  public static editEstablishmentDetail = "v1/doctor/doctor-edit-establishment";
-  public static changeEstablishmentStatus =
-    "v1/doctor/doctor-accept-establishment";
-  public static addEstablishment = "v1/doctor/doctor-add-establishment";
   public static hospitalType = "v1/master/hospital-type";
+
+  public static socialListHospital = "v1/hospital/hospital-social-data-admin";
+  public static addSocialMedia = "v1/hospital/hospital-add-social-admin";
+  public static editSocialMedia = "v1/hospital/hospital-update-social-admin";
+  public static deleteSocialMedia = "v1/hospital/hospital-delete-social-admin";
+
+  //not in use
+  public static deleteAccount = "v1/hospital/hospital-delete-account";
 }

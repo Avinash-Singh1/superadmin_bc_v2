@@ -111,6 +111,9 @@ export class AddEstablishmentComponent implements OnInit {
   location: any = [];
   markerDragable: boolean = true;
   mapClickable: boolean = true;
+
+  userId?: string = this.localStorage.getItem("userId");
+
   ngOnInit(): void {
     this.location = this.localStorage.getItem("location");
     if (!this.location) {
@@ -408,6 +411,7 @@ export class AddEstablishmentComponent implements OnInit {
             {
               establishmentId: this.data.establishmentDetail.establishmentId,
               hospitalId: this.data.establishmentDetail.hospitalData.hospitalId,
+              userId: this.userId,
             }
           )
           .subscribe({
@@ -430,7 +434,9 @@ export class AddEstablishmentComponent implements OnInit {
             ...this.establishmentForm.value,
             isOwner: this.data.establishmentDetail.isOwner,
           },
-          {}
+          {
+            userId: this.userId,
+          }
         )
         .subscribe({
           next: (res: any) => {
@@ -444,6 +450,7 @@ export class AddEstablishmentComponent implements OnInit {
         });
     }
   }
+
   dayControl(day: string) {
     return this.establishmentForm.get(day) as UntypedFormArray;
   }

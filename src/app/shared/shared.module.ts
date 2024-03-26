@@ -12,6 +12,9 @@ import { GoogleMapsComponent } from "./components/google-maps/google-maps.compon
 import { TimecomparePipe } from "./pipes/timecompare.pipe";
 import { AgmCoreModule } from "@agm/core";
 import { CommonModule } from "@angular/common";
+import { HospitalDeleteModalComponent } from "./components/hospital-delete-modal/hospital-delete-modal.component";
+import { TranslateModule } from "@ngx-translate/core";
+import { ReplacePipe } from "./pipes/replace.pipe";
 
 const component = [
   DeleteModalComponent,
@@ -23,9 +26,17 @@ const component = [
   FormatarrayPipe,
   GoogleMapsComponent,
   TimecomparePipe,
+  HospitalDeleteModalComponent,
+  ReplacePipe,
 ];
 
-const module = [NgSelectModule, FormsModule, AgmCoreModule, CommonModule];
+const module = [
+  NgSelectModule,
+  FormsModule,
+  AgmCoreModule,
+  CommonModule,
+  TranslateModule,
+];
 
 @NgModule({
   declarations: [component],
