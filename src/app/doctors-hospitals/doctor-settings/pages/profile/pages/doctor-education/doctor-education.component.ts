@@ -5,7 +5,7 @@ import { ActivatedRoute } from "@angular/router";
 import { LocalStorageService } from "src/app/services/storage.service";
 import { DeleteModalComponent } from "src/app/shared/components/delete-modal/delete-modal.component";
 import { ApiService } from "src/app/shared/api.service";
-import { URLConstant as API_ENDPOINTS } from "src/app/apisURL/url";
+import { URLConstant } from "src/app/apisURL/url";
 import { APP_CONSTANTS } from "src/app/constant/app.constant";
 
 @Component({
@@ -73,6 +73,7 @@ export class DoctorEducationComponent implements OnInit {
     const addEditDialog = this.matdialog.open(AddMoreEditModalComponent, {
       width: "720px",
       autoFocus: false,
+      minHeight: "500px",
       data: {
         edit,
         content: {
@@ -108,6 +109,7 @@ export class DoctorEducationComponent implements OnInit {
         message: `This will delete ${item.name} from ${str} sections of your profile.`,
         id: item?.procedureId ? item?.procedureId : item?._id,
         type: str == "Service" ? 5 : 9,
+        userId: this.userId,
       },
       width: "720px",
     });
@@ -127,20 +129,19 @@ export class DoctorEducationComponent implements OnInit {
       userId: this.userId,
     };
     this.apiService
-      .GetData(API_ENDPOINTS.faqListDoctor, faq)
+      .GetData(URLConstant.faqListDoctor, faq)
       .subscribe((res: any) => {
         this.faqsList = res?.result;
       });
   }
 
   getVideosList() {
-    let id = this.localStorage.getItem("faqId");
     let payload = {
-      id: id,
+      userId: this.userId,
       userType: APP_CONSTANTS.USER_TYPES.DOCTOR,
     };
     this.apiService
-      .GetData(API_ENDPOINTS.doctorVideos, payload)
+      .GetData(URLConstant.doctorVideos, payload)
       .subscribe((res: any) => {
         this.videoList = res?.result?.data;
         this.videoList.forEach((element: any) => {
@@ -151,7 +152,7 @@ export class DoctorEducationComponent implements OnInit {
 
   getProcedureList() {
     this.apiService
-      .GetData(API_ENDPOINTS.procedures, { userId: this.userId })
+      .GetData(URLConstant.procedures, { userId: this.userId })
       .subscribe((res: any) => {
         this.procedureList = res?.result?.list;
       });
@@ -159,7 +160,7 @@ export class DoctorEducationComponent implements OnInit {
 
   getListing() {
     this.apiService
-      .GetData(API_ENDPOINTS.settingList, {
+      .GetData(URLConstant.settingList, {
         type: this.data.type,
         userId: this.userId,
       })

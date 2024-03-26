@@ -13,6 +13,9 @@
     outline: none;
     font-size: 14px;
   }
+  .content {
+    min-height: 300px;
+  }
 }
 :host::ng-deep {
   .add-more-edit.ng-select .ng-select-container {

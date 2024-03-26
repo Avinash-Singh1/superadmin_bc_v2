@@ -20,6 +20,7 @@ export class DeleteModalComponent {
   deleteService() {
     let param = {
       recordId: this.matdata?.id,
+      userId: this.matdata?.userId,
     };
     let data = {
       type: this?.data?.type ? this?.data?.type : 5,
@@ -30,17 +31,15 @@ export class DeleteModalComponent {
       this.apiService
         .PutData(URLConstant.settingList, data, param)
         .subscribe((res: any) => {
-          if (res?.success) {
-            this.closeModal.close(true);
-          }
+          if (res?.success) this.closeModal.close(true);
         });
     } else {
       this.apiService
-        .DeleteData(URLConstant.procedures, this.matdata?.id)
+        .DeleteData(`${URLConstant.procedures}/${this.matdata?.id}`, {
+          userId: this.matdata?.userId,
+        })
         .subscribe((res: any) => {
-          if (res?.success) {
-            this.closeModal.close(true);
-          }
+          if (res?.success) this.closeModal.close(true);
         });
     }
   }

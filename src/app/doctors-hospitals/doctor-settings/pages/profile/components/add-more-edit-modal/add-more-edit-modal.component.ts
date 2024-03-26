@@ -358,7 +358,9 @@ export class AddMoreEditModalComponent implements OnInit {
     };
 
     this.apiService
-      .Postdata(URLConstant.procedures, payloadData, {})
+      .Postdata(URLConstant.procedures, payloadData, {
+        userId: this.matdata.userId,
+      })
       .subscribe({
         next: (res: any) => {
           this.matdialogRef.close(true);
@@ -379,11 +381,16 @@ export class AddMoreEditModalComponent implements OnInit {
       }
     });
     const params = this.matdata.edit
-      ? { recordId: this.matdata.content.patchData._id }
+      ? {
+          recordId: this.matdata.content.patchData._id,
+        }
       : {};
 
     this.apiService
-      .PutData(URLConstant.settingList, payload1, params)
+      .PutData(URLConstant.settingList, payload1, {
+        ...params,
+        userId: this.matdata.userId,
+      })
       .subscribe({
         next: (res: any) => {
           this.matdialogRef.close(true);
@@ -423,7 +430,9 @@ export class AddMoreEditModalComponent implements OnInit {
         this.apiService
           .DeleteData(
             `${URLConstant.addfaqList}/${this.matdata.content.patchData._id}`,
-            ""
+            {
+              userId: this.matdata.userId,
+            }
           )
           .subscribe((res: any) => {
             this.matdialogRef.close(true);
@@ -431,10 +440,10 @@ export class AddMoreEditModalComponent implements OnInit {
         break;
       case 7:
         this.apiService
-          .DeleteData(
-            `${URLConstant.addVideos}/${this.matdata.content.patchData._id}`,
-            ""
-          )
+          .DeleteData(URLConstant.addVideos, {
+            id: this.matdata.content.patchData._id,
+            userId: this.matdata.userId,
+          })
           .subscribe((res: any) => {
             this.matdialogRef.close(true);
           });
@@ -442,6 +451,7 @@ export class AddMoreEditModalComponent implements OnInit {
       default:
         const param = {
           recordId: this.matdata?.content?.patchData._id,
+          userId: this.matdata.userId,
         };
         const data = {
           type: this.matdata.content.type,

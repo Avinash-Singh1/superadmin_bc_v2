@@ -68,8 +68,8 @@ export class URLConstant {
   public static logout = "v1/auth/logout";
 
   //imported
-  public static updateDoctorProfile = "v1/setting/profile/admin";
-  public static settingList = "v1/setting/list/admin";
+  public static updateDoctorProfile = "v1/setting/profile-admin";
+  public static settingList = "v1/setting/list-admin";
   public static procedures = "v1/doctor/procedure-admin";
   public static doctorVideos = "v1/video/list";
   public static establishmentList = "v1/doctor/doctor-establishment-list-admin";
