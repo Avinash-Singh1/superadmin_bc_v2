@@ -46,10 +46,10 @@
   }
 }
 ::ng-deep {
-  .mdc-dialog__actions.settings-add {
+  .mat-dialog-actions.settings-add {
     padding: 0 !important;
   }
-  .mdc-dialog__content.settings-add {
+  .mat-dialog-container.settings-add {
     color: $black !important;
     font-size: 14px !important;
     font-family: "Sans_Pro", sans-serif !important;

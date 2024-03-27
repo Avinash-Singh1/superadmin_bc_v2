@@ -1,0 +1,22 @@
+<div class="main d-flex">
+  <div class="settings-sidebar">
+    <div class="heading-container text-16 border-bottom-style">
+      {{ "HOSPITAL_SETTINGS" | translate }}
+    </div>
+    <div class="d-flex flex-column gap-2 p-24">
+      <ng-container *ngFor="let menu of settingsMenu">
+        <div
+          class="menu-item px-24 py-16 text-14 font-600 cursor-pointer"
+          [routerLink]="menu.routerLink"
+          routerLinkActive="active"
+          [ngClass]="{ 'menu-red': menu.red }"
+        >
+          {{ menu.label }}
+        </div>
+      </ng-container>
+    </div>
+  </div>
+  <div class="router-outlet">
+    <router-outlet></router-outlet>
+  </div>
+</div>

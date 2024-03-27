@@ -26,7 +26,7 @@ button {
   }
 }
 ::ng-deep {
-  .mdc-dialog .mdc-dialog__content.timing-wrapper,
+  .mdc-dialog .mat-dialog-container.timing-wrapper,
   .mat-dialog-content.timing-wrapper {
     padding: 24px !important;
     color: $black !important;
@@ -44,7 +44,7 @@ button {
   .gy-8 {
     gap: 8px 0;
   }
-  .mdc-dialog__actions {
+  .mat-dialog-actions {
     padding: 0 !important;
   }
   .from.ng-select .ng-select-container {

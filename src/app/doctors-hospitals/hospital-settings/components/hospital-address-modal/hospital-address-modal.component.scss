@@ -42,7 +42,7 @@
   }
 }
 ::ng-deep {
-  .mdc-dialog .mdc-dialog__content.address-wrapper {
+  .mdc-dialog .mat-dialog-container.address-wrapper {
     padding: 24px !important;
     color: $black !important;
     font-size: 14px !important;
@@ -59,7 +59,7 @@
   .gy-8 {
     gap: 8px 0;
   }
-  .mdc-dialog__actions {
+  .mat-dialog-actions {
     padding: 0 !important;
   }
 }

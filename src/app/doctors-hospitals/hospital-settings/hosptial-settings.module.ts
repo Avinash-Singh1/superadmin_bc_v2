@@ -25,6 +25,7 @@ import { MatDialogModule } from "@angular/material/dialog";
 import { MatOptionModule } from "@angular/material/core";
 import { MatAutocompleteModule } from "@angular/material/autocomplete";
 import { ThemeWrapperModule } from "src/app/theme-wrapper/theme-wrapper.module";
+import { ProfileContainerComponent } from "./components/profile-container.component";
 
 @NgModule({
   declarations: [
@@ -43,6 +44,7 @@ import { ThemeWrapperModule } from "src/app/theme-wrapper/theme-wrapper.module";
     HospitalSocialListComponent,
     HospitalAddSocialmediaComponent,
     HospitalDeleteProfileComponent,
+    ProfileContainerComponent,
   ],
   imports: [
     CommonModule,

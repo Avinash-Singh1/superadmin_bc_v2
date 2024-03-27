@@ -12,7 +12,7 @@ $font-base-path: "/assets/fonts" !default;
 
 @font-face {
   font-family: "Source Sans Pro";
-  src: url("#{$font-base-path}/sans_pro/SourceSansPro-Regular.woff")
+  src: url("#{$font-base-path}/SourceSansPro-Regular.woff")
     format("truetype-variations");
   font-weight: 400;
   font-style: normal;
@@ -21,7 +21,7 @@ $font-base-path: "/assets/fonts" !default;
 
 @font-face {
   font-family: "Source Sans Pro";
-  src: url("#{$font-base-path}/sans_pro/SourceSansPro-Regular.woff")
+  src: url("#{$font-base-path}/SourceSansPro-Regular.woff")
     format("truetype-variations");
   font-weight: 400;
   font-style: normal;
@@ -30,7 +30,7 @@ $font-base-path: "/assets/fonts" !default;
 
 @font-face {
   font-family: "Source Sans Pro";
-  src: url("#{$font-base-path}/sans_pro/SourceSansPro-SemiBold.woff")
+  src: url("#{$font-base-path}/SourceSansPro-SemiBold.woff")
     format("truetype-variations");
   font-weight: 600;
   font-style: normal;
@@ -39,7 +39,7 @@ $font-base-path: "/assets/fonts" !default;
 
 @font-face {
   font-family: "Source Sans Pro";
-  src: url("#{$font-base-path}/sans_pro/SourceSansPro-Bold.woff")
+  src: url("#{$font-base-path}/SourceSansPro-Bold.woff")
     format("truetype-variations");
   font-weight: 700;
   font-style: normal;

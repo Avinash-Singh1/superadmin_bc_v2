@@ -94,7 +94,7 @@
     }
   }
 
-  .mdc-dialog__actions {
+  .mat-dialog-actions {
     padding: 0 !important;
   }
   .establishment-type.ng-select .ng-select-container {
@@ -114,7 +114,7 @@
   }
 }
 
-.mdc-dialog__content.add-establishment ::ng-deep {
+.mat-dialog-container.add-establishment ::ng-deep {
   font-family: "Sans_Pro", sans-serif !important;
   font-size: 14px !important;
   color: $black !important;

@@ -15,6 +15,7 @@ import { CommonModule } from "@angular/common";
 import { HospitalDeleteModalComponent } from "./components/hospital-delete-modal/hospital-delete-modal.component";
 import { TranslateModule } from "@ngx-translate/core";
 import { ReplacePipe } from "./pipes/replace.pipe";
+import { ImageViewModalComponent } from "./components/image-view-modal/image-view-modal.component";
 
 const component = [
   DeleteModalComponent,
@@ -28,6 +29,7 @@ const component = [
   TimecomparePipe,
   HospitalDeleteModalComponent,
   ReplacePipe,
+  ImageViewModalComponent,
 ];
 
 const module = [

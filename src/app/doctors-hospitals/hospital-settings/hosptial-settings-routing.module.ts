@@ -10,6 +10,7 @@ import { HospitalAddressComponent } from "./components/hospital-address/hospital
 import { HospitalImagesComponent } from "./components/hospital-images/hospital-images.component";
 import { HospitalSocialListComponent } from "./components/hospital-social-list/hospital-social-list.component";
 import { HospitalDeleteProfileComponent } from "./components/hospital-delete-profile/hospital-delete-profile.component";
+import { ProfileContainerComponent } from "./components/profile-container.component";
 
 const routes: Routes = [
   {
@@ -18,42 +19,74 @@ const routes: Routes = [
     children: [
       {
         path: "profile",
-        component: HospitalProfileComponent,
+        component: ProfileContainerComponent,
+        children: [
+          {
+            path: "main",
+            component: HospitalProfileComponent,
+          },
+          {
+            path: "services",
+            component: ServicesListComponent,
+          },
+          {
+            path: "faqs",
+            component: HospitalFaqsListComponent,
+          },
+          {
+            path: "videos",
+            component: HospitalVideoListComponent,
+          },
+          {
+            path: "timing",
+            component: HospitalTimingComponent,
+          },
+          {
+            path: "address",
+            component: HospitalAddressComponent,
+          },
+          {
+            path: "images",
+            component: HospitalImagesComponent,
+          },
+          {
+            path: "social",
+            component: HospitalSocialListComponent,
+          },
+          {
+            path: "delete-profile",
+            component: HospitalDeleteProfileComponent,
+          },
+          {
+            path: "",
+            redirectTo: "main",
+            pathMatch: "full",
+          },
+        ],
       },
       {
-        path: "services",
-        component: ServicesListComponent,
+        path: "doctors",
+        loadChildren: () =>
+          import("./hospital-doctor/hospital-doctor.module").then(
+            (m) => m.HospitalDoctorModule
+          ),
       },
       {
-        path: "faqs",
-        component: HospitalFaqsListComponent,
+        path: "speciality",
+        loadChildren: () =>
+          import("./hospital-speciality/hospital-speciality.module").then(
+            (m) => m.HospitalSpecialityModule
+          ),
       },
       {
-        path: "videos",
-        component: HospitalVideoListComponent,
+        path: "procedure",
+        loadChildren: () =>
+          import("./hospital-procedure/hospital-procedure.module").then(
+            (m) => m.HospitalProcedureModule
+          ),
       },
       {
-        path: "timing",
-        component: HospitalTimingComponent,
-      },
-      {
-        path: "address",
-        component: HospitalAddressComponent,
-      },
-      {
-        path: "images",
-        component: HospitalImagesComponent,
-      },
-      {
-        path: "social",
-        component: HospitalSocialListComponent,
-      },
-      {
-        path: "delete-profile",
-        component: HospitalDeleteProfileComponent,
-      },
-      {
-        path: "",
+        path: "**",
         redirectTo: "profile",
         pathMatch: "full",
       },

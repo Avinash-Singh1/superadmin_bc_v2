@@ -23,43 +23,4 @@ export class SettingsContainerComponent implements OnInit {
   openSidenav() {
     this.eventService.broadcastEvent("sidenav", true);
   }
-  settingsMenu: any = [
-    {
-      label: "Profile",
-      routerLink: "profile",
-    },
-    {
-      label: "Services",
-      routerLink: "services",
-    },
-    {
-      label: "FAQs",
-      routerLink: "faqs",
-    },
-    {
-      label: "Videos",
-      routerLink: "videos",
-    },
-    {
-      label: "Timing",
-      routerLink: "timing",
-    },
-    {
-      label: "Address",
-      routerLink: "address",
-    },
-    {
-      label: "Images",
-      routerLink: "images",
-    },
-    {
-      label: "Social",
-      routerLink: "social",
-    },
-    // {
-    //   label: "Delete Profile",
-    //   routerLink: "delete-profile",
-    //   red: true,
-    // },
-  ];
 }

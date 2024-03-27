@@ -68,6 +68,11 @@ export class URLConstant {
   public static logout = "v1/auth/logout";
 
   //imported
+  public static addfaqList = "v1/faq";
+  public static addVideos = "v1/video";
+  public static social = "v1/master/social-media";
+  public static hospitalType = "v1/master/hospital-type";
+
   public static updateDoctorProfile = "v1/setting/profile-admin";
   public static settingList = "v1/setting/list-admin";
   public static procedures = "v1/doctor/procedure-admin";
@@ -103,16 +108,22 @@ export class URLConstant {
   public static getImagesList = "v1/hospital/hospital-get-images-admin";
   public static addImages = "v1/hospital/hospital-add-images-admin";
   public static deleteImages = "v1/hospital/hospital-delete-images-admin";
-
-  public static addfaqList = "v1/faq";
-  public static addVideos = "v1/video";
-  public static social = "v1/master/social-media";
-  public static hospitalType = "v1/master/hospital-type";
-
   public static socialListHospital = "v1/hospital/hospital-social-data-admin";
   public static addSocialMedia = "v1/hospital/hospital-add-social-admin";
   public static editSocialMedia = "v1/hospital/hospital-update-social-admin";
   public static deleteSocialMedia = "v1/hospital/hospital-delete-social-admin";
+  public static doctorListHospital = "v1/hospital/doctor-list-admin";
+  public static doctorRequestList = "v1/hospital/doctor-request-list-admin";
+  public static doctorProfileHospital = "v1/hospital/view-doctor-profile";
+  public static deleteDoctorHospital =
+    "v1/hospital/hospital-remove-doctor-admin";
+  public static editDoctorProfile = "v1/hospital/edit-doctor-profile-admin";
+  public static changedoctorRequestStatus =
+    "v1/hospital/hospital-accept-doctor-admin";
+  public static doctorDetail = "v1/hospital/hospital-find-doctor";
+  public static addDoctorHospital = "v1/hospital/hospital-add-doctor-admin";
+  public static specialityList = "v1/hospital/speciality-admin";
+  public static procedureList = "v1/hospital/procedure-admin";
 
   //not in use
   public static deleteAccount = "v1/hospital/hospital-delete-account";
