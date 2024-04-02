@@ -77,7 +77,7 @@ export class AddMoreEditModalComponent implements OnInit {
         },
         {
           label: "Year",
-          required: true,
+          required: false,
           type: "select",
           placeholder: "Year",
           formcontrolName: "year",
@@ -86,7 +86,7 @@ export class AddMoreEditModalComponent implements OnInit {
       ],
       formGroup: {
         name: ["", [Validators.required, Validators.minLength(3)]],
-        year: [null, [Validators.required]],
+        year: [null, []],
       },
     },
     3: {
