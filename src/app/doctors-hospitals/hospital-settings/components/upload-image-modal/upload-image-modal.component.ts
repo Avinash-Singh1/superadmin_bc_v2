@@ -18,14 +18,16 @@ export class UploadImageModalComponent {
   ) {}
 
   imageUrl!: string;
-  imageFilter = ["image/png", "image/jpg", "image/jpeg"];
+  imageFilter = ["image/png", "image/jpg", "image/jpeg", "image/webp"];
 
   onFileUpload(event: any) {
     if (event instanceof DragEvent) {
       const file = event.dataTransfer?.files[0] || ([] as any);
 
       if (!this.imageFilter.includes(file.type)) {
-        this.toastr.error("Please upload images in jpeg, jpg or png format.");
+        this.toastr.error(
+          "Please upload images in webp, jpeg, jpg or png format."
+        );
         return;
       }
       if (file) {

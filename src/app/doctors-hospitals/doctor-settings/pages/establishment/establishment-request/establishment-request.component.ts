@@ -46,7 +46,10 @@ export class EstablishmentRequestComponent implements OnInit {
   }
   getRequestList() {
     this.apiService
-      .GetData(URLConstant.establishmentRequestList, this.payload)
+      .GetData(URLConstant.establishmentRequestList, {
+        ...this.payload,
+        userId: this.data.userId,
+      })
       .subscribe({
         next: (res: any) => {
           this.requestList = res.result[0].data;
@@ -73,7 +76,9 @@ export class EstablishmentRequestComponent implements OnInit {
 
     const params = {
       establishmentId: String(details.establishmentId),
+      userId: this.data.userId,
     };
+
     this.apiService
       .patchData(URLConstant.changeEstablishmentStatus, payload, params)
       .subscribe({

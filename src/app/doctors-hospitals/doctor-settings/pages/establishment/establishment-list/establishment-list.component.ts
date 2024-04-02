@@ -110,11 +110,13 @@ export class EstablishmentListComponent implements OnInit, OnDestroy {
       data: {
         tableData: this.requestList,
         totalItems: this.totalRequest,
+        userId: this.userId,
       },
     });
     requestDialog.afterClosed().subscribe({
       next: (res: any) => {
         this.getRequestList();
+        this.getEsablishmentList();
       },
       error: (error: any) => {
         console.log(error);
