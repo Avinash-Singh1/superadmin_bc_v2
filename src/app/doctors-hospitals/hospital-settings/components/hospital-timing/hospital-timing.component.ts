@@ -49,6 +49,8 @@ export class HospitalTimingComponent implements OnInit {
   }
 
   onAddTiming(edit: boolean = false) {
+    if (this.establishmentTimingId) edit = true;
+
     const addEditDialog = this.matdialog.open(HospitalAddTimingModalComponent, {
       autoFocus: false,
       data: {
