@@ -101,7 +101,7 @@ export class LoginComponent implements OnInit {
               }
               this.emailLogin = data;
               this.token = data.result.token;
-              console.log("pityush", this.token);
+              // console.log("pityush", this.token);
               // if (data) {
               // }
               localStorage.setItem("token1", this.token);
