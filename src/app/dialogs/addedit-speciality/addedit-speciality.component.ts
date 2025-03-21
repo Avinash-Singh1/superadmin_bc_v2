@@ -1,7 +1,7 @@
-import { Component, Inject, OnInit } from "@angular/core";
-import { UntypedFormBuilder, Validators } from "@angular/forms";
+import { Component, Inject, OnInit, OnDestroy } from "@angular/core";
+import { UntypedFormBuilder, Validators, FormGroup } from "@angular/forms";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
-import { Editor, Toolbar } from "ngx-editor";
+import { Editor, Toolbar, toHTML } from "ngx-editor";
 import { URLConstant } from "src/app/apisURL/url";
 import { ApiService } from "src/app/shared/api.service";
 
@@ -10,13 +10,13 @@ import { ApiService } from "src/app/shared/api.service";
   templateUrl: "./addedit-speciality.component.html",
   styleUrls: ["./addedit-speciality.component.scss"],
 })
-export class AddeditSpecialityComponent implements OnInit {
-  addFaqForm: any;
-  header: any;
-  faq: any;
+export class AddeditSpecialityComponent implements OnInit, OnDestroy {
+  addFaqForm!: FormGroup;
+  header: string = "";
+  faq: string = "";
   submitted: boolean = false;
-  editor: Editor = new Editor({ history: true, keyboardShortcuts: true });
-  editor1: Editor = new Editor({ history: true, keyboardShortcuts: true });
+  editor: Editor = new Editor();
+  editor1: Editor = new Editor();
   toolbar: Toolbar = [
     ["bold", "underline", "italic"],
     ["blockquote"],
@@ -26,29 +26,39 @@ export class AddeditSpecialityComponent implements OnInit {
     ["text_color", "background_color"],
     ["align_left", "align_center", "align_right", "align_justify"],
     ["horizontal_rule"],
-    [],
   ];
+  additionalSections: { title: string; editor: Editor; content: string }[] = [];
+  profileImage: string = "";
+
   constructor(
-    public fb: UntypedFormBuilder,
+    private fb: UntypedFormBuilder,
     @Inject(MAT_DIALOG_DATA) public data: any,
-    public dialogRef: MatDialogRef<AddeditSpecialityComponent>,
-    public apiService: ApiService
+    private dialogRef: MatDialogRef<AddeditSpecialityComponent>,
+    private apiService: ApiService
   ) {}
 
   ngOnInit(): void {
-    this.faqForm();
-    this.header = this.data?.creation;
-    this.faq = this.data?.type;
-    console.log(this.data);
+    this.initFaqForm();
+    this.header = this.data?.creation || "";
+    this.faq = this.data?.type || "";
 
     this.addFaqForm.patchValue({
-      question: this.data?.content,
-      profilePic: this.data?.image,
-      description: this.data?.description,
-      links: this.data?.links,
+      question: this.data?.content || "",
+      profilePic: this.data?.image || "",
+      description: this.data?.description || "",
+      links: this.data?.links || "",
     });
+
+    if (this.data?.sections) {
+      this.additionalSections = this.data.sections.map((section: any) => ({
+        title: section.title || "",
+        editor: new Editor(),
+        content: section.content || "",
+      }));
+    }
   }
-  faqForm() {
+
+  initFaqForm() {
     this.addFaqForm = this.fb.group({
       profilePic: ["", [Validators.required]],
       question: ["", [Validators.required]],
@@ -56,45 +66,85 @@ export class AddeditSpecialityComponent implements OnInit {
       links: ["", [Validators.required]],
     });
   }
+
   get f() {
     return this.addFaqForm.controls;
   }
+
   addEditdata() {
     this.submitted = true;
-    console.log(this.addFaqForm.valid);
-    console.log("lll", this.addFaqForm?.value?.question);
-    if (this.addFaqForm?.value?.question) {
+    if (this.addFaqForm.valid) {
+      const sectionsData = this.additionalSections.map((section) => ({
+        title: section.title.trim(), // ✅ Ensuring title is correctly captured
+        content: section.content, // ✅ Storing content as HTML
+      }));
+
+      console.log("Form Data:", this.addFaqForm.value);
+      console.log("Sections Data:", sectionsData);
+
       this.dialogRef.close({
         type: this.data?.type,
         creation: this.data?.creation,
-        name: this.addFaqForm?.value?.question,
+        name: this.addFaqForm.value.question,
         id: this.data?.id,
         imageURL: this.profileImage,
-        description: this.addFaqForm?.value?.description,
-        links: this.addFaqForm?.value?.links,
+        description: this.addFaqForm.value.description,
+        links: this.addFaqForm.value.links,
+        sections: sectionsData,
       });
     }
   }
+
   closeModal() {
     this.dialogRef.close();
   }
-  file: any;
-  profileImage: any;
 
   onChange(event: any) {
-    this.file = event.target.files[0];
+    const file = event.target.files[0];
     const formData = new FormData();
-    formData.append("file", this.file, this.file.name);
-    console.log(formData);
+    formData.append("file", file, file.name);
 
     this.apiService.Postdata(URLConstant.fileupload, formData, {}).subscribe(
       (res) => {
         this.profileImage = res.result?.uri?.uri;
-        this.f["profilePic"].setValue(res.result?.uri?.uri);
-
-        console.log(res);
+        this.addFaqForm.get("profilePic")?.setValue(res.result?.uri?.uri);
       },
-      (error) => {}
+      (error) => console.error(error)
     );
+  }
+
+  addSection() {
+    const newEditor = new Editor();
+    const newSection = {
+      title: "",
+      editor: newEditor,
+      content: "",
+    };
+
+    // Listen for changes and store HTML content correctly
+    newEditor.valueChanges.subscribe((content) => {
+      newSection.content = toHTML(content);
+    });
+
+    this.additionalSections.push(newSection);
+  }
+
+  deleteSection(index: number) {
+    this.additionalSections[index].editor.destroy();
+    this.additionalSections.splice(index, 1);
+  }
+
+  updateTitle(event: any, index: number) {
+    this.additionalSections[index].title = event.target.value;
+  }
+
+  updateContent(event: any, index: number) {
+    this.additionalSections[index].content = toHTML(event);
+  }
+
+  ngOnDestroy(): void {
+    this.editor.destroy();
+    this.editor1.destroy();
+    this.additionalSections.forEach((section) => section.editor.destroy());
   }
 }
