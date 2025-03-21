@@ -37,26 +37,34 @@ export class AddeditSpecialityComponent implements OnInit, OnDestroy {
     private apiService: ApiService
   ) {}
 
-  ngOnInit(): void {
-    this.initFaqForm();
-    this.header = this.data?.creation || "";
-    this.faq = this.data?.type || "";
+ngOnInit(): void {
+  this.initFaqForm();
+  this.header = this.data?.creation || "";
+  this.faq = this.data?.type || "";
 
-    this.addFaqForm.patchValue({
-      question: this.data?.content || "",
-      profilePic: this.data?.image || "",
-      description: this.data?.description || "",
-      links: this.data?.links || "",
-    });
+  // Populate main form fields
+  this.addFaqForm.patchValue({
+    question: this.data?.content || "",
+    profilePic: this.data?.image || "",
+    description: this.data?.description || "",
+    links: this.data?.links || "",
+  });
 
-    if (this.data?.sections) {
-      this.additionalSections = this.data.sections.map((section: any) => ({
+  // Initialize additional sections with existing data
+  if (this.data?.sections) {
+    this.additionalSections = this.data.sections.map((section: any) => {
+      const editorInstance = new Editor();
+      editorInstance.setContent(section.content || ""); // Set pre-existing content
+
+      return {
         title: section.title || "",
-        editor: new Editor(),
+        editor: editorInstance,
         content: section.content || "",
-      }));
-    }
+      };
+    });
   }
+}
+
 
   initFaqForm() {
     this.addFaqForm = this.fb.group({
@@ -75,13 +83,9 @@ export class AddeditSpecialityComponent implements OnInit, OnDestroy {
     this.submitted = true;
     if (this.addFaqForm.valid) {
       const sectionsData = this.additionalSections.map((section) => ({
-        title: section.title.trim(), // ✅ Ensuring title is correctly captured
-        content: section.content, // ✅ Storing content as HTML
-      }));
-
-      console.log("Form Data:", this.addFaqForm.value);
-      console.log("Sections Data:", sectionsData);
-
+        title: section.title.trim(),
+        content: section.content, 
+      })); 
       this.dialogRef.close({
         type: this.data?.type,
         creation: this.data?.creation,

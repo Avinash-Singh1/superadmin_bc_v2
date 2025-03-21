@@ -149,7 +149,8 @@ export class SpecialityComponent implements OnInit {
     content?: any,
     imageUrl?: any,
     description?: any,
-    links?: any
+    links?: any,
+    sections?:any
   ) {
     let dialogRef = this.dialog.open(AddeditSpecialityComponent, {
       maxHeight: "100vh",
@@ -163,6 +164,7 @@ export class SpecialityComponent implements OnInit {
         image: creation == "Edit" ? imageUrl : "",
         description: creation == "Edit" ? description : "",
         links: creation == "Edit" ? links : "",
+        sections: creation == "Edit" ? sections : []
       },
     });
     dialogRef.afterClosed().subscribe((res: any) => {
@@ -174,6 +176,7 @@ export class SpecialityComponent implements OnInit {
             image: res?.imageURL,
             description: res?.description,
             links: res?.links,
+            sections: res?.sections || []
           },
         };
         Object.keys(body?.content).forEach((key) => {
@@ -206,6 +209,7 @@ export class SpecialityComponent implements OnInit {
           image: res?.imageURL,
           description: res?.description,
           links: res?.links,
+          sections: res?.sections || [] 
         };
         let param = {
           type: res?.type == "Speciality" ? 10 : 4,
