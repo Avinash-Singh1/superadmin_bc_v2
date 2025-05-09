@@ -9,6 +9,7 @@ import { AddNewDoctorComponent } from 'src/app/dialogs/add-new-doctor/add-new-do
 import { ApiService } from 'src/app/shared/api.service';
 import { URLConstant } from 'src/app/apisURL/url';
 import { GlobalsearchService } from 'src/app/shared/globalsearch.service';
+import { DeleteUserService } from 'src/app/services/delete-user.service';
 export interface PeriodicElement {
   name: string;
   position: string;
@@ -80,6 +81,7 @@ export class DeletedComponent implements OnInit {
     private location: Location,
     private fb: UntypedFormBuilder,
     public apiService: ApiService,
+    public deleteUserService:DeleteUserService,
     public globalSearch: GlobalsearchService
   ) { }
 
@@ -239,6 +241,9 @@ export class DeletedComponent implements OnInit {
       this.patientListData = res?.result?.patient?.data
       this.doctorListData = res?.result?.doctor?.data
       this.hospitalListData = res?.result?.hospital?.data
+      console.log("patientListData: ",this.patientListData);
+      console.log("doctorListData: ",this.doctorListData);
+      console.log("hospitalListData: ",this.hospitalListData);
       this.patientLength = res?.result?.patient?.count
       this.doctorLength = res?.result?.doctor?.count
       this.hospitalLength = res?.result?.hospital?.count
@@ -274,4 +279,45 @@ export class DeletedComponent implements OnInit {
     this.hospitalPage = event;
     this.deletedUsers()
   }
+
+  DeletepatientList(element:any){
+
+    this.deleteUserService.DeletepatientList(element).subscribe({
+      next: (res) => {
+        console.log('User deleted:', res);
+        setTimeout(() => {
+          this.deletedUsers();
+        }, 1000);
+      },
+      error: (err) => {
+        console.error('Error deleting user:', err);
+      }
+    });
+    
+  }
+  DeletedoctorList(element:any){
+
+    this.deleteUserService.DeleteDoctorList(element).subscribe({
+      next: (res) => {
+        console.log('User deleted:', res);
+        setTimeout(() => {
+          this.deletedUsers();
+        }, 1000);
+      },
+      error: (err) => {
+        console.error('Error deleting user:', err);
+      }
+    });
+    
+  }
+
+//   this.deleteUserService.deleteUser(userId).subscribe({
+//   next: (res) => {
+//     console.log('User deleted:', res);
+//   },
+//   error: (err) => {
+//     console.error('Error deleting user:', err);
+//   }
+// });
+
 }

@@ -46,6 +46,38 @@
         </a>
         </ng-container>
         </div>
+        <div class="d-flex align-items-center mt-3 ">
+            <ng-container *ngFor="let image of medicalProof1">
+            <img class="proof ms-2 cursor" *ngIf="image?.fileType=='image'" (click)="fullViewProof(image)"  [src]="image?.url" alt="" onError="this.src='assets/images/svg/nectorIcon.svg'">
+            <a [href]="image?.url" target="_blank" *ngIf="image?.fileType=='pdf'">
+            <img class="proof ms-2 cursor" src="assets/images/png/pdf.jpeg" alt="">
+        </a>
+        </ng-container>
+        </div>
+        <div class="d-flex align-items-center mt-3 ">
+            <ng-container *ngFor="let image of medicalProof2">
+            <img class="proof ms-2 cursor" *ngIf="image?.fileType=='image'" (click)="fullViewProof(image)"  [src]="image?.url" alt="" onError="this.src='assets/images/svg/nectorIcon.svg'">
+            <a [href]="image?.url" target="_blank" *ngIf="image?.fileType=='pdf'">
+            <img class="proof ms-2 cursor" src="assets/images/png/pdf.jpeg" alt="">
+        </a>
+        </ng-container>
+        </div>
+        <div class="d-flex align-items-center mt-3 ">
+            <ng-container *ngFor="let image of medicalProof3">
+            <img class="proof ms-2 cursor" *ngIf="image?.fileType=='image'" (click)="fullViewProof(image)"  [src]="image?.url" alt="" onError="this.src='assets/images/svg/nectorIcon.svg'">
+            <a [href]="image?.url" target="_blank" *ngIf="image?.fileType=='pdf'">
+            <img class="proof ms-2 cursor" src="assets/images/png/pdf.jpeg" alt="">
+        </a>
+        </ng-container>
+        </div>
+        <div class="d-flex align-items-center mt-3 ">
+            <ng-container *ngFor="let image of medicalProof4">
+            <img class="proof ms-2 cursor" *ngIf="image?.fileType=='image'" (click)="fullViewProof(image)"  [src]="image?.url" alt="" onError="this.src='assets/images/svg/nectorIcon.svg'">
+            <a [href]="image?.url" target="_blank" *ngIf="image?.fileType=='pdf'">
+            <img class="proof ms-2 cursor" src="assets/images/png/pdf.jpeg" alt="">
+        </a>
+        </ng-container>
+        </div>
 
     </div>
 </div>

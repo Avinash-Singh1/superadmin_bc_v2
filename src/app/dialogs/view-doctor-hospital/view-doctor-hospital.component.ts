@@ -16,6 +16,10 @@ export class ViewDoctorHospitalComponent implements OnInit {
   hospitalDetail:any;
   identityProof:any=[]
 medicalProof:any=[]
+medicalProof1:any=[]
+medicalProof2:any=[]
+medicalProof3:any=[]
+medicalProof4:any=[]
 rejectedDoctorDetail:any
 identityProofRejected:any=[]
 medicalProofRejected:any=[];
@@ -50,7 +54,10 @@ viewDoctor(){
     this.viewDetail=res?.result[0]
     this.establishment=this.viewDetail?.establishmentProof[0]
      this.identityProof=this.viewDetail?.identityProof;
-     this.medicalProof=this.viewDetail?.medicalProof;
+     this.medicalProof1=this.viewDetail?.medicalProof1;
+     this.medicalProof2=this.viewDetail?.medicalProof2;
+     this.medicalProof3=this.viewDetail?.medicalProof3;
+     this.medicalProof4=this.viewDetail?.medicalProof4;
 
      for(let i=0;i<this.identityProof?.length;i++){
      let obj = this.identityProof[i];
