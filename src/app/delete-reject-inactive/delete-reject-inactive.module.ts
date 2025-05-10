@@ -11,7 +11,7 @@ import { ThemeWrapperModule } from '../theme-wrapper/theme-wrapper.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { GlobalsearchService } from '../shared/globalsearch.service';
-
+import { MatIconModule } from '@angular/material/icon';
 
 @NgModule({
   declarations: [
@@ -28,6 +28,7 @@ import { GlobalsearchService } from '../shared/globalsearch.service';
     ThemeWrapperModule,
     FormsModule,
     ReactiveFormsModule,
+    MatIconModule,
     NgxPaginationModule
   ],
   providers: [GlobalsearchService]

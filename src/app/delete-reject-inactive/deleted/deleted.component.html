@@ -109,12 +109,21 @@
             <th mat-header-cell *matHeaderCellDef class=" text-headers"> Blood Group </th>
             <td mat-cell *matCellDef="let element" class=" tabledata" >{{element?.bloodGroup || 'N/A'}}</td>
           </ng-container>
-          <ng-container matColumnDef="status">
+          <!-- <ng-container matColumnDef="status">
             <th mat-header-cell *matHeaderCellDef class=" text-headers pe-5"> Status</th>
             <td mat-cell *matCellDef="let element" class=" tabledata pe-5"> 
                <span class="status" (click)="DeletepatientList(element._id)" >Deleted</span>
             </td>
-          </ng-container>
+          </ng-container> -->
+          <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef class="text-headers pe-5">Status</th>
+          <td mat-cell *matCellDef="let element" class="tabledata pe-5"> 
+            <button mat-icon-button color="warn" (click)="DeletepatientList(element._id)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
         <tr mat-header-row *matHeaderRowDef="displayedPatientsColumns"></tr>
         <tr mat-row *matRowDef="let row; columns: displayedPatientsColumns| paginate:{itemsPerPage:itemPerPage,currentPage:page,totalItems: patientLength}; let i=index"></tr>
       </table>
@@ -122,16 +131,16 @@
         No Data Found.
       </div>
  </div>
-    <div class="text-center" *ngIf="patientLength>0 && doctorsList">
+<div class="text-center" *ngIf="patientLength>0 && doctorsList">
       <pagination-controls (pageChange)="updatePageNumer($event)" previousLabel="&lsaquo;"
         nextLabel="&rsaquo;"></pagination-controls>
-    </div>
+</div>
 
 
 
 
 
-      <div class="table-responsive w-100 scrolldata mb-5" *ngIf="hospitalsList">
+<div class="table-responsive w-100 scrolldata mb-5" *ngIf="hospitalsList">
         <table mat-table  matSort [dataSource]="doctorListData" class="mat-elevation-z8 " >
             <ng-container matColumnDef="position">
               <th mat-header-cell *matHeaderCellDef class=" text-center text-headers "> </th>
@@ -213,12 +222,22 @@
                   <td mat-cell *matCellDef="let element" class=" tabledata"> <span *ngIf="element?.doctorPhone!=null || element?.doctorPhone!=undefined || element?.doctorPhone">+91</span>{{element.doctorPhone || 'N/A'}} </td>
                 </ng-container>
                
-                <ng-container matColumnDef="BloodGroup">
+                <!-- <ng-container matColumnDef="BloodGroup">
                   <th mat-header-cell *matHeaderCellDef class=" text-headers"> status</th>
                   <td mat-cell *matCellDef="let element" class=" tabledata ">
                     <span class="status" (click)="DeletedoctorList(element._id)"   >Deleted</span> 
                   </td>
-                </ng-container>
+                </ng-container> -->
+
+                <ng-container matColumnDef="BloodGroup">
+                <th mat-header-cell *matHeaderCellDef class="text-headers">Status</th>
+                <td mat-cell *matCellDef="let element" class="tabledata">
+                  <button mat-icon-button color="warn" (click)="DeletedoctorList(element._id)">
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                </td>
+              </ng-container>
+
                 
             <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
             <tr mat-row *matRowDef="let row; columns: displayedColumns | paginate:{itemsPerPage:itemPerPageDoctor,currentPage:doctorPage,totalItems: doctorLength}; let i=index"></tr>
@@ -226,11 +245,11 @@
           <div class="nodata text-center" *ngIf="doctorLength==0">
             No Data Found.
           </div>
-        </div>
-        <div class="text-center" *ngIf="doctorLength>0 && hospitalsList">
+</div>
+<div class="text-center" *ngIf="doctorLength>0 && hospitalsList">
           <pagination-controls (pageChange)="updateDoctorPage($event)" previousLabel="&lsaquo;"
             nextLabel="&rsaquo;"></pagination-controls>
-        </div>
+</div>
     
 
 
@@ -239,7 +258,7 @@
 
 
 
-        <div class="table-responsive w-100 scrolldata mb-5" *ngIf="patientList">
+<div class="table-responsive w-100 scrolldata mb-5" *ngIf="patientList">
           <table mat-table  matSort [dataSource]="hospitalListData" class="mat-elevation-z8 " >
               <ng-container matColumnDef="position">
                 <th mat-header-cell *matHeaderCellDef class=" text-center text-headers "> </th>
@@ -328,7 +347,7 @@
                  
                   <ng-container matColumnDef="BloodGroup">
                     <th mat-header-cell *matHeaderCellDef class=" text-headers"> status</th>
-                    <td mat-cell *matCellDef="let element" class=" tabledata "><span class="status">Deleted</span> </td>
+                    <td mat-cell *matCellDef="let element" class=" tabledata "><span class="status">Delete</span> </td>
                   </ng-container>
                   
               <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>

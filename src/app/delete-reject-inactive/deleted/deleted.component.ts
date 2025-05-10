@@ -10,6 +10,7 @@ import { ApiService } from 'src/app/shared/api.service';
 import { URLConstant } from 'src/app/apisURL/url';
 import { GlobalsearchService } from 'src/app/shared/globalsearch.service';
 import { DeleteUserService } from 'src/app/services/delete-user.service';
+import { DeleteConfirmationComponent } from 'src/app/dialogs/delete-confirmation/delete-confirmation.component';
 export interface PeriodicElement {
   name: string;
   position: string;
@@ -280,36 +281,37 @@ export class DeletedComponent implements OnInit {
     this.deletedUsers()
   }
 
-  DeletepatientList(element:any){
+  // DeletepatientList(element:any){
 
-    this.deleteUserService.DeletepatientList(element).subscribe({
-      next: (res) => {
-        console.log('User deleted:', res);
-        setTimeout(() => {
-          this.deletedUsers();
-        }, 1000);
-      },
-      error: (err) => {
-        console.error('Error deleting user:', err);
-      }
-    });
+  //   this.deleteUserService.DeletepatientList(element).subscribe({
+  //     next: (res) => {
+  //       console.log('User deleted:', res);
+  //       setTimeout(() => {
+  //         this.deletedUsers();
+  //       }, 1000);
+  //     },
+  //     error: (err) => {
+  //       console.error('Error deleting user:', err);
+  //     }
+  //   });
     
-  }
-  DeletedoctorList(element:any){
+  // }
 
-    this.deleteUserService.DeleteDoctorList(element).subscribe({
-      next: (res) => {
-        console.log('User deleted:', res);
-        setTimeout(() => {
-          this.deletedUsers();
-        }, 1000);
-      },
-      error: (err) => {
-        console.error('Error deleting user:', err);
-      }
-    });
+  // DeletedoctorList(element:any){
+
+  //   this.deleteUserService.DeleteDoctorList(element).subscribe({
+  //     next: (res) => {
+  //       console.log('User deleted:', res);
+  //       setTimeout(() => {
+  //         this.deletedUsers();
+  //       }, 1000);
+  //     },
+  //     error: (err) => {
+  //       console.error('Error deleting user:', err);
+  //     }
+  //   });
     
-  }
+  // }
 
 //   this.deleteUserService.deleteUser(userId).subscribe({
 //   next: (res) => {
@@ -319,5 +321,59 @@ export class DeletedComponent implements OnInit {
 //     console.error('Error deleting user:', err);
 //   }
 // });
+
+dialogRef: any;
+DeletepatientList(element: any) {
+  this.dialogRef = this.dialog.open(DeleteConfirmationComponent, {
+    data: {
+      id: element,
+      text: 'Patient',
+      type: 'patient'
+    }
+  });
+
+  this.dialogRef.afterClosed().subscribe((confirmed: boolean) => {
+    if (!confirmed) return;
+
+    this.deleteUserService.DeletepatientList(element).subscribe({
+      next: (res) => {
+        setTimeout(() => {
+          this.deletedUsers();
+        }, 500);
+      },
+      error: (err) => {
+        console.error('Error deleting patient:', err);
+      }
+    });
+  });
+}
+
+
+DeletedoctorList(element: any) {
+  this.dialogRef = this.dialog.open(DeleteConfirmationComponent, {
+    data: {
+      id: element,
+      text: 'Doctor',
+      type: 'doctor'
+    }
+  });
+
+  this.dialogRef.afterClosed().subscribe((confirmed: boolean) => {
+    if (!confirmed) return;
+
+    this.deleteUserService.DeleteDoctorList(element).subscribe({
+      next: (res) => {
+        setTimeout(() => {
+          this.deletedUsers();
+        }, 500);
+      },
+      error: (err) => {
+        console.error('Error deleting doctor:', err);
+      }
+    });
+  });
+}
+
+
 
 }
