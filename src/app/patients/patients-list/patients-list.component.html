@@ -267,6 +267,71 @@
         {{ bloodType[element?.bloodGroup + 1].bloodgroup || "N/A" }}
       </td>
     </ng-container>
+    <ng-container matColumnDef="Action">
+      <th mat-header-cell *matHeaderCellDef class="pe-4 headers">
+       Action
+      </th>
+      <td mat-cell *matCellDef="let element" class="pe-4 tabledata">
+          <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="menu">
+            <img
+              class="cursor"
+              src="assets/images/png/toggle.png"
+              alt=""
+              width="20"
+              height="20"
+            />
+          </button>
+
+          <mat-menu #menu="matMenu">
+            <button
+              mat-menu-item
+              [routerLink]="['hospital', element?._id]"
+              class="d-flex align-items-center gap-2"
+            >
+              <img
+                class="cursor"
+                src="assets/images/svg/settings.svg"
+                alt=""
+                width="20"
+                height="20"
+              />
+              <span>Settings</span>
+            </button>
+
+            <button
+              mat-menu-item
+              class="d-flex align-items-center gap-2"
+              (click)="EditPatient('Edit', element?._id, page)"
+            >
+              <img
+                class="cursor"
+                src="assets/images/svg/editdate.svg"
+                alt=""
+                width="20"
+                height="16"
+              />
+              <span>Edit</span>
+            </button>
+
+            <button
+              mat-menu-item
+              (click)="deletePatient(element?._id, 'hospital')"
+              class="d-flex align-items-center gap-2"
+            >
+              <img
+                class="cursor"
+                src="assets/images/svg/delete.svg"
+                alt=""
+                width="20"
+                height="20"
+              />
+              <span>Delete</span>
+            </button>
+          </mat-menu>
+      </td>
+    </ng-container>
+
+
 
     <tr mat-header-row nodatacontent *matHeaderRowDef="displayedColumns"></tr>
     <tr

@@ -62,6 +62,14 @@ export class ApiService {
 
     return this.httpClient.delete(`${this.url + endpoint}`, { params: params });
   }
+  MarkDeleted(endpoint: string, payload: any) {
+    let params = new HttpParams();
+    params = params.appendAll(payload);
+    // console.log("params: ",params);
+    // console.log("endpoint: ",endpoint);
+    // console.log("payload: ",payload);
+    return this.httpClient.post(`${this.url + endpoint}`, { userId:payload.userId });
+  }
   patchData(endpoint: string, data: any, parameter: any) {
     let params = new HttpParams();
     params = params.appendAll(parameter);

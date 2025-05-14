@@ -13,6 +13,7 @@ export class URLConstant {
   public static addDoctor = "v1/doctor/admin-add-doctor";
   public static editDoctor = "v1/doctor/admin-edit-doctor";
   public static deleteDoctor = "v1/doctor/admin-delete-doctor";
+  public static deletepatient = "v1/doctor/admin-delete-doctor-patient";
   public static addHospital = "v1/hospital/admin";
   public static deleteHospital = "v1/hospital/admin";
   public static specialization = "v1/master/specialization";

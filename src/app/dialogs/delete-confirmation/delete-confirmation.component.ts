@@ -39,18 +39,36 @@ export class DeleteConfirmationComponent implements OnInit {
 
   delete() {
     this.isDisabled = true;
+    // console.log("This tpye: ",this.type);
+    if(this.type=='patient') {
+          // console.log("pateint if condition",this.type);
+          const url =
+            this.type === "patient"
+              ? URLConstant.deletepatient
+              : URLConstant.deleteHospital;
 
-    const url =
-      this.type === "doctor"
-        ? URLConstant.deleteDoctor
-        : URLConstant.deleteHospital;
+          this.apiservice
+            .MarkDeleted(url, { userId: this.userId })
+            .subscribe((res: any) => {
+              if (res.success) this.dialogRef.close(true);
+              return this.toastr.success(res.message);
+            });
+    
+    }else{
+        // console.log(" not pateint if condition",this.type);
+        const url =
+        this.type === "doctor"
+          ? URLConstant.deleteDoctor
+          : URLConstant.deleteHospital;
 
-    this.apiservice
-      .DeleteData(url, { userId: this.userId })
-      .subscribe((res: any) => {
-        if (res.success) this.dialogRef.close(true);
+      this.apiservice
+        .DeleteData(url, { userId: this.userId })
+        .subscribe((res: any) => {
+          if (res.success) this.dialogRef.close(true);
+          return this.toastr.success(res.message);
+        });
+    }
 
-        return this.toastr.success(res.message);
-      });
+    
   }
 }

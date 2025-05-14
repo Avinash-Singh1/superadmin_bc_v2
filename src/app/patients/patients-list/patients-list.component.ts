@@ -7,6 +7,8 @@ import { debounceTime, distinctUntilChanged } from "rxjs";
 import { URLConstant } from "src/app/apisURL/url";
 import { ApiService } from "src/app/shared/api.service";
 import { ngxCsv } from "ngx-csv/ngx-csv";
+import { DeleteConfirmationComponent } from "src/app/dialogs/delete-confirmation/delete-confirmation.component";
+import { DeleteUserService } from "src/app/services/delete-user.service"; 
 
 export interface PeriodicElement {
   name: string;
@@ -35,6 +37,7 @@ export class PatientsListComponent implements OnInit {
     "Email",
     "Age",
     "BloodGroup",
+    "Action",
   ];
   dataSource: any;
   page = 1;
@@ -155,6 +158,7 @@ export class PatientsListComponent implements OnInit {
     private dialog: MatDialog,
     public toastr: ToastrService,
     public apiservice: ApiService,
+    public deleteUserService:DeleteUserService,
     public fb: UntypedFormBuilder
   ) {}
 
@@ -432,5 +436,39 @@ export class PatientsListComponent implements OnInit {
         this.toastr.error(error.message);
       }
     );
+  }
+
+  dialogRef: any;
+  deletePatient(element:any,val2:any){
+    // console.log("deleteDoctor-Val: deletePatient: ",element);
+
+     this.dialogRef = this.dialog.open(DeleteConfirmationComponent, {
+        data: {
+          id: element,
+          text: 'patient',
+          type: 'patient'
+        }
+      });
+    
+      this.dialogRef.afterClosed().subscribe((confirmed: boolean) => {
+        if (!confirmed) return;
+            this.patientList("", "");
+        // this.deleteUserService.DeleteDoctorList(element).subscribe({
+        //   next: (res) => {
+        //     setTimeout(() => {
+        //     }, 500);
+        //   },
+        //   error: (err) => {
+        //     console.error('Error deleting doctor:', err);
+        //   }
+        // });
+        
+      });
+
+
+
+  }
+  EditPatient(val:any,val2:any,page:any){
+    // console.log("deleteDoctor-Val-EditPatient :",val2);
   }
 }

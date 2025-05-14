@@ -7,7 +7,7 @@ import { ThemeWrapperModule } from '../theme-wrapper/theme-wrapper.module';
 import { MaterialModule } from '../material/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgxPaginationModule } from 'ngx-pagination';
-
+import { MatIconModule } from '@angular/material/icon';
 
 @NgModule({
   declarations: [
@@ -15,6 +15,7 @@ import { NgxPaginationModule } from 'ngx-pagination';
   ],
   imports: [
     CommonModule,
+    MatIconModule,
     PatientsRoutingModule,
     ThemeWrapperModule,
     MaterialModule,
