@@ -33,7 +33,25 @@
         </ng-container>
       
         <ng-container matColumnDef="date">
-          <th mat-header-cell *matHeaderCellDef class=" text-headers" > Date/Times </th>
+          <th mat-header-cell *matHeaderCellDef class=" text-headers"
+          (click)="sortData('createdAt')" > Date/Times
+           <img
+          class="cursor"
+          *ngIf="
+            !sortBy.sortOrder ||
+            sortBy.sortOrder == 'DESC' ||
+            sortBy.sort != 'createdAt'
+          "
+          src="assets/images/svg/sort.svg"
+          alt=""
+        />
+        <img
+          *ngIf="sortBy.sortOrder == 'ASC' && sortBy.sort == 'createdAt'"
+          src="assets/images/svg/sort.svg"
+          class="asce cursor"
+          alt=""
+        />
+        </th>
           <td mat-cell *matCellDef="let element" class=" tabledata"> {{element.createdAt | date:'dd/MM/yy'}}<ng-container *ngIf="element.createdAt">,</ng-container> {{element.createdAt | date:'hh:mm a'}}</td>
         </ng-container>
       

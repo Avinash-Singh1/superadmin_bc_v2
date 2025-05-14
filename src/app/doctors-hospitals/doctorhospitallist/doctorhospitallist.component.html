@@ -280,7 +280,25 @@
       </ng-container>
 
       <ng-container matColumnDef="Address">
-        <th mat-header-cell *matHeaderCellDef class="headers">Locality</th>
+        <th mat-header-cell *matHeaderCellDef class="headers cursor"
+          (click)="sortData('city')">Locality
+         <img
+            class="cursor"
+            *ngIf="
+              !sortBy.order ||
+              sortBy.order == 'DESC' ||
+              sortBy.sortBy != 'city'
+            "
+            src="assets/images/svg/sort.svg"
+            alt=""
+          />
+          <img
+            *ngIf="sortBy.order == 'ASC' && sortBy.sortBy == 'city'"
+            src="assets/images/svg/sort.svg"
+            class="asce cursor"
+            alt=""
+          />
+        </th>
         <td mat-cell *matCellDef="let element" class="tabledata change-text">
           {{ element?.city || "N/A" }}
         </td>
@@ -309,20 +327,71 @@
         </td>
       </ng-container>
       <ng-container matColumnDef="Age">
-        <th mat-header-cell *matHeaderCellDef class="headers">Email ID</th>
+        <th mat-header-cell *matHeaderCellDef class="headers" (click)="sortData('email')">Email ID
+           <img
+            class="cursor"
+            *ngIf="
+              !sortBy.order ||
+              sortBy.order == 'DESC' ||
+              sortBy.sortBy != 'email'
+            "
+            src="assets/images/svg/sort.svg"
+            alt=""
+          />
+          <img
+            *ngIf="sortBy.order == 'ASC' && sortBy.sortBy == 'email'"
+            src="assets/images/svg/sort.svg"
+            class="asce cursor"
+            alt=""
+          />
+        </th>
         <td mat-cell *matCellDef="let element" class="tabledata">
           {{ element.email || "N/A" }}
         </td>
       </ng-container>
       <ng-container matColumnDef="BloodGroup">
-        <th mat-header-cell *matHeaderCellDef class="headers">Joining Date</th>
+        <th mat-header-cell *matHeaderCellDef class="headers cursor" (click)="sortData('createdAt')">Joining Date
+           <img
+            class="cursor"
+            *ngIf="
+              !sortBy.order ||
+              sortBy.order == 'DESC' ||
+              sortBy.sortBy != 'createdAt'
+            "
+            src="assets/images/svg/sort.svg"
+            alt=""
+          />
+          <img
+            *ngIf="sortBy.order == 'ASC' && sortBy.sortBy == 'createdAt'"
+            src="assets/images/svg/sort.svg"
+            class="asce cursor"
+            alt=""
+          />
+        </th>
         <td mat-cell *matCellDef="let element" class="tabledata">
           {{ element?.createdAt | date : "dd/MM/yyyy" }}
         </td>
       </ng-container>
       <ng-container matColumnDef="requestStatus">
-        <th mat-header-cell *matHeaderCellDef class="headers">
+        <th mat-header-cell *matHeaderCellDef (click)="sortData('approvalStatus')"
+          class="headers cursor">
           Requested Status
+           <img
+            class="cursor"
+            *ngIf="
+              !sortBy.order ||
+              sortBy.order == 'DESC' ||
+              sortBy.sortBy != 'approvalStatus'
+            "
+            src="assets/images/svg/sort.svg"
+            alt=""
+          />
+          <img
+            *ngIf="sortBy.order == 'ASC' && sortBy.sortBy == 'approvalStatus'"
+            src="assets/images/svg/sort.svg"
+            class="asce cursor"
+            alt=""
+          />
         </th>
         <td mat-cell *matCellDef="let element" class="tabledata cursor">
           {{
@@ -563,7 +632,25 @@
       </ng-container>
 
       <ng-container matColumnDef="Address">
-        <th mat-header-cell *matHeaderCellDef class="headers">Locality</th>
+        <th mat-header-cell *matHeaderCellDef class="headers cursor"
+          (click)="sortData('city')">Locality
+         <img
+            class="cursor"
+            *ngIf="
+              !sortBy.order ||
+              sortBy.order == 'DESC' ||
+              sortBy.sortBy != 'city'
+            "
+            src="assets/images/svg/sort.svg"
+            alt=""
+          />
+          <img
+            *ngIf="sortBy.order == 'ASC' && sortBy.sortBy == 'city'"
+            src="assets/images/svg/sort.svg"
+            class="asce cursor"
+            alt=""
+          />
+        </th>
         <td mat-cell *matCellDef="let element" class="tabledata change-text">
           {{ element?.locality || "N/A" }}
         </td>
@@ -588,14 +675,50 @@
         </td>
       </ng-container>
       <ng-container matColumnDef="BloodGroup">
-        <th mat-header-cell *matHeaderCellDef class="headers">Joining Date</th>
+        <th mat-header-cell *matHeaderCellDef class="headers cursor"
+          (click)="sortData('createdAt')">Joining Date
+           <img
+            class="cursor"
+            *ngIf="
+              !sortBy.order ||
+              sortBy.order == 'DESC' ||
+              sortBy.sortBy != 'createdAt'
+            "
+            src="assets/images/svg/sort.svg"
+            alt=""
+          />
+          <img
+            *ngIf="sortBy.order == 'ASC' && sortBy.sortBy == 'createdAt'"
+            src="assets/images/svg/sort.svg"
+            class="asce cursor"
+            alt=""
+          />
+        
+        </th>
         <td mat-cell *matCellDef="let element" class="tabledata">
           {{ element?.joiningDate | date : "dd/MM/yyyy" }}
         </td>
       </ng-container>
       <ng-container matColumnDef="requestStatus">
-        <th mat-header-cell *matHeaderCellDef class="headers">
+        <th mat-header-cell *matHeaderCellDef class="headers cursor"
+          (click)="sortData('approvalStatus')">
           Requested Status
+           <img
+            class="cursor"
+            *ngIf="
+              !sortBy.order ||
+              sortBy.order == 'DESC' ||
+              sortBy.sortBy != 'approvalStatus'
+            "
+            src="assets/images/svg/sort.svg"
+            alt=""
+          />
+          <img
+            *ngIf="sortBy.order == 'ASC' && sortBy.sortBy == 'approvalStatus'"
+            src="assets/images/svg/sort.svg"
+            class="asce cursor"
+            alt=""
+          />
         </th>
         <td mat-cell *matCellDef="let element" class="tabledata cursor">
           {{
