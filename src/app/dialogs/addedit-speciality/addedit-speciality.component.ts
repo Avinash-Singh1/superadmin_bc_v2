@@ -68,7 +68,8 @@ ngOnInit(): void {
 
   initFaqForm() {
     this.addFaqForm = this.fb.group({
-      profilePic: ["", [Validators.required]],
+      // profilePic: ["", [Validators.required]],
+      profilePic: [""],
       question: ["", [Validators.required]],
       description: ["", [Validators.required]],
       links: ["", [Validators.required]],
