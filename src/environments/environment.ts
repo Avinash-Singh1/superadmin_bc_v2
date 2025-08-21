@@ -10,6 +10,7 @@ export const environment = {
   // API_BASE_URL: 'https://dev-api.hmns.xyz/api/v1',
   X_API_KEY: "f68dd92ab05fa026457651a34b7ef4b18cf289a5",
   API_BASE_URL: "http://localhost:8080/api/",
+  ADMIN_SECRET_KEY:"super-secret-key-here",
   // API_BASE_URL: "http://localhost:3000/api/",
   GOOGLE_API_KEY: "AIzaSyDb7zoRltrfSat3aq7o9EYF5VV4hEKwNUE",
   BASE_URL: "https://nectarplus.health/",
