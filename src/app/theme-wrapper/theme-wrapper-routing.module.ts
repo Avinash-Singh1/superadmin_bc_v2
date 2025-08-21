@@ -66,7 +66,12 @@ const routes: Routes = [
         loadChildren: () =>
           import("../settings/settings.module").then((v) => v.SettingsModule),
       },
-
+      {
+        path: ROUTE_CONSTANT.SYNC_SITEMAP,
+        loadChildren: () =>
+          import("../syncsitemap/patients.module").then((v) => v.SyncsitemapModule),
+      },
+      
       {
         path: ROUTE_CONSTANT.SURGERY.SURGERY,
         loadChildren: () =>

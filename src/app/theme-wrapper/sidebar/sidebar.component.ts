@@ -90,6 +90,11 @@ export class SidebarComponent {
       icon: "assets/images/svg/settings.svg",
       routerLink: `/${ROUTE_CONSTANT.THEME}/${ROUTE_CONSTANT.SETTINGS}`,
     },
+    {
+      label: "Sync Sitemap ",
+      icon: "assets/images/svg/sync_2.svg",
+      routerLink: `/${ROUTE_CONSTANT.THEME}/${ROUTE_CONSTANT.SYNC_SITEMAP}`,
+    },
   ];
   settingbackGround: boolean = false;
   settingRoute() {

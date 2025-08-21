@@ -9,6 +9,7 @@ export const ROUTE_CONSTANT = {
   REVIEW: "review",
   SPECIALITY_PROCEDURE: "speciality-procedure",
   SETTINGS: "settings",
+  SYNC_SITEMAP: "sync-sitemap",
   SURGERY: {
     SURGERY: "surgery",
     LEAD_LIST: "lead-list",
