@@ -1,0 +1,148 @@
+<app-header></app-header>
+
+<div class="patientsHeader d-flex justify-content-between align-items-center">
+  <h2 class="page-title">User Blacklist</h2>
+</div>
+
+<div class="card mt-3">
+  <div class="card-header d-flex justify-content-between align-items-center">
+    <div>
+      <button class="btn btn-success me-2" (click)="openAddModal()">+ Add to Blacklist</button>
+      <button class="btn btn-outline-secondary" (click)="exportCSV()" [disabled]="blacklist.length === 0">
+        Export CSV
+      </button>
+    </div>
+
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" id="showRemoved" [(ngModel)]="showRemoved" />
+      <label class="form-check-label" for="showRemoved">Show removed entries</label>
+    </div>
+  </div>
+
+  <div class="card-body">
+    <div *ngIf="filteredCount() === 0" class="text-center text-muted py-4">
+      No users blacklisted yet.
+    </div>
+
+    <div *ngIf="filteredCount() > 0">
+      <table class="table table-hover">
+        <thead class="table-light">
+          <tr>
+            <th style="width: 4%">#</th>
+            <th style="width: 18%">Name</th>
+            <th style="width: 16%">Email</th>
+            <th style="width: 12%">Mobile</th>
+            <th style="width: 15%">Specialty</th>
+            <th style="width: 18%">Reason</th>
+            <th style="width: 10%">Date Added</th>
+            <th style="width: 7%">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of visibleList(); let i = index">
+            <td>{{ (page - 1) * pageSize + i + 1 }}</td>
+            <td>{{ item.name }}</td>
+            <td>{{ item.email }}</td>
+            <td>{{ item.mobile }}</td>
+            <td>{{ item.specialty }}</td>
+            <td>{{ item.reason }}</td>
+            <td>{{ item.date | date: 'short' }}</td>
+            <td>
+              <button class="btn btn-sm btn-info me-1" (click)="viewItem(item)">View</button>
+              <button class="btn btn-sm btn-warning me-1" (click)="openEditModal(item)">Edit</button>
+              <button class="btn btn-sm btn-danger" *ngIf="!item.removed" (click)="confirmRemove(item)">
+                Remove
+              </button>
+              <button class="btn btn-sm btn-outline-danger" *ngIf="item.removed" (click)="confirmPermanentDelete(item)">
+                Delete
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="d-flex justify-content-between align-items-center mt-3">
+        <div class="text-muted">Total: {{ filteredCount() }}</div>
+
+        <div>
+          <button class="btn btn-sm btn-outline-primary me-1" [disabled]="page === 1" (click)="prevPage()">Prev</button>
+          <span>Page {{ page }}</span>
+          <button class="btn btn-sm btn-outline-primary ms-1" [disabled]="!hasMore()" (click)="nextPage()">Next</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- INLINE MODAL -->
+<!-- Backdrop -->
+<div
+  *ngIf="modalOpen"
+  (click)="onBackdropClick($event)"
+  style="position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 1050;"
+></div>
+
+<!-- Modal -->
+<div
+  *ngIf="modalOpen"
+  role="dialog"
+  aria-modal="true"
+  style="position: fixed; top: 6%; left: 50%; transform: translateX(-50%); z-index: 1060; width: 96%; max-width: 700px;"
+>
+  <div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <h5 class="mb-0">{{ editing ? 'Edit Blacklist Entry' : 'Add to Blacklist' }}</h5>
+      <button type="button" class="btn-close" aria-label="Close" (click)="closeModal()"></button>
+    </div>
+    <div class="card-body">
+      <form #formRef="ngForm" (ngSubmit)="submitForm(formRef)" novalidate>
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Name</label>
+            <input name="name" class="form-control" [(ngModel)]="form.name" required minlength="2" />
+            <div *ngIf="formRef.submitted && (!form.name || form.name.trim().length < 2)" class="text-danger small mt-1">
+              Name is required (min 2).
+            </div>
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Email</label>
+            <input name="email" class="form-control" [(ngModel)]="form.email" required />
+            <div *ngIf="formRef.submitted && !validateEmail(form.email)" class="text-danger small mt-1">
+              Enter a valid email.
+            </div>
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Mobile</label>
+            <input name="mobile" class="form-control" [(ngModel)]="form.mobile" required />
+            <div *ngIf="formRef.submitted && !validateMobile(form.mobile)" class="text-danger small mt-1">
+              Enter a valid mobile number (digits only, 7-15).
+            </div>
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Specialty</label>
+            <input name="specialty" class="form-control" [(ngModel)]="form.specialty" required minlength="2" />
+            <div *ngIf="formRef.submitted && (!form.specialty || form.specialty.trim().length < 2)" class="text-danger small mt-1">
+              Specialty is required (min 2).
+            </div>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Reason</label>
+          <textarea name="reason" class="form-control" rows="3" [(ngModel)]="form.reason" required minlength="3"></textarea>
+          <div *ngIf="formRef.submitted && (!form.reason || form.reason.trim().length < 3)" class="text-danger small mt-1">
+            Reason is required (min 3).
+          </div>
+        </div>
+
+        <div class="d-flex justify-content-end">
+          <button type="button" class="btn btn-secondary me-2" (click)="closeModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary">{{ editing ? 'Update' : 'Add' }}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

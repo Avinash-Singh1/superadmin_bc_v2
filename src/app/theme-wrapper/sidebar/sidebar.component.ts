@@ -95,6 +95,11 @@ export class SidebarComponent {
       icon: "assets/images/svg/sync_2.svg",
       routerLink: `/${ROUTE_CONSTANT.THEME}/${ROUTE_CONSTANT.SYNC_SITEMAP}`,
     },
+    {
+      label: "Black List Users",
+      icon: "assets/images/svg/sync_2.svg",
+      routerLink: `/${ROUTE_CONSTANT.THEME}/${ROUTE_CONSTANT.BLACKLIST}`,
+    },
   ];
   settingbackGround: boolean = false;
   settingRoute() {

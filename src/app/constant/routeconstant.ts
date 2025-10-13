@@ -10,6 +10,7 @@ export const ROUTE_CONSTANT = {
   SPECIALITY_PROCEDURE: "speciality-procedure",
   SETTINGS: "settings",
   SYNC_SITEMAP: "sync-sitemap",
+  BLACKLIST: "blacklist",
   SURGERY: {
     SURGERY: "surgery",
     LEAD_LIST: "lead-list",

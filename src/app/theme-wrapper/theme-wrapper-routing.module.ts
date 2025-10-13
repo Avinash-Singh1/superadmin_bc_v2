@@ -71,6 +71,11 @@ const routes: Routes = [
         loadChildren: () =>
           import("../syncsitemap/patients.module").then((v) => v.SyncsitemapModule),
       },
+      {
+        path: ROUTE_CONSTANT.BLACKLIST,
+        loadChildren: () =>
+          import("../blackListUsers/blacklist.module").then((v) => v.BlacklistModule),
+      },
       
       {
         path: ROUTE_CONSTANT.SURGERY.SURGERY,
