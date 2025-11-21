@@ -45,7 +45,7 @@ closeModal(){
 establishment:any
 establishmentrejected:any
 viewDoctor(){
-  console.log(this.viewUser)
+  // console.log("data ViewDoctorHospitalComponent",this.data)
   if(this.viewUser=='doctorpopup'){
     let param={
       userId:this.getVIewId
