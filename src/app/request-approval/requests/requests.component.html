@@ -156,9 +156,19 @@
       </th>
       <td mat-cell *matCellDef="let element" class=" tabledata"> {{element?.hospitalName || 'N/A'}} </td>
     </ng-container>
+    <ng-container matColumnDef="DoctorName">
+      <th mat-header-cell *matHeaderCellDef class=" headers"> Doctor FullName</th>
+      <td mat-cell *matCellDef="let element" class=" tabledata"> {{element?.userTableDetails?.fullName || 'N/A'}}
+      </td>
+    </ng-container>
     <ng-container matColumnDef="typeOfHospital">
       <th mat-header-cell *matHeaderCellDef class=" headers"> Type of Hospital</th>
-      <td mat-cell *matCellDef="let element" class=" tabledata"> {{element?.hospitalTypeDetails[0]?.name || 'N/A'}}
+      <td mat-cell *matCellDef="let element" class=" tabledata"> {{element?.hospitalTypeDetails?.name || 'N/A'}}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="EstabType">
+      <th mat-header-cell *matHeaderCellDef class=" headers"> Est Type</th>
+      <td mat-cell *matCellDef="let element" class=" tabledata"> {{element?.establishmentType || 'N/A'}}
       </td>
     </ng-container>
     <ng-container matColumnDef="locality">
@@ -186,7 +196,46 @@
         (click)="viewDoctor('ViewDoctorHospitalComponent','hospitalpopup',element?.userId,'','')"> <span
           class="view">View</span> </td>
     </ng-container> -->
-    <ng-container matColumnDef="Action">
+   <ng-container matColumnDef="Action">
+  <th mat-header-cell *matHeaderCellDef class="headers"> Action </th>
+
+  <td mat-cell *matCellDef="let element" class="tabledata cursor" [matMenuTriggerFor]="menu">
+    Pending
+    <img class="ms-2" src="assets/images/svg/blackdropdown.svg" alt="">
+
+    <mat-menu #menu="matMenu" class="mt-2 menus">
+
+      <!-- ACCEPT BUTTON -->
+      <button mat-menu-item class="d-flex align-items-center accept"
+        (click)="viewDoctor(
+          'AcceptRejectComponent',
+          '',
+          element?.establishmentType === 'visiting' ? element?._id : element?.userId,
+          'hospitalAccept',
+          'hospital'
+        ); $event.stopPropagation();">
+
+        <img src="assets/images/svg/accept.svg" class="me-2" alt="">Accept
+      </button>
+
+      <!-- REJECT BUTTON -->
+      <button mat-menu-item class="d-flex align-items-center reject"
+        (click)="viewDoctor(
+          'AcceptRejectComponent',
+          true,
+          element?.establishmentType === 'visiting' ? element?._id : element?.userId,
+          'hospitalReject',
+          'hospital'
+        ); $event.stopPropagation();">
+
+        <img src="assets/images/svg/reject.svg" class="me-2" alt="">Reject
+      </button>
+
+    </mat-menu>
+  </td>
+</ng-container>
+
+    <!-- <ng-container matColumnDef="Action">
       <th mat-header-cell *matHeaderCellDef class=" headers"> Action </th>
       <td mat-cell *matCellDef="let element" class=" tabledata cursor" [matMenuTriggerFor]="menu">Pending
         <img class="ms-2" src="assets/images/svg/blackdropdown.svg" alt="">
@@ -200,7 +249,7 @@
         </mat-menu>
       </td>
 
-    </ng-container>
+    </ng-container> -->
     <tr mat-header-row *matHeaderRowDef="displayedHospitalColumns"></tr>
     <tr mat-row
       *matRowDef="let row; columns: displayedHospitalColumns | paginate:{itemsPerPage:hospitalItemperPage,currentPage:hospitalPage,totalItems: totalLengthHospital}; let i=index">

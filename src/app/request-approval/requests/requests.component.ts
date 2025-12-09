@@ -39,7 +39,7 @@ import { ApiService } from 'src/app/shared/api.service';
 export class RequestsComponent implements OnInit {
 
   displayedColumns: string[] = ['img','date', 'name', 'specialization', 'locality','Mobile','document','Action',];
-  displayedHospitalColumns: string[] = ['img','date','name', 'typeOfHospital', 'locality','Mobile','document','Action',];
+  displayedHospitalColumns: string[] = ['img','date','name',"DoctorName", 'typeOfHospital','EstabType', 'locality','Mobile','document','Action',];
 
   dataSource:any;
   dataSourceHospital:any
