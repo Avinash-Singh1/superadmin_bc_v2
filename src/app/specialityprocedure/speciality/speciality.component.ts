@@ -170,6 +170,7 @@ export class SpecialityComponent implements OnInit {
       },
     });
     dialogRef.afterClosed().subscribe((res: any) => {
+      // console.log(" closed res: ", res);
       if (res?.name && res?.creation == "Add") {
         let body: any = {
           type: res?.type == "Speciality" ? 10 : 4,
@@ -178,6 +179,7 @@ export class SpecialityComponent implements OnInit {
             image: res?.imageURL,
             description: res?.description,
             links: res?.links,
+            breadcrumb: res?.breadcrumb,
             sections: res?.sections || []
           },
         };
@@ -188,7 +190,8 @@ export class SpecialityComponent implements OnInit {
         });
         this.toastrMessage = res?.type;
         this.toastrCreation = res?.creation;
-        console.log(res?.creation);
+        // console.log(res?.creation);
+        // console.log("body: ",body);
         this.apiservice
           .Postdata(URLConstant.master, body, "")
           .subscribe((res: any) => {
@@ -211,6 +214,7 @@ export class SpecialityComponent implements OnInit {
           image: res?.imageURL,
           description: res?.description,
           links: res?.links,
+          breadcrumb: res?.breadcrumb,
           sections: res?.sections || [] 
         };
         let param = {
