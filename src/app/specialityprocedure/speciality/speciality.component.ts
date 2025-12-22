@@ -150,6 +150,7 @@ export class SpecialityComponent implements OnInit {
     imageUrl?: any,
     description?: any,
     links?: any,
+    breadcrumb?:any,
     sections?:any
   ) {
     let dialogRef = this.dialog.open(AddeditSpecialityComponent, {
@@ -164,6 +165,7 @@ export class SpecialityComponent implements OnInit {
         image: creation == "Edit" ? imageUrl : "",
         description: creation == "Edit" ? description : "",
         links: creation == "Edit" ? links : "",
+        breadcrumb: creation == "Edit" ? breadcrumb : "",
         sections: creation == "Edit" ? sections : []
       },
     });

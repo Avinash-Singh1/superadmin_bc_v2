@@ -34,6 +34,71 @@
     </div>
   </div>
 
+<!-- Primary Specialization MultiSelect ⭐ REQUIRED -->
+<div class="mx-4 mt-3">
+  <label class="profileDetail">Primary Specialization<span class="mandatory">*</span></label>
+  
+  <!-- Selected primary tags display -->
+  <div class="tag-container mt-2" *ngIf="selectedPrimarySpecializations.length">
+    <span class="tag" *ngFor="let tag of selectedPrimarySpecializations; let i = index">
+      {{ tag }}
+      <span class="remove-tag" (click)="removePrimarySpecialization(i)">×</span>
+    </span>
+  </div>
+
+  <!-- Primary input -->
+  <input
+    type="text"
+    class="mt-2 form-control inputHeight"
+    placeholder="Type to search primary specialization"
+    formControlName="primarySpecializationSearch"
+  />
+
+  <!-- Primary suggestions -->
+  <ul class="suggestion-list" *ngIf="filteredPrimarySuggestions.length">
+    <li
+      *ngFor="let item of filteredPrimarySuggestions; let i = index"
+      (click)="selectPrimarySpecialization(item)">
+      {{ item }}
+    </li>
+  </ul>
+
+  <div *ngIf="submitted && !selectedPrimarySpecializations.length" class="emailerror mt-2">
+    Primary specialization is required
+  </div>
+</div>
+
+<!-- Secondary Specialization MultiSelect ⭐ REQUIRED -->
+<div class="mx-4 mt-3">
+  <label class="profileDetail">Secondary Specialization</label>
+  
+  <!-- Selected secondary tags display -->
+  <div class="tag-container mt-2" *ngIf="selectedSecondarySpecializations.length">
+    <span class="tag" *ngFor="let tag of selectedSecondarySpecializations; let i = index">
+      {{ tag }}
+      <span class="remove-tag" (click)="removeSecondarySpecialization(i)">×</span>
+    </span>
+  </div>
+
+  <!-- Secondary input -->
+  <input
+    type="text"
+    class="mt-2 form-control inputHeight"
+    placeholder="Type to search secondary specialization"
+    formControlName="secondarySpecializationSearch"
+  />
+
+  <!-- Secondary suggestions -->
+  <ul class="suggestion-list" *ngIf="filteredSecondarySuggestions.length">
+    <li
+      *ngFor="let item of filteredSecondarySuggestions"
+      (click)="selectSecondarySpecialization(item)">
+      {{ item }}
+    </li>
+  </ul>
+</div>
+
+
   <div class="mx-4 mt-3">
     <label>Description</label>
     <div class="NgxEditor__Wrapper mt-2">
