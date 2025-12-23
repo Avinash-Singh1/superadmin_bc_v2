@@ -83,7 +83,7 @@ export class AddeditSpecialityComponent implements OnInit, OnDestroy {
     { _id: '65aa494f4a91189617824908', name: 'Dietitian Nutritionist' },
     { _id: '6603f76aa051f55e39d9a5d8', name: 'Cosmetologist' },
     { _id: '660548a06a89dc628994277f', name: 'Psychologist' },
-    { _id: '660a467d0f637f6860e4a3bb', name: 'Gastroenterologist' },
+    // { _id: '660a467d0f637f6860e4a3bb', name: 'Gastroenterologist' },
     { _id: '6614feb3b3c929b7184b7335', name: 'Cosmetic/Aesthetic Dentist' },
     { _id: '66165364e29f267a386ecce7', name: 'Prosthodontist' },
     { _id: '661773942e3ab81807f2099e', name: 'Pediatric Dentist' },
