@@ -1,243 +1,364 @@
+<!-- ==================== DOCTOR POPUP ==================== -->
 <div class="view-container" *ngIf="viewUser=='doctorpopup'">
-    <div class="icon-close py-3 pe-4 d-flex justify-content-end"><img (click)="closeModal()" class="cursor" src="assets/images/svg/close.svg" alt=""></div>
-    <hr class="p-0 m-0">
-    <div class="profile-details d-flex align-items-center">
-        <div class="image">
-            <img class="patientimg" *ngIf="viewDetail?.profilePic!=null || viewDetail?.profilePic!=undefined ||  viewDetail?.profilePic; else intial" [src]="viewDetail?.profilePic" alt="" >
-            <ng-template #intial>
-              <div class="imageintial ">
-             {{viewDetail?.name?.[0]?.[0] | uppercase}}{{viewDetail?.name?.[1]?.[0] | uppercase}}
+
+  <!-- Dialog Header -->
+  <div class="dialog-header">
+    <h2 class="dialog-title">Doctor Profile</h2>
+    <button class="close-btn" (click)="closeModal()" aria-label="Close dialog">
+      <img src="assets/images/svg/close.svg" alt="Close">
+    </button>
+  </div>
+
+  <!-- Profile Card -->
+  <div class="profile-card">
+    <div class="avatar-wrapper">
+      <img class="avatar-img" *ngIf="viewDetail?.profilePic; else doctorInitial" [src]="viewDetail?.profilePic" alt="Doctor profile">
+      <ng-template #doctorInitial>
+        <div class="avatar-initials">
+          {{viewDetail?.name?.[0]?.[0] | uppercase}}{{viewDetail?.name?.[1]?.[0] | uppercase}}
+        </div>
+      </ng-template>
+    </div>
+    <div class="profile-info">
+      <h3 class="profile-name">{{viewDetail?.doctorDetails?.fullName}}</h3>
+      <div class="profile-tags">
+        <span class="tag" *ngFor="let specialization of viewDetail?.specializationDetails">
+          {{specialization?.name}}
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scrollable Content -->
+  <div class="dialog-body">
+
+    <!-- Registration Section -->
+    <div class="info-section">
+      <div class="section-header">
+        <img src="assets/images/svg/ragistration.svg" alt="" class="section-icon">
+        <h4 class="section-title">Registration</h4>
+      </div>
+      <div class="section-content">
+        <div class="detail-item">
+          <span class="detail-bullet"></span>
+          <p class="detail-text">
+            {{viewDetail?.medicalRegistration[0]?.registrationNumber}}
+            <ng-container *ngIf="viewDetail?.medicalRegistration[0]?.council">, {{viewDetail?.medicalRegistration[0]?.council}}</ng-container>
+            <ng-container *ngIf="viewDetail?.medicalRegistration[0]?.year">, {{viewDetail?.medicalRegistration[0]?.year}}</ng-container>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Education Section -->
+    <div class="info-section">
+      <div class="section-header">
+        <img src="assets/images/svg/ragistration.svg" alt="" class="section-icon">
+        <h4 class="section-title">Education</h4>
+      </div>
+      <div class="section-content">
+        <div class="detail-item" *ngFor="let education of viewDetail?.education">
+          <span class="detail-bullet"></span>
+          <p class="detail-text">
+            {{education?.degree}}
+            <ng-container *ngIf="education?.college">, {{education?.college}}</ng-container>
+            <ng-container *ngIf="education?.year">, {{education?.year}}</ng-container>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Identity Proof Section -->
+    <div class="info-section">
+      <div class="section-header">
+        <img src="assets/images/svg/documents.svg" alt="" class="section-icon">
+        <h4 class="section-title">Identity Proof</h4>
+      </div>
+      <div class="proof-grid">
+        <ng-container *ngFor="let image of identityProof">
+          <div class="proof-item" *ngIf="image?.fileType=='image'" (click)="fullViewProof(image)">
+            <img [src]="image?.url" alt="Identity proof" onError="this.src='assets/images/svg/nectorIcon.svg'">
+            <div class="proof-overlay">
+              <span>View</span>
             </div>
-            </ng-template>
-
-        </div>
-        <div class="details">
-            <h3 class="username">{{viewDetail?.doctorDetails?.fullName}}</h3>
-            <p class="occupation m-0" *ngFor="let specialization of viewDetail?.specializationDetails">{{specialization?.name}}<ng-container *ngIf="viewDetail?.specializationDetails.length>1">,</ng-container></p>
-        </div>
+          </div>
+          <a class="proof-item" [href]="image?.url" target="_blank" *ngIf="image?.fileType=='pdf'">
+            <img src="assets/images/png/pdf.jpeg" alt="PDF document">
+            <div class="proof-overlay">
+              <span>Open PDF</span>
+            </div>
+          </a>
+        </ng-container>
+      </div>
     </div>
-    <hr class="m-0 p-0">
-    <div class="profile-details">
-        <div class="d-flex align-items-center">
-            <img src="assets/images/svg/ragistration.svg" alt="">
-            <p class="m-0 registration ps-1">Registrations</p>
-        </div>
-        <div class="d-flex align-items-center mt-3 ms-2">
-            <img src="assets/images/svg/rightblackarrow.svg" alt="">
-            <p class='m-0 other-details  ms-3'> {{viewDetail?.medicalRegistration[0]?.registrationNumber}}<ng-container *ngIf="viewDetail?.medicalRegistration[0]?.council">,</ng-container>{{viewDetail?.medicalRegistration[0]?.council}}<ng-container *ngIf="viewDetail?.medicalRegistration[0]?.year">,</ng-container>{{viewDetail?.medicalRegistration[0]?.year}}</p>
-        </div>
-        <div class="d-flex align-items-center mt-4">
-            <img src="assets/images/svg/ragistration.svg" alt="">
-            <p class="m-0 education ps-1" >Education</p>
-        </div>
-        <div class="d-flex align-items-center mt-3 ms-2">
-            <img src="assets/images/svg/rightblackarrow.svg" alt="">
-            <p class="m-0 other-details  ms-3" *ngFor="let education of viewDetail?.education">{{education?.degree}}<ng-container *ngIf="education?.college">,</ng-container>{{education?.college}}<ng-container *ngIf="education?.year">,</ng-container>{{education?.year}}</p>
-        </div>
-        <div class="d-flex align-items-center mt-4">
-            <img src="assets/images/svg/documents.svg" alt="">
-            <p class="m-0 document ps-2" >Document</p>
-        </div>
-        <div class="d-flex align-items-center mt-3 ">
-            <ng-container *ngFor="let image of identityProof">
-            <img class="proof ms-2 cursor" *ngIf="image?.fileType=='image'" (click)="fullViewProof(image)"  [src]="image?.url" alt="" onError="this.src='assets/images/svg/nectorIcon.svg'">
-            <a [href]="image?.url" target="_blank" *ngIf="image?.fileType=='pdf'">
-            <img class="proof ms-2 cursor" src="assets/images/png/pdf.jpeg" alt="">
-        </a>
-        </ng-container>
-        </div>
-        <div class="d-flex align-items-center mt-3 ">
-            <ng-container *ngFor="let image of medicalProof1">
-            <img class="proof ms-2 cursor" *ngIf="image?.fileType=='image'" (click)="fullViewProof(image)"  [src]="image?.url" alt="" onError="this.src='assets/images/svg/nectorIcon.svg'">
-            <a [href]="image?.url" target="_blank" *ngIf="image?.fileType=='pdf'">
-            <img class="proof ms-2 cursor" src="assets/images/png/pdf.jpeg" alt="">
-        </a>
-        </ng-container>
-        </div>
-        <div class="d-flex align-items-center mt-3 ">
-            <ng-container *ngFor="let image of medicalProof2">
-            <img class="proof ms-2 cursor" *ngIf="image?.fileType=='image'" (click)="fullViewProof(image)"  [src]="image?.url" alt="" onError="this.src='assets/images/svg/nectorIcon.svg'">
-            <a [href]="image?.url" target="_blank" *ngIf="image?.fileType=='pdf'">
-            <img class="proof ms-2 cursor" src="assets/images/png/pdf.jpeg" alt="">
-        </a>
-        </ng-container>
-        </div>
-        <div class="d-flex align-items-center mt-3 ">
-            <ng-container *ngFor="let image of medicalProof3">
-            <img class="proof ms-2 cursor" *ngIf="image?.fileType=='image'" (click)="fullViewProof(image)"  [src]="image?.url" alt="" onError="this.src='assets/images/svg/nectorIcon.svg'">
-            <a [href]="image?.url" target="_blank" *ngIf="image?.fileType=='pdf'">
-            <img class="proof ms-2 cursor" src="assets/images/png/pdf.jpeg" alt="">
-        </a>
-        </ng-container>
-        </div>
-        <div class="d-flex align-items-center mt-3 ">
-            <ng-container *ngFor="let image of medicalProof4">
-            <img class="proof ms-2 cursor" *ngIf="image?.fileType=='image'" (click)="fullViewProof(image)"  [src]="image?.url" alt="" onError="this.src='assets/images/svg/nectorIcon.svg'">
-            <a [href]="image?.url" target="_blank" *ngIf="image?.fileType=='pdf'">
-            <img class="proof ms-2 cursor" src="assets/images/png/pdf.jpeg" alt="">
-        </a>
-        </ng-container>
-        </div>
 
+    <!-- Medical Proof Section -->
+    <div class="info-section">
+      <div class="section-header">
+        <img src="assets/images/svg/documents.svg" alt="" class="section-icon">
+        <h4 class="section-title">Medical Proof</h4>
+      </div>
+      <div class="proof-grid">
+        <ng-container *ngFor="let proofSet of [medicalProof1, medicalProof2, medicalProof3, medicalProof4]">
+          <ng-container *ngFor="let image of proofSet">
+            <div class="proof-item" *ngIf="image?.fileType=='image'" (click)="fullViewProof(image)">
+              <img [src]="image?.url" alt="Medical proof" onError="this.src='assets/images/svg/nectorIcon.svg'">
+              <div class="proof-overlay">
+                <span>View</span>
+              </div>
+            </div>
+            <a class="proof-item" [href]="image?.url" target="_blank" *ngIf="image?.fileType=='pdf'">
+              <img src="assets/images/png/pdf.jpeg" alt="PDF document">
+              <div class="proof-overlay">
+                <span>Open PDF</span>
+              </div>
+            </a>
+          </ng-container>
+        </ng-container>
+      </div>
     </div>
+
+  </div>
 </div>
 
 
-
-<!-- viewHospital -->
-
-
+<!-- ==================== HOSPITAL POPUP ==================== -->
 <div class="view-container" *ngIf="viewUser=='hospitalpopup'">
 
+  <!-- Dialog Header -->
+  <div class="dialog-header">
+    <h2 class="dialog-title">Hospital Profile</h2>
+    <button class="close-btn" (click)="closeModal()" aria-label="Close dialog">
+      <img src="assets/images/svg/close.svg" alt="Close">
+    </button>
+  </div>
 
-    <div class="icon-close py-3 pe-4 d-flex justify-content-end"><img (click)="closeModal()" class="cursor" src="assets/images/svg/close.svg" alt=""></div>
-    <hr class="p-0 m-0">
-    <div class="profile-details d-flex align-items-center">
-        <div class="image">
-            <img class="patientimg" *ngIf="hospitalDetail?.profilePic!=null || hospitalDetail?.profilePic!=undefined ||  hospitalDetail?.profilePic; else intial" [src]="hospitalDetail?.profilePic" alt="" >
-            <ng-template #intial>
-              <div class="imageintial ">
-             {{hospitalDetail?.name?.[0]?.[0] | uppercase}}{{hospitalDetail?.name?.[1]?.[0] | uppercase}}
-            </div>
-            </ng-template>
+  <!-- Profile Card -->
+  <div class="profile-card">
+    <div class="avatar-wrapper">
+      <img class="avatar-img" *ngIf="hospitalDetail?.profilePic; else hospitalInitial" [src]="hospitalDetail?.profilePic" alt="Hospital profile">
+      <ng-template #hospitalInitial>
+        <div class="avatar-initials">
+          {{hospitalDetail?.name?.[0]?.[0] | uppercase}}{{hospitalDetail?.name?.[1]?.[0] | uppercase}}
+        </div>
+      </ng-template>
+    </div>
+    <div class="profile-info">
+      <h3 class="profile-name">{{hospitalDetail?.hospitalName}}</h3>
+      <div class="profile-tags">
+        <span class="tag" *ngFor="let hospitalType of hospitalDetail?.hospitalTypeDetails">
+          {{hospitalType?.name}}
+        </span>
+      </div>
+    </div>
+  </div>
 
-        </div>
-        <div class="details">
-            <h3 class="username">{{hospitalDetail?.hospitalName}}</h3>
-            <p class="occupation m-0" *ngFor="let hospitalType of hospitalDetail?.hospitalTypeDetails">{{hospitalType?.name}}</p>
-        </div>
-    </div>
-    <hr class="m-0 p-0">
-<div class="profile-details">
-    <div class="d-flex align-items-center mt-4">
-        <img src="assets/images/svg/documents.svg" alt="">
-        <p class="m-0 document ps-2" >Document</p>
-    </div>
-    <div class="d-flex align-items-center mt-3 ">
+  <!-- Scrollable Content -->
+  <div class="dialog-body">
+
+    <!-- Documents Section -->
+    <div class="info-section">
+      <div class="section-header">
+        <img src="assets/images/svg/documents.svg" alt="" class="section-icon">
+        <h4 class="section-title">Establishment Documents</h4>
+      </div>
+      <div class="proof-grid">
         <ng-container *ngFor="let image of hospitalDetail?.establishmentProof">
-        <img class="proof ms-2 cursor" *ngIf="image?.fileType=='image'" (click)="fullViewProof(image)"  [src]="image?.url" alt="" onError="this.src='assets/images/svg/nectorIcon.svg'">
-        <a [href]="image?.url" target="_blank" *ngIf="image?.fileType=='pdf'">
-        <img class="proof ms-2 cursor" src="assets/images/png/pdf.jpeg" alt="">
-    </a>
-    </ng-container>
-    </div>
-</div>
-</div>
-
-
-<!-- rejetedDoctor -->
-
-<div class="view-container" *ngIf="viewUser=='rejectDoctor'">
-    <div class="icon-close py-3 pe-4 d-flex justify-content-end"><img (click)="closeModal()" class="cursor" src="assets/images/svg/close.svg" alt=""></div>
-    <hr class="p-0 m-0">
-    <div class="profile-details d-flex align-items-center">
-        <div class="image">
-            <img class="patientimg" *ngIf="rejectedDoctorDetail?.doctorProfilePic!=null || rejectedDoctorDetail?.doctorProfilePic!=undefined ||  rejectedDoctorDetail?.doctorProfilePic; else intial" [src]="rejectedDoctorDetail?.doctorProfilePic" alt="" >
-            <ng-template #intial>
-              <div class="imageintial ">
-             {{rejectedDoctorDetail?.name?.[0]?.[0] | uppercase}}{{rejectedDoctorDetail?.name?.[1]?.[0] | uppercase}}
+          <div class="proof-item" *ngIf="image?.fileType=='image'" (click)="fullViewProof(image)">
+            <img [src]="image?.url" alt="Document" onError="this.src='assets/images/svg/nectorIcon.svg'">
+            <div class="proof-overlay">
+              <span>View</span>
             </div>
-            </ng-template>
-
-        </div>
-        <div class="details">
-            <h3 class="username">{{rejectedDoctorDetail?.doctorName}}</h3>
-            <p class="occupation m-0" *ngFor="let specialization of rejectedDoctorDetail?.doctorSpecialization">{{specialization?.name}}<ng-container *ngIf="rejectedDoctorDetail?.doctorSpecialization.length>1">,</ng-container></p>
-        </div>
-    </div>
-    <hr class="m-0 p-0">
-    <div class="profile-details">
-        <div class="d-flex align-items-center">
-            <img src="assets/images/svg/ragistration.svg" alt="">
-            <p class="m-0 registration ps-1">Registrations</p>
-        </div>
-        <div class="d-flex align-items-center mt-3 ms-2">
-            <img src="assets/images/svg/rightblackarrow.svg" alt="">
-            <p class='m-0 other-details  ms-3'> {{rejectedDoctorDetail?.doctorMedicalRegistration[0]?.registrationNumber}}<ng-container *ngIf="rejectedDoctorDetail?.doctorMedicalRegistration[0]?.council">,</ng-container>{{rejectedDoctorDetail?.doctorMedicalRegistration[0]?.council}}<ng-container *ngIf="rejectedDoctorDetail?.doctorMedicalRegistration[0]?.year">,</ng-container>{{rejectedDoctorDetail?.doctorMedicalRegistration[0]?.year}}</p>
-        </div>
-        <div class="d-flex align-items-center mt-4">
-            <img src="assets/images/svg/ragistration.svg" alt="">
-            <p class="m-0 education ps-1" >Education</p>
-        </div>
-        <div class="d-flex align-items-center mt-3 ms-2">
-            <img src="assets/images/svg/rightblackarrow.svg" alt="">
-            <p class="m-0 other-details  ms-3" *ngFor="let education of rejectedDoctorDetail?.education">{{education?.degree}}<ng-container *ngIf="education?.college">,</ng-container>{{education?.college}}<ng-container *ngIf="education?.year">,</ng-container>{{education?.year}}</p>
-        </div>
-        <div class="d-flex align-items-center mt-4">
-            <img src="assets/images/svg/documents.svg" alt="">
-            <p class="m-0 document ps-2" >Document</p>
-        </div>
-        <div class="d-flex align-items-center mt-3 ">
-            <ng-container *ngFor="let image of identityProofRejected">
-            <img class="proof ms-2 cursor" *ngIf="image?.fileType=='image'" (click)="fullViewProof(image)"  [src]="image?.url" alt="" onError="this.src='assets/images/svg/nectorIcon.svg'">
-            <a [href]="image?.url" target="_blank" *ngIf="image?.fileType=='pdf'">
-            <img class="proof ms-2 cursor" src="assets/images/png/pdf.jpeg" alt="">
-        </a>
+          </div>
+          <a class="proof-item" [href]="image?.url" target="_blank" *ngIf="image?.fileType=='pdf'">
+            <img src="assets/images/png/pdf.jpeg" alt="PDF document">
+            <div class="proof-overlay">
+              <span>Open PDF</span>
+            </div>
+          </a>
         </ng-container>
-        </div>
-        <div class="d-flex align-items-center mt-4" *ngIf="rejectedDoctorDetail?.rejectReason!=null || rejectedDoctorDetail?.rejectReason !=undefined">
-            <img src="assets/images/svg/reject.svg" alt="">
-            <p class="m-0 rejectedReason ps-1" >Rejection reason</p>
-        </div>
-        <div class="d-flex align-items-center mt-3 ms-2" *ngIf="rejectedDoctorDetail?.rejectReason!=null || rejectedDoctorDetail?.rejectReason !=undefined">
-            <img src="assets/images/svg/rightblackarrow.svg" alt="">
-            <p class="m-0 other-details  ms-3" >{{rejectedDoctorDetail?.rejectReason}}</p>
-        </div>
-
+      </div>
     </div>
+
+  </div>
 </div>
 
 
+<!-- ==================== REJECTED DOCTOR ==================== -->
+<div class="view-container" *ngIf="viewUser=='rejectDoctor'">
+
+  <!-- Dialog Header -->
+  <div class="dialog-header">
+    <h2 class="dialog-title">Rejected Doctor</h2>
+    <button class="close-btn" (click)="closeModal()" aria-label="Close dialog">
+      <img src="assets/images/svg/close.svg" alt="Close">
+    </button>
+  </div>
+
+  <!-- Profile Card -->
+  <div class="profile-card">
+    <div class="avatar-wrapper">
+      <img class="avatar-img" *ngIf="rejectedDoctorDetail?.doctorProfilePic; else rejDocInitial" [src]="rejectedDoctorDetail?.doctorProfilePic" alt="Doctor profile">
+      <ng-template #rejDocInitial>
+        <div class="avatar-initials">
+          {{rejectedDoctorDetail?.name?.[0]?.[0] | uppercase}}{{rejectedDoctorDetail?.name?.[1]?.[0] | uppercase}}
+        </div>
+      </ng-template>
+    </div>
+    <div class="profile-info">
+      <h3 class="profile-name">{{rejectedDoctorDetail?.doctorName}}</h3>
+      <div class="profile-tags">
+        <span class="tag" *ngFor="let specialization of rejectedDoctorDetail?.doctorSpecialization">
+          {{specialization?.name}}
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scrollable Content -->
+  <div class="dialog-body">
+
+    <!-- Registration Section -->
+    <div class="info-section">
+      <div class="section-header">
+        <img src="assets/images/svg/ragistration.svg" alt="" class="section-icon">
+        <h4 class="section-title">Registration</h4>
+      </div>
+      <div class="section-content">
+        <div class="detail-item">
+          <span class="detail-bullet"></span>
+          <p class="detail-text">
+            {{rejectedDoctorDetail?.doctorMedicalRegistration[0]?.registrationNumber}}
+            <ng-container *ngIf="rejectedDoctorDetail?.doctorMedicalRegistration[0]?.council">, {{rejectedDoctorDetail?.doctorMedicalRegistration[0]?.council}}</ng-container>
+            <ng-container *ngIf="rejectedDoctorDetail?.doctorMedicalRegistration[0]?.year">, {{rejectedDoctorDetail?.doctorMedicalRegistration[0]?.year}}</ng-container>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Education Section -->
+    <div class="info-section">
+      <div class="section-header">
+        <img src="assets/images/svg/ragistration.svg" alt="" class="section-icon">
+        <h4 class="section-title">Education</h4>
+      </div>
+      <div class="section-content">
+        <div class="detail-item" *ngFor="let education of rejectedDoctorDetail?.education">
+          <span class="detail-bullet"></span>
+          <p class="detail-text">
+            {{education?.degree}}
+            <ng-container *ngIf="education?.college">, {{education?.college}}</ng-container>
+            <ng-container *ngIf="education?.year">, {{education?.year}}</ng-container>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Documents Section -->
+    <div class="info-section">
+      <div class="section-header">
+        <img src="assets/images/svg/documents.svg" alt="" class="section-icon">
+        <h4 class="section-title">Documents</h4>
+      </div>
+      <div class="proof-grid">
+        <ng-container *ngFor="let image of identityProofRejected">
+          <div class="proof-item" *ngIf="image?.fileType=='image'" (click)="fullViewProof(image)">
+            <img [src]="image?.url" alt="Document" onError="this.src='assets/images/svg/nectorIcon.svg'">
+            <div class="proof-overlay">
+              <span>View</span>
+            </div>
+          </div>
+          <a class="proof-item" [href]="image?.url" target="_blank" *ngIf="image?.fileType=='pdf'">
+            <img src="assets/images/png/pdf.jpeg" alt="PDF document">
+            <div class="proof-overlay">
+              <span>Open PDF</span>
+            </div>
+          </a>
+        </ng-container>
+      </div>
+    </div>
+
+    <!-- Rejection Reason -->
+    <div class="rejection-banner" *ngIf="rejectedDoctorDetail?.rejectReason">
+      <div class="rejection-header">
+        <img src="assets/images/svg/reject.svg" alt="" class="section-icon">
+        <h4 class="rejection-title">Rejection Reason</h4>
+      </div>
+      <p class="rejection-text">{{rejectedDoctorDetail?.rejectReason}}</p>
+    </div>
+
+  </div>
+</div>
 
 
-<!-- rejectedHospital -->
-
-
-
+<!-- ==================== REJECTED HOSPITAL ==================== -->
 <div class="view-container" *ngIf="viewUser=='rejectHospital'">
 
+  <!-- Dialog Header -->
+  <div class="dialog-header">
+    <h2 class="dialog-title">Rejected Hospital</h2>
+    <button class="close-btn" (click)="closeModal()" aria-label="Close dialog">
+      <img src="assets/images/svg/close.svg" alt="Close">
+    </button>
+  </div>
 
-    <div class="icon-close py-3 pe-4 d-flex justify-content-end"><img (click)="closeModal()" class="cursor" src="assets/images/svg/close.svg" alt=""></div>
-    <hr class="p-0 m-0">
-    <div class="profile-details d-flex align-items-center">
-        <div class="image">
-            <img class="patientimg" *ngIf="rejectedHospitalDetail?.profilePic!=null || rejectedHospitalDetail?.profilePic!=undefined ||  rejectedHospitalDetail?.profilePic; else intial" [src]="rejectedHospitalDetail?.profilePic" alt="" >
-            <ng-template #intial>
-              <div class="imageintial ">
-             {{rejectedHospitalDetail?.name?.[0]?.[0] | uppercase}}{{rejectedHospitalDetail?.name?.[1]?.[0] | uppercase}}
-            </div>
-            </ng-template>
+  <!-- Profile Card -->
+  <div class="profile-card">
+    <div class="avatar-wrapper">
+      <img class="avatar-img" *ngIf="rejectedHospitalDetail?.profilePic; else rejHospInitial" [src]="rejectedHospitalDetail?.profilePic" alt="Hospital profile">
+      <ng-template #rejHospInitial>
+        <div class="avatar-initials">
+          {{rejectedHospitalDetail?.name?.[0]?.[0] | uppercase}}{{rejectedHospitalDetail?.name?.[1]?.[0] | uppercase}}
+        </div>
+      </ng-template>
+    </div>
+    <div class="profile-info">
+      <h3 class="profile-name">{{rejectedHospitalDetail?.establishmentName}}</h3>
+      <div class="profile-tags">
+        <span class="tag" *ngFor="let hospitalType of rejectedHospitalDetail?.hospitalType">
+          {{hospitalType?.name}}
+        </span>
+      </div>
+    </div>
+  </div>
 
-        </div>
-        <div class="details">
-            <h3 class="username">{{rejectedHospitalDetail?.establishmentName}}</h3>
-            <p class="occupation m-0" *ngFor="let hospitalType of rejectedHospitalDetail?.hospitalType">{{hospitalType?.name}}</p>
-        </div>
-    </div>
-    <hr class="m-0 p-0">
-<div class="profile-details">
-    <div class="d-flex align-items-center mt-4">
-        <img src="assets/images/svg/documents.svg" alt="">
-        <p class="m-0 document ps-2" >Document</p>
-    </div>
-    <div class="d-flex align-items-center mt-3 ">
+  <!-- Scrollable Content -->
+  <div class="dialog-body">
+
+    <!-- Documents Section -->
+    <div class="info-section">
+      <div class="section-header">
+        <img src="assets/images/svg/documents.svg" alt="" class="section-icon">
+        <h4 class="section-title">Establishment Documents</h4>
+      </div>
+      <div class="proof-grid">
         <ng-container *ngFor="let image of rejectedHospitalDetail?.establishmentProof">
-        <img class="proof ms-2 cursor" *ngIf="image?.fileType=='image'" (click)="fullViewProof(image?.url)"  [src]="image?.url" alt="" onError="this.src='assets/images/svg/nectorIcon.svg'">
-        <a [href]="image?.url" target="_blank" *ngIf="image?.fileType=='pdf'">
-        <img class="proof ms-2 cursor" src="assets/images/png/pdf.jpeg" alt="">
-    </a>
-    </ng-container>
-    </div>
-    <div class="d-flex align-items-center mt-4" *ngIf="rejectedHospitalDetail?.rejectReason!=null || rejectedHospitalDetail?.rejectReason !=undefined">
-        <img src="assets/images/svg/reject.svg" alt="">
-        <p class="m-0 rejectedReason ps-1" >Rejection reason</p>
-    </div>
-    <div class="d-flex align-items-center mt-3 ms-2" *ngIf="rejectedHospitalDetail?.rejectReason!=null || rejectedHospitalDetail?.rejectReason !=undefined">
-        <img src="assets/images/svg/rightblackarrow.svg" alt="">
-        <p class="m-0 other-details  ms-3" >{{rejectedHospitalDetail?.rejectReason}}</p>
+          <div class="proof-item" *ngIf="image?.fileType=='image'" (click)="fullViewProof(image?.url)">
+            <img [src]="image?.url" alt="Document" onError="this.src='assets/images/svg/nectorIcon.svg'">
+            <div class="proof-overlay">
+              <span>View</span>
+            </div>
+          </div>
+          <a class="proof-item" [href]="image?.url" target="_blank" *ngIf="image?.fileType=='pdf'">
+            <img src="assets/images/png/pdf.jpeg" alt="PDF document">
+            <div class="proof-overlay">
+              <span>Open PDF</span>
+            </div>
+          </a>
+        </ng-container>
+      </div>
     </div>
 
-</div>
+    <!-- Rejection Reason -->
+    <div class="rejection-banner" *ngIf="rejectedHospitalDetail?.rejectReason">
+      <div class="rejection-header">
+        <img src="assets/images/svg/reject.svg" alt="" class="section-icon">
+        <h4 class="rejection-title">Rejection Reason</h4>
+      </div>
+      <p class="rejection-text">{{rejectedHospitalDetail?.rejectReason}}</p>
+    </div>
+
+  </div>
 </div>
 
 

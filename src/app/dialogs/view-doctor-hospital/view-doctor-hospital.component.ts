@@ -52,9 +52,10 @@ viewDoctor(){
     }
   this.apiService.GetData(URLConstant.viewDoctorApproval,param).subscribe((res:any)=>{
     this.viewDetail=res?.result[0]
+    console.log("my",this.viewDetail)
     this.establishment=this.viewDetail?.establishmentProof[0]
      this.identityProof=this.viewDetail?.identityProof;
-     this.medicalProof1=this.viewDetail?.medicalProof1;
+     this.medicalProof1=this.viewDetail?.medicalProof;
      this.medicalProof2=this.viewDetail?.medicalProof2;
      this.medicalProof3=this.viewDetail?.medicalProof3;
      this.medicalProof4=this.viewDetail?.medicalProof4;

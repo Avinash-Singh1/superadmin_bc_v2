@@ -1,62 +1,300 @@
 @import '../../../assets/scss/main.scss';
 
 :host {
+  display: block;
 
-    .view-container {
-        width: 100%;
+  .view-container {
+    width: 100%;
+    max-height: 85vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
 
-        .profile-details {
-            padding: 23px 0 23px 33px;
+    // ===== Dialog Header =====
+    .dialog-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 24px;
+      border-bottom: 1px solid $bright-gray;
+      background: $white;
+      flex-shrink: 0;
 
-            .registration,
-            .education,
-            .document {
-                @include font($primaryFont, 600, 18px);
-                color: $black;
-            }
+      .dialog-title {
+        @include font($primaryFont, 700, 20px);
+        color: $black;
+        margin: 0;
+        letter-spacing: -0.2px;
+      }
 
-            .other-details {
-                @include font($primaryFont, 400, 18px);
-                color: $black;
+      .close-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+        border: none;
+        border-radius: 50%;
+        background: $bright-gray;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        padding: 0;
 
-            }
-
-            .image {
-                img {
-                    width: 72px;
-                    height: 72px;
-                    border-radius: 100%;
-                }
-            }
-
-            .details {
-                margin-left: 12px;
-
-                .username {
-                    @include font($primaryFont, 600, 24px);
-                    color: $black
-                }
-
-                .occupation {
-                    @include font($primaryFont, 400, 18px);
-                    color: $filtercolor;
-                }
-            }
+        img {
+          width: 14px;
+          height: 14px;
+          opacity: 0.6;
         }
+
+        &:hover {
+          background: darken($bright-gray, 8%);
+          img {
+            opacity: 1;
+          }
+        }
+      }
     }
+
+    // ===== Profile Card =====
+    .profile-card {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 24px 28px;
+      background: linear-gradient(135deg, #f8f5ff 0%, #f0ecf9 100%);
+      border-bottom: 1px solid $bright-gray;
+      flex-shrink: 0;
+
+      .avatar-wrapper {
+        flex-shrink: 0;
+
+        .avatar-img {
+          width: 72px;
+          height: 72px;
+          border-radius: 50%;
+          object-fit: cover;
+          border: 3px solid $white;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .avatar-initials {
+          width: 72px;
+          height: 72px;
+          border-radius: 50%;
+          background: $purple;
+          color: $white;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          @include font($primaryFont, 700, 22px);
+          letter-spacing: 1px;
+          box-shadow: 0 2px 8px rgba(69, 25, 124, 0.25);
+        }
+      }
+
+      .profile-info {
+        min-width: 0;
+
+        .profile-name {
+          @include font($primaryFont, 700, 22px);
+          color: $black;
+          margin: 0 0 8px 0;
+          line-height: 1.2;
+          word-break: break-word;
+        }
+
+        .profile-tags {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 6px;
+
+          .tag {
+            @include font($primaryFont, 500, 13px);
+            color: $purple;
+            background: rgba(69, 25, 124, 0.08);
+            padding: 3px 12px;
+            border-radius: 20px;
+            white-space: nowrap;
+          }
+        }
+      }
+    }
+
+    // ===== Scrollable Body =====
+    .dialog-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 8px 0;
+
+      &::-webkit-scrollbar {
+        width: 5px;
+      }
+
+      &::-webkit-scrollbar-track {
+        background: transparent;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        background: $border;
+        border-radius: 4px;
+      }
+    }
+
+    // ===== Info Sections =====
+    .info-section {
+      padding: 16px 28px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      .section-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 14px;
+
+        .section-icon {
+          width: 20px;
+          height: 20px;
+          opacity: 0.7;
+        }
+
+        .section-title {
+          @include font($primaryFont, 600, 16px);
+          color: $black;
+          margin: 0;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+        }
+      }
+
+      .section-content {
+        padding-left: 30px;
+
+        .detail-item {
+          display: flex;
+          align-items: flex-start;
+          gap: 12px;
+          padding: 6px 0;
+
+          .detail-bullet {
+            flex-shrink: 0;
+            width: 6px;
+            height: 6px;
+            background: $purple;
+            border-radius: 50%;
+            margin-top: 8px;
+          }
+
+          .detail-text {
+            @include font($primaryFont, 400, 15px);
+            color: $dark-gray;
+            margin: 0;
+            line-height: 1.6;
+          }
+        }
+      }
+
+      // ===== Proof Grid =====
+      .proof-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        padding-left: 30px;
+
+        .proof-item {
+          position: relative;
+          width: 80px;
+          height: 80px;
+          border-radius: 10px;
+          overflow: hidden;
+          cursor: pointer;
+          border: 1px solid $bright-gray;
+          transition: all 0.25s ease;
+          text-decoration: none;
+
+          img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+          }
+
+          .proof-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.25s ease;
+
+            span {
+              @include font($primaryFont, 600, 12px);
+              color: $white;
+              text-transform: uppercase;
+              letter-spacing: 0.5px;
+            }
+          }
+
+          &:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+
+            .proof-overlay {
+              opacity: 1;
+            }
+          }
+        }
+      }
+    }
+
+    // ===== Rejection Banner =====
+    .rejection-banner {
+      margin: 12px 28px 20px;
+      padding: 16px 20px;
+      background: $light-pink;
+      border-radius: 10px;
+      border-left: 4px solid #FF0000;
+
+      .rejection-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 8px;
+
+        .section-icon {
+          width: 18px;
+          height: 18px;
+        }
+
+        .rejection-title {
+          @include font($primaryFont, 600, 15px);
+          color: #cc0000;
+          margin: 0;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+        }
+      }
+
+      .rejection-text {
+        @include font($primaryFont, 400, 15px);
+        color: $dark-gray;
+        margin: 0;
+        padding-left: 28px;
+        line-height: 1.6;
+      }
+    }
+  }
 }
 
+// ===== Material Dialog Override =====
 ::ng-deep {
-    .mat-dialog-container {
-        padding: 0px !important;
-    }
-}
-
-.proof {
-    height: 72px;
-    width: 72px;
-}
-.rejectedReason{
-    @include font($primaryFont, 600, 18px);
-    color:#FF0000;
+  .mat-dialog-container {
+    padding: 0 !important;
+    border-radius: 14px !important;
+    overflow: hidden !important;
+  }
 }
