@@ -60,6 +60,7 @@ export class DoctorhospitallistComponent implements OnInit {
     "name",
     "Gender",
     "Address",
+    "City",
     "Mobile",
     "Email",
     "BloodGroup",

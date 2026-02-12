@@ -655,6 +655,30 @@
           {{ element?.locality || "N/A" }}
         </td>
       </ng-container>
+      <ng-container matColumnDef="City">
+        <th mat-header-cell *matHeaderCellDef class="headers cursor"
+          (click)="sortData('city')">City
+          <img
+            class="cursor"
+            *ngIf="
+              !sortByHospital.sortOrder ||
+              sortByHospital.sortOrder == 'DESC' ||
+              sortByHospital.sort != 'city'
+            "
+            src="assets/images/svg/sort.svg"
+            alt=""
+          />
+          <img
+            *ngIf="sortByHospital.sortOrder == 'ASC' && sortByHospital.sort == 'city'"
+            src="assets/images/svg/sort.svg"
+            class="asce cursor"
+            alt=""
+          />
+        </th>
+        <td mat-cell *matCellDef="let element" class="tabledata change-text">
+          {{ element?.city || "N/A" }}
+        </td>
+      </ng-container>
       <ng-container matColumnDef="Mobile">
         <th mat-header-cell *matHeaderCellDef class="headers">Total Doctors</th>
         <td mat-cell *matCellDef="let element" class="tabledata">
