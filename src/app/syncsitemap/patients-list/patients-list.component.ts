@@ -9,7 +9,7 @@ import { ApiService } from "src/app/shared/api.service";
 import { ngxCsv } from "ngx-csv/ngx-csv";
 import { DeleteConfirmationComponent } from "src/app/dialogs/delete-confirmation/delete-confirmation.component";
 import { DeleteUserService } from "src/app/services/delete-user.service"; 
-import { SitemapService } from "../sitemap.service";
+import { SitemapService, SitemapMeta } from "../sitemap.service";
 
 export interface PeriodicElement {
   name: string;
@@ -163,15 +163,6 @@ export class PatientsListComponent implements OnInit {
     public fb: UntypedFormBuilder,
     private sitemapService: SitemapService
   ) {}
-
-  ngOnInit(): void {
-    // this.patientList("", "");
-    // this.patientListForm();
-    // this.downloadPatient();
-    // this.search.valueChanges
-    //   .pipe(debounceTime(500), distinctUntilChanged())
-    //   .subscribe((val) => this.searchFunction(val));
-  }
 
   // patientListForm() {
   //   this.patientForm = this.fb.group({
@@ -480,13 +471,33 @@ export class PatientsListComponent implements OnInit {
 
 
 loading = false;
+loadingMeta = false;
 message = '';
+sitemapMeta: SitemapMeta | null = null;
 
+ngOnInit(): void {
+  this.loadMeta();
+}
 
+loadMeta() {
+  this.loadingMeta = true;
+  const token = localStorage.getItem('token1') || '';
+
+  this.sitemapService.getSitemapMeta(token).subscribe({
+    next: (res: any) => {
+      this.sitemapMeta = res?.result?.data || res?.result || null;
+      this.loadingMeta = false;
+    },
+    error: (err) => {
+      console.error('Failed to load sitemap meta:', err);
+      this.loadingMeta = false;
+    },
+  });
+}
 
 syncSitemap() {
-  this.loading = true;   // 👈 Show progress bar
-  this.message = '';     // clear old messages
+  this.loading = true;
+  this.message = '';
 
   const token = localStorage.getItem('token1') || '';
 
@@ -495,12 +506,16 @@ syncSitemap() {
       this.message = res.success
         ? res.message || '✅ Sitemap synced successfully'
         : res.error || '❌ Failed';
-      this.loading = false;  // 👈 Hide progress bar
+      this.loading = false;
+      // Refresh meta after successful sync
+      if (res.success) {
+        setTimeout(() => this.loadMeta(), 2000);
+      }
     },
     error: (err) => {
       console.error(err);
       this.message = '❌ Failed to sync sitemap';
-      this.loading = false;  // 👈 Hide progress bar
+      this.loading = false;
     },
   });
 }

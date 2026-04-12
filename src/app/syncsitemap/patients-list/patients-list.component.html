@@ -1,18 +1,67 @@
 <app-header></app-header>
 
 <div class="patientsHeader d-flex justify-content-between align-items-center">
-  <h2 class="page-title">Sync Sitemap</h2>
+  <h2 class="page-title">Sitemap Management</h2>
 </div>
 
+<!-- Sitemap Meta Info -->
+<div class="sitemap-card" *ngIf="sitemapMeta">
+  <div class="card-body">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h5 class="mb-0">Sitemap Overview</h5>
+      <span class="badge bg-success">{{ sitemapMeta.totalUrls | number }} Total URLs</span>
+    </div>
+    <p class="text-muted mb-2">
+      <strong>Domain:</strong> {{ sitemapMeta.domain }}
+    </p>
+    <p class="text-muted mb-3">
+      <strong>Last Generated:</strong> {{ sitemapMeta.lastGenerated | date:'medium' }}
+    </p>
+
+    <div class="table-responsive">
+      <table class="table table-sm table-bordered">
+        <thead class="table-light">
+          <tr>
+            <th>Category</th>
+            <th class="text-end">URL Count</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let cat of sitemapMeta.categories">
+            <td>{{ cat }}</td>
+            <td class="text-end">{{ sitemapMeta.urlCounts[cat] | number }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Loading Meta -->
+<div class="sitemap-card" *ngIf="loadingMeta">
+  <div class="card-body text-center">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <p class="mt-2 text-muted">Loading sitemap info...</p>
+  </div>
+</div>
+
+<!-- Sync Action -->
 <div class="sitemap-card">
   <div class="card-body text-center">
     <p class="description">
-      Click the button below to regenerate the sitemap for <b>nectarplus.health</b>.
+      Click the button below to regenerate the sitemap for <b>bookcure.in</b>.
     </p>
 
     <button (click)="syncSitemap()" [disabled]="loading" class="btn btn-primary btn-lg">
       <i class="bi bi-arrow-repeat me-2"></i>
       {{ loading ? 'Syncing...' : 'Sync Sitemap' }}
+    </button>
+
+    <button (click)="loadMeta()" [disabled]="loadingMeta" class="btn btn-outline-secondary btn-lg ms-2">
+      <i class="bi bi-info-circle me-2"></i>
+      Refresh Stats
     </button>
 
     <!-- Progress bar while loading -->

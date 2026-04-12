@@ -13,7 +13,7 @@ export const environment = {
   ADMIN_SECRET_KEY:"super-secret-key-here",
   // API_BASE_URL: "http://localhost:3000/api/",
   GOOGLE_API_KEY: "AIzaSyDb7zoRltrfSat3aq7o9EYF5VV4hEKwNUE",
-  BASE_URL: "https://nectarplus.health/",
+  BASE_URL: "https://bookcure.in/",
   SURGERY_IMAGE_URL:
     "https://nectorplus.s3.ap-south-1.amazonaws.com/8b0d08d0-673c-11ee-bfab-6d7e93c1d95a-Surgery%20Desktop%20Banner.png",
   SURGERY_ICON_IMAGE_URL:
