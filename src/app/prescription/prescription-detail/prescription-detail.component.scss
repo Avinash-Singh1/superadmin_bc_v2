@@ -1,0 +1,244 @@
+.detail-page {
+  padding: 24px;
+  min-height: 100%;
+  background: #f5f7fb;
+}
+
+/* ── States ──────────────────────────── */
+.state-box {
+  text-align: center;
+  padding: 60px 20px;
+  color: #6b7280;
+  p { margin: 12px 0; }
+}
+
+.error-box { color: #dc2626; }
+
+/* ── Action Bar ──────────────────────── */
+.detail-action-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.detail-actions-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.btn-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 16px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  background: #fff;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  &:hover { background: #f9fafb; }
+}
+
+.btn-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  transition: all 0.15s;
+  mat-icon { font-size: 16px; width: 16px; height: 16px; }
+}
+
+.btn-print { background: #f3f4f6; color: #374151; &:hover { background: #e5e7eb; } }
+.btn-pdf   { background: #1d4ed8; color: #fff; &:hover { background: #1e40af; } }
+
+/* ── Status Badge ────────────────────── */
+.rx-status-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+
+  &.badge-final    { background: #d1fae5; color: #065f46; }
+  &.badge-draft    { background: #fef3c7; color: #92400e; }
+  &.badge-cancelled { background: #fee2e2; color: #991b1b; }
+  &.badge-default  { background: #f3f4f6; color: #374151; }
+}
+
+/* ── Document ────────────────────────── */
+.rx-document {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 28px;
+  max-width: 900px;
+}
+
+.rx-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.rx-brand__name {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #1d4ed8;
+  display: block;
+}
+
+.rx-brand__tag {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  background: #fef3c7;
+  color: #92400e;
+  padding: 2px 8px;
+  border-radius: 4px;
+  margin-top: 4px;
+  display: inline-block;
+}
+
+.rx-meta { text-align: right; }
+.rx-id { font-size: 0.8rem; font-weight: 700; color: #374151; background: #f1f5f9; padding: 4px 10px; border-radius: 6px; margin-bottom: 4px; }
+.rx-date { font-size: 0.8rem; color: #6b7280; }
+
+.rx-divider { border: none; border-top: 1px solid #e5e7eb; margin: 16px 0; }
+
+/* ── Strip ───────────────────────────── */
+.rx-strip {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  background: #f8faff;
+  border: 1px solid #e0e7ff;
+  border-radius: 10px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.rx-strip__label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #6b7280;
+  margin-bottom: 4px;
+}
+
+.rx-strip__name { font-size: 1rem; font-weight: 700; color: #111827; }
+.rx-strip__sub { font-size: 0.78rem; color: #4b5563; margin-top: 2px; }
+
+/* ── Vitals ──────────────────────────── */
+.rx-vitals {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.vital-chip {
+  padding: 5px 12px;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 20px;
+  font-size: 0.78rem;
+  color: #065f46;
+}
+
+/* ── Section ─────────────────────────── */
+.rx-section { margin-bottom: 24px; }
+
+.rx-section-title {
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #1d4ed8;
+  border-bottom: 2px solid #dbeafe;
+  padding-bottom: 6px;
+  margin-bottom: 12px;
+}
+
+.rx-info-row {
+  display: grid;
+  grid-template-columns: 150px 1fr;
+  gap: 8px;
+  font-size: 0.875rem;
+  margin-bottom: 6px;
+}
+
+.rx-info-label { font-weight: 600; color: #374151; }
+
+/* ── Tags ────────────────────────────── */
+.tag {
+  display: inline-block;
+  padding: 2px 8px;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 10px;
+  font-size: 0.72rem;
+  color: #1d4ed8;
+  margin: 2px;
+  &--danger { background: #fff1f2; border-color: #fecdd3; color: #be123c; }
+}
+
+/* ── Table ───────────────────────────── */
+.rx-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+
+  thead tr { background: #f8faff; }
+
+  th, td {
+    padding: 10px 12px;
+    text-align: left;
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  th {
+    font-weight: 700;
+    color: #374151;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+  }
+}
+
+.med-strength { font-size: 0.78rem; color: #6b7280; }
+
+/* ── Audit Log ───────────────────────── */
+.audit-log { display: flex; flex-direction: column; gap: 6px; }
+
+.audit-entry {
+  display: flex;
+  gap: 12px;
+  font-size: 0.8rem;
+  padding: 8px 12px;
+  background: #f9fafb;
+  border-radius: 6px;
+  border-left: 3px solid #6366f1;
+}
+
+.audit-action { font-weight: 600; color: #374151; }
+.audit-time   { color: #6b7280; }
+.audit-by     { color: #4b5563; font-style: italic; }
+
+/* ── Print ───────────────────────────── */
+@media print {
+  .no-print { display: none !important; }
+  .detail-page { background: #fff; padding: 0; }
+  .rx-document { max-width: 100%; border: none; box-shadow: none; border-radius: 0; padding: 10mm; }
+  @page { size: A4; margin: 10mm; }
+}

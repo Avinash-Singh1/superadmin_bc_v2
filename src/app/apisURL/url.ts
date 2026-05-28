@@ -58,6 +58,11 @@ export class URLConstant {
   public static surgeryLeadList = "v1/surgery/all-enquires";
   public static surgeryLeadChange = "v1/surgery/enquire";
   public static masterSurgerylist = "v1/surgery/all-surgery";
+
+  // Prescription APIs
+  public static adminPrescriptionList = "v1/prescription/admin/all";
+  public static adminPrescriptionById = "v1/prescription/admin";
+  public static adminPrescriptionStats = "v1/prescription/admin/stats";
   public static addSurgery = "v1/surgery";
   public static appointmentToolTip =
     "v1/admin/dashboard/appointment-surgery-lead/count/range-specialization";

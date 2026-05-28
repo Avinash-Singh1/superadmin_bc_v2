@@ -1,0 +1,107 @@
+<div class="admin-page">
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="page-header__left">
+      <h1 class="page-title">Prescriptions</h1>
+      <p class="page-subtitle">Manage and review all prescriptions</p>
+    </div>
+    <div class="page-header__right">
+      <span class="total-badge">{{ total }} Total</span>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="filter-bar">
+    <div class="filter-bar__search">
+      <mat-icon class="search-icon">search</mat-icon>
+      <input
+        type="text"
+        class="filter-input"
+        placeholder="Search by patient, doctor, Rx ID..."
+        [(ngModel)]="searchText"
+        (keyup.enter)="applyFilters()"
+      />
+    </div>
+    <div class="filter-bar__controls">
+      <select class="filter-select" [(ngModel)]="statusFilter" (change)="applyFilters()">
+        <option value="">All Statuses</option>
+        <option value="draft">Draft</option>
+        <option value="final">Final</option>
+        <option value="cancelled">Cancelled</option>
+      </select>
+      <input type="date" class="filter-input filter-input--date" [(ngModel)]="dateFrom" placeholder="From" (change)="applyFilters()" />
+      <input type="date" class="filter-input filter-input--date" [(ngModel)]="dateTo" placeholder="To" (change)="applyFilters()" />
+      <button class="btn-clear" (click)="clearFilters()">Clear</button>
+      <button class="btn-search" (click)="applyFilters()">Search</button>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="isLoading" class="loading-state">
+    <mat-spinner diameter="40"></mat-spinner>
+    <p>Loading prescriptions…</p>
+  </div>
+
+  <!-- Error -->
+  <div *ngIf="error && !isLoading" class="error-state">
+    <mat-icon>error_outline</mat-icon>
+    <p>{{ error }}</p>
+    <button class="btn-search" (click)="loadPrescriptions()">Retry</button>
+  </div>
+
+  <!-- Table -->
+  <div class="table-wrapper" *ngIf="!isLoading && !error">
+    <table class="rx-table" *ngIf="prescriptions.length; else noData">
+      <thead>
+        <tr>
+          <th>Rx ID</th>
+          <th>Patient</th>
+          <th>Doctor</th>
+          <th>Date</th>
+          <th>Diagnosis</th>
+          <th>Status</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let rx of prescriptions | paginate: { itemsPerPage: size, currentPage: page, totalItems: total }">
+          <td class="rx-id-cell">{{ rx?.prescriptionId || rx?._id?.slice(-6)?.toUpperCase() }}</td>
+          <td>{{ getPatientName(rx) }}</td>
+          <td>{{ getDoctorName(rx) }}</td>
+          <td>{{ formatDate(rx?.prescriptionDate) }}</td>
+          <td class="diagnosis-cell">{{ rx?.diagnosis || '—' }}</td>
+          <td>
+            <span class="rx-status-badge" [ngClass]="getStatusClass(rx?.status)">
+              {{ getStatusLabel(rx?.status) }}
+            </span>
+          </td>
+          <td>
+            <button class="btn-view" (click)="viewDetail(rx)">
+              <mat-icon>visibility</mat-icon>
+              View
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- No data -->
+    <ng-template #noData>
+      <div class="no-data">
+        <img src="assets/images/svg/services.svg" alt="No Prescriptions" width="60" height="60" />
+        <h3>No Prescriptions Found</h3>
+        <p>Try adjusting your search filters.</p>
+      </div>
+    </ng-template>
+
+    <!-- Pagination -->
+    <div class="pagination-row" *ngIf="total > size">
+      <pagination-controls
+        (pageChange)="onPageChange($event)"
+        [maxSize]="7"
+        previousLabel="Prev"
+        nextLabel="Next"
+      ></pagination-controls>
+    </div>
+  </div>
+</div>

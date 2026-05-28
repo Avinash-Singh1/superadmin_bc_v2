@@ -1,0 +1,177 @@
+<div class="detail-page">
+
+  <!-- Loading -->
+  <div *ngIf="isLoading" class="state-box">
+    <mat-spinner diameter="40"></mat-spinner>
+    <p>Loading prescription…</p>
+  </div>
+
+  <!-- Error -->
+  <div *ngIf="error && !isLoading" class="state-box error-box">
+    <mat-icon>error_outline</mat-icon>
+    <p>{{ error }}</p>
+    <button class="btn-back" (click)="goBack()">Go Back</button>
+  </div>
+
+  <!-- Content -->
+  <ng-container *ngIf="!isLoading && !error && prescription">
+
+    <!-- Action Bar -->
+    <div class="detail-action-bar no-print">
+      <button class="btn-back" (click)="goBack()">
+        <mat-icon>arrow_back</mat-icon> Back
+      </button>
+      <div class="detail-actions-right">
+        <span class="rx-status-badge" [ngClass]="getStatusClass()">{{ getStatusLabel() }}</span>
+        <button class="btn-action btn-print" (click)="printPrescription()">
+          <mat-icon>print</mat-icon> Print
+        </button>
+        <button class="btn-action btn-pdf" (click)="openPdf()" *ngIf="prescription?.generatedPdfUrl || prescription?.uploadedPdfUrl">
+          <mat-icon>picture_as_pdf</mat-icon> PDF
+        </button>
+      </div>
+    </div>
+
+    <!-- Document -->
+    <div class="rx-document">
+
+      <!-- Header -->
+      <div class="rx-header">
+        <div class="rx-brand">
+          <span class="rx-brand__name">Bookcure Health</span>
+          <span class="rx-brand__tag">Admin View</span>
+        </div>
+        <div class="rx-meta">
+          <div class="rx-id">{{ getRxId() }}</div>
+          <div class="rx-date">{{ formatDate(prescription?.prescriptionDate) }}</div>
+        </div>
+      </div>
+
+      <hr class="rx-divider"/>
+
+      <!-- Doctor + Patient -->
+      <div class="rx-strip">
+        <div class="rx-strip__col">
+          <div class="rx-strip__label">Doctor</div>
+          <div class="rx-strip__name">{{ getDoctorName() }}</div>
+        </div>
+        <div class="rx-strip__col">
+          <div class="rx-strip__label">Patient</div>
+          <div class="rx-strip__name">{{ getPatientName() }}</div>
+          <div class="rx-strip__sub" *ngIf="prescription?.patientDetails?.age">
+            {{ prescription.patientDetails.age }} yrs
+            <span *ngIf="prescription?.patientDetails?.gender"> · {{ prescription.patientDetails.gender }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Vitals -->
+      <div class="rx-vitals" *ngIf="prescription?.vitalSigns">
+        <div class="vital-chip" *ngIf="prescription.vitalSigns.bloodPressure">BP: {{ prescription.vitalSigns.bloodPressure }}</div>
+        <div class="vital-chip" *ngIf="prescription.vitalSigns.temperature">Temp: {{ prescription.vitalSigns.temperature }}°</div>
+        <div class="vital-chip" *ngIf="prescription.vitalSigns.pulse">Pulse: {{ prescription.vitalSigns.pulse }}</div>
+        <div class="vital-chip" *ngIf="prescription.vitalSigns.weight">Wt: {{ prescription.vitalSigns.weight }}</div>
+        <div class="vital-chip" *ngIf="prescription.vitalSigns.height">Ht: {{ prescription.vitalSigns.height }}</div>
+        <div class="vital-chip" *ngIf="prescription.vitalSigns.spo2">SpO₂: {{ prescription.vitalSigns.spo2 }}%</div>
+      </div>
+
+      <hr class="rx-divider"/>
+
+      <!-- Clinical -->
+      <div class="rx-section" *ngIf="prescription?.chiefComplaint || prescription?.diagnosis">
+        <div class="rx-section-title">Clinical Details</div>
+        <div class="rx-info-row" *ngIf="prescription?.chiefComplaint">
+          <span class="rx-info-label">Chief Complaint</span>
+          <span>{{ prescription.chiefComplaint }}</span>
+        </div>
+        <div class="rx-info-row" *ngIf="prescription?.diagnosis">
+          <span class="rx-info-label">Diagnosis</span>
+          <span>{{ prescription.diagnosis }}</span>
+        </div>
+        <div class="rx-info-row" *ngIf="prescription?.symptoms?.length">
+          <span class="rx-info-label">Symptoms</span>
+          <span>
+            <span class="tag" *ngFor="let s of prescription.symptoms">{{ s }}</span>
+          </span>
+        </div>
+        <div class="rx-info-row" *ngIf="prescription?.allergies?.length">
+          <span class="rx-info-label">Allergies</span>
+          <span>
+            <span class="tag tag--danger" *ngFor="let a of prescription.allergies">{{ a }}</span>
+          </span>
+        </div>
+      </div>
+
+      <!-- Medications -->
+      <div class="rx-section" *ngIf="getMedications().length">
+        <div class="rx-section-title">Medications</div>
+        <table class="rx-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Medicine</th>
+              <th>Dosage</th>
+              <th>Frequency</th>
+              <th>Duration</th>
+              <th>Instructions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let m of getMedications(); let i = index">
+              <td>{{ i + 1 }}</td>
+              <td>{{ m.name }}<span class="med-strength" *ngIf="m.strength"> · {{ m.strength }}</span></td>
+              <td>{{ m.dosage || '—' }}</td>
+              <td>{{ m.frequency || '—' }}</td>
+              <td>{{ m.duration || '—' }}</td>
+              <td>{{ m.instructions || '—' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Lab Tests -->
+      <div class="rx-section" *ngIf="getLabTests().length">
+        <div class="rx-section-title">Lab Tests</div>
+        <table class="rx-table">
+          <thead>
+            <tr><th>#</th><th>Test</th><th>Urgency</th><th>Instructions</th></tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let t of getLabTests(); let i = index">
+              <td>{{ i + 1 }}</td>
+              <td>{{ t.testName }}</td>
+              <td>{{ t.urgency || 'routine' }}</td>
+              <td>{{ t.instructions || '—' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Doctor Notes -->
+      <div class="rx-section" *ngIf="prescription?.doctorNotes || prescription?.followUp?.date">
+        <div class="rx-section-title">Notes & Follow-Up</div>
+        <div class="rx-info-row" *ngIf="prescription?.followUp?.date">
+          <span class="rx-info-label">Follow-Up</span>
+          <span>{{ formatDate(prescription.followUp.date) }}</span>
+        </div>
+        <div class="rx-info-row" *ngIf="prescription?.doctorNotes">
+          <span class="rx-info-label">Doctor Notes</span>
+          <span>{{ prescription.doctorNotes }}</span>
+        </div>
+      </div>
+
+      <!-- Audit log (admin only) -->
+      <div class="rx-section no-print" *ngIf="prescription?.auditLogs?.length">
+        <div class="rx-section-title">Audit Log</div>
+        <div class="audit-log">
+          <div class="audit-entry" *ngFor="let log of prescription.auditLogs">
+            <span class="audit-action">{{ log.action }}</span>
+            <span class="audit-time">{{ formatDate(log.timestamp) }}</span>
+            <span class="audit-by" *ngIf="log.performedBy">by {{ log.performedBy }}</span>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /rx-document -->
+  </ng-container>
+</div>

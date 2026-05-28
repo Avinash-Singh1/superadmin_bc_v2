@@ -100,6 +100,11 @@ export class SidebarComponent {
       icon: "assets/images/svg/sync_2.svg",
       routerLink: `/${ROUTE_CONSTANT.THEME}/${ROUTE_CONSTANT.BLACKLIST}`,
     },
+    {
+      label: "PRESCRIPTIONS",
+      icon: "assets/images/svg/prescription.svg",
+      routerLink: `/${ROUTE_CONSTANT.THEME}/${ROUTE_CONSTANT.PRESCRIPTION}`,
+    },
   ];
   settingbackGround: boolean = false;
   settingRoute() {

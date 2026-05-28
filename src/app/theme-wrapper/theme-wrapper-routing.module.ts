@@ -76,6 +76,11 @@ const routes: Routes = [
         loadChildren: () =>
           import("../blackListUsers/blacklist.module").then((v) => v.BlacklistModule),
       },
+      {
+        path: ROUTE_CONSTANT.PRESCRIPTION,
+        loadChildren: () =>
+          import("../prescription/prescription.module").then((v) => v.PrescriptionModule),
+      },
       
       {
         path: ROUTE_CONSTANT.SURGERY.SURGERY,
