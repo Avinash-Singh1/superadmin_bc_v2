@@ -19,9 +19,14 @@ export class PrescriptionListComponent implements OnInit {
   size = 20;
   total = 0;
 
+  // Stats
+  uploadedCount = 0;
+  generatedCount = 0;
+
   // Filters
   searchText = '';
   statusFilter = '';
+  typeFilter = '';
   dateFrom = '';
   dateTo = '';
 
@@ -43,15 +48,33 @@ export class PrescriptionListComponent implements OnInit {
 
     this.apiService.GetData(URLConstant.adminPrescriptionList, params).subscribe({
       next: (res: any) => {
-        this.prescriptions = res?.data?.prescriptions || res?.data || [];
-        this.total = res?.data?.count || 0;
+        // Backend wraps response as: { result: { data: { prescriptions, count } } }
+        const payload =
+          res?.result?.data ||
+          res?.data?.data ||
+          res?.result ||
+          res?.data ||
+          res || {};
+
+        this.prescriptions = payload?.prescriptions || (Array.isArray(payload) ? payload : []);
+        this.total = payload?.count ?? this.prescriptions.length;
+        this.computeStats();
         this.isLoading = false;
       },
       error: (err: any) => {
-        this.error = err?.message || 'Failed to load prescriptions.';
+        this.error = err?.message || err?.error?.message || 'Failed to load prescriptions.';
         this.isLoading = false;
       },
     });
+  }
+
+  computeStats(): void {
+    this.uploadedCount = this.prescriptions.filter(
+      p => p?.prescriptionType === 'uploaded' || p?.prescriptionType === 'both'
+    ).length;
+    this.generatedCount = this.prescriptions.filter(
+      p => p?.prescriptionType === 'generated' || p?.prescriptionType === 'both'
+    ).length;
   }
 
   applyFilters(): void {
@@ -62,6 +85,7 @@ export class PrescriptionListComponent implements OnInit {
   clearFilters(): void {
     this.searchText = '';
     this.statusFilter = '';
+    this.typeFilter = '';
     this.dateFrom = '';
     this.dateTo = '';
     this.applyFilters();
@@ -107,5 +131,38 @@ export class PrescriptionListComponent implements OnInit {
     const p = rx?.patientId;
     if (p && typeof p === 'object') return p?.userId?.fullName || '';
     return rx?.patientDetails?.name || 'N/A';
+  }
+
+  getPrescriptionTypeLabel(rx: any): string {
+    const t = rx?.prescriptionType;
+    if (t === 'uploaded') return 'Uploaded';
+    if (t === 'both') return 'Form + Upload';
+    return 'Digital';
+  }
+
+  getPrescriptionTypeClass(rx: any): string {
+    const t = rx?.prescriptionType;
+    if (t === 'uploaded') return 'badge-uploaded';
+    if (t === 'both') return 'badge-both';
+    return 'badge-generated';
+  }
+
+  getPrescriptionTypeIcon(rx: any): string {
+    const t = rx?.prescriptionType;
+    if (t === 'uploaded') return 'upload_file';
+    if (t === 'both') return 'library_books';
+    return 'description';
+  }
+
+  /** Client-side type filter applied on top of server-side results */
+  get filteredPrescriptions(): any[] {
+    if (!this.typeFilter) return this.prescriptions;
+    return this.prescriptions.filter(p => {
+      const t = p?.prescriptionType;
+      if (this.typeFilter === 'uploaded') return t === 'uploaded';
+      if (this.typeFilter === 'generated') return t === 'generated' || !t;
+      if (this.typeFilter === 'both') return t === 'both';
+      return true;
+    });
   }
 }

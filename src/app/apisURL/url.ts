@@ -62,6 +62,7 @@ export class URLConstant {
   // Prescription APIs
   public static adminPrescriptionList = "v1/prescription/admin/all";
   public static adminPrescriptionById = "v1/prescription/admin";
+  public static adminPrescriptionUploadFile = "v1/prescription/admin";
   public static adminPrescriptionStats = "v1/prescription/admin/stats";
   public static addSurgery = "v1/surgery";
   public static appointmentToolTip =

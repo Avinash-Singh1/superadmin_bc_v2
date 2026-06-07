@@ -1,12 +1,27 @@
 <div class="admin-page">
+
   <!-- Page Header -->
   <div class="page-header">
     <div class="page-header__left">
-      <h1 class="page-title">Prescriptions</h1>
-      <p class="page-subtitle">Manage and review all prescriptions</p>
+      <h1 class="page-title">
+        <span class="page-title__icon">💊</span>
+        Prescriptions
+      </h1>
+      <p class="page-subtitle">View and manage all prescriptions across the platform</p>
     </div>
     <div class="page-header__right">
-      <span class="total-badge">{{ total }} Total</span>
+      <span class="stat-chip stat-chip--total">
+        <mat-icon>receipt_long</mat-icon>
+        {{ total }} Total
+      </span>
+      <span class="stat-chip stat-chip--upload">
+        <mat-icon>upload_file</mat-icon>
+        {{ uploadedCount }} Uploaded
+      </span>
+      <span class="stat-chip stat-chip--digital">
+        <mat-icon>description</mat-icon>
+        {{ generatedCount }} Digital
+      </span>
     </div>
   </div>
 
@@ -29,10 +44,22 @@
         <option value="final">Final</option>
         <option value="cancelled">Cancelled</option>
       </select>
+      <select class="filter-select" [(ngModel)]="typeFilter" (change)="applyFilters()">
+        <option value="">All Types</option>
+        <option value="uploaded">Uploaded</option>
+        <option value="generated">Digital</option>
+        <option value="both">Form + Upload</option>
+      </select>
       <input type="date" class="filter-input filter-input--date" [(ngModel)]="dateFrom" placeholder="From" (change)="applyFilters()" />
       <input type="date" class="filter-input filter-input--date" [(ngModel)]="dateTo" placeholder="To" (change)="applyFilters()" />
-      <button class="btn-clear" (click)="clearFilters()">Clear</button>
-      <button class="btn-search" (click)="applyFilters()">Search</button>
+      <button class="btn-clear" (click)="clearFilters()">
+        <mat-icon>filter_alt_off</mat-icon>
+        Clear
+      </button>
+      <button class="btn-search" (click)="applyFilters()">
+        <mat-icon>search</mat-icon>
+        Search
+      </button>
     </div>
   </div>
 
@@ -51,7 +78,7 @@
 
   <!-- Table -->
   <div class="table-wrapper" *ngIf="!isLoading && !error">
-    <table class="rx-table" *ngIf="prescriptions.length; else noData">
+    <table class="rx-table" *ngIf="filteredPrescriptions.length; else noData">
       <thead>
         <tr>
           <th>Rx ID</th>
@@ -60,19 +87,41 @@
           <th>Date</th>
           <th>Diagnosis</th>
           <th>Status</th>
+          <th>Type</th>
           <th>Action</th>
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let rx of prescriptions | paginate: { itemsPerPage: size, currentPage: page, totalItems: total }">
-          <td class="rx-id-cell">{{ rx?.prescriptionId || rx?._id?.slice(-6)?.toUpperCase() }}</td>
-          <td>{{ getPatientName(rx) }}</td>
-          <td>{{ getDoctorName(rx) }}</td>
-          <td>{{ formatDate(rx?.prescriptionDate) }}</td>
-          <td class="diagnosis-cell">{{ rx?.diagnosis || '—' }}</td>
+        <tr *ngFor="let rx of filteredPrescriptions | paginate: { itemsPerPage: size, currentPage: page, totalItems: total }">
+          <td class="rx-id-cell">
+            <span class="rx-id-text">{{ rx?.prescriptionId || ('#' + rx?._id?.slice(-6)?.toUpperCase()) }}</span>
+          </td>
+          <td>
+            <div class="person-cell">
+              <span class="person-avatar person-avatar--patient">{{ getPatientName(rx).charAt(0).toUpperCase() || 'P' }}</span>
+              <span class="person-name">{{ getPatientName(rx) }}</span>
+            </div>
+          </td>
+          <td>
+            <div class="person-cell">
+              <span class="person-avatar person-avatar--doctor">{{ getDoctorName(rx).charAt(0).toUpperCase() || 'D' }}</span>
+              <div>
+                <div class="person-name">{{ getDoctorName(rx) }}</div>
+                <div class="person-sub" *ngIf="rx?.doctorDetails?.specialization">{{ rx.doctorDetails.specialization }}</div>
+              </div>
+            </div>
+          </td>
+          <td class="date-cell">{{ formatDate(rx?.prescriptionDate || rx?.createdAt) }}</td>
+          <td class="diagnosis-cell">{{ (rx?.diagnosis || '—') | slice:0:60 }}</td>
           <td>
             <span class="rx-status-badge" [ngClass]="getStatusClass(rx?.status)">
               {{ getStatusLabel(rx?.status) }}
+            </span>
+          </td>
+          <td>
+            <span class="rx-type-badge" [ngClass]="getPrescriptionTypeClass(rx)">
+              <mat-icon class="type-icon">{{ getPrescriptionTypeIcon(rx) }}</mat-icon>
+              {{ getPrescriptionTypeLabel(rx) }}
             </span>
           </td>
           <td>
@@ -88,9 +137,10 @@
     <!-- No data -->
     <ng-template #noData>
       <div class="no-data">
-        <img src="assets/images/svg/services.svg" alt="No Prescriptions" width="60" height="60" />
+        <div class="no-data__icon">📋</div>
         <h3>No Prescriptions Found</h3>
-        <p>Try adjusting your search filters.</p>
+        <p>Try adjusting your search filters or date range.</p>
+        <button class="btn-clear" (click)="clearFilters()">Clear Filters</button>
       </div>
     </ng-template>
 

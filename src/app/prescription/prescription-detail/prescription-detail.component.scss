@@ -1,18 +1,46 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
 .detail-page {
   padding: 24px;
   min-height: 100%;
   background: #f5f7fb;
+  font-family: 'Inter', sans-serif;
 }
 
 /* ── States ──────────────────────────── */
 .state-box {
   text-align: center;
   padding: 60px 20px;
-  color: #6b7280;
-  p { margin: 12px 0; }
+  color: #64748b;
+
+  p {
+    margin: 12px 0;
+    font-size: 0.9rem;
+  }
+
+  mat-icon {
+    font-size: 40px;
+    width: 40px;
+    height: 40px;
+  }
 }
 
-.error-box { color: #dc2626; }
+.error-box {
+  color: #dc2626;
+}
+
+.error-banner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+  border-radius: 10px;
+  padding: 10px 16px;
+  margin-bottom: 16px;
+  font-size: 0.875rem;
+}
 
 /* ── Action Bar ──────────────────────── */
 .detail-action-bar {
@@ -42,7 +70,19 @@
   font-size: 0.875rem;
   font-weight: 500;
   cursor: pointer;
-  &:hover { background: #f9fafb; }
+  font-family: inherit;
+  transition: all 0.15s;
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+
+  &:hover {
+    background: #f8fafc;
+    border-color: #94a3b8;
+  }
 }
 
 .btn-action {
@@ -53,115 +93,307 @@
   border-radius: 8px;
   font-size: 0.875rem;
   font-weight: 500;
+  font-family: inherit;
   cursor: pointer;
   border: none;
   transition: all 0.15s;
-  mat-icon { font-size: 16px; width: 16px; height: 16px; }
+  text-decoration: none;
+
+  mat-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+  }
 }
 
-.btn-print { background: #f3f4f6; color: #374151; &:hover { background: #e5e7eb; } }
-.btn-pdf   { background: #1d4ed8; color: #fff; &:hover { background: #1e40af; } }
+.btn-print {
+  background: #f3f4f6;
+  color: #374151;
 
-/* ── Status Badge ────────────────────── */
+  &:hover {
+    background: #e5e7eb;
+  }
+}
+
+.btn-pdf {
+  background: #1d4ed8;
+  color: #fff;
+
+  &:hover {
+    background: #1e40af;
+  }
+}
+
+.btn-upload {
+  background: #0f766e;
+  color: #fff;
+
+  &:hover {
+    background: #115e59;
+  }
+}
+
+.btn-remove {
+  background: #fee2e2;
+  color: #991b1b;
+
+  &:hover {
+    background: #fecaca;
+  }
+}
+
+.btn-download {
+  background: #7c3aed;
+  color: #fff;
+
+  &:hover {
+    background: #6d28d9;
+  }
+}
+
+.hidden-file-input {
+  display: none;
+}
+
+/* ── Status / Type ───────────────────── */
 .rx-status-badge {
   display: inline-block;
-  padding: 4px 10px;
+  padding: 4px 12px;
   border-radius: 20px;
   font-size: 0.72rem;
   font-weight: 700;
   text-transform: uppercase;
+  letter-spacing: 0.06em;
 
-  &.badge-final    { background: #d1fae5; color: #065f46; }
-  &.badge-draft    { background: #fef3c7; color: #92400e; }
-  &.badge-cancelled { background: #fee2e2; color: #991b1b; }
-  &.badge-default  { background: #f3f4f6; color: #374151; }
+  &.badge-final {
+    background: #d1fae5;
+    color: #065f46;
+  }
+
+  &.badge-draft {
+    background: #fef3c7;
+    color: #92400e;
+  }
+
+  &.badge-cancelled {
+    background: #fee2e2;
+    color: #991b1b;
+  }
+
+  &.badge-default {
+    background: #f3f4f6;
+    color: #374151;
+  }
+}
+
+.rx-type-chip {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  color: #1d4ed8;
 }
 
 /* ── Document ────────────────────────── */
 .rx-document {
   background: #fff;
   border: 1px solid #e5e7eb;
-  border-radius: 12px;
-  padding: 28px;
-  max-width: 900px;
+  border-radius: 16px;
+  padding: 32px;
+  max-width: 960px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
 }
 
-.rx-header {
+/* ── Letterhead ──────────────────────── */
+.rx-letterhead {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
+  margin-bottom: 4px;
 }
 
-.rx-brand__name {
-  font-size: 1.25rem;
+.rx-brand-name {
+  font-size: 1.4rem;
   font-weight: 800;
   color: #1d4ed8;
-  display: block;
 }
 
-.rx-brand__tag {
+.rx-brand-sub {
   font-size: 0.72rem;
-  font-weight: 700;
+  font-weight: 600;
   text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #94a3b8;
+  margin-top: 4px;
   background: #fef3c7;
   color: #92400e;
   padding: 2px 8px;
   border-radius: 4px;
-  margin-top: 4px;
   display: inline-block;
 }
 
-.rx-meta { text-align: right; }
-.rx-id { font-size: 0.8rem; font-weight: 700; color: #374151; background: #f1f5f9; padding: 4px 10px; border-radius: 6px; margin-bottom: 4px; }
-.rx-date { font-size: 0.8rem; color: #6b7280; }
+.rx-id-pill {
+  font-family: 'Courier New', monospace;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #374151;
+  background: #f1f5f9;
+  padding: 4px 12px;
+  border-radius: 6px;
+  margin-bottom: 4px;
+  text-align: right;
+}
 
-.rx-divider { border: none; border-top: 1px solid #e5e7eb; margin: 16px 0; }
+.rx-date-text {
+  font-size: 0.8rem;
+  color: #64748b;
+  text-align: right;
+}
 
-/* ── Strip ───────────────────────────── */
-.rx-strip {
+.rx-divider {
+  border: none;
+  border-top: 1px solid #e5e7eb;
+  margin: 20px 0;
+}
+
+/* ── Info Grid ───────────────────────── */
+.rx-info-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 16px;
-  background: #f8faff;
-  border: 1px solid #e0e7ff;
-  border-radius: 10px;
-  padding: 16px;
-  margin-bottom: 16px;
+  margin-bottom: 20px;
 }
 
-.rx-strip__label {
+/* ── Cards ───────────────────────────── */
+.rx-card {
+  border-radius: 12px;
+  padding: 18px;
+  border: 1px solid;
+
+  &--doctor {
+    background: linear-gradient(135deg, #eff6ff, #f5f3ff);
+    border-color: #dbeafe;
+  }
+
+  &--patient {
+    background: linear-gradient(135deg, #f0fdf4, #f5f3ff);
+    border-color: #bbf7d0;
+  }
+}
+
+.rx-card__label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
   font-size: 0.68rem;
   font-weight: 700;
   text-transform: uppercase;
+  letter-spacing: 0.06em;
   color: #6b7280;
-  margin-bottom: 4px;
+  margin-bottom: 8px;
+
+  mat-icon {
+    font-size: 14px;
+    width: 14px;
+    height: 14px;
+  }
 }
 
-.rx-strip__name { font-size: 1rem; font-weight: 700; color: #111827; }
-.rx-strip__sub { font-size: 0.78rem; color: #4b5563; margin-top: 2px; }
+.rx-card__name {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 8px;
+}
+
+.rx-card__detail {
+  font-size: 0.8rem;
+  color: #4b5563;
+  margin-bottom: 3px;
+}
+
+.rx-card__row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.rx-chip {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 20px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  background: #f3f4f6;
+  color: #374151;
+  border: 1px solid #e5e7eb;
+
+  &--blood {
+    background: #fff1f2;
+    color: #be123c;
+    border-color: #fecdd3;
+  }
+}
 
 /* ── Vitals ──────────────────────────── */
 .rx-vitals {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  margin-bottom: 16px;
+  margin-bottom: 20px;
 }
 
 .vital-chip {
-  padding: 5px 12px;
+  padding: 5px 14px;
   background: #f0fdf4;
   border: 1px solid #bbf7d0;
   border-radius: 20px;
   font-size: 0.78rem;
   color: #065f46;
+  font-weight: 500;
+}
+
+/* ── Section Headers ─────────────────── */
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  border-radius: 8px;
+  padding: 10px 16px;
+  margin-bottom: 16px;
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+
+  &--digital {
+    background: #eff6ff;
+    color: #1d4ed8;
+    border: 1px solid #bfdbfe;
+  }
+
+  &--upload {
+    background: #f0fdf4;
+    color: #15803d;
+    border: 1px solid #bbf7d0;
+  }
 }
 
 /* ── Section ─────────────────────────── */
-.rx-section { margin-bottom: 24px; }
+.rx-section {
+  margin-bottom: 24px;
+}
 
 .rx-section-title {
-  font-size: 0.78rem;
+  font-size: 0.75rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.06em;
@@ -173,13 +405,17 @@
 
 .rx-info-row {
   display: grid;
-  grid-template-columns: 150px 1fr;
+  grid-template-columns: 170px 1fr;
   gap: 8px;
   font-size: 0.875rem;
-  margin-bottom: 6px;
+  margin-bottom: 8px;
+  align-items: baseline;
 }
 
-.rx-info-label { font-weight: 600; color: #374151; }
+.rx-info-label {
+  font-weight: 600;
+  color: #374151;
+}
 
 /* ── Tags ────────────────────────────── */
 .tag {
@@ -191,54 +427,190 @@
   font-size: 0.72rem;
   color: #1d4ed8;
   margin: 2px;
-  &--danger { background: #fff1f2; border-color: #fecdd3; color: #be123c; }
+
+  &--danger {
+    background: #fff1f2;
+    border-color: #fecdd3;
+    color: #be123c;
+  }
 }
 
-/* ── Table ───────────────────────────── */
-.rx-table {
+/* ── Medications Table ───────────────── */
+.rx-med-table {
   width: 100%;
   border-collapse: collapse;
   font-size: 0.85rem;
 
-  thead tr { background: #f8faff; }
+  thead tr {
+    background: linear-gradient(135deg, #f8faff, #faf5ff);
+  }
 
-  th, td {
+  th,
+  td {
     padding: 10px 12px;
     text-align: left;
-    border-bottom: 1px solid #e5e7eb;
+    border-bottom: 1px solid #f1f5f9;
   }
 
   th {
     font-weight: 700;
-    color: #374151;
-    font-size: 0.75rem;
+    color: #475569;
+    font-size: 0.72rem;
     text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  tbody tr:hover td {
+    background: #fafbff;
   }
 }
 
-.med-strength { font-size: 0.78rem; color: #6b7280; }
+.med-strength {
+  font-size: 0.78rem;
+  color: #6b7280;
+}
+
+/* ── File Preview ────────────────────── */
+.rx-file-empty {
+  padding: 16px 20px;
+  border: 2px dashed #cbd5e1;
+  border-radius: 12px;
+  color: #64748b;
+  background: #f8fafc;
+  font-size: 0.875rem;
+}
+
+.rx-file-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.rx-file-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* ── Image Preview ────────────────────── */
+.rx-image-wrapper {
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #f8fafc;
+  text-align: center;
+  cursor: zoom-in;
+
+  &--zoomed {
+    cursor: zoom-out;
+
+    .rx-uploaded-image {
+      max-height: none;
+      transform: scale(1.5);
+      transform-origin: top center;
+    }
+  }
+}
+
+.rx-uploaded-image {
+  width: 100%;
+  max-height: 600px;
+  object-fit: contain;
+  transition: transform 0.3s ease;
+  display: block;
+}
+
+.rx-image-hint {
+  padding: 8px;
+  font-size: 0.75rem;
+  color: #94a3b8;
+  background: #f1f5f9;
+  border-top: 1px solid #e2e8f0;
+}
+
+/* ── PDF Frame ────────────────────────── */
+.rx-pdf-wrapper {
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.rx-uploaded-frame {
+  width: 100%;
+  min-height: 540px;
+  border: none;
+  display: block;
+}
 
 /* ── Audit Log ───────────────────────── */
-.audit-log { display: flex; flex-direction: column; gap: 6px; }
+.audit-log {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
 
 .audit-entry {
   display: flex;
   gap: 12px;
+  align-items: center;
   font-size: 0.8rem;
-  padding: 8px 12px;
+  padding: 8px 14px;
   background: #f9fafb;
-  border-radius: 6px;
+  border-radius: 8px;
   border-left: 3px solid #6366f1;
 }
 
-.audit-action { font-weight: 600; color: #374151; }
-.audit-time   { color: #6b7280; }
-.audit-by     { color: #4b5563; font-style: italic; }
+.audit-action {
+  font-weight: 600;
+  color: #374151;
+}
+
+.audit-time {
+  color: #6b7280;
+}
+
+.audit-note {
+  color: #9ca3af;
+  font-style: italic;
+  font-size: 0.75rem;
+}
 
 /* ── Print ───────────────────────────── */
 @media print {
-  .no-print { display: none !important; }
-  .detail-page { background: #fff; padding: 0; }
-  .rx-document { max-width: 100%; border: none; box-shadow: none; border-radius: 0; padding: 10mm; }
-  @page { size: A4; margin: 10mm; }
+  .no-print {
+    display: none !important;
+  }
+
+  .detail-page {
+    background: #fff;
+    padding: 0;
+  }
+
+  .rx-document {
+    max-width: 100%;
+    border: none;
+    box-shadow: none;
+    border-radius: 0;
+    padding: 10mm;
+  }
+
+  @page {
+    size: A4;
+    margin: 10mm;
+  }
+}
+
+/* ── Responsive ──────────────────────── */
+@media (max-width: 640px) {
+  .rx-info-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .rx-info-row {
+    grid-template-columns: 1fr;
+  }
+
+  .rx-document {
+    padding: 16px;
+  }
 }
