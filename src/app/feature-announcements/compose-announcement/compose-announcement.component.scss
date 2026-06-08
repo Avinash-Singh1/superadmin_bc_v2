@@ -1,0 +1,898 @@
+@import "src/assets/scss/variable";
+@import "src/assets/scss/mixins";
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// COMPOSE ANNOUNCEMENT DIALOG — Modern Healthcare UI (Mobile-First)
+// ═══════════════════════════════════════════════════════════════════════════════
+
+// ── Design Tokens ───────────────────────────────────────────────────────────
+$compose-primary: #45197c;
+$compose-primary-light: #f3eaff;
+$compose-primary-dark: #2f0f5c;
+$compose-gradient: linear-gradient(135deg, #45197c 0%, #6b3fa0 50%, #8b5fbf 100%);
+$compose-surface: #ffffff;
+$compose-surface-dim: #faf8fc;
+$compose-border: #e8e0f0;
+$compose-text: #1a1a2e;
+$compose-text-muted: #6b6b80;
+$compose-text-faint: #9e9eb3;
+$compose-success: #10b981;
+$compose-error: #ef4444;
+$compose-shadow-sm: 0 1px 3px rgba(69, 25, 124, 0.06);
+$compose-shadow-md: 0 4px 12px rgba(69, 25, 124, 0.1);
+$compose-shadow-lg: 0 8px 32px rgba(69, 25, 124, 0.15);
+$compose-radius: 12px;
+$compose-radius-sm: 8px;
+$compose-radius-xs: 6px;
+$compose-transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+
+// ── Global Dialog Panel (override Material) ─────────────────────────────────
+::ng-deep .compose-dialog-panel {
+  .mat-dialog-container {
+    padding: 0 !important;
+    border-radius: 0 !important;
+    overflow: hidden;
+
+    @media (min-width: 640px) {
+      border-radius: $compose-radius !important;
+    }
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// ROOT CONTAINER
+// ═══════════════════════════════════════════════════════════════════════════════
+.compose {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: $compose-surface;
+  font-family: $primaryFont;
+
+  // ── Header ──────────────────────────────────────────────────────────────
+  &__header {
+    position: relative;
+    padding: 20px 20px 16px;
+    overflow: hidden;
+    flex-shrink: 0;
+
+    @media (min-width: 640px) {
+      padding: 24px 28px 18px;
+    }
+  }
+
+  &__header-bg {
+    position: absolute;
+    inset: 0;
+    background: $compose-gradient;
+    opacity: 1;
+    z-index: 0;
+
+    &::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Ccircle cx='30' cy='30' r='1.5' fill='rgba(255,255,255,0.08)'/%3E%3C/svg%3E");
+      background-size: 30px 30px;
+    }
+  }
+
+  &__header-content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  &__header-icon {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(8px);
+    border-radius: 10px;
+    color: #fff;
+    flex-shrink: 0;
+
+    @media (min-width: 640px) {
+      width: 44px;
+      height: 44px;
+    }
+  }
+
+  &__header-text {
+    h2 {
+      @include font($primaryFont, 700, 18px);
+      color: #fff;
+      margin: 0;
+      letter-spacing: -0.02em;
+
+      @media (min-width: 640px) {
+        font-size: 20px;
+      }
+    }
+
+    p {
+      @include font($primaryFont, 400, 12px);
+      color: rgba(255, 255, 255, 0.7);
+      margin: 2px 0 0;
+
+      @media (min-width: 640px) {
+        font-size: 13px;
+      }
+    }
+  }
+
+  &__close {
+    position: absolute;
+    z-index: 2;
+    top: 16px;
+    right: 16px;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(4px);
+    border: none;
+    border-radius: 8px;
+    color: rgba(255, 255, 255, 0.85);
+    cursor: pointer;
+    transition: all $compose-transition;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.25);
+      color: #fff;
+    }
+  }
+
+  // ── Scrollable Body ──────────────────────────────────────────────────────
+  &__body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0;
+    -webkit-overflow-scrolling: touch;
+
+    &::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: $compose-border;
+      border-radius: 4px;
+    }
+  }
+
+  // ── Section ──────────────────────────────────────────────────────────────
+  &__section {
+    padding: 20px;
+    border-bottom: 1px solid $compose-border;
+
+    @media (min-width: 640px) {
+      padding: 24px 28px;
+    }
+
+    &--last {
+      border-bottom: none;
+    }
+  }
+
+  &__section-badge {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 18px;
+  }
+
+  &__badge {
+    width: 26px;
+    height: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: $compose-gradient;
+    color: #fff;
+    @include font($primaryFont, 700, 12px);
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  &__badge-label {
+    @include font($primaryFont, 600, 14px);
+    color: $compose-text;
+    letter-spacing: -0.01em;
+  }
+
+  // ── Fields ─────────────────────────────────────────────────────────────
+  &__field {
+    margin-bottom: 18px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  &__label {
+    display: block;
+    @include font($primaryFont, 600, 13px);
+    color: $compose-text;
+    margin-bottom: 6px;
+    letter-spacing: 0.01em;
+
+    &--sm {
+      font-size: 12px;
+      color: $compose-text-muted;
+      margin-bottom: 4px;
+    }
+  }
+
+  &__req {
+    color: $compose-error;
+    font-weight: 400;
+  }
+
+  // ── Input with icon ────────────────────────────────────────────────────
+  &__input-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border: 1.5px solid $compose-border;
+    border-radius: $compose-radius-sm;
+    padding: 0 14px;
+    background: $compose-surface;
+    transition: all $compose-transition;
+    height: 44px;
+
+    &--focus {
+      border-color: $compose-primary;
+      box-shadow: 0 0 0 3px rgba($compose-primary, 0.08);
+    }
+
+    &--error {
+      border-color: $compose-error;
+      box-shadow: 0 0 0 3px rgba($compose-error, 0.06);
+    }
+  }
+
+  &__input-icon {
+    flex-shrink: 0;
+    color: $compose-text-faint;
+  }
+
+  &__input {
+    flex: 1;
+    border: none;
+    outline: none;
+    background: transparent;
+    @include font($primaryFont, 400, 14px);
+    color: $compose-text;
+    height: 100%;
+
+    &::placeholder {
+      color: $compose-text-faint;
+    }
+  }
+
+  &__error {
+    display: block;
+    margin-top: 5px;
+    @include font($primaryFont, 400, 12px);
+    color: $compose-error;
+    padding-left: 2px;
+  }
+
+  // ── Rich Text Editor ───────────────────────────────────────────────────
+  &__editor {
+    border: 1.5px solid $compose-border;
+    border-radius: $compose-radius-sm;
+    overflow: hidden;
+    transition: all $compose-transition;
+
+    &--focus {
+      border-color: $compose-primary;
+      box-shadow: 0 0 0 3px rgba($compose-primary, 0.08);
+    }
+
+    ::ng-deep {
+      .NgxEditor__MenuBar {
+        background: $compose-surface-dim;
+        border-bottom: 1px solid $compose-border;
+        padding: 4px 8px;
+        gap: 2px;
+        flex-wrap: wrap;
+      }
+
+      .NgxEditor__MenuItem {
+        border-radius: $compose-radius-xs;
+        padding: 4px 6px;
+
+        &:hover {
+          background: rgba($compose-primary, 0.06);
+        }
+
+        &.NgxEditor__MenuItem--Active {
+          background: $compose-primary-light;
+          color: $compose-primary;
+        }
+      }
+
+      .NgxEditor {
+        min-height: 120px;
+        padding: 12px 14px;
+        @include font($primaryFont, 400, 14px);
+        color: $compose-text;
+
+        @media (min-width: 640px) {
+          min-height: 140px;
+          padding: 14px 16px;
+        }
+
+        .NgxEditor__Placeholder::before {
+          color: $compose-text-faint;
+        }
+      }
+
+      .NgxEditor__Seperator {
+        border-color: $compose-border;
+      }
+    }
+  }
+
+  // ── Emoji ───────────────────────────────────────────────────────────────
+  &__editor-tools {
+    margin-top: 8px;
+  }
+
+  &__emoji-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border: 1.5px solid $compose-border;
+    border-radius: 20px;
+    background: $compose-surface;
+    cursor: pointer;
+    transition: all $compose-transition;
+
+    &:hover {
+      border-color: $compose-primary;
+      background: $compose-primary-light;
+    }
+  }
+
+  &__emoji-icon {
+    font-size: 18px;
+    line-height: 1;
+  }
+
+  &__emoji-text {
+    @include font($primaryFont, 500, 12px);
+    color: $compose-text-muted;
+  }
+
+  &__emoji-picker {
+    margin-top: 8px;
+    padding: 12px;
+    background: $compose-surface;
+    border: 1.5px solid $compose-border;
+    border-radius: $compose-radius-sm;
+    box-shadow: $compose-shadow-md;
+    max-height: 200px;
+    overflow-y: auto;
+    animation: fadeInScale 0.2s ease;
+  }
+
+  &__emoji-cat {
+    margin-bottom: 10px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  &__emoji-cat-name {
+    @include font($primaryFont, 600, 11px);
+    color: $compose-text-faint;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 6px;
+  }
+
+  &__emoji-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+
+  &__emoji-item {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: transparent;
+    border-radius: $compose-radius-xs;
+    font-size: 18px;
+    cursor: pointer;
+    transition: all $compose-transition;
+
+    &:hover {
+      background: $compose-primary-light;
+      transform: scale(1.15);
+    }
+  }
+
+  // ── Audience Cards ──────────────────────────────────────────────────────
+  &__audience-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+
+    @media (min-width: 640px) {
+      gap: 10px;
+    }
+  }
+
+  &__audience-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 14px 8px 12px;
+    border: 1.5px solid $compose-border;
+    border-radius: $compose-radius-sm;
+    background: $compose-surface;
+    cursor: pointer;
+    transition: all $compose-transition;
+    text-align: center;
+
+    &:hover {
+      border-color: rgba($compose-primary, 0.3);
+      background: $compose-surface-dim;
+    }
+
+    &--active {
+      border-color: $compose-primary;
+      background: $compose-primary-light;
+      box-shadow: 0 0 0 3px rgba($compose-primary, 0.08);
+
+      .compose__audience-name {
+        color: $compose-primary;
+        font-weight: 700;
+      }
+    }
+  }
+
+  &__audience-radio {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+
+  &__audience-icon {
+    font-size: 26px;
+    line-height: 1;
+
+    @media (min-width: 640px) {
+      font-size: 28px;
+    }
+  }
+
+  &__audience-name {
+    @include font($primaryFont, 600, 12px);
+    color: $compose-text-muted;
+    transition: all $compose-transition;
+
+    @media (min-width: 640px) {
+      font-size: 13px;
+    }
+  }
+
+  // ── Filters ────────────────────────────────────────────────────────────
+  &__filters {
+    margin-top: 16px;
+    padding: 16px;
+    border: 1.5px dashed rgba($compose-primary, 0.2);
+    border-radius: $compose-radius-sm;
+    background: $compose-surface-dim;
+    animation: fadeInSlide 0.25s ease;
+  }
+
+  &__filters-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    @include font($primaryFont, 600, 13px);
+    color: $compose-primary;
+    margin-bottom: 14px;
+
+    svg {
+      flex-shrink: 0;
+    }
+  }
+
+  &__filters-opt {
+    font-weight: 400;
+    color: $compose-text-faint;
+    font-size: 12px;
+  }
+
+  &__filters-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+
+    @media (min-width: 480px) {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+  }
+
+  &__filter-item {
+    min-width: 0;
+  }
+
+  &__mat-field {
+    width: 100%;
+
+    ::ng-deep {
+      .mat-form-field-wrapper {
+        padding-bottom: 0 !important;
+        margin: 0;
+      }
+
+      .mat-form-field-flex {
+        padding: 0 10px !important;
+      }
+
+      .mat-form-field-infix {
+        padding: 8px 0 !important;
+        border-top: 0;
+        width: auto !important;
+      }
+
+      .mat-form-field-outline {
+        color: $compose-border;
+      }
+
+      .mat-form-field-outline-thick {
+        color: $compose-primary;
+      }
+
+      .mat-select-value-text {
+        @include font($primaryFont, 400, 13px);
+        color: $compose-text;
+      }
+
+      .mat-select-placeholder {
+        @include font($primaryFont, 400, 13px);
+        color: $compose-text-faint !important;
+      }
+
+      .mat-form-field-label {
+        display: none !important;
+      }
+
+      .mat-form-field-subscript-wrapper {
+        display: none;
+      }
+    }
+  }
+
+  // ── Channels ───────────────────────────────────────────────────────────
+  &__channels {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+
+    @media (min-width: 400px) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  &__channel {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    border: 1.5px solid $compose-border;
+    border-radius: $compose-radius-sm;
+    background: $compose-surface;
+    cursor: pointer;
+    transition: all $compose-transition;
+
+    &:hover {
+      border-color: rgba($compose-primary, 0.3);
+    }
+
+    &--active {
+      border-color: $compose-primary;
+      background: $compose-primary-light;
+    }
+
+    ::ng-deep {
+      .mat-checkbox-layout {
+        margin: 0;
+      }
+
+      .mat-checkbox-inner-container {
+        margin: 0;
+      }
+    }
+  }
+
+  &__channel-icon {
+    font-size: 22px;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+
+  &__channel-info {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  &__channel-name {
+    @include font($primaryFont, 600, 13px);
+    color: $compose-text;
+  }
+
+  &__channel-desc {
+    @include font($primaryFont, 400, 11px);
+    color: $compose-text-faint;
+  }
+
+  // ── Footer ──────────────────────────────────────────────────────────────
+  &__footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 14px 20px;
+    border-top: 1px solid $compose-border;
+    background: $compose-surface;
+    flex-shrink: 0;
+
+    @media (min-width: 640px) {
+      padding: 16px 28px;
+    }
+  }
+
+  &__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border: none;
+    border-radius: $compose-radius-sm;
+    cursor: pointer;
+    @include font($primaryFont, 600, 14px);
+    transition: all $compose-transition;
+    white-space: nowrap;
+
+    &--cancel {
+      padding: 10px 20px;
+      background: transparent;
+      color: $compose-text-muted;
+      border: 1.5px solid $compose-border;
+
+      &:hover:not(:disabled) {
+        background: $compose-surface-dim;
+        border-color: rgba($compose-primary, 0.2);
+      }
+    }
+
+    &--send {
+      padding: 10px 22px;
+      background: $compose-gradient;
+      color: #fff;
+      box-shadow: 0 2px 8px rgba($compose-primary, 0.3);
+
+      &:hover:not(:disabled) {
+        box-shadow: 0 4px 16px rgba($compose-primary, 0.4);
+        transform: translateY(-1px);
+      }
+
+      &:active:not(:disabled) {
+        transform: translateY(0);
+      }
+
+      &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        box-shadow: none;
+      }
+    }
+  }
+
+  &__spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+
+    &--sm {
+      width: 14px;
+      height: 14px;
+      border-width: 1.5px;
+      border-top-color: $compose-primary;
+      border-color: rgba($compose-primary, 0.2);
+    }
+  }
+
+  // ── Scheduling & Test Panels ──────────────────────────────────────────
+  &__toggle-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 4px;
+  }
+
+  &__toggle-label {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  &__toggle {
+    position: relative;
+    width: 40px;
+    height: 20px;
+    border-radius: 10px;
+    background: $compose-border;
+    border: none;
+    cursor: pointer;
+    transition: all $compose-transition;
+    flex-shrink: 0;
+
+    &--active {
+      background: $compose-primary;
+      .compose__toggle-dot {
+        transform: translateX(20px);
+      }
+    }
+  }
+
+  &__toggle-dot {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 16px;
+    height: 16px;
+    background: #fff;
+    border-radius: 50%;
+    transition: all $compose-transition;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+  }
+
+  &__schedule-box, &__test-box {
+    margin-top: 12px;
+    padding: 16px;
+    background: $compose-surface-dim;
+    border: 1px solid $compose-border;
+    border-radius: $compose-radius-sm;
+    animation: fadeInSlide 0.25s ease;
+  }
+
+  &__info-text {
+    @include font($primaryFont, 400, 11px);
+    color: $compose-text-faint;
+    margin-top: 8px;
+    line-height: 1.4;
+  }
+
+  &__test-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    @media (min-width: 640px) {
+      flex-direction: row;
+      align-items: center;
+    }
+  }
+
+  &__test-field {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__phone-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #fff;
+    border: 1.5px solid $compose-border;
+    border-radius: $compose-radius-sm;
+    padding: 0 12px;
+    height: 38px;
+
+    .compose__input {
+      font-size: 13px;
+    }
+  }
+
+  &__phone-prefix {
+    @include font($primaryFont, 600, 13px);
+    color: $compose-text-faint;
+  }
+
+  &__input--sm {
+    height: 38px;
+    padding: 0 12px;
+    border: 1.5px solid $compose-border !important;
+    border-radius: $compose-radius-sm !important;
+    background: #fff !important;
+    width: 100%;
+    @include font($primaryFont, 400, 13px);
+
+    &:focus {
+      border-color: $compose-primary !important;
+      outline: none;
+    }
+  }
+
+  &__btn--test {
+    background: $compose-primary-light;
+    color: $compose-primary;
+    padding: 0 18px;
+    height: 38px;
+    font-size: 13px;
+    border: 1px solid transparent;
+
+    &:hover:not(:disabled) {
+      background: rgba($compose-primary, 0.1);
+      border-color: rgba($compose-primary, 0.2);
+    }
+
+    &:disabled {
+      opacity: 0.6;
+    }
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// ANIMATIONS
+// ═══════════════════════════════════════════════════════════════════════════════
+@keyframes fadeInSlide {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

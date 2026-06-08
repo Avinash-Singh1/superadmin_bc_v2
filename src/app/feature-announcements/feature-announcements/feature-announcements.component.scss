@@ -1,0 +1,260 @@
+@import "../../../assets/scss/main.scss";
+
+.ann-page {
+  padding: 24px;
+}
+
+// ── Page Header ──
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+  gap: 16px;
+
+  &__left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  &__icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, rgba($purple, 0.12), rgba($purple, 0.04));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: $purple;
+  }
+
+  &__title {
+    @include font($primaryFont, 700, 20px);
+    color: $black;
+    margin: 0;
+  }
+
+  &__sub {
+    @include font($primaryFont, 400, 13px);
+    color: rgba($black, 0.55);
+    margin: 4px 0 0;
+  }
+}
+
+.btn-compose {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: $purple;
+  color: $white;
+  border: none;
+  border-radius: 8px;
+  @include font($primaryFont, 600, 14px);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba($purple, 0.25);
+
+  &:hover {
+    background: darken($purple, 8%);
+    box-shadow: 0 4px 14px rgba($purple, 0.35);
+    transform: translateY(-1px);
+  }
+}
+
+// ── Table ──
+.table-wrap {
+  background: $white;
+  border-radius: 12px;
+  border: 1px solid $border-color;
+  overflow: hidden;
+}
+
+.ann-table {
+  width: 100%;
+  border-collapse: collapse;
+
+  thead tr {
+    background: rgba($purple, 0.04);
+  }
+
+  th {
+    @include font($primaryFont, 600, 12px);
+    color: rgba($black, 0.5);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 14px 16px;
+    text-align: left;
+    border-bottom: 1px solid $border-color;
+  }
+
+  td {
+    @include font($primaryFont, 400, 13.5px);
+    color: $black;
+    padding: 14px 16px;
+    border-bottom: 1px solid rgba($border-color, 0.6);
+    vertical-align: middle;
+  }
+}
+
+.ann-row {
+  transition: background 0.15s ease;
+
+  &:hover {
+    background: rgba($purple, 0.02);
+  }
+
+  &:last-child td {
+    border-bottom: none;
+  }
+}
+
+.title-text {
+  @include font($primaryFont, 500, 13.5px);
+  color: $black;
+}
+
+.audience-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 20px;
+  @include font($primaryFont, 500, 12px);
+  background: rgba($purple, 0.08);
+  color: $purple;
+}
+
+.metric {
+  @include font($primaryFont, 600, 13px);
+
+  &--error {
+    color: $red;
+  }
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 20px;
+  @include font($primaryFont, 600, 11px);
+  text-transform: capitalize;
+}
+
+.badge--success {
+  background: rgba($green, 0.1);
+  color: $green;
+}
+.badge--warning {
+  background: rgba(#f39c12, 0.1);
+  color: #f39c12;
+}
+.badge--error {
+  background: rgba($red, 0.1);
+  color: $red;
+}
+.badge--info {
+  background: rgba($blue-violet, 0.1);
+  color: $blue-violet;
+}
+
+.col-date {
+  @include font($primaryFont, 400, 12px);
+  color: rgba($black, 0.5);
+  white-space: nowrap;
+}
+
+// ── Pagination ──
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 16px;
+  border-top: 1px solid $border-color;
+}
+
+.page-btn {
+  padding: 6px 14px;
+  border: 1px solid $border-color;
+  border-radius: 6px;
+  background: $white;
+  @include font($primaryFont, 500, 13px);
+  cursor: pointer;
+  color: $purple;
+  transition: all 0.2s;
+
+  &:hover:not(:disabled) {
+    background: rgba($purple, 0.06);
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+}
+
+.page-info {
+  @include font($primaryFont, 400, 13px);
+  color: rgba($black, 0.55);
+}
+
+// ── Empty State ──
+.empty-state {
+  text-align: center;
+  padding: 64px 24px;
+
+  &__icon {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: rgba($purple, 0.06);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 16px;
+    color: rgba($purple, 0.4);
+  }
+
+  &__title {
+    @include font($primaryFont, 600, 16px);
+    color: $black;
+    margin: 0 0 6px;
+  }
+
+  &__sub {
+    @include font($primaryFont, 400, 13px);
+    color: rgba($black, 0.5);
+    margin: 0;
+  }
+}
+
+// ── Skeleton ──
+.skeleton-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sk-card {
+  background: $white;
+  border-radius: 10px;
+  padding: 20px;
+  border: 1px solid $border-color;
+}
+
+.sk {
+  border-radius: 6px;
+  background: linear-gradient(90deg, #f0edf5 25%, #e8e4ee 50%, #f0edf5 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s ease infinite;
+}
+
+.sk-title { height: 14px; width: 40%; margin-bottom: 10px; }
+.sk-big { height: 18px; width: 70%; margin-bottom: 8px; }
+.sk-sub { height: 12px; width: 25%; }
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}

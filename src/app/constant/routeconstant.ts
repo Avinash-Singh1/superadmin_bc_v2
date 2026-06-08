@@ -12,6 +12,11 @@ export const ROUTE_CONSTANT = {
   SYNC_SITEMAP: "sync-sitemap",
   BLACKLIST: "blacklist",
   PRESCRIPTION: "prescription",
+  KYC: "doctor-kyc",
+  PAYMENTS: "payments",
+  PAYOUTS: "payouts",
+  REPORTS: "reports",
+  FEATURE_ANNOUNCEMENTS: "feature-announcements",
   SURGERY: {
     SURGERY: "surgery",
     LEAD_LIST: "lead-list",

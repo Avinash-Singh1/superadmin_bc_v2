@@ -1,7 +1,41 @@
 export class URLConstant {
   //onboarding apis
 
-  //onboarding apis
+  // Doctor KYC review
+  public static kycList = "v1/admin/kyc";
+  public static kycDetail = "v1/admin/kyc/"; // append :userId
+  public static kycApprove = "v1/admin/kyc/"; // append :userId/approve
+  public static kycReject = "v1/admin/kyc/";  // append :userId/reject
+
+  // Payments dashboard
+  public static paymentsList = "v1/admin/payments";
+  public static paymentsSummary = "v1/admin/payments/summary";
+  public static paymentsDetail = "v1/admin/payments/";        // append :id
+  public static paymentsRefund = "v1/admin/payments/";        // append :id/refund
+  public static paymentsReceipt = "v1/admin/payments/";       // append :id/receipt
+
+  // Doctor payouts
+  public static payoutsEligible = "v1/admin/payouts/eligible";
+  public static payoutsSummary = "v1/admin/payouts/summary";
+  public static payoutsList = "v1/admin/payouts";
+  public static payoutsDetail = "v1/admin/payouts/";          // append :id
+  public static payoutsInitiate = "v1/admin/payouts";
+  public static payoutsMark = "v1/admin/payouts/";            // append :id/mark
+  public static payoutsCancel = "v1/admin/payouts/";          // append :id/cancel
+
+  // Reconciliation reports
+  public static reportsSummary = "v1/admin/reports/summary";
+  public static reportsPaymentsCsv = "v1/admin/reports/payments.csv";
+  public static reportsRefundsCsv = "v1/admin/reports/refunds.csv";
+  public static reportsPayoutsCsv = "v1/admin/reports/payouts.csv";
+  public static reportsCommissionCsv = "v1/admin/reports/commission.csv";
+
+  // Feature Announcements
+  public static announcementsSend = "v1/admin/announcements/send";
+  public static announcementsSendTest = "v1/admin/announcements/send-test";
+  public static announcementsList = "v1/admin/announcements";
+  public static announcementsDoctorCities = "v1/admin/announcements/doctor-cities";
+  public static announcementsSpecializations = "v1/admin/announcements/specializations";
 
   public static login = "v1/admin/admin-login";
   public static forgotPassword = "v1/admin/admin-forgot-password";

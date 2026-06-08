@@ -90,6 +90,33 @@ const routes: Routes = [
           ),
       },
       {
+        path: ROUTE_CONSTANT.KYC,
+        loadChildren: () =>
+          import("../kyc/kyc.module").then((v) => v.KycModule),
+      },
+      {
+        path: ROUTE_CONSTANT.PAYMENTS,
+        loadChildren: () =>
+          import("../payments/payments.module").then((v) => v.PaymentsModule),
+      },
+      {
+        path: ROUTE_CONSTANT.PAYOUTS,
+        loadChildren: () =>
+          import("../payouts/payouts.module").then((v) => v.PayoutsModule),
+      },
+      {
+        path: ROUTE_CONSTANT.REPORTS,
+        loadChildren: () =>
+          import("../reports/reports.module").then((v) => v.ReportsModule),
+      },
+      {
+        path: ROUTE_CONSTANT.FEATURE_ANNOUNCEMENTS,
+        loadChildren: () =>
+          import("../feature-announcements/feature-announcements.module").then(
+            (m) => m.FeatureAnnouncementsModule
+          ),
+      },
+      {
         path: "",
         redirectTo: ROUTE_CONSTANT.DASHBOARD,
         pathMatch: "full",

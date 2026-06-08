@@ -1,0 +1,782 @@
+// ── Design tokens ────────────────────────────────────────────────
+$purple:       #45197c;
+$purple-dark:  #2d0f55;
+$purple-mid:   #6b3fa0;
+$lavender:     #f3eaff;
+$lavender-mid: #e5d5f9;
+$text-primary: #1a0d2e;
+$text-sec:     #6b6880;
+$text-muted:   #9e9bb0;
+$border:       #e8e3f0;
+$surface:      #ffffff;
+$bg-page:      #f7f4fc;
+
+$ok-text:   #15803d;
+$ok-bg:     #dcfce7;
+$ok-dot:    #22c55e;
+$warn-text: #92400e;
+$warn-bg:   #fef3c7;
+$warn-dot:  #f59e0b;
+$err-text:  #b91c1c;
+$err-bg:    #fee2e2;
+$err-dot:   #ef4444;
+
+// ── Keyframes ────────────────────────────────────────────────────
+@keyframes shimmer {
+  from { background-position: -400px 0; }
+  to   { background-position:  400px 0; }
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+// ── Page shell ───────────────────────────────────────────────────
+.kyc-page {
+  min-height: 100vh;
+  background: $bg-page;
+  padding: 16px;
+
+  @media (min-width: 768px)  { padding: 24px; }
+  @media (min-width: 1200px) { padding: 28px 32px; }
+}
+
+// ── Page header ──────────────────────────────────────────────────
+.page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 20px;
+
+  &__left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  &__icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, $purple, $purple-mid);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    flex-shrink: 0;
+    box-shadow: 0 4px 12px rgba(69, 25, 124, 0.35);
+  }
+
+  &__title {
+    margin: 0 0 2px;
+    font-size: 20px;
+    font-weight: 700;
+    color: $text-primary;
+    line-height: 1.2;
+
+    @media (min-width: 768px) { font-size: 22px; }
+  }
+
+  &__sub {
+    margin: 0;
+    font-size: 13px;
+    color: $text-sec;
+  }
+
+  &__badge {
+    display: flex;
+    align-items: center;
+  }
+}
+
+.record-count {
+  background: $lavender;
+  color: $purple;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 5px 12px;
+  border-radius: 999px;
+  border: 1px solid $lavender-mid;
+}
+
+// ── Filter bar ───────────────────────────────────────────────────
+.filter-bar {
+  margin-bottom: 20px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 4px;
+
+  &::-webkit-scrollbar       { height: 4px; }
+  &::-webkit-scrollbar-thumb { background: $lavender-mid; border-radius: 4px; }
+}
+
+.filter-pills {
+  display: flex;
+  gap: 8px;
+  width: max-content;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border-radius: 999px;
+  border: 1.5px solid $border;
+  background: $surface;
+  font-size: 12px;
+  font-weight: 500;
+  color: $text-sec;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.18s ease;
+
+  &:hover {
+    border-color: $purple-mid;
+    color: $purple;
+    background: $lavender;
+  }
+
+  &.active {
+    background: $purple;
+    border-color: $purple;
+    color: #fff;
+
+    .pill__dot { background: rgba(255, 255, 255, 0.6); }
+  }
+
+  &__dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: $text-muted;
+    flex-shrink: 0;
+
+    &.all           { background: $purple-mid; }
+    &.verified      { background: $ok-dot; }
+    &.manual_review { background: $warn-dot; }
+    &.submitted     { background: #60a5fa; }
+    &.rejected      { background: $err-dot; }
+    &.not_submitted { background: $text-muted; }
+  }
+}
+
+// ── Body layout ──────────────────────────────────────────────────
+.kyc-body {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+
+  @media (min-width: 1100px) {
+    &.panel-open { grid-template-columns: 1fr 400px; }
+  }
+  @media (min-width: 1400px) {
+    &.panel-open { grid-template-columns: 1fr 440px; }
+  }
+}
+
+.kyc-list-panel { min-width: 0; }
+
+// ── Skeleton ─────────────────────────────────────────────────────
+.skeleton-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.skeleton-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  background: $surface;
+  border-radius: 12px;
+  border: 1px solid $border;
+}
+
+.sk {
+  background: linear-gradient(90deg, #f0ebf8 25%, #e5d9f5 50%, #f0ebf8 75%);
+  background-size: 400px 100%;
+  animation: shimmer 1.4s ease-in-out infinite;
+  border-radius: 6px;
+
+  &-avatar { width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0; }
+
+  &-lines {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  &-line {
+    height: 12px;
+    &--wide   { width: 60%; }
+    &--narrow { width: 35%; }
+  }
+
+  &-badge { width: 72px; height: 22px; border-radius: 999px; }
+}
+
+// ── Empty state ──────────────────────────────────────────────────
+.empty-state {
+  text-align: center;
+  padding: 56px 24px;
+  background: $surface;
+  border-radius: 16px;
+  border: 1px dashed $lavender-mid;
+
+  &__icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: $lavender;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 16px;
+    color: $purple-mid;
+  }
+
+  &__title {
+    margin: 0 0 6px;
+    font-size: 16px;
+    font-weight: 600;
+    color: $text-primary;
+  }
+
+  &__sub {
+    margin: 0;
+    font-size: 13px;
+    color: $text-sec;
+  }
+}
+
+// ── KYC cards ────────────────────────────────────────────────────
+.kyc-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.kyc-card {
+  background: $surface;
+  border: 1.5px solid $border;
+  border-radius: 14px;
+  padding: 14px 16px;
+  cursor: pointer;
+  transition: all 0.18s ease;
+
+  &:hover {
+    border-color: $purple-mid;
+    box-shadow: 0 4px 16px rgba(69, 25, 124, 0.1);
+    transform: translateY(-1px);
+  }
+
+  &--active {
+    border-color: $purple !important;
+    background: $lavender !important;
+    box-shadow: 0 4px 20px rgba(69, 25, 124, 0.15) !important;
+  }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+
+  &__avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, $purple, $purple-mid);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-weight: 700;
+    flex-shrink: 0;
+    text-transform: uppercase;
+  }
+
+  &__info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__name {
+    margin: 0 0 2px;
+    font-size: 14px;
+    font-weight: 600;
+    color: $text-primary;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__uid {
+    margin: 0;
+    font-size: 11px;
+    color: $text-muted;
+    font-family: ui-monospace, monospace;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__meta {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+  }
+
+  &__action { display: flex; justify-content: flex-end; }
+}
+
+// ── Status badge ─────────────────────────────────────────────────
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+  background: #f3f4f6;
+  color: #4b5563;
+  flex-shrink: 0;
+
+  &--ok      { background: $ok-bg;   color: $ok-text; }
+  &--warn    { background: $warn-bg; color: $warn-text; }
+  &--err     { background: $err-bg;  color: $err-text; }
+  &--default { background: #f3f4f6;  color: #4b5563; }
+
+  &__dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+    flex-shrink: 0;
+  }
+}
+
+// ── Meta item ────────────────────────────────────────────────────
+.meta-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  color: $text-sec;
+
+  svg { flex-shrink: 0; }
+}
+
+// ── Review CTA ───────────────────────────────────────────────────
+.review-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  color: $purple;
+
+  svg { transition: transform 0.15s ease; }
+  .kyc-card:hover & svg { transform: translateX(2px); }
+}
+
+// ── Pagination ───────────────────────────────────────────────────
+.pagination-wrap {
+  margin-top: 16px;
+  display: flex;
+  justify-content: center;
+
+  ::ng-deep .ngx-pagination {
+    display: flex;
+    gap: 6px;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+
+    li {
+      a, span {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 34px;
+        height: 34px;
+        padding: 0 10px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 500;
+        border: 1px solid $border;
+        background: $surface;
+        color: $text-sec;
+        cursor: pointer;
+        text-decoration: none;
+        transition: all 0.15s ease;
+
+        &:hover { background: $lavender; border-color: $purple-mid; color: $purple; }
+      }
+
+      &.current span { background: $purple; border-color: $purple; color: #fff; }
+      &.disabled a   { opacity: 0.4; pointer-events: none; }
+    }
+  }
+}
+
+// ── Detail panel ─────────────────────────────────────────────────
+.kyc-detail-panel {
+  position: sticky;
+  top: 16px;
+  align-self: flex-start;
+  max-height: calc(100vh - 32px);
+  overflow-y: auto;
+  background: $surface;
+  border: 1.5px solid $border;
+  border-radius: 16px;
+  scrollbar-width: thin;
+  scrollbar-color: $lavender-mid transparent;
+
+  &::-webkit-scrollbar       { width: 5px; }
+  &::-webkit-scrollbar-thumb { background: $lavender-mid; border-radius: 4px; }
+
+  @media (max-width: 1099px) {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    border-radius: 0;
+    max-height: 100vh;
+    top: 0;
+  }
+}
+
+.detail-panel__inner { padding: 0; }
+
+.detail-panel__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid $border;
+  background: linear-gradient(135deg, $purple-dark 0%, $purple 100%);
+  border-radius: 14px 14px 0 0;
+  color: #fff;
+
+  &-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+}
+
+.detail-panel__avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 700;
+  color: #fff;
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+
+.detail-panel__name {
+  margin: 0 0 4px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.close-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  border: none;
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background 0.15s ease;
+
+  &:hover { background: rgba(255, 255, 255, 0.28); }
+}
+
+// Loading spinner
+.detail-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 48px 24px;
+  color: $text-sec;
+  font-size: 13px;
+}
+
+.spinner {
+  width: 28px;
+  height: 28px;
+  border: 3px solid $lavender-mid;
+  border-top-color: $purple;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+// ── Detail sections ──────────────────────────────────────────────
+.detail-section {
+  padding: 14px 20px;
+  border-bottom: 1px solid $border;
+
+  &:last-child { border-bottom: none; }
+
+  &__label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: $text-muted;
+    margin-bottom: 10px;
+
+    svg { color: $purple-mid; }
+  }
+}
+
+// KV rows
+.kv-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.kv {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  font-size: 13px;
+
+  &__label {
+    color: $text-sec;
+    flex-shrink: 0;
+    font-size: 12px;
+  }
+
+  &__val {
+    color: $text-primary;
+    font-weight: 500;
+    text-align: right;
+    word-break: break-all;
+  }
+}
+
+.mono {
+  font-family: ui-monospace, 'Courier New', monospace;
+  font-size: 12px;
+  letter-spacing: 0.03em;
+}
+
+// Wallet tiles
+.wallet-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.wallet-tile {
+  background: $lavender;
+  border: 1px solid $lavender-mid;
+  border-radius: 10px;
+  padding: 10px 12px;
+  text-align: center;
+
+  &--warn { background: $warn-bg; border-color: #fde68a; }
+
+  &__label {
+    display: block;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: $text-sec;
+    margin-bottom: 4px;
+  }
+
+  &__amount {
+    display: block;
+    font-size: 15px;
+    font-weight: 700;
+    color: $text-primary;
+  }
+}
+
+// Verify chip
+.verify-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+
+  &--ok  { background: $ok-bg;  color: $ok-text; }
+  &--no  { background: $err-bg; color: $err-text; }
+}
+
+// Cheque link
+.cheque-link {
+  margin-top: 10px;
+
+  a {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: $purple;
+    text-decoration: none;
+    font-weight: 500;
+
+    &:hover { text-decoration: underline; }
+  }
+}
+
+// Activity log
+.log-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.log-item {
+  display: flex;
+  gap: 10px;
+  padding: 8px 0;
+  position: relative;
+
+  &:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    left: 7px;
+    top: 26px;
+    bottom: -8px;
+    width: 2px;
+    background: $border;
+  }
+
+  &__dot {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 2px;
+
+    &--ok   { background: $ok-dot;  box-shadow: 0 0 0 3px $ok-bg; }
+    &--err  { background: $err-dot; box-shadow: 0 0 0 3px $err-bg; }
+    &--info { background: #60a5fa;  box-shadow: 0 0 0 3px #dbeafe; }
+  }
+
+  &__body {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  &__action { font-size: 13px; font-weight: 600; color: $text-primary; }
+  &__time   { font-size: 11px; color: $text-muted; }
+  &__reason { font-size: 12px; color: $text-sec; font-style: italic; }
+}
+
+// ── Action section ───────────────────────────────────────────────
+.action-section { padding-bottom: 20px; }
+
+.action-field {
+  margin-bottom: 12px;
+
+  &__label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: $text-sec;
+    margin-bottom: 5px;
+  }
+
+  &__hint {
+    font-weight: 400;
+    font-size: 11px;
+    color: $text-muted;
+  }
+}
+
+.action-input,
+.action-textarea {
+  width: 100%;
+  padding: 9px 12px;
+  border: 1.5px solid $border;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 13px;
+  color: $text-primary;
+  background: $surface;
+  transition: border-color 0.15s ease;
+  box-sizing: border-box;
+  resize: vertical;
+
+  &:focus {
+    outline: none;
+    border-color: $purple;
+    box-shadow: 0 0 0 3px rgba(69, 25, 124, 0.12);
+  }
+}
+
+.action-buttons {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 14px;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 10px 18px;
+  border-radius: 10px;
+  border: none;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  flex: 1;
+
+  &--approve {
+    background: linear-gradient(135deg, #16a34a, #15803d);
+    color: #fff;
+    box-shadow: 0 3px 10px rgba(22, 163, 74, 0.3);
+
+    &:hover  { transform: translateY(-1px); box-shadow: 0 5px 16px rgba(22, 163, 74, 0.4); }
+    &:active { transform: translateY(0); }
+  }
+
+  &--reject {
+    background: linear-gradient(135deg, #dc2626, #b91c1c);
+    color: #fff;
+    box-shadow: 0 3px 10px rgba(220, 38, 38, 0.3);
+
+    &:hover  { transform: translateY(-1px); box-shadow: 0 5px 16px rgba(220, 38, 38, 0.4); }
+    &:active { transform: translateY(0); }
+  }
+}

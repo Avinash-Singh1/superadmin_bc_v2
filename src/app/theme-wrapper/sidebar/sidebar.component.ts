@@ -105,6 +105,31 @@ export class SidebarComponent {
       icon: "assets/images/svg/prescription.svg",
       routerLink: `/${ROUTE_CONSTANT.THEME}/${ROUTE_CONSTANT.PRESCRIPTION}`,
     },
+    {
+      label: "Doctor KYC",
+      icon: "assets/images/svg/settings.svg",
+      routerLink: `/${ROUTE_CONSTANT.THEME}/${ROUTE_CONSTANT.KYC}`,
+    },
+    {
+      label: "Payments",
+      icon: "assets/images/svg/appointment.svg",
+      routerLink: `/${ROUTE_CONSTANT.THEME}/${ROUTE_CONSTANT.PAYMENTS}`,
+    },
+    {
+      label: "Payouts",
+      icon: "assets/images/svg/dashboard.svg",
+      routerLink: `/${ROUTE_CONSTANT.THEME}/${ROUTE_CONSTANT.PAYOUTS}`,
+    },
+    {
+      label: "Reports",
+      icon: "assets/images/svg/review.svg",
+      routerLink: `/${ROUTE_CONSTANT.THEME}/${ROUTE_CONSTANT.REPORTS}`,
+    },
+    {
+      label: "Feature Announcements",
+      icon: "assets/images/svg/approval.svg",
+      routerLink: `/${ROUTE_CONSTANT.THEME}/${ROUTE_CONSTANT.FEATURE_ANNOUNCEMENTS}`,
+    },
   ];
   settingbackGround: boolean = false;
   settingRoute() {

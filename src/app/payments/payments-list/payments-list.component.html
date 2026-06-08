@@ -1,0 +1,349 @@
+<div class="pay-page">
+
+  <!-- ── Page Header ──────────────────────────────────────────── -->
+  <div class="page-header">
+    <div class="page-header__left">
+      <div class="page-header__icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/>
+        </svg>
+      </div>
+      <div>
+        <h1 class="page-header__title">Payments</h1>
+        <p class="page-header__sub">Monitor transactions, commissions and refunds</p>
+      </div>
+    </div>
+    <div class="page-header__badge" *ngIf="!loading">
+      <span class="record-count">{{ total }} result{{ total !== 1 ? 's' : '' }}</span>
+    </div>
+  </div>
+
+  <!-- ── KPI Summary ───────────────────────────────────────────── -->
+  <div class="kpi-grid" *ngIf="totals">
+    <div class="kpi-card">
+      <div class="kpi-card__icon kpi-card__icon--green">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+      </div>
+      <span class="kpi-card__label">Gross Paid</span>
+      <span class="kpi-card__value">{{ formatPaise(totals.grossPaid) }}</span>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-card__icon kpi-card__icon--purple">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      </div>
+      <span class="kpi-card__label">Commission</span>
+      <span class="kpi-card__value">{{ formatPaise(totals.commission) }}</span>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-card__icon kpi-card__icon--blue">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4"/></svg>
+      </div>
+      <span class="kpi-card__label">Refunded</span>
+      <span class="kpi-card__value">{{ formatPaise(totals.refunded) }}</span>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-card__icon kpi-card__icon--orange">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      </div>
+      <span class="kpi-card__label">Cancellation Fee</span>
+      <span class="kpi-card__value">{{ formatPaise(totals.cancellationFee) }}</span>
+    </div>
+    <div class="kpi-card kpi-card--accent">
+      <div class="kpi-card__icon kpi-card__icon--white">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+      </div>
+      <span class="kpi-card__label">Net Revenue</span>
+      <span class="kpi-card__value">{{ formatPaise(totals.netRevenue) }}</span>
+    </div>
+  </div>
+
+  <!-- ── Filter Bar ────────────────────────────────────────────── -->
+  <div class="filter-bar">
+    <!-- Status pills -->
+    <div class="filter-pills">
+      <button
+        class="pill"
+        *ngFor="let s of statuses"
+        [class.active]="status === s"
+        (click)="status = s; applyFilters()">
+        <span class="pill__dot" [ngClass]="s || 'all'"></span>
+        {{ s ? statusLabel(s) : 'All' }}
+      </button>
+    </div>
+
+    <!-- Search + date row -->
+    <div class="filter-inputs">
+      <div class="filter-field">
+        <svg class="filter-field__icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input
+          class="filter-input"
+          type="text"
+          placeholder="order_id / payment_id / refund_id"
+          [(ngModel)]="search"
+          (keyup.enter)="applyFilters()" />
+      </div>
+      <div class="filter-field">
+        <svg class="filter-field__icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        <input class="filter-input filter-input--date" type="date" [(ngModel)]="from" placeholder="From" />
+      </div>
+      <div class="filter-field">
+        <svg class="filter-field__icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        <input class="filter-input filter-input--date" type="date" [(ngModel)]="to" placeholder="To" />
+      </div>
+      <button class="btn-apply" (click)="applyFilters()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        Apply
+      </button>
+      <button class="btn-clear" (click)="clearFilters()">Clear</button>
+    </div>
+  </div>
+
+  <!-- ── Main Body ─────────────────────────────────────────────── -->
+  <div class="pay-body" [class.panel-open]="!!selected">
+
+    <!-- List panel -->
+    <section class="pay-list-panel">
+
+      <!-- Skeleton -->
+      <div class="skeleton-list" *ngIf="loading">
+        <div class="skeleton-row" *ngFor="let i of [1,2,3,4,5,6]">
+          <div class="sk sk-avatar"></div>
+          <div class="sk-lines">
+            <div class="sk sk-line sk-line--wide"></div>
+            <div class="sk sk-line sk-line--narrow"></div>
+          </div>
+          <div class="sk sk-badge"></div>
+          <div class="sk sk-amt"></div>
+        </div>
+      </div>
+
+      <!-- Empty -->
+      <div class="empty-state" *ngIf="!loading && rows.length === 0">
+        <div class="empty-state__icon">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+        </div>
+        <p class="empty-state__title">No payments found</p>
+        <p class="empty-state__sub">Try adjusting your filters</p>
+      </div>
+
+      <!-- Payment cards -->
+      <ng-container *ngIf="!loading && rows.length > 0">
+        <div class="pay-cards">
+          <div
+            class="pay-card"
+            *ngFor="let p of rows | paginate: { itemsPerPage: itemsPerPage, currentPage: page, totalItems: total }"
+            [class.pay-card--active]="selected?._id === p._id"
+            (click)="openDetail(p)">
+
+            <div class="pay-card__row">
+              <div class="pay-card__avatar">
+                {{ (p.patientName || p.doctorName || 'P')[0] | uppercase }}
+              </div>
+              <div class="pay-card__info">
+                <p class="pay-card__patient">{{ p.patientName || '—' }}</p>
+                <p class="pay-card__doctor">Dr. {{ p.doctorName || p.doctorId }}</p>
+              </div>
+              <div class="pay-card__right">
+                <span class="pay-card__amount">{{ formatPaise(p.amount) }}</span>
+                <span [class]="'status-badge ' + statusClass(p.status)">
+                  <span class="status-badge__dot"></span>
+                  {{ statusLabel(p.status) }}
+                </span>
+              </div>
+            </div>
+
+            <div class="pay-card__meta">
+              <div class="meta-item">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                <span>{{ p.createdAt | date:'dd MMM, hh:mm a' }}</span>
+              </div>
+              <div class="meta-item" *ngIf="p.commissionAmount">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                <span>Fee {{ formatPaise(p.commissionAmount) }}</span>
+              </div>
+              <div class="meta-item" *ngIf="p.refund?.amount">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4"/></svg>
+                <span class="meta-item--refund">Refunded {{ formatPaise(p.refund?.amount) }}</span>
+              </div>
+              <div class="meta-item mono-sm">
+                <span>{{ p.razorpayOrderId }}</span>
+              </div>
+            </div>
+
+            <button
+              class="receipt-chip"
+              *ngIf="['paid','refund_pending','refunded','refund_failed'].includes(p.status)"
+              (click)="downloadReceipt(p, $event)">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Receipt
+            </button>
+          </div>
+        </div>
+
+        <div class="pagination-wrap">
+          <pagination-controls
+            *ngIf="total > itemsPerPage"
+            (pageChange)="onPageChange($event)"
+            previousLabel="Prev"
+            nextLabel="Next">
+          </pagination-controls>
+        </div>
+      </ng-container>
+    </section>
+
+    <!-- Detail Panel -->
+    <aside class="pay-detail-panel" *ngIf="selected">
+      <div class="detail-panel__inner">
+
+        <!-- Head -->
+        <div class="detail-panel__head">
+          <div class="detail-panel__head-left">
+            <div class="detail-panel__avatar">
+              {{ (selected.patientName || selected.doctorName || 'P')[0] | uppercase }}
+            </div>
+            <div>
+              <p class="detail-panel__name">{{ selected.patientName || 'Patient' }}</p>
+              <span [class]="'status-badge ' + statusClass(selected.status)">
+                <span class="status-badge__dot"></span>
+                {{ statusLabel(selected.status) }}
+              </span>
+            </div>
+          </div>
+          <div class="detail-panel__head-actions">
+            <button
+              class="receipt-btn"
+              *ngIf="['paid','refund_pending','refunded','refund_failed'].includes(selected.status)"
+              (click)="downloadReceipt(selected, $event)">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            </button>
+            <button class="close-btn" (click)="closeDetail()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Loading -->
+        <div class="detail-loading" *ngIf="loadingDetail">
+          <div class="spinner"></div>
+          <span>Loading…</span>
+        </div>
+
+        <ng-container *ngIf="!loadingDetail">
+
+          <!-- Order -->
+          <div class="detail-section">
+            <div class="detail-section__label">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+              Order
+            </div>
+            <div class="kv-grid">
+              <div class="kv"><span class="kv__label">Amount</span><span class="kv__val fw">{{ formatPaise(selected.amount) }}</span></div>
+              <div class="kv"><span class="kv__label">Commission ({{ formatBps(selected.platformCommissionBps) }})</span><span class="kv__val">{{ formatPaise(selected.commissionAmount) }}</span></div>
+              <div class="kv"><span class="kv__label">Doctor payout</span><span class="kv__val">{{ formatPaise(selected.doctorPayoutAmount) }}</span></div>
+              <div class="kv"><span class="kv__label">RZP order</span><span class="kv__val mono">{{ selected.razorpayOrderId }}</span></div>
+              <div class="kv" *ngIf="selected.razorpayPaymentId"><span class="kv__label">RZP payment</span><span class="kv__val mono">{{ selected.razorpayPaymentId }}</span></div>
+              <div class="kv"><span class="kv__label">Created</span><span class="kv__val">{{ selected.createdAt | date:'dd MMM yyyy, hh:mm a' }}</span></div>
+              <div class="kv" *ngIf="selected.paidAt"><span class="kv__label">Paid at</span><span class="kv__val">{{ selected.paidAt | date:'dd MMM yyyy, hh:mm a' }}</span></div>
+              <div class="kv err" *ngIf="selected.failureReason"><span class="kv__label">Failure</span><span class="kv__val kv__val--err">{{ selected.failureReason }}</span></div>
+            </div>
+          </div>
+
+          <!-- Appointment -->
+          <div class="detail-section" *ngIf="selectedDetail?.appointment as apt">
+            <div class="detail-section__label">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              Appointment
+            </div>
+            <div class="kv-grid">
+              <div class="kv"><span class="kv__label">Slot</span><span class="kv__val">{{ apt.date | date:'dd MMM yyyy, hh:mm a' }}</span></div>
+              <div class="kv"><span class="kv__label">Type</span><span class="kv__val">{{ apt.consultationType || '—' }}</span></div>
+              <div class="kv"><span class="kv__label">Status</span><span class="kv__val">{{ apt.status }}</span></div>
+            </div>
+          </div>
+
+          <!-- Refund info -->
+          <div class="detail-section" *ngIf="selected.refund?.razorpayRefundId || selected.refund?.amount">
+            <div class="detail-section__label">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4"/></svg>
+              Refund
+            </div>
+            <div class="kv-grid">
+              <div class="kv"><span class="kv__label">Refunded</span><span class="kv__val">{{ formatPaise(selected.refund?.amount) }}</span></div>
+              <div class="kv"><span class="kv__label">Cancellation fee</span><span class="kv__val">{{ formatPaise(selected.refund?.cancellationFee) }}</span></div>
+              <div class="kv"><span class="kv__label">Policy</span><span class="kv__val">{{ selected.refund?.policy || '—' }}</span></div>
+              <div class="kv"><span class="kv__label">Cancelled by</span><span class="kv__val">{{ selected.refund?.cancelledBy || '—' }}</span></div>
+              <div class="kv" *ngIf="selected.refund?.reason"><span class="kv__label">Reason</span><span class="kv__val">{{ selected.refund?.reason }}</span></div>
+              <div class="kv" *ngIf="selected.refund?.razorpayRefundId"><span class="kv__label">RZP refund</span><span class="kv__val mono">{{ selected.refund?.razorpayRefundId }}</span></div>
+              <div class="kv"><span class="kv__label">RZP status</span><span class="kv__val">{{ selected.refund?.rzpStatus || '—' }}</span></div>
+              <div class="kv" *ngIf="selected.refund?.initiatedAt"><span class="kv__label">Initiated</span><span class="kv__val">{{ selected.refund?.initiatedAt | date:'dd MMM yyyy' }}</span></div>
+              <div class="kv"><span class="kv__label">Wallet reversed</span><span class="kv__val">{{ selected.walletReversed ? 'Yes' : 'No' }}</span></div>
+            </div>
+          </div>
+
+          <!-- Doctor wallet -->
+          <div class="detail-section" *ngIf="selectedDetail?.wallet as w">
+            <div class="detail-section__label">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+              Doctor Wallet
+            </div>
+            <div class="wallet-grid">
+              <div class="wallet-tile">
+                <span class="wallet-tile__label">Pending</span>
+                <span class="wallet-tile__amount">{{ formatPaise(w.pendingBalance) }}</span>
+              </div>
+              <div class="wallet-tile wallet-tile--warn" *ngIf="w.awaitingKycBalance > 0">
+                <span class="wallet-tile__label">Awaiting KYC</span>
+                <span class="wallet-tile__amount">{{ formatPaise(w.awaitingKycBalance) }}</span>
+              </div>
+              <div class="wallet-tile">
+                <span class="wallet-tile__label">Paid Out</span>
+                <span class="wallet-tile__amount">{{ formatPaise(w.paidOutBalance) }}</span>
+              </div>
+              <div class="wallet-tile">
+                <span class="wallet-tile__label">Lifetime</span>
+                <span class="wallet-tile__amount">{{ formatPaise(w.lifetimeGross) }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Issue refund -->
+          <div class="detail-section action-section" *ngIf="canRefund()">
+            <div class="detail-section__label">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4"/></svg>
+              Issue Refund
+            </div>
+
+            <div class="action-field">
+              <label class="action-field__label">Amount (₹) <span class="action-field__hint">leave blank for policy-driven</span></label>
+              <input class="action-input" type="number" min="0" step="0.01"
+                     [(ngModel)]="refundAmountRupees" [disabled]="refundForceFull" placeholder="e.g. 500" />
+            </div>
+
+            <label class="checkbox-row">
+              <input type="checkbox" [(ngModel)]="refundForceFull" />
+              <span>Force full refund</span>
+            </label>
+
+            <div class="action-field">
+              <label class="action-field__label">Reason</label>
+              <textarea class="action-textarea" rows="2" [(ngModel)]="refundReason" placeholder="Internal note…"></textarea>
+            </div>
+
+            <button class="btn btn--refund" [disabled]="refunding" (click)="triggerRefund()">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4"/></svg>
+              {{ refunding ? 'Processing…' : 'Initiate Refund' }}
+            </button>
+            <p class="refund-hint">Reverses the doctor's wallet credit. If the appointment is still BOOKED it will also be cancelled.</p>
+          </div>
+
+          <!-- Refund unavailable -->
+          <div class="detail-section" *ngIf="!canRefund()">
+            <p class="refund-na">Refund unavailable for status <strong>{{ statusLabel(selected.status) }}</strong></p>
+          </div>
+
+        </ng-container>
+      </div>
+    </aside>
+
+  </div>
+</div>

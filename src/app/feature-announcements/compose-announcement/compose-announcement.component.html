@@ -1,0 +1,273 @@
+<div class="compose">
+  <!-- ── Gradient Header ── -->
+  <div class="compose__header">
+    <div class="compose__header-bg"></div>
+    <div class="compose__header-content">
+      <div class="compose__header-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+          <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+        </svg>
+      </div>
+      <div class="compose__header-text">
+        <h2>New Announcement</h2>
+        <p>Broadcast to your healthcare network</p>
+      </div>
+    </div>
+    <button class="compose__close" (click)="onCancel()" type="button" aria-label="Close">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+      </svg>
+    </button>
+  </div>
+
+  <!-- ── Scrollable Body ── -->
+  <form [formGroup]="form" (ngSubmit)="onSend()" class="compose__body">
+
+    <!-- ── Section: Content ── -->
+    <div class="compose__section">
+      <div class="compose__section-badge">
+        <span class="compose__badge">1</span>
+        <span class="compose__badge-label">Content</span>
+      </div>
+
+      <!-- Title -->
+      <div class="compose__field">
+        <label class="compose__label">Announcement Title <span class="compose__req">*</span></label>
+        <div class="compose__input-wrap" [class.compose__input-wrap--focus]="titleFocused" [class.compose__input-wrap--error]="form.get('title')?.touched && form.get('title')?.invalid">
+          <svg class="compose__input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+          </svg>
+          <input
+            class="compose__input"
+            type="text"
+            formControlName="title"
+            placeholder="e.g. Video Consultations Now Available!"
+            id="announcement-title"
+            (focus)="titleFocused=true"
+            (blur)="titleFocused=false"
+          />
+        </div>
+        <span class="compose__error" *ngIf="form.get('title')?.touched && form.get('title')?.invalid">
+          Title is required (min 3 characters)
+        </span>
+      </div>
+
+      <!-- Message Editor -->
+      <div class="compose__field">
+        <label class="compose__label">Message Body <span class="compose__req">*</span></label>
+        <div class="compose__editor" [class.compose__editor--focus]="editorFocused">
+          <ngx-editor-menu [editor]="editor" [toolbar]="toolbar"></ngx-editor-menu>
+          <ngx-editor
+            [editor]="editor"
+            formControlName="message"
+            [placeholder]="'Write your announcement here...'"
+            id="announcement-message"
+            (focus)="editorFocused=true"
+            (blur)="editorFocused=false"
+          ></ngx-editor>
+        </div>
+        <div class="compose__editor-tools">
+          <button type="button" class="compose__emoji-btn" (click)="toggleEmojiPicker()" title="Insert Emoji">
+            <span class="compose__emoji-icon">😊</span>
+            <span class="compose__emoji-text">Emoji</span>
+          </button>
+        </div>
+
+        <!-- Emoji Picker -->
+        <div class="compose__emoji-picker" *ngIf="showEmojiPicker">
+          <div class="compose__emoji-cat" *ngFor="let cat of emojiCategories">
+            <div class="compose__emoji-cat-name">{{ cat.name }}</div>
+            <div class="compose__emoji-grid">
+              <button type="button" class="compose__emoji-item" *ngFor="let emoji of cat.emojis" (click)="insertEmoji(emoji)">{{ emoji }}</button>
+            </div>
+          </div>
+        </div>
+        <span class="compose__error" *ngIf="form.get('message')?.touched && form.get('message')?.invalid">
+          Message content is required
+        </span>
+      </div>
+    </div>
+
+    <!-- ── Section: Audience ── -->
+    <div class="compose__section">
+      <div class="compose__section-badge">
+        <span class="compose__badge">2</span>
+        <span class="compose__badge-label">Audience & Filters</span>
+      </div>
+
+      <div class="compose__field">
+        <label class="compose__label">Target Audience</label>
+        <div class="compose__audience-cards">
+          <label
+            class="compose__audience-card"
+            *ngFor="let opt of audienceOptions"
+            [class.compose__audience-card--active]="form.get('targetAudience')?.value === opt.value"
+          >
+            <input type="radio" [value]="opt.value" formControlName="targetAudience" class="compose__audience-radio" />
+            <span class="compose__audience-icon">{{ opt.icon }}</span>
+            <span class="compose__audience-name">{{ opt.label }}</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Filters -->
+      <div class="compose__filters" *ngIf="form.get('targetAudience')?.value">
+        <div class="compose__filters-head">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+          </svg>
+          <span>Targeting Filters <span class="compose__filters-opt">(optional)</span></span>
+        </div>
+
+        <div class="compose__filters-grid">
+          <!-- Doctor Specific -->
+          <ng-container *ngIf="isDoctorAudience">
+            <div class="compose__filter-item">
+              <label class="compose__label compose__label--sm">City</label>
+              <mat-form-field appearance="outline" class="compose__mat-field">
+                <mat-select formControlName="filterCity" id="filter-city" placeholder="All Cities">
+                  <mat-option value="">All Cities</mat-option>
+                  <mat-option *ngFor="let city of cities" [value]="city">{{ city }}</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+            <div class="compose__filter-item">
+              <label class="compose__label compose__label--sm">Specialization</label>
+              <mat-form-field appearance="outline" class="compose__mat-field">
+                <mat-select formControlName="filterSpecialization" id="filter-specialization" placeholder="All">
+                  <mat-option value="">All Specializations</mat-option>
+                  <mat-option *ngFor="let spec of specializations" [value]="spec._id">{{ spec.name }}</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+            <div class="compose__filter-item">
+              <label class="compose__label compose__label--sm">Status</label>
+              <mat-form-field appearance="outline" class="compose__mat-field">
+                <mat-select formControlName="filterStatus" id="filter-status" placeholder="All">
+                  <mat-option value="">All Statuses</mat-option>
+                  <mat-option *ngFor="let s of statusOptions" [value]="s.value">{{ s.label }}</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </ng-container>
+
+          <!-- General Engagement -->
+          <div class="compose__filter-item">
+            <label class="compose__label compose__label--sm">Active in last (days)</label>
+            <input type="number" class="compose__input compose__input--sm" formControlName="lastActiveDays" placeholder="e.g. 7">
+          </div>
+          <div class="compose__filter-item" *ngIf="form.get('targetAudience')?.value !== 'doctors'">
+            <label class="compose__label compose__label--sm">Min. Bookings</label>
+            <input type="number" class="compose__input compose__input--sm" formControlName="minBookings" placeholder="e.g. 5">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Section: Delivery ── -->
+    <div class="compose__section compose__section--last">
+      <div class="compose__section-badge">
+        <span class="compose__badge">3</span>
+        <span class="compose__badge-label">Delivery</span>
+      </div>
+
+      <div class="compose__field">
+        <label class="compose__label">Send via</label>
+        <div class="compose__channels">
+          <label class="compose__channel" [class.compose__channel--active]="form.get('whatsapp')?.value">
+            <mat-checkbox formControlName="whatsapp" color="primary" id="channel-whatsapp"></mat-checkbox>
+            <span class="compose__channel-icon">💬</span>
+            <div class="compose__channel-info">
+              <span class="compose__channel-name">WhatsApp</span>
+              <span class="compose__channel-desc">Instant messaging</span>
+            </div>
+          </label>
+          <label class="compose__channel" [class.compose__channel--active]="form.get('email')?.value">
+            <mat-checkbox formControlName="email" color="primary" id="channel-email"></mat-checkbox>
+            <span class="compose__channel-icon">📧</span>
+            <div class="compose__channel-info">
+              <span class="compose__channel-name">Email</span>
+              <span class="compose__channel-desc">Detailed notification</span>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <!-- Scheduling Toggle -->
+      <div class="compose__field">
+        <div class="compose__toggle-row">
+          <div class="compose__toggle-label">
+            <span class="compose__label">Schedule for later</span>
+            <span class="compose__channel-desc">Broadcast at a specific date/time</span>
+          </div>
+          <button type="button" class="compose__toggle" [class.compose__toggle--active]="showSchedule" (click)="showSchedule = !showSchedule">
+            <div class="compose__toggle-dot"></div>
+          </button>
+        </div>
+
+        <div class="compose__schedule-box" *ngIf="showSchedule">
+          <mat-form-field appearance="outline" class="compose__mat-field">
+            <mat-label>Select Date & Time</mat-label>
+            <input matInput [matDatepicker]="picker" formControlName="scheduledAt" placeholder="Choose a date">
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+          </mat-form-field>
+          <p class="compose__info-text">Note: Server will process this at the nearest minute after the scheduled time.</p>
+        </div>
+      </div>
+
+      <!-- Test Broadcast Toggle -->
+      <div class="compose__field">
+        <div class="compose__toggle-row">
+          <div class="compose__toggle-label">
+            <span class="compose__label">Send test broadcast</span>
+            <span class="compose__channel-desc">Preview on your own device</span>
+          </div>
+          <button type="button" class="compose__toggle" [class.compose__toggle--active]="showTestPanel" (click)="showTestPanel = !showTestPanel">
+            <div class="compose__toggle-dot"></div>
+          </button>
+        </div>
+
+        <div class="compose__test-box" *ngIf="showTestPanel">
+          <div class="compose__test-grid">
+            <div class="compose__test-field" *ngIf="form.get('email')?.value">
+              <input type="email" class="compose__input compose__input--sm" placeholder="Test Email" formControlName="testEmail">
+            </div>
+            <div class="compose__test-field" *ngIf="form.get('whatsapp')?.value">
+              <div class="compose__phone-wrap">
+                <span class="compose__phone-prefix">+91</span>
+                <input type="text" class="compose__input compose__input--sm" placeholder="Test Phone" formControlName="testPhone">
+              </div>
+            </div>
+            <button type="button" class="compose__btn compose__btn--test" (click)="onSendTest()" [disabled]="testing">
+              <div class="compose__spinner compose__spinner--sm" *ngIf="testing"></div>
+              <span>{{ testing ? 'Sending...' : 'Send Test' }}</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <!-- ── Sticky Footer ── -->
+  <div class="compose__footer">
+    <button class="compose__btn compose__btn--cancel" type="button" (click)="onCancel()" [disabled]="sending">
+      Cancel
+    </button>
+    <button
+      class="compose__btn compose__btn--send"
+      type="button"
+      (click)="onSend()"
+      [disabled]="sending || form.invalid"
+      id="btn-send-announcement"
+    >
+      <div class="compose__spinner" *ngIf="sending"></div>
+      <svg *ngIf="!sending" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
+      </svg>
+      <span>{{ sending ? 'Sending…' : 'Send Announcement' }}</span>
+    </button>
+  </div>
+</div>
