@@ -6,7 +6,7 @@ import { ToastrService } from "ngx-toastr";
 import { debounceTime, distinctUntilChanged } from "rxjs";
 import { URLConstant } from "src/app/apisURL/url";
 import { ApiService } from "src/app/shared/api.service";
-import { ngxCsv } from "ngx-csv/ngx-csv";
+import * as XLSX from "xlsx";
 import { DatePipe } from "@angular/common";
 
 export interface PeriodicElement {
@@ -29,6 +29,7 @@ const ELEMENT_DATA: PeriodicElement[] = [];
 export class AppointmentListComponent implements OnInit {
   displayedColumns: string[] = [
     "position",
+    "BookedOn",
     "Address",
     "name",
     "Gender",
@@ -48,6 +49,7 @@ export class AppointmentListComponent implements OnInit {
   bloodGroup: boolean = false;
   isChecked: any = false;
   patientLists: any;
+  pageSizeOptions: number[] = [10, 25, 50, 100];
   isSelected: boolean = false;
   bloodGroups: any;
   bloodGroupList: any = [{}];
@@ -62,6 +64,20 @@ export class AppointmentListComponent implements OnInit {
   };
 
   data: any = [];
+
+  // Filter panel state
+  showFilterPanel: boolean = false;
+  filterGenderOpen: boolean = true;
+  filterStatusOpen: boolean = true;
+  filterDateOpen: boolean = true;
+  filterGenderValue: any = '';
+  filterStatusValue: any = '';
+  activeFilterCount: number = 0;
+
+  genderOptions = [
+    { label: 'Male', value: 1 },
+    { label: 'Female', value: 2 },
+  ];
 
   ageLimit = [
     {
@@ -96,16 +112,10 @@ export class AppointmentListComponent implements OnInit {
     },
   ];
   appointmentStatus = [
-    {
-      img: "assets/images/svg/pending.svg",
-      content: "Pending",
-      value: 0,
-    },
-    {
-      img: "assets/images/svg/completed.svg",
-      content: "Completed",
-      value: 1,
-    },
+    { content: 'Pending', value: 0, color: '#f0ad4e' },
+    { content: 'Completed', value: 1, color: '#28a745' },
+    { content: 'Cancelled', value: -1, color: '#dc3545' },
+    { content: 'Rescheduled', value: -2, color: '#2196f3' },
   ];
   genders = [
     {
@@ -191,6 +201,46 @@ export class AppointmentListComponent implements OnInit {
     this.search.valueChanges
       .pipe(debounceTime(500), distinctUntilChanged())
       .subscribe((val) => this.searchFunction(val));
+  }
+
+  toggleFilterPanel() {
+    this.showFilterPanel = !this.showFilterPanel;
+  }
+
+  closeFilterPanel() {
+    this.showFilterPanel = false;
+  }
+
+  toggleFilterSection(section: string) {
+    if (section === 'date') this.filterDateOpen = !this.filterDateOpen;
+    if (section === 'status') this.filterStatusOpen = !this.filterStatusOpen;
+    if (section === 'gender') this.filterGenderOpen = !this.filterGenderOpen;
+  }
+
+  selectGenderFilter(val: any) {
+    this.filterGenderValue = val;
+  }
+
+  selectStatusFilter(val: any) {
+    this.filterStatusValue = val;
+    this.value = val;
+  }
+
+  applyFilters() {
+    this.disableResetFilter = true;
+    this.page = 1;
+    this.patientList('', '', '', true);
+    this.downloadPatient();
+    this.showFilterPanel = false;
+    this.countActiveFilters();
+  }
+
+  countActiveFilters() {
+    let count = 0;
+    if (this.toDate || this.fromDate) count++;
+    if (this.value !== '' && this.value !== undefined) count++;
+    if (this.filterGenderValue !== '' && this.filterGenderValue !== undefined) count++;
+    this.activeFilterCount = count;
   }
 
   patientListForm() {
@@ -391,7 +441,6 @@ export class AppointmentListComponent implements OnInit {
   }
   disableResetFilter: boolean = false;
   patientList(event: any, value: any, getValue: any, disableButton?: any) {
-    console.log("disable", disableButton);
     if (disableButton == true) {
       this.disableResetFilter = true;
     }
@@ -402,6 +451,7 @@ export class AppointmentListComponent implements OnInit {
       fromDate: this.fromDate,
       status: this.value,
       search: this.search.value,
+      gender: this.filterGenderValue,
     };
     let param = { ...data, ...this.sortBy };
     Object.keys(param).forEach((key) => {
@@ -435,7 +485,24 @@ export class AppointmentListComponent implements OnInit {
   updatePageNumer(event: any) {
     this.page = event;
     this.patientList(this.patientForm.value.gender, "", "");
-    console.log("helloss", this.patientForm.value.gender);
+  }
+
+  get totalPages(): number {
+    return Math.ceil((this.totalLength || 0) / this.itemsPerPage);
+  }
+
+  get showingFrom(): number {
+    return this.totalLength ? (this.page - 1) * this.itemsPerPage + 1 : 0;
+  }
+
+  get showingTo(): number {
+    return Math.min(this.page * this.itemsPerPage, this.totalLength || 0);
+  }
+
+  onItemsPerPageChange(size: number) {
+    this.itemsPerPage = size;
+    this.page = 1;
+    this.patientList(this.patientForm.value.gender, "", "");
   }
 
   result: any;
@@ -448,6 +515,7 @@ export class AppointmentListComponent implements OnInit {
       fromDate: this.fromDate,
       status: this.value,
       search: this.search.value,
+      gender: this.filterGenderValue,
     };
     Object.keys(param).forEach((key) => {
       if (
@@ -463,7 +531,13 @@ export class AppointmentListComponent implements OnInit {
       .subscribe((res: any) => {
         this.result = res?.result?.data;
         for (let i = 0; i < this.result.length; i++) {
+          const statusVal = this.result[i]?.status;
+          const statusText = statusVal == 0 ? 'Pending'
+            : statusVal == 1 ? 'Completed'
+            : statusVal == -1 ? 'Cancelled'
+            : statusVal == -2 ? 'Rescheduled' : '';
           this.data.push([
+            this.result[i]?.createdAt,
             this.result[i]?.slot,
             this.result[i]?.patientName,
             this.result[i]?.patientGender == 1 ? "Male" : "Female",
@@ -473,12 +547,14 @@ export class AppointmentListComponent implements OnInit {
             this.result[i]?.establishmentName,
             this.result[i]?.establishmentLocality,
             this.result[i]?.establishmentCity,
+            statusText,
           ]);
         }
       });
   }
   header = [
-    "Date/Time",
+    "Booked On",
+    "Appointment Date/Time",
     "Patient Name",
     "Patient Gender",
     "Patient Phone",
@@ -487,21 +563,63 @@ export class AppointmentListComponent implements OnInit {
     "Hospital Name",
     "Hospital Locality",
     "Hospital City",
+    "Status",
   ];
 
   exportToCSV() {
-    const headers = this.header;
-    var options = {
-      fieldSeparator: ",",
-      quoteStrings: '"',
-      decimalseparator: ".",
-      showLabels: true,
-      showTitle: true,
-      // title: 'Your title',
-      useBom: true,
-      headers: headers,
+    this.result = "";
+    this.data = [];
+    let param: any = {
+      isExport: true,
+      toDate: this.toDate,
+      fromDate: this.fromDate,
+      status: this.value,
+      search: this.search.value,
+      gender: this.filterGenderValue,
     };
-    new ngxCsv(this.data, "Appointment List", options);
+    Object.keys(param).forEach((key) => {
+      if (param[key] === null || param[key] === undefined || param[key] === "") {
+        delete param[key];
+      }
+    });
+    this.apiservice
+      .Postdata(URLConstant.appointmentList, "", param)
+      .subscribe((res: any) => {
+        this.result = res?.result?.data;
+        for (let i = 0; i < this.result.length; i++) {
+          const statusVal = this.result[i]?.status;
+          const statusText = statusVal == 0 ? 'Pending'
+            : statusVal == 1 ? 'Completed'
+            : statusVal == -1 ? 'Cancelled'
+            : statusVal == -2 ? 'Rescheduled' : '';
+          this.data.push([
+            this.result[i]?.createdAt,
+            this.result[i]?.slot,
+            this.result[i]?.patientName,
+            this.result[i]?.patientGender == 1 ? "Male" : "Female",
+            this.result[i]?.patientPhone,
+            this.result[i]?.doctorName,
+            this.result[i]?.doctorPhone,
+            this.result[i]?.establishmentName,
+            this.result[i]?.establishmentLocality,
+            this.result[i]?.establishmentCity,
+            statusText,
+          ]);
+        }
+        const wsData = [this.header, ...this.data];
+        const ws = XLSX.utils.aoa_to_sheet(wsData);
+        // Auto-size columns
+        ws['!cols'] = this.header.map((_: string, i: number) => {
+          const maxLen = Math.max(
+            this.header[i].length,
+            ...this.data.map((row: any[]) => String(row[i] || '').length)
+          );
+          return { wch: Math.min(maxLen + 2, 40) };
+        });
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'Appointments');
+        XLSX.writeFile(wb, 'Appointment_List.xlsx');
+      });
   }
   @ViewChild("picker") picker: any;
   selectedDate: any;
@@ -529,10 +647,15 @@ export class AppointmentListComponent implements OnInit {
     this.patientForm.reset();
     this.page = 1;
     this.itemsPerPage = 10;
-    this.toDate = "";
-    this.fromDate = "";
-    this.value = "";
-    this.patientList("", "", "");
+    this.toDate = '';
+    this.fromDate = '';
+    this.value = '';
+    this.filterGenderValue = '';
+    this.filterStatusValue = '';
+    this.selectedEndDate = false;
+    this.activeFilterCount = 0;
+    this.patientList('', '', '');
     this.disableResetFilter = false;
+    this.showFilterPanel = false;
   }
 }

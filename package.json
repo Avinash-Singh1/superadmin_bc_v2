@@ -47,6 +47,7 @@
     "slugify": "^1.6.6",
     "sonarqube-scanner": "^3.0.1",
     "tslib": "^2.3.0",
+    "xlsx": "^0.18.5",
     "zone.js": "~0.11.4"
   },
   "devDependencies": {
@@ -58,6 +59,7 @@
     "@types/gtag.js": "^0.0.19",
     "@types/jasmine": "~3.10.0",
     "@types/node": "^12.11.1",
+    "@types/xlsx": "^0.0.35",
     "@typescript-eslint/eslint-plugin": "^7.3.1",
     "@typescript-eslint/parser": "^7.3.1",
     "eslint": "^8.57.0",

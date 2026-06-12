@@ -1,14 +1,129 @@
-@import '../../../assets/scss/main.scss';
-.wrapper{
-    padding:13px 24px;
+@import 'src/assets/scss/main.scss';
+
+.page-wrapper {
+  background: #f7f5fa;
+  padding: 20px 24px;
 }
-.deleteduser{
-    @include font($primaryFont,400,24px);
-    color:$filtercolor;
+
+.page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  gap: 16px;
+  flex-wrap: wrap;
+
+  .header-left {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .page-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    @include font($primaryFont, 700, 20px);
+    color: #1a1a2e;
+    margin: 0;
+
+    svg { color: $purple; }
+  }
+
+  .header-right {
+    display: flex;
+    align-items: center;
+  }
 }
-.active{
-    color:$white;
-    background-color: $okBackground;
-    padding: 9px 24px;
+
+// Navigation Tabs
+.nav-tabs-modern {
+  display: flex;
+  gap: 4px;
+  background: $white;
+  padding: 4px;
+  border-radius: 10px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+
+  .nav-tab {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 8px 18px;
     border-radius: 8px;
+    background: transparent;
+    @include font($primaryFont, 500, 13px);
+    color: #888;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+
+    svg {
+      stroke: #aaa;
+      transition: stroke 0.2s ease;
+    }
+
+    &:hover {
+      color: $purple;
+      background: #f7f5fa;
+      svg { stroke: $purple; }
+    }
+
+    &.active {
+      background: $purple;
+      color: $white !important;
+      box-shadow: 0 2px 8px rgba($purple, 0.25);
+      svg { stroke: $white; }
+    }
+  }
+}
+
+// Search Box
+.search-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: $white;
+  border: 1px solid #e8e8e8;
+  border-radius: 10px;
+  padding: 0 14px;
+  min-width: 280px;
+  transition: all 0.2s ease;
+
+  svg {
+    stroke: #aaa;
+    flex-shrink: 0;
+  }
+
+  input {
+    border: none;
+    outline: none;
+    background: transparent;
+    padding: 10px 0;
+    @include font($primaryFont, 400, 13px);
+    color: #333;
+    width: 100%;
+
+    &::placeholder { color: #bbb; }
+  }
+
+  &:focus-within {
+    border-color: $purple;
+    box-shadow: 0 0 0 3px rgba($purple, 0.08);
+    svg { stroke: $purple; }
+  }
+}
+
+.content-area {
+  margin-top: 0;
+}
+
+@media screen and (max-width: 768px) {
+  .page-header {
+    flex-direction: column;
+  }
+  .search-box {
+    min-width: 220px;
+  }
 }

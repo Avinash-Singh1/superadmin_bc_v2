@@ -1,896 +1,396 @@
-<app-header>Doctors/Hospitals</app-header>
 
-<div class="d-flex justify-content-between align-items-center patientsHeader">
-  <span class="patientdetail d-flex align-items-center gap-3">
-    <div
-      [ngClass]="doctorsList ? 'activepage' : 'cursor'"
-      (click)="chnageDoctorList('doctors')"
-    >
-      Doctors
-    </div>
-    <div
-      [ngClass]="hospitalsList ? 'activepage' : 'cursor'"
-      (click)="chnageDoctorList('hospitals')"
-    >
-      Hospitals
-    </div>
-  </span>
-  <form [formGroup]="filterForm">
-    <div class="d-flex otherFeatures">
-      <div>
-        <button
-          type="button"
-          class="sampleCsv me-2"
-          (click)="doctorsList ? SampleCSVDoctor() : SampleCSVHospital()"
-        >
-          Sample CSV
+<div class="dh-page">
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="header-left">
+      <!-- Tab Switcher -->
+      <div class="tab-switcher">
+        <button class="tab-btn" [class.active]="doctorsList" (click)="chnageDoctorList('doctors')">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="5" r="3.5" stroke="currentColor" stroke-width="1.2"/><path d="M2 14.5c0-3.3 2.7-6 6-6s6 2.7 6 6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+          Doctors
+          <span class="tab-count" *ngIf="doctorsList && totalLength">{{ totalLength }}</span>
         </button>
-      </div>
-      <div class="filter d-flex align-items-center" [matMenuTriggerFor]="menu">
-        <img src="assets/images/svg/filter.svg" alt="" /><span class="ms-2"
-          >Add filter</span
-        >
-      </div>
-      <mat-menu #menu="matMenu" class="mt-2 menu">
-        <button
-          mat-menu-item
-          *ngIf="doctorsList"
-          class="d-flex justify-content-between align-items-center mt-2"
-          (click)="changeGender('age'); $event.stopPropagation()"
-        >
-          Specialization
-          <img
-            *ngIf="!age"
-            src="assets/images/svg/rightblackarrow.svg"
-            alt=""
-          /><img *ngIf="age" src="assets/images/svg/blackdropdown.svg" alt="" />
+        <button class="tab-btn" [class.active]="hospitalsList" (click)="chnageDoctorList('hospitals')">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="2" y="4" width="12" height="10" rx="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M6 4V2.5a.5.5 0 01.5-.5h3a.5.5 0 01.5.5V4M5 7.5h2M9 7.5h2M5 10h2M9 10h2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+          Hospitals
+          <span class="tab-count" *ngIf="hospitalsList && totalLengthHospital">{{ totalLengthHospital }}</span>
         </button>
-        <div class="ms-4 d-flex flex-column" *ngIf="age && doctorsList">
-          <mat-checkbox
-            color="primary"
-            (click)="$event.stopPropagation()"
-            [checked]="Specialization?.selected"
-            [value]="Specialization?._id"
-            (change)="specilaizationCitiesFilter($event, 'specialization')"
-            *ngFor="let Specialization of OccupationList"
-            >{{ Specialization?.name }}</mat-checkbox
-          >
-          <div class="cancel-ok-btn mt-3 mb-3">
-            <button class="cancel">Cancel</button>
-            <button class="ok ms-2" (click)="doctorList('', '')">Ok</button>
-          </div>
-        </div>
-        <hr *ngIf="doctorsList" />
-        <button
-          mat-menu-item
-          *ngIf="hospitalsList"
-          class="d-flex justify-content-between align-items-center mt-2"
-          (click)="changeGender('hospital'); $event.stopPropagation()"
-        >
-          Type of hospital
-          <img
-            *ngIf="!hospital"
-            src="assets/images/svg/rightblackarrow.svg"
-            alt=""
-          /><img
-            *ngIf="hospital"
-            src="assets/images/svg/blackdropdown.svg"
-            alt=""
-          />
-        </button>
-        <div class="ms-4 d-flex flex-column" *ngIf="hospital && hospitalsList">
-          <mat-checkbox
-            color="primary"
-            (click)="$event.stopPropagation()"
-            [value]="hospitals?._id"
-            (change)="specilaizationCitiesFilter($event, 'hospital')"
-            *ngFor="let hospitals of typeOfHospital"
-            >{{ hospitals?.name }}</mat-checkbox
-          >
-          <div class="cancel-ok-btn mt-3 mb-3">
-            <button class="cancel">Cancel</button>
-            <button class="ok ms-2" (click)="hospitalList('')">Ok</button>
-          </div>
-        </div>
-        <button
-          mat-menu-item
-          class="d-flex justify-content-between align-items-center mt-2"
-          (click)="changeGender('bloodGroup'); $event.stopPropagation()"
-        >
-          Cities
-          <img
-            *ngIf="!bloodGroup"
-            src="assets/images/svg/rightblackarrow.svg"
-            alt=""
-          /><img
-            *ngIf="bloodGroup"
-            src="assets/images/svg/blackdropdown.svg"
-            alt=""
-          />
-        </button>
-        <div class="ms-4 d-flex flex-column" *ngIf="bloodGroup">
-          <mat-checkbox
-            color="primary"
-            (click)="$event.stopPropagation()"
-            [value]="cities?._id"
-            (change)="specilaizationCitiesFilter($event, 'cities')"
-            *ngFor="let cities of cityListing"
-            formControlName="cities"
-            >{{ cities?.name }}</mat-checkbox
-          >
-          <div class="cancel-ok-btn mt-3 mb-3">
-            <button class="cancel">Cancel</button>
-            <button
-              class="ok ms-2"
-              (click)="doctorsList ? doctorList('', '') : hospitalList('')"
-            >
-              Ok
-            </button>
-          </div>
-        </div>
-      </mat-menu>
-      <div
-        class="export mx-3 d-flex align-items-center cursor"
-        [matMenuTriggerFor]="file"
-      >
-        <img src="assets/images/svg/file.svg" alt="" /><span class="ms-2"
-          >File</span
-        >
-      </div>
-      <mat-menu #file="matMenu" class="mt-2 menu1">
-        <button mat-menu-item class="d-flex align-items-center">
-          <!-- <label for="myfile">Select a file:</label>
-          <input type="file" id="myfile" name="myfile"> -->
-          <label for="myfile">
-            <img src="assets/images/svg/import.svg" alt="" /><span
-              class="ms-2 import"
-              >Import</span
-            >
-          </label>
-          <input
-            type="file"
-            id="myfile"
-            #uploadFile
-            name="myfile"
-            class="importInput"
-            (change)="
-              doctorsList == true ? onChange($event) : importHospital($event)
-            "
-            accept=".csv"
-          />
-        </button>
-        <hr class="m-0 p-0" />
-        <button
-          mat-menu-item
-          class="d-flex align-items-center"
-          (click)="
-            doctorsList == true
-              ? downloadDoctorList('doctorList')
-              : downloadHospitalList('hospitalList')
-          "
-        >
-          <img src="assets/images/svg/export.svg" alt="" /><span
-            class="ms-2 export"
-            >Export</span
-          >
-        </button>
-      </mat-menu>
-
-      <div class="search d-flex align-items-center">
-        <img src="assets/images/svg/search.svg" alt="" /><input
-          type="text"
-          [formControl]="search"
-          class="form-control"
-          placeholder="Search by Name, Number"
-        />
-      </div>
-      <div class="ms-3 cursor" (click)="addDoctor('Add New', '', '')">
-        <img src="assets/images/svg/addDoctor.svg" alt="" />
       </div>
     </div>
-  </form>
-</div>
-<div *ngIf="doctorsList">
-  <div class="table-responsive w-100 scrolldata mb-5">
-    <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
-      <ng-container matColumnDef="position">
-        <th mat-header-cell *matHeaderCellDef class="text-center headers">
-          Image
-        </th>
-        <td
-          mat-cell
-          *matCellDef="let element"
-          class="text-center tabledata intialName"
-        >
-          <img
-            class="patientimg"
-            [src]="element?.profilePic"
-            alt=""
-            onError="this.src='assets/images/svg/nectorIcon.svg'"
-            *ngIf="
-              element?.profilePic != null ||
-                element?.profilePic != undefined ||
-                element?.profilePic;
-              else intial
-            "
-          />
-          <ng-template #intial>
-            <span class="imageintial">
-              {{element?.name?.[0]?.[0] | uppercase }}
-              {{element?.name?.[1]?.[0] | uppercase}}
-            </span>
-          </ng-template>
-        </td>
-      </ng-container>
-
-      <ng-container matColumnDef="name">
-        <th
-          mat-header-cell
-          *matHeaderCellDef
-          (click)="sortData('fullName')"
-          class="headers cursor"
-        >
-          Name
-          <img
-            class="cursor"
-            *ngIf="
-              !sortBy.order ||
-              sortBy.order == 'DESC' ||
-              sortBy.sortBy != 'fullName'
-            "
-            src="assets/images/svg/sort.svg"
-            alt=""
-          />
-          <img
-            *ngIf="sortBy.order == 'ASC' && sortBy.sortBy == 'fullName'"
-            src="assets/images/svg/sort.svg"
-            class="asce cursor"
-            alt=""
-          />
-        </th>
-        <td mat-cell *matCellDef="let element" class="tabledata">
-          <a
-            href="javascript:void(0)"
-            (click)="redirectToDoctorDetails(element)"
-            *ngIf="element?.profileSlug && element?.localityDetails?.[0]?.address?.city"
-          >
-            {{ element?.doctorDetails?.fullName || "N/A" }}
-          </a>
-          <span
-            *ngIf="!(element?.profileSlug && element?.localityDetails?.[0]?.address?.city)"
-            >{{ element?.doctorDetails?.fullName || "N/A" }}</span
-          >
-        </td>
-      </ng-container>
-
-      <ng-container matColumnDef="Gender">
-        <th mat-header-cell *matHeaderCellDef class="headers">
-          Specialization
-        </th>
-        <td mat-cell *matCellDef="let element" class="tabledata">
-          <div *ngIf="element?.specialization.length > 0; else nodata">
-            <ng-container *ngFor="let specialization of element?.specialization"
-              >{{ specialization?.name || "N/A" }}<br
-            /></ng-container>
-          </div>
-          <ng-template #nodata>
-            <span>N/A</span>
-          </ng-template>
-        </td>
-      </ng-container>
-
-      <ng-container matColumnDef="Address">
-        <th mat-header-cell *matHeaderCellDef class="headers cursor"
-          (click)="sortData('city')">Locality
-         <img
-            class="cursor"
-            *ngIf="
-              !sortBy.order ||
-              sortBy.order == 'DESC' ||
-              sortBy.sortBy != 'city'
-            "
-            src="assets/images/svg/sort.svg"
-            alt=""
-          />
-          <img
-            *ngIf="sortBy.order == 'ASC' && sortBy.sortBy == 'city'"
-            src="assets/images/svg/sort.svg"
-            class="asce cursor"
-            alt=""
-          />
-        </th>
-        <td mat-cell *matCellDef="let element" class="tabledata change-text">
-          {{ element?.city || "N/A" }}
-        </td>
-      </ng-container>
-      <ng-container matColumnDef="Mobile">
-        <th mat-header-cell *matHeaderCellDef class="headers">Degree</th>
-        <td mat-cell *matCellDef="let element" class="tabledata">
-          <span *ngFor="let degree of element?.education; let last = last">
-            {{ degree?.degree || "N/A"
-            }}<ng-container *ngIf="!last">,</ng-container>
-          </span>
-          <span *ngIf="element?.education == 0">N/A</span>
-        </td>
-      </ng-container>
-      <ng-container matColumnDef="Email">
-        <th mat-header-cell *matHeaderCellDef class="headers">Mobile</th>
-        <td mat-cell *matCellDef="let element" class="tabledata">
-          <span
-            *ngIf="
-              element?.doctorDetails?.phone != null ||
-              element?.doctorDetails?.phone != undefined ||
-              element?.doctorDetails?.phone
-            "
-            >+91</span
-          >{{ element?.doctorDetails?.phone || "N/A" }}
-        </td>
-      </ng-container>
-      <ng-container matColumnDef="Age">
-        <th mat-header-cell *matHeaderCellDef class="headers" (click)="sortData('email')">Email ID
-           <img
-            class="cursor"
-            *ngIf="
-              !sortBy.order ||
-              sortBy.order == 'DESC' ||
-              sortBy.sortBy != 'email'
-            "
-            src="assets/images/svg/sort.svg"
-            alt=""
-          />
-          <img
-            *ngIf="sortBy.order == 'ASC' && sortBy.sortBy == 'email'"
-            src="assets/images/svg/sort.svg"
-            class="asce cursor"
-            alt=""
-          />
-        </th>
-        <td mat-cell *matCellDef="let element" class="tabledata">
-          {{ element.email || "N/A" }}
-        </td>
-      </ng-container>
-      <ng-container matColumnDef="BloodGroup">
-        <th mat-header-cell *matHeaderCellDef class="headers cursor" (click)="sortData('createdAt')">Joining Date
-           <img
-            class="cursor"
-            *ngIf="
-              !sortBy.order ||
-              sortBy.order == 'DESC' ||
-              sortBy.sortBy != 'createdAt'
-            "
-            src="assets/images/svg/sort.svg"
-            alt=""
-          />
-          <img
-            *ngIf="sortBy.order == 'ASC' && sortBy.sortBy == 'createdAt'"
-            src="assets/images/svg/sort.svg"
-            class="asce cursor"
-            alt=""
-          />
-        </th>
-        <td mat-cell *matCellDef="let element" class="tabledata">
-          {{ element?.createdAt | date : "dd/MM/yyyy" }}
-        </td>
-      </ng-container>
-      <ng-container matColumnDef="requestStatus">
-        <th mat-header-cell *matHeaderCellDef (click)="sortData('approvalStatus')"
-          class="headers cursor">
-          Requested Status
-           <img
-            class="cursor"
-            *ngIf="
-              !sortBy.order ||
-              sortBy.order == 'DESC' ||
-              sortBy.sortBy != 'approvalStatus'
-            "
-            src="assets/images/svg/sort.svg"
-            alt=""
-          />
-          <img
-            *ngIf="sortBy.order == 'ASC' && sortBy.sortBy == 'approvalStatus'"
-            src="assets/images/svg/sort.svg"
-            class="asce cursor"
-            alt=""
-          />
-        </th>
-        <td mat-cell *matCellDef="let element" class="tabledata cursor">
-          {{
-            element?.approvalStatus == 1
-              ? "Pending"
-              : element?.approvalStatus == 2
-              ? "Approved"
-              : element?.approvalStatus == 3
-              ? "Rejected"
-              : "N/A"
-          }}
-        </td>
-      </ng-container>
-      <ng-container matColumnDef="Action">
-        <th mat-header-cell *matHeaderCellDef class="headers">Action</th>
-        <td mat-cell *matCellDef="let element" class="tabledata">
-          <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="menu">
-            <img
-              class="cursor"
-              src="assets/images/png/toggle.png"
-              alt=""
-              width="20"
-              height="20"
-            />
+    <div class="header-actions">
+      <!-- Search -->
+      <div class="search-box">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="5.5" stroke="#9a9a9a" stroke-width="1.5"/><path d="M11 11L14 14" stroke="#9a9a9a" stroke-width="1.5" stroke-linecap="round"/></svg>
+        <input type="text" [formControl]="search" placeholder="Search by name, phone..." />
+      </div>
+      <!-- Filter -->
+      <button class="btn-action" (click)="toggleFilterPanel()">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M1.5 3h13M4 8h8M6 13h4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        Filters
+        <span class="action-badge" *ngIf="activeFilterCount">{{ activeFilterCount }}</span>
+      </button>
+      <!-- Reset -->
+      <button class="btn-action btn-reset-action" (click)="resetAllFilters()" *ngIf="activeFilterCount">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 1L7 7M7 7L13 13M7 7L13 1M7 7L1 13" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+        Reset
+      </button>
+      <!-- Sample CSV -->
+      <button class="btn-action" (click)="doctorsList ? SampleCSVDoctor() : SampleCSVHospital()">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M4 2h5l4 4v7.5a1.5 1.5 0 01-1.5 1.5h-7A1.5 1.5 0 013 13.5v-10A1.5 1.5 0 014.5 2z" stroke="currentColor" stroke-width="1.2"/><path d="M9 2v4h4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+        Sample CSV
+      </button>
+      <!-- File Import/Export -->
+      <div class="file-dropdown">
+        <button class="btn-action" [matMenuTriggerFor]="fileMenu">
+          <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M2 11v2.5h12V11" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M8 2v8M5 7l3 3 3-3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          File
+        </button>
+        <mat-menu #fileMenu="matMenu">
+          <button mat-menu-item>
+            <label for="myfile" class="import-label">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="margin-right:8px"><path d="M2 11v2.5h12V11" stroke="#666" stroke-width="1.2" stroke-linecap="round"/><path d="M8 10V2M5 5l3-3 3 3" stroke="#666" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Import CSV
+            </label>
+            <input type="file" id="myfile" #uploadFile name="myfile" class="import-input" (change)="doctorsList ? onChange($event) : importHospital($event)" accept=".csv" />
           </button>
-
-          <mat-menu #menu="matMenu">
-            <button
-              mat-menu-item
-              [routerLink]="['doctor', element?.userId]"
-              class="d-flex align-items-center gap-2"
-            >
-              <img
-                class="cursor"
-                src="assets/images/svg/settings.svg"
-                alt=""
-                width="20"
-                height="20"
-              />
-              <span>Settings</span>
-            </button>
-
-            <button
-              mat-menu-item
-              class="d-flex align-items-center gap-2"
-              (click)="addDoctor('Edit', element?.userId, page)"
-            >
-              <img
-                class="cursor"
-                src="assets/images/svg/editdate.svg"
-                alt=""
-                width="20"
-                height="16"
-              />
-              <span>Edit</span>
-            </button>
-
-            <button
-              mat-menu-item
-              (click)="deleteDoctor(element?.userId, 'doctor')"
-              class="d-flex align-items-center gap-2"
-            >
-              <img
-                class="cursor"
-                src="assets/images/svg/delete.svg"
-                alt=""
-                width="20"
-                height="20"
-              />
-              <span>Delete</span>
-            </button>
-          </mat-menu>
-        </td>
-      </ng-container>
-
-      <ng-container matColumnDef="Status">
-        <th mat-header-cell *matHeaderCellDef class="me-3 headers">Status</th>
-        <td mat-cell *matCellDef="let element" class="me-3 tabledata">
-          <span
-            *ngIf="element?.doctorDetails?.status == 2"
-            class="mt-1"
-            [ngClass]="element?.doctorDetails?.status == 2 ? 'active' : ''"
-            >Active
-          </span>
-          <span
-            *ngIf="
-              element?.doctorDetails?.status == 5 ||
-              element?.doctorDetails?.status == 1 ||
-              element?.doctorDetails?.status == 4 ||
-              element?.doctorDetails?.status == 3
-            "
-            class="mt-1"
-            [ngClass]="
-              element?.doctorDetails?.status == 5 ||
-              element?.doctorDetails?.status == 1 ||
-              element?.doctorDetails?.status == 3 ||
-              element?.doctorDetails?.status == 4
-                ? 'inactive'
-                : ''
-            "
-            >Inactive</span
-          >
-          <label class="switch ms-5">
-            <input
-              type="checkbox"
-              [checked]="element?.doctorDetails?.status == 2 ? true : false"
-              (click)="
-                toggleCheckboxdoctors($event, element?.userId);
-                activeInactiveDoctor(
-                  element?.doctorDetails?.status,
-                  element?.userId
-                )
-              "
-            />
-            <span class="slider round"></span>
-          </label>
-        </td>
-      </ng-container>
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr
-        mat-row
-        *matRowDef="
-          let row;
-          columns: displayedColumns
-            | paginate
-              : {
-                  itemsPerPage: itemsPerPage,
-                  currentPage: page,
-                  totalItems: totalLength
-                };
-          let i = index
-        "
-      ></tr>
-    </table>
-    <div
-      class="nodata text-center"
-      *ngIf="totalLength == 0 || getLength?.length == 0"
-    >
-      No Data Found.
-    </div>
-  </div>
-  <div class="text-center" *ngIf="totalLength > 0">
-    <pagination-controls
-      (pageChange)="updatePageNumer($event)"
-      previousLabel="&lsaquo;"
-      nextLabel="&rsaquo;"
-    ></pagination-controls>
-  </div>
-</div>
-
-<div *ngIf="hospitalsList">
-  <div class="table-responsive w-100 scrolldata mb-5">
-    <table mat-table [dataSource]="dataSourceHospital" class="mat-elevation-z8">
-      <ng-container matColumnDef="position">
-        <th mat-header-cell *matHeaderCellDef class="text-center headers">
-          Image
-        </th>
-        <td
-          mat-cell
-          *matCellDef="let element"
-          class="text-center tabledata intialName"
-        >
-          <img
-            class="patientimg"
-            [src]="element?.profilePic"
-            alt=""
-            onError="this.src='assets/images/svg/nectorIcon.svg'"
-            *ngIf="
-              element?.profilePic != null ||
-                element?.profilePic != undefined ||
-                element?.profilePic;
-              else intial
-            "
-          />
-          <ng-template #intial>
-            <div class="imageintial">
-              {{element?.name?.[0]?.[0] | uppercase }}
-              {{element?.name?.[1]?.[0] | uppercase}}
-            </div>
-          </ng-template>
-        </td>
-      </ng-container>
-
-      <ng-container matColumnDef="name">
-        <th
-          mat-header-cell
-          *matHeaderCellDef
-          class="headers cursor"
-          (click)="sortData('fullName')"
-        >
-          Name
-          <img
-            class="cursor"
-            *ngIf="
-              !sortByHospital.sortOrder ||
-              sortByHospital.sortOrder == 'DESC' ||
-              sortByHospital.sort != 'fullName'
-            "
-            src="assets/images/svg/sort.svg"
-            alt=""
-          />
-          <img
-            *ngIf="
-              sortByHospital.sortOrder == 'ASC' &&
-              sortByHospital.sort == 'fullName'
-            "
-            src="assets/images/svg/sort.svg"
-            class="asce cursor"
-            alt=""
-          />
-        </th>
-        <td mat-cell *matCellDef="let element" class="tabledata">
-          <a
-            [href]="
-              baseurl +
-              createSlug(element?.address?.city) +
-              '/hospital/' +
-              element.profileSlug
-            "
-            target="_blank"
-            *ngIf="element.profileSlug && element?.address?.city"
-          >
-            {{ element?.hospitalName || "N/A" }}
-          </a>
-          <span *ngIf="!(element?.profileSlug && element?.address?.city)">{{
-            element?.hospitalName || "N/A"
-          }}</span>
-        </td>
-      </ng-container>
-
-      <ng-container matColumnDef="Gender">
-        <th mat-header-cell *matHeaderCellDef class="headers">
-          Type of hospital
-        </th>
-        <td mat-cell *matCellDef="let element" class="tabledata">
-          {{ element?.hospitalType || "N/A" }}
-        </td>
-      </ng-container>
-
-      <ng-container matColumnDef="Address">
-        <th mat-header-cell *matHeaderCellDef class="headers cursor"
-          (click)="sortData('city')">Locality
-         <img
-            class="cursor"
-            *ngIf="
-              !sortBy.order ||
-              sortBy.order == 'DESC' ||
-              sortBy.sortBy != 'city'
-            "
-            src="assets/images/svg/sort.svg"
-            alt=""
-          />
-          <img
-            *ngIf="sortBy.order == 'ASC' && sortBy.sortBy == 'city'"
-            src="assets/images/svg/sort.svg"
-            class="asce cursor"
-            alt=""
-          />
-        </th>
-        <td mat-cell *matCellDef="let element" class="tabledata change-text">
-          {{ element?.locality || "N/A" }}
-        </td>
-      </ng-container>
-      <ng-container matColumnDef="City">
-        <th mat-header-cell *matHeaderCellDef class="headers cursor"
-          (click)="sortData('city')">City
-          <img
-            class="cursor"
-            *ngIf="
-              !sortByHospital.sortOrder ||
-              sortByHospital.sortOrder == 'DESC' ||
-              sortByHospital.sort != 'city'
-            "
-            src="assets/images/svg/sort.svg"
-            alt=""
-          />
-          <img
-            *ngIf="sortByHospital.sortOrder == 'ASC' && sortByHospital.sort == 'city'"
-            src="assets/images/svg/sort.svg"
-            class="asce cursor"
-            alt=""
-          />
-        </th>
-        <td mat-cell *matCellDef="let element" class="tabledata change-text">
-          {{ element?.city || "N/A" }}
-        </td>
-      </ng-container>
-      <ng-container matColumnDef="Mobile">
-        <th mat-header-cell *matHeaderCellDef class="headers">Total Doctors</th>
-        <td mat-cell *matCellDef="let element" class="tabledata">
-          {{ element?.totalDoctors || "N/A" }}
-        </td>
-      </ng-container>
-      <ng-container matColumnDef="Email">
-        <th mat-header-cell *matHeaderCellDef class="headers">Mobile</th>
-        <td mat-cell *matCellDef="let element" class="tabledata">
-          <span
-            *ngIf="
-              element?.phone != null ||
-              element?.phone != undefined ||
-              element?.phone
-            "
-            >+91</span
-          >{{ element?.phone || "N/A" }}
-        </td>
-      </ng-container>
-      <ng-container matColumnDef="BloodGroup">
-        <th mat-header-cell *matHeaderCellDef class="headers cursor"
-          (click)="sortData('createdAt')">Joining Date
-           <img
-            class="cursor"
-            *ngIf="
-              !sortBy.order ||
-              sortBy.order == 'DESC' ||
-              sortBy.sortBy != 'createdAt'
-            "
-            src="assets/images/svg/sort.svg"
-            alt=""
-          />
-          <img
-            *ngIf="sortBy.order == 'ASC' && sortBy.sortBy == 'createdAt'"
-            src="assets/images/svg/sort.svg"
-            class="asce cursor"
-            alt=""
-          />
-        
-        </th>
-        <td mat-cell *matCellDef="let element" class="tabledata">
-          {{ element?.joiningDate | date : "dd/MM/yyyy" }}
-        </td>
-      </ng-container>
-      <ng-container matColumnDef="requestStatus">
-        <th mat-header-cell *matHeaderCellDef class="headers cursor"
-          (click)="sortData('approvalStatus')">
-          Requested Status
-           <img
-            class="cursor"
-            *ngIf="
-              !sortBy.order ||
-              sortBy.order == 'DESC' ||
-              sortBy.sortBy != 'approvalStatus'
-            "
-            src="assets/images/svg/sort.svg"
-            alt=""
-          />
-          <img
-            *ngIf="sortBy.order == 'ASC' && sortBy.sortBy == 'approvalStatus'"
-            src="assets/images/svg/sort.svg"
-            class="asce cursor"
-            alt=""
-          />
-        </th>
-        <td mat-cell *matCellDef="let element" class="tabledata cursor">
-          {{
-            element?.approvalStatus == 1
-              ? "Pending"
-              : element?.approvalStatus == 2
-              ? "Approved"
-              : element?.approvalStatus == 3
-              ? "Rejected"
-              : "N/A"
-          }}
-        </td>
-      </ng-container>
-      <ng-container matColumnDef="Action">
-        <th mat-header-cell *matHeaderCellDef class="headers">Action</th>
-        <!-- <td
-          mat-cell
-          *matCellDef="let element"
-          class="tabledata"
-          (click)="addDoctor('Edit', element?._id, '')"
-        >
-          <img src="assets/images/svg/edit.svg" alt="" />
-        </td> -->
-        <td mat-cell *matCellDef="let element" class="tabledata">
-          <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="menu">
-            <img
-              class="cursor"
-              src="assets/images/png/toggle.png"
-              alt=""
-              width="20"
-              height="20"
-            />
+          <button mat-menu-item (click)="doctorsList ? downloadDoctorList('doctorList') : downloadHospitalList('hospitalList')">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="margin-right:8px"><path d="M2 11v2.5h12V11" stroke="#666" stroke-width="1.2" stroke-linecap="round"/><path d="M8 2v8M5 7l3 3 3-3" stroke="#666" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Export
           </button>
-
-          <mat-menu #menu="matMenu">
-            <button
-              mat-menu-item
-              [routerLink]="['hospital', element?._id]"
-              class="d-flex align-items-center gap-2"
-            >
-              <img
-                class="cursor"
-                src="assets/images/svg/settings.svg"
-                alt=""
-                width="20"
-                height="20"
-              />
-              <span>Settings</span>
-            </button>
-
-            <button
-              mat-menu-item
-              class="d-flex align-items-center gap-2"
-              (click)="addDoctor('Edit', element?._id, page)"
-            >
-              <img
-                class="cursor"
-                src="assets/images/svg/editdate.svg"
-                alt=""
-                width="20"
-                height="16"
-              />
-              <span>Edit</span>
-            </button>
-
-            <button
-              mat-menu-item
-              (click)="deleteDoctor(element?._id, 'hospital')"
-              class="d-flex align-items-center gap-2"
-            >
-              <img
-                class="cursor"
-                src="assets/images/svg/delete.svg"
-                alt=""
-                width="20"
-                height="20"
-              />
-              <span>Delete</span>
-            </button>
-          </mat-menu>
-        </td>
-      </ng-container>
-      <ng-container matColumnDef="Status">
-        <th mat-header-cell *matHeaderCellDef class="headers pe-5">Status</th>
-        <td mat-cell *matCellDef="let element" class="tabledata pe-5">
-          <span
-            *ngIf="element?.status == 2"
-            [ngClass]="element?.status == 2 ? 'active' : ''"
-            >Active
-          </span>
-          <span
-            *ngIf="
-              element?.status == 5 ||
-              element?.status == null ||
-              element?.status == 1 ||
-              element?.status == 3 ||
-              element?.status == 4
-            "
-            [ngClass]="
-              element?.status == 5 ||
-              element?.status == null ||
-              element?.status == 1 ||
-              element?.status == 3 ||
-              element?.status == 4
-                ? 'inactive'
-                : ''
-            "
-            >Inactive</span
-          >
-
-          <label class="switch ms-4">
-            <input
-              type="checkbox"
-              [checked]="element?.status == 2 ? true : false"
-              (click)="
-                toggleCheckboxhospitalss($event, element?._id);
-                activeInactiveHospital(element?.status, element?._id)
-              "
-            />
-            <span class="slider round"></span>
-          </label>
-        </td>
-      </ng-container>
-      <tr mat-header-row *matHeaderRowDef="displayedHospitalColumns"></tr>
-      <tr
-        mat-row
-        *matRowDef="
-          let row;
-          columns: displayedHospitalColumns
-            | paginate
-              : {
-                  itemsPerPage: itemPerPageOfHospital,
-                  currentPage: pageOfHospital,
-                  totalItems: totalLengthHospital
-                };
-          let i = index
-        "
-      ></tr>
-    </table>
-    <div class="nodata text-center" *ngIf="totalLengthHospital == 0">
-      No Data Found.
+        </mat-menu>
+      </div>
+      <!-- Add New -->
+      <button class="btn-action btn-primary-action" (click)="addDoctor('Add New', '', '')">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        {{ doctorsList ? 'Add Doctor' : 'Add Hospital' }}
+      </button>
     </div>
   </div>
-  <div class="text-center" *ngIf="totalLengthHospital > 0">
-    <pagination-controls
-      (pageChange)="updateHospitalPageNumer($event)"
-      previousLabel="&lsaquo;"
-      nextLabel="&rsaquo;"
-    ></pagination-controls>
+
+  <!-- Filter Overlay + Slide Panel -->
+  <div class="filter-overlay" *ngIf="showFilterPanel" (click)="closeFilterPanel()"></div>
+  <div class="filter-panel" [class.open]="showFilterPanel">
+    <div class="filter-panel-head">
+      <div class="fp-title-row">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M2 3h14M4 7h10M6.5 11h5M8 15h2" stroke="#45197c" stroke-width="1.5" stroke-linecap="round"/></svg>
+        <h3>Filters</h3>
+        <span class="fp-count" *ngIf="activeFilterCount > 0">{{ activeFilterCount }}</span>
+      </div>
+      <button class="close-btn" (click)="closeFilterPanel()">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M5 5L13 13M13 5L5 13" stroke="#666" stroke-width="1.6" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+    <div class="filter-panel-body">
+      <!-- Specialization (doctors only) -->
+      <div class="filter-section" *ngIf="doctorsList">
+        <button class="section-toggle" (click)="toggleFilterSection('specialization')">
+          <span class="section-label">
+            <span class="section-icon"><svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M7.5 1v13M1 7.5h13" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><circle cx="7.5" cy="7.5" r="3" stroke="currentColor" stroke-width="1.2"/></svg></span>
+            Specialization
+          </span>
+          <svg class="chevron" [class.rotated]="filterSpecOpen" width="12" height="12" viewBox="0 0 12 12"><path d="M3.5 4.5L6 7L8.5 4.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="section-body" *ngIf="filterSpecOpen">
+          <div class="chip-group">
+            <button *ngFor="let spec of OccupationList" class="filter-chip" [class.active]="spec.selected" (click)="toggleSpecChip(spec)">
+              {{ spec?.name }}
+            </button>
+          </div>
+        </div>
+      </div>
+      <!-- Hospital Type (hospitals only) -->
+      <div class="filter-section" *ngIf="hospitalsList">
+        <button class="section-toggle" (click)="toggleFilterSection('hospitalType')">
+          <span class="section-label">
+            <span class="section-icon"><svg width="15" height="15" viewBox="0 0 15 15" fill="none"><rect x="1" y="3" width="13" height="10" rx="2" stroke="currentColor" stroke-width="1.2"/><path d="M5 6.5h2M8 6.5h2M5 9h2M8 9h2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg></span>
+            Hospital Type
+          </span>
+          <svg class="chevron" [class.rotated]="filterHospTypeOpen" width="12" height="12" viewBox="0 0 12 12"><path d="M3.5 4.5L6 7L8.5 4.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="section-body" *ngIf="filterHospTypeOpen">
+          <div class="chip-group">
+            <button *ngFor="let ht of typeOfHospital" class="filter-chip" [class.active]="ht.selected" (click)="toggleHospTypeChip(ht)">
+              {{ ht?.name }}
+            </button>
+          </div>
+        </div>
+      </div>
+      <!-- Cities -->
+      <div class="filter-section">
+        <button class="section-toggle" (click)="toggleFilterSection('cities')">
+          <span class="section-label">
+            <span class="section-icon"><svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M7.5 1C5 1 3 3.2 3 5.5 3 9 7.5 14 7.5 14S12 9 12 5.5C12 3.2 10 1 7.5 1z" stroke="currentColor" stroke-width="1.2"/><circle cx="7.5" cy="5.5" r="1.5" stroke="currentColor" stroke-width="1.2"/></svg></span>
+            Cities
+          </span>
+          <svg class="chevron" [class.rotated]="filterCitiesOpen" width="12" height="12" viewBox="0 0 12 12"><path d="M3.5 4.5L6 7L8.5 4.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="section-body" *ngIf="filterCitiesOpen">
+          <div class="chip-group">
+            <button *ngFor="let c of cities" class="filter-chip" [class.active]="isCitySelected(c)" (click)="toggleCityChip(c)">
+              {{ c }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="filter-panel-footer">
+      <button class="fp-clear" (click)="clearAllFilters()">Clear All</button>
+      <button class="fp-apply" (click)="applyFilters()">Apply Filters</button>
+    </div>
+  </div>
+
+  <!-- ==================== DOCTORS TABLE ==================== -->
+  <div class="table-card" *ngIf="doctorsList">
+    <div class="table-scroll">
+      <table>
+        <caption class="sr-only">Doctor List</caption>
+        <thead>
+          <tr>
+            <th class="col-avatar">&nbsp;</th>
+            <th class="sortable" (click)="sortData('fullName')">
+              Name
+              <span class="sort-icon" [class.asc]="sortBy.sortBy === 'fullName' && sortBy.order === 'ASC'" [class.desc]="sortBy.sortBy === 'fullName' && sortBy.order === 'DESC'" [class.active]="sortBy.sortBy === 'fullName'">
+                <svg width="10" height="14" viewBox="0 0 10 14"><path d="M5 0L9.5 5H0.5L5 0Z" fill="currentColor" opacity="0.35"/><path d="M5 14L0.5 9H9.5L5 14Z" fill="currentColor" opacity="0.35"/></svg>
+              </span>
+            </th>
+            <th>Specialization</th>
+            <th class="sortable" (click)="sortData('city')">
+              Locality
+              <span class="sort-icon" [class.asc]="sortBy.sortBy === 'city' && sortBy.order === 'ASC'" [class.desc]="sortBy.sortBy === 'city' && sortBy.order === 'DESC'" [class.active]="sortBy.sortBy === 'city'">
+                <svg width="10" height="14" viewBox="0 0 10 14"><path d="M5 0L9.5 5H0.5L5 0Z" fill="currentColor" opacity="0.35"/><path d="M5 14L0.5 9H9.5L5 14Z" fill="currentColor" opacity="0.35"/></svg>
+              </span>
+            </th>
+            <th>Degree</th>
+            <th>Mobile</th>
+            <th class="sortable" (click)="sortData('email')">
+              Email
+              <span class="sort-icon" [class.asc]="sortBy.sortBy === 'email' && sortBy.order === 'ASC'" [class.desc]="sortBy.sortBy === 'email' && sortBy.order === 'DESC'" [class.active]="sortBy.sortBy === 'email'">
+                <svg width="10" height="14" viewBox="0 0 10 14"><path d="M5 0L9.5 5H0.5L5 0Z" fill="currentColor" opacity="0.35"/><path d="M5 14L0.5 9H9.5L5 14Z" fill="currentColor" opacity="0.35"/></svg>
+              </span>
+            </th>
+            <th class="sortable" (click)="sortData('createdAt')">
+              Joined
+              <span class="sort-icon" [class.asc]="sortBy.sortBy === 'createdAt' && sortBy.order === 'ASC'" [class.desc]="sortBy.sortBy === 'createdAt' && sortBy.order === 'DESC'" [class.active]="sortBy.sortBy === 'createdAt'">
+                <svg width="10" height="14" viewBox="0 0 10 14"><path d="M5 0L9.5 5H0.5L5 0Z" fill="currentColor" opacity="0.35"/><path d="M5 14L0.5 9H9.5L5 14Z" fill="currentColor" opacity="0.35"/></svg>
+              </span>
+            </th>
+            <th class="sortable" (click)="sortData('approvalStatus')">
+              Status
+              <span class="sort-icon" [class.asc]="sortBy.sortBy === 'approvalStatus' && sortBy.order === 'ASC'" [class.desc]="sortBy.sortBy === 'approvalStatus' && sortBy.order === 'DESC'" [class.active]="sortBy.sortBy === 'approvalStatus'">
+                <svg width="10" height="14" viewBox="0 0 10 14"><path d="M5 0L9.5 5H0.5L5 0Z" fill="currentColor" opacity="0.35"/><path d="M5 14L0.5 9H9.5L5 14Z" fill="currentColor" opacity="0.35"/></svg>
+              </span>
+            </th>
+            <th class="col-toggle">Active</th>
+            <th class="col-action">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let element of dataSource | paginate: { id: 'doctorPager', itemsPerPage: itemsPerPage, currentPage: page, totalItems: totalLength }">
+            <!-- Avatar -->
+            <td class="col-avatar">
+              <img class="avatar-img" [src]="element?.profilePic" alt="" onError="this.src='assets/images/svg/nectorIcon.svg'" *ngIf="element?.profilePic; else docInitials" />
+              <ng-template #docInitials>
+                <div class="avatar-initials">{{ getInitials(element?.doctorDetails?.fullName) }}</div>
+              </ng-template>
+            </td>
+            <!-- Name -->
+            <td class="cell-name">
+              <a class="name-link" *ngIf="element?.profileSlug && element?.localityDetails?.[0]?.address?.city" (click)="redirectToDoctorDetails(element)">{{ element?.doctorDetails?.fullName || 'N/A' }}</a>
+              <span *ngIf="!(element?.profileSlug && element?.localityDetails?.[0]?.address?.city)">{{ element?.doctorDetails?.fullName || 'N/A' }}</span>
+            </td>
+            <!-- Specialization -->
+            <td>
+              <span class="spec-tags" *ngIf="element?.specialization?.length > 0">
+                <span class="spec-tag" *ngFor="let s of element?.specialization">{{ s?.name }}</span>
+              </span>
+              <span *ngIf="!element?.specialization?.length">N/A</span>
+            </td>
+            <!-- Locality -->
+            <td class="cell-locality">{{ element?.city || 'N/A' }}</td>
+            <!-- Degree -->
+            <td>
+              <span *ngFor="let degree of element?.education; let last = last">{{ degree?.degree || 'N/A' }}<ng-container *ngIf="!last">, </ng-container></span>
+              <span *ngIf="!element?.education?.length">N/A</span>
+            </td>
+            <!-- Mobile -->
+            <td class="cell-phone">{{ element?.doctorDetails?.phone ? '+91 ' + element.doctorDetails.phone : 'N/A' }}</td>
+            <!-- Email -->
+            <td class="cell-email">{{ element?.email || 'N/A' }}</td>
+            <!-- Joined -->
+            <td>{{ element?.createdAt | date:'dd MMM yyyy' }}</td>
+            <!-- Request Status -->
+            <td>
+              <span class="status-badge" [ngClass]="{'pending': element?.approvalStatus == 1, 'approved': element?.approvalStatus == 2, 'rejected': element?.approvalStatus == 3}">
+                {{ element?.approvalStatus == 1 ? 'Pending' : element?.approvalStatus == 2 ? 'Approved' : element?.approvalStatus == 3 ? 'Rejected' : 'N/A' }}
+              </span>
+            </td>
+            <!-- Toggle -->
+            <td class="col-toggle">
+              <label class="modern-toggle">
+                <input type="checkbox" [checked]="element?.doctorDetails?.status == 2" (click)="toggleCheckboxdoctors($event, element?.userId); activeInactiveDoctor(element?.doctorDetails?.status, element?.userId)" />
+                <span class="toggle-track"></span>
+              </label>
+            </td>
+            <!-- Action -->
+            <td class="col-action">
+              <button class="action-btn" [matMenuTriggerFor]="docActionMenu" aria-label="Actions">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="3" r="1.5" fill="#666"/><circle cx="8" cy="8" r="1.5" fill="#666"/><circle cx="8" cy="13" r="1.5" fill="#666"/></svg>
+              </button>
+              <mat-menu #docActionMenu="matMenu">
+                <button mat-menu-item [routerLink]="['doctor', element?.userId]">
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="margin-right:8px"><circle cx="8" cy="8" r="6.5" stroke="#666" stroke-width="1.2"/><path d="M8 5v6M5 8h6" stroke="#666" stroke-width="1.2" stroke-linecap="round"/></svg>
+                  Settings
+                </button>
+                <button mat-menu-item (click)="addDoctor('Edit', element?.userId, page)">
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="margin-right:8px"><path d="M11.5 2.5l2 2-8 8H3.5v-2l8-8z" stroke="#666" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  Edit
+                </button>
+                <button mat-menu-item (click)="deleteDoctor(element?.userId, 'doctor')" class="delete-action">
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="margin-right:8px"><path d="M3 4.5h10M6 4.5V3a1 1 0 011-1h2a1 1 0 011 1v1.5M12 4.5l-.5 8a1.5 1.5 0 01-1.5 1.5H6a1.5 1.5 0 01-1.5-1.5L4 4.5" stroke="#e53935" stroke-width="1.2" stroke-linecap="round"/></svg>
+                  Delete
+                </button>
+              </mat-menu>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="empty-state" *ngIf="totalLength === 0 || !dataSource?.length">
+      <svg width="48" height="48" viewBox="0 0 48 48" fill="none"><circle cx="24" cy="24" r="23" stroke="#ddd" stroke-width="1.5"/><path d="M16 20a8 8 0 1116 0" stroke="#ccc" stroke-width="1.5" stroke-linecap="round"/><circle cx="20" cy="18" r="1.5" fill="#ccc"/><circle cx="28" cy="18" r="1.5" fill="#ccc"/><path d="M20 30c1.5-2 6.5-2 8 0" stroke="#ccc" stroke-width="1.5" stroke-linecap="round"/></svg>
+      <p>No doctors found</p>
+    </div>
+  </div>
+
+  <!-- Doctor Pagination -->
+  <div class="pagination-bar" *ngIf="doctorsList && totalLength > 0">
+    <div class="page-info">Showing <strong>{{ doctorShowingFrom }}-{{ doctorShowingTo }}</strong> of <strong>{{ totalLength }}</strong></div>
+    <pagination-controls id="doctorPager" (pageChange)="updatePageNumer($event)" previousLabel="&#8249;" nextLabel="&#8250;"></pagination-controls>
+    <div class="page-size-select">
+      <label>Rows</label>
+      <select [ngModel]="itemsPerPage" (ngModelChange)="onDoctorPageSizeChange($event)">
+        <option *ngFor="let opt of pageSizeOptions" [ngValue]="opt">{{ opt }}</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- ==================== HOSPITALS TABLE ==================== -->
+  <div class="table-card" *ngIf="hospitalsList">
+    <div class="table-scroll">
+      <table>
+        <caption class="sr-only">Hospital List</caption>
+        <thead>
+          <tr>
+            <th class="col-avatar">&nbsp;</th>
+            <th class="sortable" (click)="sortData('fullName')">
+              Name
+              <span class="sort-icon" [class.asc]="sortByHospital.sort === 'fullName' && sortByHospital.sortOrder === 'ASC'" [class.desc]="sortByHospital.sort === 'fullName' && sortByHospital.sortOrder === 'DESC'" [class.active]="sortByHospital.sort === 'fullName'">
+                <svg width="10" height="14" viewBox="0 0 10 14"><path d="M5 0L9.5 5H0.5L5 0Z" fill="currentColor" opacity="0.35"/><path d="M5 14L0.5 9H9.5L5 14Z" fill="currentColor" opacity="0.35"/></svg>
+              </span>
+            </th>
+            <th>Type</th>
+            <th class="sortable" (click)="sortData('city')">
+              Locality
+              <span class="sort-icon" [class.asc]="sortByHospital.sort === 'city' && sortByHospital.sortOrder === 'ASC'" [class.desc]="sortByHospital.sort === 'city' && sortByHospital.sortOrder === 'DESC'" [class.active]="sortByHospital.sort === 'city'">
+                <svg width="10" height="14" viewBox="0 0 10 14"><path d="M5 0L9.5 5H0.5L5 0Z" fill="currentColor" opacity="0.35"/><path d="M5 14L0.5 9H9.5L5 14Z" fill="currentColor" opacity="0.35"/></svg>
+              </span>
+            </th>
+            <th>City</th>
+            <th>Doctors</th>
+            <th>Mobile</th>
+            <th class="sortable" (click)="sortData('createdAt')">
+              Joined
+              <span class="sort-icon" [class.asc]="sortByHospital.sort === 'createdAt' && sortByHospital.sortOrder === 'ASC'" [class.desc]="sortByHospital.sort === 'createdAt' && sortByHospital.sortOrder === 'DESC'" [class.active]="sortByHospital.sort === 'createdAt'">
+                <svg width="10" height="14" viewBox="0 0 10 14"><path d="M5 0L9.5 5H0.5L5 0Z" fill="currentColor" opacity="0.35"/><path d="M5 14L0.5 9H9.5L5 14Z" fill="currentColor" opacity="0.35"/></svg>
+              </span>
+            </th>
+            <th class="sortable" (click)="sortData('approvalStatus')">
+              Status
+              <span class="sort-icon" [class.asc]="sortByHospital.sort === 'approvalStatus' && sortByHospital.sortOrder === 'ASC'" [class.desc]="sortByHospital.sort === 'approvalStatus' && sortByHospital.sortOrder === 'DESC'" [class.active]="sortByHospital.sort === 'approvalStatus'">
+                <svg width="10" height="14" viewBox="0 0 10 14"><path d="M5 0L9.5 5H0.5L5 0Z" fill="currentColor" opacity="0.35"/><path d="M5 14L0.5 9H9.5L5 14Z" fill="currentColor" opacity="0.35"/></svg>
+              </span>
+            </th>
+            <th class="col-toggle">Active</th>
+            <th class="col-action">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let element of dataSourceHospital | paginate: { id: 'hospitalPager', itemsPerPage: itemPerPageOfHospital, currentPage: pageOfHospital, totalItems: totalLengthHospital }">
+            <!-- Avatar -->
+            <td class="col-avatar">
+              <img class="avatar-img" [src]="element?.profilePic" alt="" onError="this.src='assets/images/svg/nectorIcon.svg'" *ngIf="element?.profilePic; else hospInitials" />
+              <ng-template #hospInitials>
+                <div class="avatar-initials hospital-avatar">{{ getInitials(element?.hospitalName) }}</div>
+              </ng-template>
+            </td>
+            <!-- Name -->
+            <td class="cell-name">
+              <a class="name-link" [href]="baseurl + createSlug(element?.address?.city) + '/hospital/' + element.profileSlug" target="_blank" *ngIf="element?.profileSlug && element?.address?.city">{{ element?.hospitalName || 'N/A' }}</a>
+              <span *ngIf="!(element?.profileSlug && element?.address?.city)">{{ element?.hospitalName || 'N/A' }}</span>
+            </td>
+            <!-- Type -->
+            <td><span class="type-badge">{{ element?.hospitalType || 'N/A' }}</span></td>
+            <!-- Locality -->
+            <td class="cell-locality">{{ element?.locality || 'N/A' }}</td>
+            <!-- City -->
+            <td>{{ element?.city || 'N/A' }}</td>
+            <!-- Total Doctors -->
+            <td class="text-center"><span class="doctor-count">{{ element?.totalDoctors || 0 }}</span></td>
+            <!-- Mobile -->
+            <td class="cell-phone">{{ element?.phone ? '+91 ' + element.phone : 'N/A' }}</td>
+            <!-- Joined -->
+            <td>{{ element?.joiningDate | date:'dd MMM yyyy' }}</td>
+            <!-- Request Status -->
+            <td>
+              <span class="status-badge" [ngClass]="{'pending': element?.approvalStatus == 1, 'approved': element?.approvalStatus == 2, 'rejected': element?.approvalStatus == 3}">
+                {{ element?.approvalStatus == 1 ? 'Pending' : element?.approvalStatus == 2 ? 'Approved' : element?.approvalStatus == 3 ? 'Rejected' : 'N/A' }}
+              </span>
+            </td>
+            <!-- Toggle -->
+            <td class="col-toggle">
+              <label class="modern-toggle">
+                <input type="checkbox" [checked]="element?.status == 2" (click)="toggleCheckboxhospitalss($event, element?._id); activeInactiveHospital(element?.status, element?._id)" />
+                <span class="toggle-track"></span>
+              </label>
+            </td>
+            <!-- Action -->
+            <td class="col-action">
+              <button class="action-btn" [matMenuTriggerFor]="hospActionMenu" aria-label="Actions">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="3" r="1.5" fill="#666"/><circle cx="8" cy="8" r="1.5" fill="#666"/><circle cx="8" cy="13" r="1.5" fill="#666"/></svg>
+              </button>
+              <mat-menu #hospActionMenu="matMenu">
+                <button mat-menu-item [routerLink]="['hospital', element?._id]">
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="margin-right:8px"><circle cx="8" cy="8" r="6.5" stroke="#666" stroke-width="1.2"/><path d="M8 5v6M5 8h6" stroke="#666" stroke-width="1.2" stroke-linecap="round"/></svg>
+                  Settings
+                </button>
+                <button mat-menu-item (click)="addDoctor('Edit', element?._id, page)">
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="margin-right:8px"><path d="M11.5 2.5l2 2-8 8H3.5v-2l8-8z" stroke="#666" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  Edit
+                </button>
+                <button mat-menu-item (click)="deleteDoctor(element?._id, 'hospital')" class="delete-action">
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="margin-right:8px"><path d="M3 4.5h10M6 4.5V3a1 1 0 011-1h2a1 1 0 011 1v1.5M12 4.5l-.5 8a1.5 1.5 0 01-1.5 1.5H6a1.5 1.5 0 01-1.5-1.5L4 4.5" stroke="#e53935" stroke-width="1.2" stroke-linecap="round"/></svg>
+                  Delete
+                </button>
+              </mat-menu>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="empty-state" *ngIf="totalLengthHospital === 0 || !dataSourceHospital?.length">
+      <svg width="48" height="48" viewBox="0 0 48 48" fill="none"><circle cx="24" cy="24" r="23" stroke="#ddd" stroke-width="1.5"/><rect x="12" y="16" width="24" height="16" rx="2" stroke="#ccc" stroke-width="1.5"/><path d="M18 22h4M26 22h4M18 26h4M26 26h4" stroke="#ccc" stroke-width="1.5" stroke-linecap="round"/></svg>
+      <p>No hospitals found</p>
+    </div>
+  </div>
+
+  <!-- Hospital Pagination -->
+  <div class="pagination-bar" *ngIf="hospitalsList && totalLengthHospital > 0">
+    <div class="page-info">Showing <strong>{{ hospitalShowingFrom }}-{{ hospitalShowingTo }}</strong> of <strong>{{ totalLengthHospital }}</strong></div>
+    <pagination-controls id="hospitalPager" (pageChange)="updateHospitalPageNumer($event)" previousLabel="&#8249;" nextLabel="&#8250;"></pagination-controls>
+    <div class="page-size-select">
+      <label>Rows</label>
+      <select [ngModel]="itemPerPageOfHospital" (ngModelChange)="onHospitalPageSizeChange($event)">
+        <option *ngFor="let opt of pageSizeOptions" [ngValue]="opt">{{ opt }}</option>
+      </select>
+    </div>
   </div>
 </div>

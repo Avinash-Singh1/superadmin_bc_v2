@@ -6,7 +6,7 @@ import { debounceTime, distinctUntilChanged } from "rxjs";
 import { URLConstant } from "src/app/apisURL/url";
 import { AddNewDoctorComponent } from "src/app/dialogs/add-new-doctor/add-new-doctor.component";
 import { ApiService } from "src/app/shared/api.service";
-import { ngxCsv } from "ngx-csv/ngx-csv";
+import * as XLSX from "xlsx";
 import { NgxUiLoaderService } from "ngx-ui-loader";
 import { environment } from "src/environments/environment";
 import slugify from "slugify";
@@ -114,6 +114,11 @@ export class DoctorhospitallistComponent implements OnInit {
   page: any = 1;
   dialogRef: any;
   filterForm: any;
+  pageSizeOptions = [10, 25, 50, 100];
+  showFilterPanel = false;
+  filterSpecOpen = true;
+  filterHospTypeOpen = true;
+  filterCitiesOpen = true;
   specialization = [
     "Dental",
     "Orthopaedics",
@@ -188,22 +193,108 @@ export class DoctorhospitallistComponent implements OnInit {
     }
   }
 
+  get activeFilterCount(): number {
+    let count = 0;
+    if (this.specializationParam?.length) count += this.specializationParam.length;
+    if (this.hospitalParam?.length) count += this.hospitalParam.length;
+    if (this.citiesParam?.length) count += this.citiesParam.length;
+    return count;
+  }
+
+  get doctorShowingFrom(): number {
+    if (!this.totalLength) return 0;
+    return (this.page - 1) * this.itemsPerPage + 1;
+  }
+  get doctorShowingTo(): number {
+    return Math.min(this.page * this.itemsPerPage, this.totalLength || 0);
+  }
+  get hospitalShowingFrom(): number {
+    if (!this.totalLengthHospital) return 0;
+    return (this.pageOfHospital - 1) * this.itemPerPageOfHospital + 1;
+  }
+  get hospitalShowingTo(): number {
+    return Math.min(this.pageOfHospital * this.itemPerPageOfHospital, this.totalLengthHospital || 0);
+  }
+
+  getInitials(name: string): string {
+    if (!name) return '?';
+    const parts = name.trim().split(/\s+/);
+    return parts.length >= 2 ? (parts[0][0] + parts[1][0]).toUpperCase() : parts[0].substring(0, 2).toUpperCase();
+  }
+
+  toggleFilterPanel() { this.showFilterPanel = !this.showFilterPanel; }
+  closeFilterPanel() { this.showFilterPanel = false; }
+  toggleFilterSection(section: string) {
+    if (section === 'specialization') this.filterSpecOpen = !this.filterSpecOpen;
+    else if (section === 'hospitalType') this.filterHospTypeOpen = !this.filterHospTypeOpen;
+    else if (section === 'cities') this.filterCitiesOpen = !this.filterCitiesOpen;
+  }
+
+  toggleSpecChip(spec: any) {
+    spec.selected = !spec.selected;
+    if (spec.selected) {
+      this.specializationParam.push(spec._id);
+    } else {
+      this.specializationParam = this.specializationParam.filter((id: any) => id !== spec._id);
+    }
+  }
+  toggleHospTypeChip(ht: any) {
+    ht.selected = !ht.selected;
+    if (ht.selected) {
+      this.hospitalParam.push(ht._id);
+    } else {
+      this.hospitalParam = this.hospitalParam.filter((id: any) => id !== ht._id);
+    }
+  }
+  isCitySelected(city: string): boolean { return this.citiesParam.includes(city); }
+  toggleCityChip(city: string) {
+    if (this.citiesParam.includes(city)) {
+      this.citiesParam = this.citiesParam.filter((c: any) => c !== city);
+    } else {
+      this.citiesParam.push(city);
+    }
+  }
+  applyFilters() {
+    this.showFilterPanel = false;
+    if (this.doctorsList) { this.page = 1; this.doctorList('', ''); }
+    else { this.pageOfHospital = 1; this.hospitalList(''); }
+  }
+  clearAllFilters() {
+    this.specializationParam = [];
+    this.hospitalParam = [];
+    this.citiesParam = [];
+    if (this.OccupationList) this.OccupationList.forEach((s: any) => s.selected = false);
+    if (this.typeOfHospital) this.typeOfHospital.forEach((h: any) => h.selected = false);
+  }
+  resetAllFilters() {
+    this.clearAllFilters();
+    this.applyFilters();
+  }
+  onDoctorPageSizeChange(size: number) {
+    this.itemsPerPage = size;
+    this.page = 1;
+    this.doctorList('', '');
+  }
+  onHospitalPageSizeChange(size: number) {
+    this.itemPerPageOfHospital = size;
+    this.pageOfHospital = 1;
+    this.hospitalList('');
+  }
+
   chnageDoctorList(list: any) {
     if (list == "doctors") {
       this.doctorsList = true;
       this.hospitalsList = false;
       this.search.reset();
       this.filterForm.reset();
-      this.citiesParam = [];
-      this.hospitalParam = [];
+      this.clearAllFilters();
       this.doctorList("", "");
     } else if (list == "hospitals") {
       this.hospitalsList = true;
       this.doctorsList = false;
       this.search.reset();
       this.filterForm.reset();
-      this.citiesParam = [];
-      this.specializationParam = [];
+      this.clearAllFilters();
       this.hospitalList("");
     }
   }
@@ -336,16 +427,16 @@ export class DoctorhospitallistComponent implements OnInit {
 
     this.apiservice.GetData(URLConstant.doctorList, data).subscribe(
       (res: any) => {
-        this.dataSource = res?.result[0]?.data;
-        this.getLength = res?.result[0]?.totalCount;
-        this.totalLength = res?.result[0]?.totalCount[0]?.count;
+        this.dataSource = res?.result?.[0]?.data || [];
+        this.getLength = res?.result?.[0]?.totalCount;
+        this.totalLength = res?.result?.[0]?.totalCount?.[0]?.count || 0;
         for (let i = 0; i < this.dataSource.length; i++) {
           this.dataSource[i]["name"] =
             this.dataSource[i]?.doctorDetails?.fullName?.split(" ");
         }
       },
       (error) => {
-        this.toastr.error(error.message);
+        this.toastr.error(error?.message || 'Failed to load doctors');
       }
     );
   }
@@ -370,15 +461,15 @@ export class DoctorhospitallistComponent implements OnInit {
     });
     this.apiservice.GetData(URLConstant.hospitalList, param).subscribe(
       (res: any) => {
-        this.dataSourceHospital = res?.result?.data;
-        this.totalLengthHospital = res?.result?.count;
+        this.dataSourceHospital = res?.result?.data || [];
+        this.totalLengthHospital = res?.result?.count || 0;
         for (let i = 0; i < this.dataSourceHospital.length; i++) {
           this.dataSourceHospital[i]["name"] =
             this.dataSourceHospital[i]?.hospitalName?.split(" ");
         }
       },
       (error) => {
-        this.toastr.error(error.message);
+        this.toastr.error(error?.message || 'Failed to load hospitals');
       }
     );
   }
@@ -489,16 +580,15 @@ export class DoctorhospitallistComponent implements OnInit {
     this.apiservice
       .GetData(URLConstant.doctorList, data)
       .subscribe((res: any) => {
-        //if(param){
         if (res?.success) {
-          this.result = res?.result[0]?.data;
+          this.result = res?.result?.[0]?.data || [];
           for (let i = 0; i < this.result.length; i++) {
             this.data.push([
               this.result[i]?.profilePic,
               this.result[i]?.doctorDetails?.fullName,
-              this.result[i]?.specialization[0]?.name,
+              this.result[i]?.specialization?.[0]?.name,
               this.result[i]?.city || "N/A",
-              this.result[i]?.education[0]?.degree,
+              this.result[i]?.education?.[0]?.degree,
               this.result[i]?.doctorDetails?.phone,
               this.result[i]?.email,
               this.result[i]?.createdAt,
@@ -506,13 +596,11 @@ export class DoctorhospitallistComponent implements OnInit {
           }
           if (param) this.exportToCSV();
         }
-        //}
       });
   }
   hospitalExport: any;
   hospitalExporteddata: any = [];
   downloadHospitalList(param?: any) {
-    console.log("traun");
     this.hospitalExporteddata = [];
     this.hospitalExport = "";
     let data: any = {
@@ -529,7 +617,7 @@ export class DoctorhospitallistComponent implements OnInit {
     this.apiservice
       .GetData(URLConstant.hospitalList, data)
       .subscribe((res: any) => {
-        this.hospitalExport = res?.result?.data;
+        this.hospitalExport = res?.result?.data || [];
         for (let i = 0; i < this.hospitalExport.length; i++) {
           this.hospitalExporteddata.push([
             this.hospitalExport[i]?.profilePic
@@ -556,9 +644,7 @@ export class DoctorhospitallistComponent implements OnInit {
             this.hospitalExport[i]?.status == 2 ? "Active" : "Inactive",
           ]);
         }
-        console.log("before hello");
         if (param) {
-          console.log("hello");
           this.exportHospitalToCSV();
         }
       });
@@ -575,7 +661,6 @@ export class DoctorhospitallistComponent implements OnInit {
   ];
 
   activeInactiveHospital(status: any, id: any) {
-    console.log(status);
     let param = {
       hospitalId: id,
     };
@@ -587,7 +672,6 @@ export class DoctorhospitallistComponent implements OnInit {
       .subscribe((res: any) => {});
   }
   activeInactiveDoctor(status: any, id: any) {
-    console.log("status", status);
     let param = {
       doctorId: id,
     };
@@ -613,18 +697,12 @@ export class DoctorhospitallistComponent implements OnInit {
   }
 
   exportToCSV() {
-    const headers = this.header;
-
-    var options = {
-      fieldSeparator: ",",
-      quoteStrings: '"',
-      decimalseparator: ".",
-      showLabels: true,
-      showTitle: true,
-      useBom: true,
-      headers: headers,
-    };
-    new ngxCsv(this.data, "doctorList", options);
+    const aoa = [this.header, ...this.data];
+    const ws = XLSX.utils.aoa_to_sheet(aoa);
+    ws['!cols'] = this.header.map(() => ({ wch: 20 }));
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Doctors');
+    XLSX.writeFile(wb, 'Doctor_List.xlsx');
   }
 
   sampleCSVDoctorData = [
@@ -823,17 +901,12 @@ export class DoctorhospitallistComponent implements OnInit {
     "Country",
   ];
   SampleCSVDoctor() {
-    const headers = this.sampleCSVHeader;
-    var options = {
-      fieldSeparator: ",",
-      quoteStrings: '"',
-      decimalseparator: ".",
-      showLabels: true,
-      showTitle: true,
-      useBom: true,
-      headers: headers,
-    };
-    new ngxCsv(this.SampleDataArr, "Sample Doctor List", options);
+    const aoa = [this.sampleCSVHeader, ...this.SampleDataArr];
+    const ws = XLSX.utils.aoa_to_sheet(aoa);
+    ws['!cols'] = this.sampleCSVHeader.map(() => ({ wch: 18 }));
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Sample Doctors');
+    XLSX.writeFile(wb, 'Sample_Doctor_List.xlsx');
   }
 
   sampleCSVHospitalHeader = [
@@ -848,31 +921,21 @@ export class DoctorhospitallistComponent implements OnInit {
     "Country",
   ];
   SampleCSVHospital() {
-    const headers = this.sampleCSVHospitalHeader;
-    var options = {
-      fieldSeparator: ",",
-      quoteStrings: '"',
-      decimalseparator: ".",
-      showLabels: true,
-      showTitle: true,
-      useBom: true,
-      headers: headers,
-    };
-    new ngxCsv(this.sampleHospitalArr, "Sample Hospital List", options);
+    const aoa = [this.sampleCSVHospitalHeader, ...this.sampleHospitalArr];
+    const ws = XLSX.utils.aoa_to_sheet(aoa);
+    ws['!cols'] = this.sampleCSVHospitalHeader.map(() => ({ wch: 18 }));
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Sample Hospitals');
+    XLSX.writeFile(wb, 'Sample_Hospital_List.xlsx');
   }
 
   exportHospitalToCSV() {
-    const headers = this.hospitalExportedHeader;
-    var options = {
-      fieldSeparator: ",",
-      quoteStrings: '"',
-      decimalseparator: ".",
-      showLabels: true,
-      showTitle: true,
-      useBom: true,
-      headers: headers,
-    };
-    new ngxCsv(this.hospitalExporteddata, "Hospital List", options);
+    const aoa = [this.hospitalExportedHeader, ...this.hospitalExporteddata];
+    const ws = XLSX.utils.aoa_to_sheet(aoa);
+    ws['!cols'] = this.hospitalExportedHeader.map(() => ({ wch: 20 }));
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Hospitals');
+    XLSX.writeFile(wb, 'Hospital_List.xlsx');
   }
 
   file: any;

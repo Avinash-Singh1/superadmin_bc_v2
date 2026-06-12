@@ -143,14 +143,12 @@ selectHospitals(type:any){
   for(var i=0; i<elem.length; i++){  
       if(elem[i].type=='checkbox' && type==true && elem[i].value==1)  
       {
-        console.log(type)
           elem[i].checked=true;  
           this.selectHospital=false;
           this.deselectHospital=true;
 
       }
          else if(elem[i].type=='checkbox' && type==false && elem[i].value==1)  {
-          console.log(type)
           elem[i].checked=false; 
           this.deselectHospital=false;
           this.selectHospital=true
@@ -254,10 +252,10 @@ doctorListing(value:any){
     }
   });
   this.apiService.GetData(URLConstant.doctorApprovalList,param).subscribe((res:any)=>{
-this.dataSource=res?.result?.data
-this.totalLength=res?.result?.count[0]?.count
+this.dataSource=res?.result?.data || []
+this.totalLength=res?.result?.count?.[0]?.count || 0
 for (let i = 0; i < this.dataSource.length; i++) {
-  this.dataSource[i]['name']=this.dataSource[i]?.doctorDetails[0]?.fullName?.split(' ');
+  this.dataSource[i]['name']=this.dataSource[i]?.doctorDetails?.[0]?.fullName?.split(' ');
 }
   })
 }
@@ -275,9 +273,9 @@ hospitalListing(events:any){
       }
     });
     this.apiService.GetData(URLConstant.viewHospitalApproval,param).subscribe((res:any)=>{
-  this.dataSourceHospital=res?.result[0]?.data
-  this.getLength=res?.result[0]?.totalCount
-  this.totalLengthHospital=res?.result[0]?.totalCount[0]?.count
+  this.dataSourceHospital=res?.result?.[0]?.data || []
+  this.getLength=res?.result?.[0]?.totalCount
+  this.totalLengthHospital=res?.result?.[0]?.totalCount?.[0]?.count || 0
   for (let i = 0; i < this.dataSourceHospital?.length; i++) {
     this.dataSourceHospital[i]['name']=this.dataSourceHospital[i]?.hospitalName?.split(' ');
   }

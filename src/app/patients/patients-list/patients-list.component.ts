@@ -1,174 +1,87 @@
 import { Component, OnInit } from "@angular/core";
 import { UntypedFormBuilder, UntypedFormControl } from "@angular/forms";
 import { MatDialog } from "@angular/material/dialog";
-import { log } from "console";
 import { ToastrService } from "ngx-toastr";
 import { debounceTime, distinctUntilChanged } from "rxjs";
 import { URLConstant } from "src/app/apisURL/url";
 import { ApiService } from "src/app/shared/api.service";
-import { ngxCsv } from "ngx-csv/ngx-csv";
+import * as XLSX from "xlsx";
 import { DeleteConfirmationComponent } from "src/app/dialogs/delete-confirmation/delete-confirmation.component";
-import { DeleteUserService } from "src/app/services/delete-user.service"; 
+import { DeleteUserService } from "src/app/services/delete-user.service";
 
-export interface PeriodicElement {
-  name: string;
-  position: string;
-  weight: string;
-  symbol: string;
-  mobile: number;
-  email: string;
-  age: number;
-  bloodgroup: string;
-}
-
-const ELEMENT_DATA: PeriodicElement[] = [];
 @Component({
   selector: "app-patients-list",
   templateUrl: "./patients-list.component.html",
   styleUrls: ["./patients-list.component.scss"],
 })
 export class PatientsListComponent implements OnInit {
-  displayedColumns: string[] = [
-    "position",
-    "name",
-    "Gender",
-    "Address",
-    "Mobile",
-    "Email",
-    "Age",
-    "BloodGroup",
-    "Action",
-  ];
   dataSource: any;
   page = 1;
-  gender: boolean = false;
-  totalLength: any;
-  age: boolean = false;
-  bloodGroup: boolean = false;
-  isChecked: any = false;
-  patientLists: any;
-  isSelected: boolean = false;
-  bloodGroups: any;
-  bloodGroupList: any = [{}];
-  patientForm: any;
-  ageParam: any = [];
+  totalLength: any = 0;
   itemsPerPage: number = 10;
-  bloodGroupParam: any = [];
+  pageSizeOptions: number[] = [10, 25, 50, 100];
   search = new UntypedFormControl();
-  sortBy: any = {
-    sort: "",
-    sortOrder: "",
-  };
-  fullNameASC: boolean = true;
-  fullNameDESC: boolean = false;
-  ageASC: boolean = true;
-  ageDESC: boolean = false;
-  bloodASC: boolean = true;
-  bloodDESC: boolean = false;
-  genderASC: boolean = true;
-  genderDESC: boolean = false;
+  sortBy: any = { sort: "", sortOrder: "" };
   data: any = [];
+  patientForm: any;
+
+  // Filter panel state
+  showFilterPanel = false;
+  filterGenderOpen = true;
+  filterAgeOpen = true;
+  filterBloodOpen = true;
+  filterGenderValue: any = "";
+  activeFilterCount = 0;
+
+  genderOptions = [
+    { label: "Male", value: 1 },
+    { label: "Female", value: 2 },
+  ];
 
   ageLimit = [
-    {
-      age: "Below 18",
-      value: "1",
-      selected: false,
-    },
-    {
-      age: "18-24",
-      value: "2",
-      selected: false,
-    },
-    {
-      age: "25-34",
-      value: "3",
-      selected: false,
-    },
-    {
-      age: "35-44",
-      value: "4",
-      selected: false,
-    },
-    {
-      age: "55-64",
-      value: "5",
-      selected: false,
-    },
-    {
-      age: "65 +",
-      value: "6",
-      selected: false,
-    },
+    { age: "Below 18", value: "1", selected: false },
+    { age: "18-24", value: "2", selected: false },
+    { age: "25-34", value: "3", selected: false },
+    { age: "35-44", value: "4", selected: false },
+    { age: "55-64", value: "5", selected: false },
+    { age: "65 +", value: "6", selected: false },
   ];
-  genders = [
-    {
-      gender: "Male",
-      value: "male",
-    },
-    {
-      gender: "Female",
-      value: "female",
-    },
-  ];
+
   bloodType = [
-    {
-      bloodgroup: "A+",
-      value: "1",
-      selected: false,
-    },
-    {
-      bloodgroup: "B+",
-      value: "2",
-      selected: false,
-    },
-    {
-      bloodgroup: "A-",
-      value: "3",
-      selected: false,
-    },
-    {
-      bloodgroup: "B-",
-      value: "4",
-      selected: false,
-    },
-    {
-      bloodgroup: "O+",
-      value: "5",
-      selected: false,
-    },
-    {
-      bloodgroup: "O-",
-      value: "6",
-      selected: false,
-    },
-    {
-      bloodgroup: "AB+",
-      value: "7",
-      selected: false,
-    },
-    {
-      bloodgroup: "AB-",
-      value: "8",
-      selected: false,
-    },
+    { bloodgroup: "A+", value: "1", selected: false },
+    { bloodgroup: "B+", value: "2", selected: false },
+    { bloodgroup: "A-", value: "3", selected: false },
+    { bloodgroup: "B-", value: "4", selected: false },
+    { bloodgroup: "O+", value: "5", selected: false },
+    { bloodgroup: "O-", value: "6", selected: false },
+    { bloodgroup: "AB+", value: "7", selected: false },
+    { bloodgroup: "AB-", value: "8", selected: false },
   ];
+
+  private bloodColorMap: any = {
+    "A+": "#e53935", "A-": "#c62828",
+    "B+": "#1e88e5", "B-": "#1565c0",
+    "O+": "#43a047", "O-": "#2e7d32",
+    "AB+": "#f57c00", "AB-": "#e65100",
+  };
 
   constructor(
     private dialog: MatDialog,
     public toastr: ToastrService,
     public apiservice: ApiService,
-    public deleteUserService:DeleteUserService,
+    public deleteUserService: DeleteUserService,
     public fb: UntypedFormBuilder
   ) {}
 
   ngOnInit(): void {
-    this.patientList("", "");
     this.patientListForm();
-    this.downloadPatient();
+    this.patientList();
     this.search.valueChanges
       .pipe(debounceTime(500), distinctUntilChanged())
-      .subscribe((val) => this.searchFunction(val));
+      .subscribe(() => {
+        this.page = 1;
+        this.patientList();
+      });
   }
 
   patientListForm() {
@@ -179,111 +92,84 @@ export class PatientsListComponent implements OnInit {
     });
   }
 
+  // ── Filter Panel ──
+  toggleFilterPanel() {
+    this.showFilterPanel = !this.showFilterPanel;
+  }
+  closeFilterPanel() {
+    this.showFilterPanel = false;
+  }
+  toggleFilterSection(section: string) {
+    if (section === "gender") this.filterGenderOpen = !this.filterGenderOpen;
+    if (section === "age") this.filterAgeOpen = !this.filterAgeOpen;
+    if (section === "bloodGroup") this.filterBloodOpen = !this.filterBloodOpen;
+  }
+  selectGenderFilter(val: any) {
+    this.filterGenderValue = this.filterGenderValue === val ? "" : val;
+  }
+  toggleAgeChip(ageItem: any) {
+    ageItem.selected = !ageItem.selected;
+  }
+  toggleBloodChip(bloodItem: any) {
+    bloodItem.selected = !bloodItem.selected;
+  }
+  countActiveFilters() {
+    let count = 0;
+    if (this.filterGenderValue) count++;
+    if (this.ageLimit.some((a) => a.selected)) count++;
+    if (this.bloodType.some((b) => b.selected)) count++;
+    this.activeFilterCount = count;
+  }
+  applyFilters() {
+    this.page = 1;
+    this.countActiveFilters();
+    this.showFilterPanel = false;
+    this.patientList();
+  }
+  clearAllFilters() {
+    this.filterGenderValue = "";
+    this.ageLimit.forEach((a) => (a.selected = false));
+    this.bloodType.forEach((b) => (b.selected = false));
+    this.activeFilterCount = 0;
+  }
+  resetFilters() {
+    this.clearAllFilters();
+    this.page = 1;
+    this.patientList();
+  }
+
+  // ── Sort ──
   sortData(sort: any) {
     this.page = 1;
     switch (true) {
       case this.sortBy.sort != sort:
-        this.sortBy = {
-          sort,
-          sortOrder: "ASC",
-        };
+        this.sortBy = { sort, sortOrder: "ASC" };
         break;
       case this.sortBy.sortOrder == "DESC":
-        this.sortBy = {
-          sort: "",
-          sortOrder: "",
-        };
+        this.sortBy = { sort: "", sortOrder: "" };
         break;
       case this.sortBy.sortOrder == "ASC":
-        this.sortBy = {
-          sort,
-          sortOrder: "DESC",
-        };
+        this.sortBy = { sort, sortOrder: "DESC" };
         break;
     }
-    this.patientList("", "");
+    this.patientList();
   }
-  changeGender(type: any, event: any) {
-    if (type == "gender") {
-      this.gender = !this.gender;
-    } else if (type == "age") {
-      this.age = !this.age;
-    } else if (type == "bloodGroup") {
-      this.bloodGroup = !this.bloodGroup;
-    }
-  }
-  ageBloodFilter(event: any, value: any, type: any) {
-    let filter;
-    if (value == "age" && event?.checked == true) {
-      let index = this.ageLimit.findIndex(
-        (el: any) => parseInt(el.value) == parseInt(type)
-      );
-      this.ageLimit[index].selected = true;
-      this.ageParam.push(event.source?.value);
-    } else if (value == "age" && event?.checked == false) {
-      let index = this.ageLimit.findIndex(
-        (el: any) => parseInt(el.value) == parseInt(type)
-      );
-      this.ageLimit[index].selected = false;
-      console.log(this.ageLimit);
-      this.ageParam.findIndex((ele: any) => {
-        if (ele === event.source.value) {
-          let ages = this.ageParam.indexOf(ele);
-          this.ageParam.splice(ages, 1);
-        }
-      });
-    }
 
-    if (value == "bloodGroup" && event?.checked == true) {
-      let index = this.bloodType.findIndex(
-        (el: any) => parseInt(el.value) == parseInt(type)
-      );
-      this.bloodType[index].selected = true;
-      this.bloodGroupParam.push(event.source?.value);
-    } else if (value == "bloodGroup" && event?.checked == false) {
-      let index = this.bloodType.findIndex(
-        (el: any) => parseInt(el.value) == parseInt(type)
-      );
-      this.bloodType[index].selected = false;
-      this.bloodGroupParam.findIndex((ele: any) => {
-        if (ele === event.source.value) {
-          let bloods = this.bloodGroupParam.indexOf(ele);
-          this.bloodGroupParam.splice(bloods, 1);
-        }
-      });
-    }
-  }
-  genderParam: any = "";
-  genderCheck(event: any, value: any, disable?: any) {
-    console.log("hello", event);
-    if (disable == true) {
-      this.disableResetFilter = true;
-    }
-    if (event?.value == "male" || event == "male") {
-      this.genderParam = 1;
-    } else if (event?.value == "female" || event == "female") {
-      this.genderParam = 2;
-    }
-    this.patientList("", "");
-  }
-  disableResetFilter: boolean = false;
-  resetcheckbox = new UntypedFormControl();
-  patientList(event: any, value: any, disable?: any) {
+  // ── Data Fetch ──
+  patientList() {
+    const ageParam = this.ageLimit.filter((a) => a.selected).map((a) => a.value).join();
+    const bloodParam = this.bloodType.filter((b) => b.selected).map((b) => b.value).join();
     let data: any = {
       page: this.page,
       size: this.itemsPerPage,
-      gender: this.genderParam,
-      age: this.ageParam.join(),
-      bloodGroup: this.bloodGroupParam.join(),
+      gender: this.filterGenderValue,
+      age: ageParam,
+      bloodGroup: bloodParam,
       search: this.search.value,
     };
     let param = { ...data, ...this.sortBy };
     Object.keys(param).forEach((key) => {
-      if (
-        param[key] === null ||
-        param[key] === undefined ||
-        param[key] === ""
-      ) {
+      if (param[key] === null || param[key] === undefined || param[key] === "") {
         delete param[key];
       }
     });
@@ -298,177 +184,101 @@ export class PatientsListComponent implements OnInit {
     );
   }
 
-  searchFunction(value: any) {
-    this.page = 1;
-    this.patientList(value, "");
-  }
   updatePageNumer(event: any) {
     this.page = event;
-    this.patientList(this.patientForm.value.gender, "");
-    console.log("helloss", this.patientForm.value.gender);
+    this.patientList();
   }
 
-  result: any;
-  downloadPatient() {
-    this.result = "";
-    this.data = [];
+  onItemsPerPageChange(val: number) {
+    this.itemsPerPage = val;
+    this.page = 1;
+    this.patientList();
+  }
+
+  // ── Pagination Getters ──
+  get showingFrom(): number {
+    return this.totalLength ? (this.page - 1) * this.itemsPerPage + 1 : 0;
+  }
+  get showingTo(): number {
+    return Math.min(this.page * this.itemsPerPage, this.totalLength || 0);
+  }
+  get totalPages(): number {
+    return Math.ceil((this.totalLength || 0) / this.itemsPerPage);
+  }
+
+  // ── Export (fresh fetch) ──
+  header = ["Name", "Gender", "City", "Mobile", "Email", "Age", "Blood Group"];
+
+  exportToCSV() {
+    const ageParam = this.ageLimit.filter((a) => a.selected).map((a) => a.value).join();
+    const bloodParam = this.bloodType.filter((b) => b.selected).map((b) => b.value).join();
     let param: any = {
       isExport: true,
-      gender: this.genderParam,
-      age: this.ageParam.join(),
-      bloodGroup: this.bloodGroupParam.join(),
+      gender: this.filterGenderValue,
+      age: ageParam,
+      bloodGroup: bloodParam,
       search: this.search.value,
     };
     Object.keys(param).forEach((key) => {
-      if (
-        param[key] === null ||
-        param[key] === undefined ||
-        param[key] === ""
-      ) {
+      if (param[key] === null || param[key] === undefined || param[key] === "") {
         delete param[key];
       }
     });
-    this.apiservice
-      .GetData(URLConstant.patientList, param)
-      .subscribe((res: any) => {
-        this.result = res?.result?.data;
-        for (let i = 0; i < this.result.length; i++) {
-          this.data.push([
-            this.result[i]?.fullName,
-            this.result[i]?.gender == 1 ? "Male" : "Female",
-            this.result[i]?.address?.city,
-            this.result[i]?.phone,
-            this.result[i]?.bloodGroup == 1
-              ? "A+"
-              : this.result[i]?.bloodGroup == 2
-              ? "B+"
-              : this.result[i]?.bloodGroup == 3
-              ? "A-"
-              : this.result[i]?.bloodGroup == 4
-              ? "B-"
-              : this.result[i]?.bloodGroup == 5
-              ? "O+"
-              : this.result[i]?.bloodGroup == 6
-              ? "O-"
-              : this.result[i]?.bloodGroup == 7
-              ? "AB+"
-              : this.result[i]?.bloodGroup == 8
-              ? "AB-"
-              : "N/A",
-          ]);
-        }
+    this.apiservice.GetData(URLConstant.patientList, param).subscribe((res: any) => {
+      const result = res?.result?.data || [];
+      const rows = result.map((r: any) => [
+        r?.fullName || "N/A",
+        r?.gender == 1 ? "Male" : r?.gender == 2 ? "Female" : "N/A",
+        r?.address?.city || "N/A",
+        r?.phone || "N/A",
+        r?.email || "N/A",
+        r?.age || "N/A",
+        this.getBloodGroupLabel(r?.bloodGroup),
+      ]);
+      const wsData = [this.header, ...rows];
+      const ws = XLSX.utils.aoa_to_sheet(wsData);
+      ws['!cols'] = this.header.map((_: string, i: number) => {
+        const maxLen = Math.max(
+          this.header[i].length,
+          ...rows.map((row: any[]) => String(row[i] || '').length)
+        );
+        return { wch: Math.min(maxLen + 2, 40) };
       });
-  }
-  header = ["Name", "Gender", "Address", "Mobile", "Blood Group"];
-
-  exportToCSV() {
-    const headers = this.header;
-    var options = {
-      fieldSeparator: ",",
-      quoteStrings: '"',
-      decimalseparator: ".",
-      showLabels: true,
-      showTitle: true,
-      // title: 'Your title',
-      useBom: true,
-      headers: headers,
-    };
-    new ngxCsv(this.data, "PatientList", options);
-  }
-  resetFilters() {
-    this.disableResetFilter = false;
-    for (let i = 0; i < this.ageLimit.length; i++) {
-      this.ageLimit[i].selected = false;
-    }
-    for (let i = 0; i < this.bloodType.length; i++) {
-      this.bloodType[i].selected = false;
-    }
-
-    this.patientForm.reset();
-    let data: any = {
-      page: this.page,
-      size: this.itemsPerPage,
-    };
-
-    this.apiservice.GetData(URLConstant.patientList, data).subscribe(
-      (res: any) => {
-        this.dataSource = res?.result?.data;
-        this.totalLength = res?.result?.count;
-
-        for (let i = 0; i < this.dataSource.length; i++) {
-          this.dataSource[i]["name"] = this.dataSource[i]?.fullName?.split(" ");
-          switch (true) {
-            case this.dataSource[i]?.bloodGroup == 1:
-              this.dataSource[i].bloodGroup = "A+";
-              break;
-            case this.dataSource[i]?.bloodGroup == 2:
-              this.dataSource[i].bloodGroup = "B+";
-              break;
-            case this.dataSource[i]?.bloodGroup == 3:
-              this.dataSource[i].bloodGroup = "A-";
-              break;
-            case this.dataSource[i]?.bloodGroup == 4:
-              this.dataSource[i].bloodGroup = "B-";
-              break;
-            case this.dataSource[i]?.bloodGroup == 5:
-              this.dataSource[i].bloodGroup = "O+";
-              break;
-            case this.dataSource[i]?.bloodGroup == 6:
-              this.dataSource[i].bloodGroup = "O-";
-              break;
-            case this.dataSource[i]?.bloodGroup == 7:
-              this.dataSource[i].bloodGroup = "AB+";
-              break;
-            case this.dataSource[i]?.bloodGroup == 8:
-              this.dataSource[i].bloodGroup = "AB-";
-              break;
-            default:
-              this.dataSource[i].bloodGroup = "N/A";
-          }
-          this.bloodGroupList = [
-            {
-              bg: this.bloodGroups,
-            },
-          ];
-        }
-      },
-      (error) => {
-        this.toastr.error(error.message);
-      }
-    );
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, 'Patients');
+      XLSX.writeFile(wb, 'Patient_List.xlsx');
+    });
   }
 
+  // ── Helpers ──
+  getInitials(name: string): string {
+    if (!name) return "?";
+    const parts = name.trim().split(/\s+/);
+    return (parts[0]?.[0] || "").toUpperCase() + (parts[1]?.[0] || "").toUpperCase();
+  }
+
+  getBloodGroupLabel(val: any): string {
+    const map: any = { 1: "A+", 2: "B+", 3: "A-", 4: "B-", 5: "O+", 6: "O-", 7: "AB+", 8: "AB-" };
+    return map[val] || "N/A";
+  }
+
+  getBloodColor(label: string): string {
+    return this.bloodColorMap[label] || "#999";
+  }
+
+  // ── Actions ──
   dialogRef: any;
-  deletePatient(element:any,val2:any){
-    // console.log("deleteDoctor-Val: deletePatient: ",element);
-
-     this.dialogRef = this.dialog.open(DeleteConfirmationComponent, {
-        data: {
-          id: element,
-          text: 'patient',
-          type: 'patient'
-        }
-      });
-    
-      this.dialogRef.afterClosed().subscribe((confirmed: boolean) => {
-        if (!confirmed) return;
-            this.patientList("", "");
-        // this.deleteUserService.DeleteDoctorList(element).subscribe({
-        //   next: (res) => {
-        //     setTimeout(() => {
-        //     }, 500);
-        //   },
-        //   error: (err) => {
-        //     console.error('Error deleting doctor:', err);
-        //   }
-        // });
-        
-      });
-
-
-
+  deletePatient(element: any, val2: any) {
+    this.dialogRef = this.dialog.open(DeleteConfirmationComponent, {
+      data: { id: element, text: "patient", type: "patient" },
+    });
+    this.dialogRef.afterClosed().subscribe((confirmed: boolean) => {
+      if (!confirmed) return;
+      this.patientList();
+    });
   }
-  EditPatient(val:any,val2:any,page:any){
-    // console.log("deleteDoctor-Val-EditPatient :",val2);
+
+  EditPatient(val: any, val2: any, page: any) {
+    // placeholder for edit functionality
   }
 }
