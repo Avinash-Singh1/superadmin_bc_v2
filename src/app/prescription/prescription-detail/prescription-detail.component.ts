@@ -255,6 +255,12 @@ export class PrescriptionDetailComponent implements OnInit {
     );
   }
 
+  isUploadOnly(): boolean {
+    const t = this.prescription?.prescriptionType;
+    if (t) return t === 'uploaded';
+    return !this.hasStructuredContent() && !!this.prescription?.uploadedPdfUrl;
+  }
+
   isUploadedImage(): boolean {
     return /\.(png|jpe?g)(\?|#|$)/i.test(this.prescription?.uploadedPdfUrl || '');
   }

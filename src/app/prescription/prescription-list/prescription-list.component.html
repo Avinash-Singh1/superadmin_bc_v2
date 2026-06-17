@@ -125,10 +125,25 @@
             </span>
           </td>
           <td>
-            <button class="btn-view" (click)="viewDetail(rx)">
-              <mat-icon>visibility</mat-icon>
-              View
-            </button>
+            <!-- Upload-only: Open File directly -->
+            <ng-container *ngIf="isUploadOnly(rx)">
+              <button class="btn-view btn-view--file" (click)="openFile(rx)">
+                <mat-icon>open_in_new</mat-icon>
+                Open File
+              </button>
+            </ng-container>
+            <!-- Structured / Both -->
+            <ng-container *ngIf="!isUploadOnly(rx)">
+              <button class="btn-view" (click)="viewDetail(rx)">
+                <mat-icon>visibility</mat-icon>
+                View
+              </button>
+              <button *ngIf="rx?.uploadedPdfUrl"
+                class="btn-view btn-view--file" style="margin-left:4px;" (click)="openFile(rx)">
+                <mat-icon>attach_file</mat-icon>
+                File
+              </button>
+            </ng-container>
           </td>
         </tr>
       </tbody>

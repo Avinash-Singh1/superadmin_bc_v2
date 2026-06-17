@@ -154,6 +154,28 @@ export class PrescriptionListComponent implements OnInit {
     return 'description';
   }
 
+  isUploadOnly(rx: any): boolean {
+    const t = rx?.prescriptionType;
+    if (t) return t === 'uploaded';
+    return !this.hasStructuredContent(rx) && !!rx?.uploadedPdfUrl;
+  }
+
+  hasStructuredContent(rx: any): boolean {
+    const t = rx?.prescriptionType;
+    if (t) return t === 'generated' || t === 'both';
+    return !!(
+      rx?.diagnosis ||
+      rx?.chiefComplaint ||
+      (rx?.medications?.length > 0) ||
+      (rx?.labTests?.length > 0)
+    );
+  }
+
+  openFile(rx: any): void {
+    const url = rx?.uploadedPdfUrl;
+    if (url) window.open(url, '_blank', 'noopener');
+  }
+
   /** Client-side type filter applied on top of server-side results */
   get filteredPrescriptions(): any[] {
     if (!this.typeFilter) return this.prescriptions;

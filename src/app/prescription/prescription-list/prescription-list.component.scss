@@ -299,6 +299,12 @@
   transition: all 0.15s;
   mat-icon { font-size: 15px; width: 15px; height: 15px; }
   &:hover { background: #e0e7ff; border-color: #4f46e5; transform: translateY(-1px); }
+  &--file {
+    border-color: #bbf7d0;
+    background: #f0fdf4;
+    color: #15803d;
+    &:hover { background: #dcfce7; border-color: #15803d; }
+  }
 }
 
 /* ── No Data ─────────────────────────── */

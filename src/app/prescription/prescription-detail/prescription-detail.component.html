@@ -26,7 +26,8 @@
       <div class="detail-actions-right">
         <span class="rx-status-badge" [ngClass]="getStatusClass()">{{ getStatusLabel() }}</span>
         <span class="rx-type-chip">{{ getPrescriptionTypeLabel() }}</span>
-        <button class="btn-action btn-print" (click)="printPrescription()">
+        <!-- Print only for structured prescriptions -->
+        <button class="btn-action btn-print" (click)="printPrescription()" *ngIf="!isUploadOnly()">
           <mat-icon>print</mat-icon> Print
         </button>
         <button class="btn-action btn-pdf" (click)="openPdf()"
