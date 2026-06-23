@@ -1,67 +1,302 @@
-@import '../../../assets/scss/main.scss';
-table{
-    max-width:3000px;
-    width:100%;
-}
-.patienttable{
-    min-width: 1400px;
-}
-.change-text{
-    color: $blue!important;
-}
-.patientdetail{
-    .activepage{
-        // background-color: $light_black;
-        // color:$white;
-        border-bottom: 1px solid $black;
-        // border-radius: 8px;
-        @include font($primaryFont,400,24px)
+@import 'src/assets/scss/main.scss';
 
+// Sub-header
+.sub-header {
+  margin-bottom: 16px;
+}
+
+// Tab Switcher
+.tab-switcher {
+  display: flex;
+  gap: 6px;
+  background: $white;
+  padding: 4px;
+  border-radius: 10px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  display: inline-flex;
+
+  .tab-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 18px;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    @include font($primaryFont, 500, 13px);
+    color: #888;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+
+    svg { stroke: #aaa; transition: stroke 0.2s ease; }
+
+    .tab-count {
+      background: #eee;
+      color: #666;
+      padding: 2px 8px;
+      border-radius: 10px;
+      @include font($primaryFont, 600, 11px);
+      transition: all 0.2s ease;
     }
-    .userTables{
-        padding: 9px 10px;
+
+    &:hover {
+      color: $purple;
+      background: #f7f5fa;
+      svg { stroke: $purple; }
     }
-    .cursor{
-        color:$filtercolor;
-        @include font($primaryFont,400,24px)
+
+    &.active {
+      background: $purple;
+      color: $white;
+      box-shadow: 0 2px 8px rgba($purple, 0.25);
+      svg { stroke: $white; }
+      .tab-count {
+        background: rgba($white, 0.2);
+        color: $white;
+      }
+    }
+  }
+}
+
+// Table Card
+.table-card {
+  background: $white;
+  border-radius: 14px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+}
+
+.table-wrapper {
+  overflow-x: auto;
+  &::-webkit-scrollbar { height: 4px; }
+  &::-webkit-scrollbar-thumb { background: #ccc; border-radius: 4px; }
+}
+
+// Table
+table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 900px;
+
+  thead {
+    tr { background: linear-gradient(135deg, $purple 0%, darken($purple, 8%) 100%); }
+
+    th {
+      padding: 14px 16px;
+      @include font($primaryFont, 600, 12px);
+      color: rgba($white, 0.9);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+      text-align: left;
+      border: none;
+
+      &.th-avatar { width: 56px; padding: 14px 8px 14px 16px; }
+
+      &.sortable {
+        cursor: pointer;
+        user-select: none;
+        svg { stroke: rgba($white, 0.5); vertical-align: middle; margin-left: 4px; }
+        &:hover svg { stroke: $white; }
+      }
+    }
+  }
+
+  tbody {
+    tr {
+      border-bottom: 1px solid #f0f0f0;
+      transition: background 0.15s ease;
+      &:hover { background: #faf8fd; }
+      &:last-child { border-bottom: none; }
     }
 
-}
-.import,.export{
-    color:$filtercolor;
-}
-
-.active{
-    color:$green;
-
-}
-
-.inactive{
-    color:$red;
+    td {
+      padding: 14px 16px;
+      @include font($primaryFont, 400, 13px);
+      color: #444;
+      vertical-align: middle;
+      &.td-avatar { width: 56px; padding: 14px 8px 14px 16px; }
+    }
+  }
 }
 
-.scrolldata {
-    overflow-x: scroll;
+// Avatar
+.avatar-img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #f0f0f0;
+}
 
+.avatar-initials {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, $purple, lighten($purple, 15%));
+  color: $white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  @include font($primaryFont, 600, 13px);
+  letter-spacing: 0.5px;
 }
-::-webkit-scrollbar {
-    height: 4px;
+
+// Cell Styles
+.date-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  .date-main { @include font($primaryFont, 500, 13px); color: #333; }
+  .date-time { @include font($primaryFont, 400, 11px); color: #999; }
 }
-::-webkit-scrollbar-thumb {
-    background: $black;
-    border-radius: 10px;
-    ;
+
+.name-text { @include font($primaryFont, 600, 13px); color: #1a1a2e; }
+
+.gender-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 12px;
+  @include font($primaryFont, 500, 11px);
+  &.male { background: #e3f2fd; color: #1565c0; }
+  &.female { background: #fce4ec; color: #c62828; }
 }
-::ng-deep {
-    .menu1 {  
-    width: 150px !important;
-    padding: 0 16px !important; 
+
+.address-text { @include font($primaryFont, 400, 13px); color: #555; }
+.email-text { @include font($primaryFont, 400, 12px); color: #777; }
+.phone-text { @include font($primaryFont, 400, 13px); color: #555; letter-spacing: 0.3px; }
+.locality-text { color: $purple; @include font($primaryFont, 500, 13px); }
+
+.blood-badge {
+  display: inline-block;
+  background: #ffebee;
+  color: #c62828;
+  padding: 3px 10px;
+  border-radius: 12px;
+  @include font($primaryFont, 600, 11px);
 }
-.menu{
-    width: 250px !important;
-    padding: 0 16px !important; 
+
+.spec-badge {
+  display: inline-block;
+  background: #f2e8ff;
+  color: $purple;
+  padding: 3px 10px;
+  border-radius: 12px;
+  @include font($primaryFont, 500, 11px);
+  margin: 2px 4px 2px 0;
 }
+
+.type-badge {
+  display: inline-block;
+  background: #e8f4f8;
+  color: #2a7f8f;
+  padding: 4px 10px;
+  border-radius: 6px;
+  @include font($primaryFont, 500, 12px);
+  margin: 2px 4px 2px 0;
 }
-.asce{
-    transform: rotate(180deg);
+
+// Status Badge
+.status-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  @include font($primaryFont, 600, 11px);
+  letter-spacing: 0.3px;
+
+  &.status-deleted { background: #ffebee; color: #c62828; }
 }
+
+// Delete Button
+.delete-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border: 1px solid #ffcdd2;
+  border-radius: 8px;
+  background: $white;
+  @include font($primaryFont, 500, 12px);
+  color: #c62828;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  svg { stroke: #c62828; }
+
+  &:hover {
+    background: #c62828;
+    color: $white;
+    border-color: #c62828;
+    box-shadow: 0 2px 8px rgba(#c62828, 0.25);
+    svg { stroke: $white; }
+  }
+}
+
+// Empty State
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  svg { stroke: #ccc; margin-bottom: 12px; }
+  p { @include font($primaryFont, 500, 14px); color: #999; margin: 0; }
+}
+
+// Pagination
+.pagination-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-top: 1px solid #f0f0f0;
+  .pagination-info { @include font($primaryFont, 400, 12px); color: #999; }
+}
+
+::ng-deep .ngx-pagination {
+  display: flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+
+  li {
+    margin: 0 !important;
+    &.current {
+      background: $purple !important;
+      border-radius: 8px !important;
+      padding: 6px 12px !important;
+      @include font($primaryFont, 600, 12px);
+      color: $white !important;
+      box-shadow: 0 2px 6px rgba($purple, 0.3) !important;
+    }
+    a {
+      border-radius: 8px !important;
+      padding: 6px 12px !important;
+      @include font($primaryFont, 500, 12px);
+      color: #666 !important;
+      background: transparent !important;
+      border: 1px solid transparent !important;
+      text-decoration: none !important;
+      &:hover {
+        background: #f7f5fa !important;
+        color: $purple !important;
+        border-color: rgba($purple, 0.15) !important;
+      }
+    }
+    &.pagination-previous,
+    &.pagination-next {
+      a, span {
+        border: 1px solid #e0e0e0 !important;
+        border-radius: 8px !important;
+        padding: 6px 10px !important;
+        @include font($primaryFont, 600, 14px);
+      }
+      a:hover {
+        background: $purple !important;
+        color: $white !important;
+        border-color: $purple !important;
+      }
+    }
+    &.disabled span { color: #ccc !important; border-color: #eee !important; }
+  }
+}
+
+.text-muted { color: #bbb !important; @include font($primaryFont, 400, 13px); }

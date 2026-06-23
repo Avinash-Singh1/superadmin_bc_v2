@@ -414,7 +414,6 @@ viewRejectedReason(id:any){
   });
 }
 acceptRequestedReview(id:any){
-  console.log('helo')
   let param={
     feedbackId:id,
   }

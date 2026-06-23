@@ -1,260 +1,542 @@
 @import "../../../assets/scss/main.scss";
-.dougnnutdetail {
-  background-color: #f7f9fb;
-  border-radius: 20px;
-  .dougnnut {
-    width: 200px;
-    height: 200px;
-  }
-}
-.cardDetail {
-  overflow-x: scroll;
-  //  width:70%;
 
-  .cardsBackground {
-    background-color: $cardBackground;
-    min-width: 18.3%;
-    height: 160px;
-    border-left: 3px solid $black;
-    border-radius: 10px;
-    .cardHeader {
-      @include font($primaryFont, 400, 18px);
-      color: #7a7a7a;
-    }
-    .count {
-      @include font($primaryFont, 600, 24px);
-      color: #1c1c1c;
-    }
-  }
-}
-.cardDetail::-webkit-scrollbar {
-  display: none;
-}
-.appointmentdetail {
-  border: 1px solid #d9d9d9;
-  border-radius: 20px;
-  padding: 30px 30px;
-  width: 97%;
-  .AppointmentCheck {
-    // @include font($primaryFont,600,18px)
-  }
-  .otherFeatures {
-    cursor: pointer;
-    border: 2px solid #d9d9d9;
-    padding: 8px 10px;
-    border-radius: 10px;
-  }
-  #appointment {
-    width: 100%;
-    padding-right: 0px !important;
-  }
-}
-::ng-deep {
-  .mat-menu-content {
-    min-width: 250px !important;
-  }
-}
-.NotificationRegistraion {
-  // width: 64%;
-  .gradientChart {
-    width: 48%;
-    height: 324px;
-    border: 1px solid #d9d9d9;
-    border-radius: 20px;
-  }
+// Dashboard Container
+.dashboard-container {
+  padding: 20px 24px;
+  height: calc(100vh - 60px);
+  overflow-y: auto;
+  background: #f5f6fa;
 }
 
-.mainSec {
+// Top Bar
+.dashboard-topbar {
   display: flex;
-  height: calc(100vh - 80px);
-}
-.rightSide {
-  width: 30%;
-  // height:   100%;
-  // overflow-y: scroll;
-  border-left: 1px solid #b3b3b3;
-  .rightSideInner {
-  }
-}
-.leftSide {
-  width: 100%;
-  // height: 100%;
-  // overflow-y: scroll;
-  ::ng-deep {
-    .mat-form-field-underline {
-      display: none !important;
-    }
-  }
-}
-.notifications {
-  margin-left: 26px;
-}
-.custom-datepicker-icon::after {
-  content: "Date Range";
-  display: inline-block;
-  color: $black;
-  margin-right: 30px;
-  // margin-left:10px;
-  @include font($primaryFont, 400, 18px);
-}
-::ng-deep {
-  .dateRange {
-    .mat-focus-indicator {
-      display: none !important;
-    }
-  }
-}
-.negative {
-  color: red;
-}
-.positive {
-  color: green;
-}
-.currentHeader {
-  @include font($primaryFont, 600, 18px);
-  color: #1c1c1c;
-}
-.previoudHeader {
-  @include font($primaryFont, 400, 18px);
-  color: #616161;
-}
-.chartHeader {
-  @include font($primaryFont, 600, 16px);
-  color: #1c1c1c;
-}
-.imageinitials {
-  background-color: #d9d9d9;
-  border-radius: 100%;
-  height: 50px;
-  width: 50px;
   align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+
+  .topbar-left {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+  }
+  .dashboard-title {
+    @include font($primaryFont, 700, 20px);
+    color: #1e1e2d;
+    margin: 0;
+  }
+  .dashboard-date {
+    @include font($primaryFont, 400, 13px);
+    color: #8c8ca1;
+  }
+  .topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+}
+
+// Filter Dropdown
+.dropdown-div {
+  position: relative;
+}
+.filter-trigger {
   display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 14px;
+  background: #fff;
+  border: 1px solid #e0e0e6;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  @include font($primaryFont, 500, 13px);
+  color: #3f3f50;
+
+  &:hover {
+    border-color: #b0b0c0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  }
+}
+.dashboardFilter {
+  width: 220px;
+  max-height: 320px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: #fff;
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  z-index: 999;
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  border: 1px solid #eee;
+  padding: 8px 0;
+
+  ul {
+    padding: 0;
+    margin: 0;
+    li {
+      list-style: none;
+      padding: 10px 16px;
+      @include font($primaryFont, 400, 13px);
+      color: #3f3f50;
+      cursor: pointer;
+      transition: all 0.15s;
+      border-left: 3px solid transparent;
+      &:hover {
+        background: #f4f0fc;
+        color: $purple;
+        border-left-color: $purple;
+      }
+    }
+  }
+
+  #exclusionDiv {
+    padding: 4px 12px 8px;
+    border-top: 1px solid #f0f0f5;
+    margin-top: 4px;
+
+    mat-form-field {
+      width: 100%;
+    }
+  }
+}
+
+// KPI Cards Grid
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 16px;
+  margin-bottom: 20px;
+}
+.kpi-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+  border: 1px solid #ececf2;
+  transition: box-shadow 0.25s, transform 0.25s;
+
+  &:hover {
+    box-shadow: 0 6px 20px rgba(69, 25, 124, 0.1);
+    transform: translateY(-2px);
+  }
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    border-radius: 12px 12px 0 0;
+  }
+  &.kpi-accent-0::before { background: linear-gradient(90deg, #45197c, #7c3aed); }
+  &.kpi-accent-1::before { background: linear-gradient(90deg, #0891b2, #22d3ee); }
+  &.kpi-accent-2::before { background: linear-gradient(90deg, #059669, #34d399); }
+  &.kpi-accent-3::before { background: linear-gradient(90deg, #d97706, #fbbf24); }
+  &.kpi-accent-4::before { background: linear-gradient(90deg, #dc2626, #f87171); }
+}
+.kpi-icon-wrap {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: #f5f0ff;
+  display: flex;
+  align-items: center;
   justify-content: center;
-  @include font($primaryFont, 600, 18px);
-  color: #b5b5b5;
-  // margin:auto;
+  img {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+  }
 }
-.overflowdata {
-  height: 200px;
-  overflow-y: scroll;
+.kpi-accent-1 .kpi-icon-wrap { background: #ecfeff; }
+.kpi-accent-2 .kpi-icon-wrap { background: #ecfdf5; }
+.kpi-accent-3 .kpi-icon-wrap { background: #fffbeb; }
+.kpi-accent-4 .kpi-icon-wrap { background: #fef2f2; }
+
+.kpi-body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
-#registration {
-  height: 258px !important;
+.kpi-label {
+  @include font($primaryFont, 500, 12px);
+  color: #8c8ca1;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
 }
-.address {
+.kpi-value {
+  @include font($primaryFont, 700, 22px);
+  color: #1e1e2d;
+}
+.kpi-trend {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  @include font($primaryFont, 600, 12px);
+
+  &.trend-up { color: #16a34a; }
+  &.trend-down { color: #dc2626; }
+}
+.trend-label {
+  @include font($primaryFont, 400, 11px);
+  color: #8c8ca1;
+  margin-left: 2px;
+}
+
+// Chart Cards
+.chart-card {
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid #ececf2;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+  overflow: hidden;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 20px;
+    border-bottom: 1px solid #f0f0f5;
+  }
+  &__title {
+    @include font($primaryFont, 600, 14px);
+    color: #1e1e2d;
+  }
+  &__body {
+    padding: 16px 20px;
+    canvas {
+      width: 100% !important;
+      max-height: 260px;
+    }
+  }
+}
+
+// Charts Row
+.charts-row {
+  margin-bottom: 20px;
+}
+.chart-card--main {
+  .chart-card__body canvas {
+    max-height: 280px;
+  }
+}
+
+// Chart Tabs
+.chart-tabs {
+  display: flex;
+  gap: 0;
+  background: #f5f6fa;
+  border-radius: 8px;
+  padding: 3px;
+}
+.chart-tab {
+  @include font($primaryFont, 500, 13px);
+  color: #8c8ca1;
+  padding: 6px 16px;
+  border: none;
+  background: transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &.active {
+    background: #fff;
+    color: #45197c;
+    font-weight: 600;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  }
+  &:hover:not(.active) {
+    color: #3f3f50;
+  }
+}
+
+// Chart Action Buttons
+.chart-actions {
+  display: flex;
+  gap: 8px;
+}
+.chart-action-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 12px;
+  border: 1px solid #e0e0e6;
+  border-radius: 7px;
+  background: #fff;
+  cursor: pointer;
+  @include font($primaryFont, 500, 12px);
+  color: #555;
+  transition: all 0.2s;
+
+  &:hover {
+    border-color: #b0b0c0;
+    background: #fafafa;
+  }
+}
+.chart-icon-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid #e0e0e6;
+  border-radius: 7px;
+  background: #fff;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    border-color: #b0b0c0;
+    background: #fafafa;
+  }
+}
+
+// Bottom Row
+.bottom-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+.chart-card--half {
+  .chart-card__body canvas {
+    max-height: 230px;
+  }
+}
+
+// Notification Panel
+.notification-tabs {
+  display: flex;
+  gap: 0;
+  padding: 10px 20px;
+  border-bottom: 1px solid #f0f0f5;
+}
+.notif-tab {
+  @include font($primaryFont, 500, 13px);
+  color: #8c8ca1;
+  padding: 5px 14px;
+  border: none;
+  background: transparent;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &.active {
+    background: #f5f0ff;
+    color: #45197c;
+    font-weight: 600;
+  }
+  &:hover:not(.active) {
+    background: #f5f6fa;
+  }
+}
+
+.notification-list {
+  max-height: 220px;
+  overflow-y: auto;
+  padding: 8px 12px;
+
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: #d0d0d8;
+    border-radius: 4px;
+  }
+}
+
+.notif-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 8px;
+  border-radius: 10px;
+  transition: background 0.15s;
+
+  &:hover {
+    background: #faf8ff;
+  }
+
+  & + .notif-item {
+    border-top: 1px solid #f0f0f5;
+  }
+}
+
+.notif-avatar {
+  flex-shrink: 0;
+  img {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+}
+.avatar-initials {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ede9fe, #c4b5fd);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  @include font($primaryFont, 600, 13px);
+  color: #6d28d9;
+}
+
+.notif-content {
+  flex: 1;
+  min-width: 0;
+
+  p {
+    margin: 0;
+  }
+}
+.notif-name {
+  @include font($primaryFont, 600, 13px);
+  color: #1e1e2d;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.notif-detail {
+  @include font($primaryFont, 400, 12px);
+  color: #8c8ca1;
+}
+.notif-address {
+  @include font($primaryFont, 400, 11px);
   color: #3c72fe;
-  @include font($primaryFont, 500, 16px);
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  margin-top: 2px;
 }
-.doctorName {
-  @include font($primaryFont, 600, 18px);
+
+.notif-actions {
+  flex-shrink: 0;
 }
-.doctorReview {
-  @include font($primaryFont, 400, 18px);
+.pending-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 20px;
+  background: #fff7ed;
+  color: #c2410c;
+  @include font($primaryFont, 600, 11px);
+  cursor: pointer;
+  border: 1px solid #fed7aa;
+  transition: all 0.2s;
+
+  &:hover {
+    background: #ffedd5;
+  }
 }
-.activenotification {
-  @include font($primaryFont, 600, 18px);
-}
-.deactiveNotificatiom {
-  @include font($primaryFont, 400, 18px);
-}
+
+// Accept/Reject
 .accept {
   background-color: $lightgreen;
   color: $green;
-  @include font($primaryFont, 600, 18px);
+  @include font($primaryFont, 600, 13px);
 }
 .reject {
   background-color: $lightred;
   color: $red;
-  @include font($primaryFont, 600, 18px);
+  @include font($primaryFont, 600, 13px);
 }
-.accepteddata {
-  color: $green;
-}
-.percentageofcharrt {
-  max-height: 166px;
-  overflow-y: scroll;
-  text-align: center;
-  // width: 100px;
-}
-::-webkit-scrollbar {
-  width: 4px;
-}
-::-webkit-scrollbar-thumb {
-  background: $black;
-  border-radius: 10px;
-}
-.maxdata {
-  width: 75%;
-}
-.bold {
-  @include font($primaryFont, 600, 18px);
-}
-.exportcsv {
-  padding: 7px 15px;
-  border: 2px solid #d9d9d9;
-  border-radius: 10px;
-  @include font($primaryFont, 400, 18px);
-}
-.dropdown-div {
-  position: relative;
-  margin-left: 30px;
-  margin-bottom: 20px;
-  margin-top: 20px;
-  input {
-    border: none !important;
-  }
-}
-.dropdownImage {
-  position: absolute;
-  // left:30px;
-  top: 10px;
-  left: 225px;
-  // z-index: 999;
-}
-.dashboardFilter {
-  width: 250px;
-  height: 250px;
-  box-sizing: border-box;
-  overflow-y: auto;
-  overflow-x: hidden;
-  background-color: #ffffff;
-  position: absolute;
-  top: calc(100% + 10px);
-  left: 0;
-  cursor: pointer;
-  z-index: 9999;
-  border-radius: 10px;
-  box-shadow: 0 2px 4px -1px #0003, 0 4px 5px #00000024, 0 1px 10px #0000001f;
 
-  ul li {
-    margin-top: 20px;
-    list-style: none;
-    @include font($primaryFont, 400, 18px);
-    color: $black;
-  }
-}
+// Mat Menu Overrides
 ::ng-deep {
+  .mat-menu-content {
+    min-width: 250px !important;
+  }
   .mat-form-field-type-mat-date-range-input .mat-form-field-infix {
     border: none !important;
     padding: 20px 0 0 0 !important;
   }
   .mat-icon-button {
-    @include font($primaryFont, 400, 18px);
+    @include font($primaryFont, 400, 14px);
   }
   .mat-button-wrapper {
     .mat-datepicker-toggle-default-icon {
       display: none !important;
     }
   }
+  .cdk-overlay-container {
+    z-index: 1000 !important;
+  }
   .mat-datepicker-popup {
     .mat-datepicker-content {
-      top: 0px !important;
-      left: 225px !important;
       background: #ffffff !important;
-      position: absolute;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15) !important;
+      border-radius: 10px !important;
     }
   }
   .mat-form-field-infix {
     margin-left: -38px;
+  }
+}
+
+// Custom datepicker text
+.custom-datepicker-icon {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 0;
+  cursor: pointer;
+
+  &::after {
+    content: "Date Range";
+    display: inline-block;
+    color: #3f3f50;
+    @include font($primaryFont, 500, 13px);
+  }
+}
+
+// Scrollbar
+::-webkit-scrollbar {
+  width: 4px;
+}
+::-webkit-scrollbar-thumb {
+  background: #c0c0c8;
+  border-radius: 4px;
+}
+
+// Responsive
+@media (max-width: 1440px) {
+  .kpi-grid {
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+  }
+  .kpi-value {
+    font-size: 20px;
+  }
+}
+@media (max-width: 1280px) {
+  .kpi-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+  .bottom-row {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 768px) {
+  .dashboard-container {
+    padding: 12px 14px;
+  }
+  .kpi-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+  .dashboard-topbar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
   }
 }

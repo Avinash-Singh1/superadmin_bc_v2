@@ -1,168 +1,406 @@
 @import '../../../assets/scss/main.scss';
-table{
-    min-width:1000px;
-    width:100%;
-}
-.change-text{
-    color: $blue!important;
-}
-.patientdetail{
-    .activepage{
-        background-color: $light_black;
-        padding: 6px 24px;
-        color:$white;
-        border-radius: 8px;
-        @include font($primaryFont,400,24px)
 
-    }
-    .cursor{
-        color:$filtercolor;
-        @include font($primaryFont,400,24px)
-    }
-
-}
-.import,.export{
-    color:$filtercolor;
-}
-.active{
-    color:$green;
-
+// Page Wrapper
+.page-wrapper {
+  background: #f7f5fa;
+  padding: 20px 24px;
 }
 
-.inactive{
-    color:$red;
-}
+// Page Header
+.page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  gap: 16px;
+  flex-wrap: wrap;
 
-.scrolldata {
-    overflow-x: scroll;
-
-}
-::-webkit-scrollbar {
-    height: 4px;
-}
-::-webkit-scrollbar-thumb {
-    background: $black;
-    border-radius: 10px;
-    ;
-}
-::ng-deep {
-    .menu1 {  
-    width: 130px !important;
-    padding: 0 16px !important; 
-}
-.menu{
-    width: 300px !important;
-    padding: 0 16px !important; 
-}
-}
-.cont {
-    // width: 93%;
-    max-width: 350px;
-    text-align: center;
-    color: #EEE;
-    overflow: hidden;
+  .header-left {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
   }
-  
-  div.stars {
-    width: 150px;
-    display: inline-block;
-  }
-  ::ng-deep{ 
-    label.star:hover {
-    transform: rotate(-15deg) scale(1.3)  !important;
-  }
-  input.star:checked ~ label.star:before{
-    color:black !important;
-    text-shadow: none !important;
-  }
-  label.star{
-    padding: 3px !important;
-    font-size: 25px !important;
 
+  .page-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    @include font($primaryFont, 700, 20px);
+    color: #1a1a2e;
+    margin: 0;
+    svg { color: $purple; }
+  }
 
+  .header-right {
+    display: flex;
+    align-items: center;
   }
 }
-.ratingNumber{
-    @include font($primaryFont,600,24px);
-    color:$black;
-    width:45px;
-}
-.doctorName{
-    @include font($primaryFont,400,18px);
-    color:$black;
-    text-align: left
-}
-.doctorReview{
-    @include font($primaryFont,400,18px);
-    color:$filtercolor;
-    white-space: nowrap; 
-    width: 200px; 
-    overflow: hidden;
-    text-overflow: ellipsis; 
-}
-.viewApprovedDetail{
+
+// Tab Switcher
+.tab-switcher {
+  display: inline-flex;
+  gap: 6px;
+  background: $white;
+  padding: 4px;
+  border-radius: 10px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+
+  .tab-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 18px;
     border: none;
-    background: none;
-    border-radius: 10px;
-    background-color: $view;
-    padding: 8px 24px;
-    @include font($primaryFont,400,18px);
-
-}
-.moreStars{
-    @include font($primaryFont,400,18px);
-
-}
-.accept{
-    background-color: #383838;
-    color: $white;
-    // margin-top: -20px;
-}
-.reject{
-    background: rgba(56, 56, 56, 0.3);
-    color:$red
-}
-::ng-deep{ 
-.mat-menu-content:not(:empty){
-    padding: 0 !important;
-}
-.mat-menu-item:hover:not([disabled]), .mat-menu-item.cdk-program-focused:not([disabled]), .mat-menu-item.cdk-keyboard-focused:not([disabled]), .mat-menu-item-highlighted:not([disabled]){
-    // background-color:$black !important;
+    border-radius: 8px;
+    background: transparent;
+    @include font($primaryFont, 500, 13px);
+    color: #888;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    svg { stroke: #aaa; transition: stroke 0.2s ease; }
+    .tab-count {
+      background: #eee; color: #666; padding: 2px 8px; border-radius: 10px;
+      @include font($primaryFont, 600, 11px); transition: all 0.2s ease;
+    }
+    &:hover { color: $purple; background: #f7f5fa; svg { stroke: $purple; } }
+    &.active {
+      background: $purple; color: $white; box-shadow: 0 2px 8px rgba($purple, 0.25);
+      svg { stroke: $white; }
+      .tab-count { background: rgba($white, 0.2); color: $white; }
+    }
+  }
 }
 
-
+// Filter Button
+.filter-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 18px;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  background: $white;
+  @include font($primaryFont, 500, 13px);
+  color: #555;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  svg { stroke: #888; }
+  &:hover {
+    border-color: $purple;
+    color: $purple;
+    svg { stroke: $purple; }
+  }
 }
-.imageintial{
+
+// Rating Filter Panel
+.rating-filter-panel {
+  padding: 16px;
+  .filter-title {
+    @include font($primaryFont, 600, 14px);
+    color: #1a1a2e;
+    margin: 0 0 12px 0;
+  }
+  .rating-option {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .more-stars {
+    @include font($primaryFont, 400, 13px);
+    color: #888;
+  }
+}
+
+.filter-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.cancel-btn {
+  padding: 6px 16px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background: $white;
+  @include font($primaryFont, 500, 12px);
+  color: #666;
+  cursor: pointer;
+  &:hover { border-color: #bbb; }
+}
+
+.apply-btn {
+  padding: 6px 16px;
+  border: none;
+  border-radius: 8px;
+  background: $purple;
+  @include font($primaryFont, 500, 12px);
+  color: $white;
+  cursor: pointer;
+  &:hover { background: darken($purple, 8%); }
+}
+
+// Table Card
+.table-card {
+  background: $white;
+  border-radius: 14px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+}
+
+.table-wrapper {
+  overflow-x: auto;
+  &::-webkit-scrollbar { height: 4px; }
+  &::-webkit-scrollbar-thumb { background: #ccc; border-radius: 4px; }
+}
+
+// Table
+table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 850px;
+
+  thead {
+    tr { background: linear-gradient(135deg, $purple 0%, darken($purple, 8%) 100%); }
+    th {
+      padding: 14px 16px;
+      @include font($primaryFont, 600, 12px);
+      color: rgba($white, 0.9);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+      text-align: left;
+      border: none;
+      &.th-action { text-align: center; }
+      &.sortable {
+        cursor: pointer; user-select: none;
+        svg { stroke: rgba($white, 0.5); vertical-align: middle; margin-left: 4px; }
+        &:hover svg { stroke: $white; }
+      }
+    }
+  }
+
+  tbody {
+    tr {
+      border-bottom: 1px solid #f0f0f0;
+      transition: background 0.15s ease;
+      &:hover { background: #faf8fd; }
+      &:last-child { border-bottom: none; }
+    }
+    td {
+      padding: 14px 16px;
+      @include font($primaryFont, 400, 13px);
+      color: #444;
+      vertical-align: middle;
+      &.td-action { text-align: center; }
+    }
+  }
+}
+
+// Avatar
+.avatar-img {
+  width: 40px; height: 40px; border-radius: 50%; object-fit: cover;
+  border: 2px solid #f0f0f0; flex-shrink: 0;
+}
+
+.avatar-initials {
+  width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0;
+  background: linear-gradient(135deg, $purple, lighten($purple, 15%));
+  color: $white; display: flex; align-items: center; justify-content: center;
+  @include font($primaryFont, 600, 13px); letter-spacing: 0.5px;
+}
+
+// Cell Styles
+.date-cell {
+  display: flex; flex-direction: column; gap: 2px;
+  .date-main { @include font($primaryFont, 500, 13px); color: #333; }
+  .date-time { @include font($primaryFont, 400, 11px); color: #999; }
+}
+
+// Review Cell
+.review-cell {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  .review-info {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+  }
+
+  .reviewer-name {
+    @include font($primaryFont, 600, 13px);
+    color: #1a1a2e;
+  }
+
+  .review-text {
+    @include font($primaryFont, 400, 12px);
+    color: #888;
+    white-space: nowrap;
+    max-width: 240px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+// Rating Cell
+.rating-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  .rating-number {
+    @include font($primaryFont, 700, 14px);
+    color: #1a1a2e;
+    min-width: 30px;
+  }
+
+  .rating-stars {
+    display: flex;
+    align-items: center;
+  }
+}
+
+// Star Rating Override
+.cont {
+  max-width: 200px;
+  overflow: hidden;
+}
+
+div.stars {
+  width: 130px;
+  display: inline-block;
+}
+
+::ng-deep {
+  .star-rating .star-container .star svg {
+    width: 18px !important;
+    height: 18px !important;
+  }
+}
+
+// Buttons
+.view-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 14px; border: 1px solid #e0e0e0; border-radius: 8px;
+  background: $white; @include font($primaryFont, 500, 12px); color: $purple;
+  cursor: pointer; transition: all 0.2s ease;
+  svg { stroke: $purple; }
+  &:hover {
+    background: $purple; color: $white; border-color: $purple;
+    box-shadow: 0 2px 8px rgba($purple, 0.25);
+    svg { stroke: $white; }
+  }
+}
+
+.delete-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 14px; border: 1px solid #ffcdd2; border-radius: 8px;
+  background: $white; @include font($primaryFont, 500, 12px); color: #c62828;
+  cursor: pointer; transition: all 0.2s ease;
+  svg { stroke: #c62828; }
+  &:hover {
+    background: #c62828; color: $white; border-color: #c62828;
+    box-shadow: 0 2px 8px rgba(#c62828, 0.25);
+    svg { stroke: $white; }
+  }
+}
+
+// Action Group (Accept / Reject)
+.action-group {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+}
+
+.accept-btn {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 6px 12px; border: 1px solid #c8e6c9; border-radius: 8px;
+  background: $white; @include font($primaryFont, 500, 12px); color: #2e7d32;
+  cursor: pointer; transition: all 0.2s ease;
+  svg { stroke: #2e7d32; }
+  &:hover {
+    background: #2e7d32; color: $white; border-color: #2e7d32;
+    box-shadow: 0 2px 8px rgba(#2e7d32, 0.25);
+    svg { stroke: $white; }
+  }
+}
+
+.reject-btn {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 6px 12px; border: 1px solid #ffcdd2; border-radius: 8px;
+  background: $white; @include font($primaryFont, 500, 12px); color: #c62828;
+  cursor: pointer; transition: all 0.2s ease;
+  svg { stroke: #c62828; }
+  &:hover {
+    background: #c62828; color: $white; border-color: #c62828;
+    box-shadow: 0 2px 8px rgba(#c62828, 0.25);
+    svg { stroke: $white; }
+  }
+}
+
+// Status Badges
+.status-badge {
+  display: inline-block; padding: 4px 12px; border-radius: 20px;
+  @include font($primaryFont, 600, 11px); letter-spacing: 0.3px;
+  &.status-rejected { background: #ffebee; color: #c62828; }
+}
+
+// Empty State
+.empty-state {
+  text-align: center; padding: 60px 20px;
+  svg { stroke: #ccc; margin-bottom: 12px; }
+  p { @include font($primaryFont, 500, 14px); color: #999; margin: 0; }
+}
+
+// Pagination
+.pagination-wrapper {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 20px; border-top: 1px solid #f0f0f0;
+  .pagination-info { @include font($primaryFont, 400, 12px); color: #999; }
+}
+
+::ng-deep .ngx-pagination {
+  display: flex !important; align-items: center !important; gap: 4px !important;
+  padding: 0 !important; margin: 0 !important;
+  li {
     margin: 0 !important;
+    &.current {
+      background: $purple !important; border-radius: 8px !important; padding: 6px 12px !important;
+      @include font($primaryFont, 600, 12px); color: $white !important;
+      box-shadow: 0 2px 6px rgba($purple, 0.3) !important;
+    }
+    a {
+      border-radius: 8px !important; padding: 6px 12px !important;
+      @include font($primaryFont, 500, 12px); color: #666 !important;
+      background: transparent !important; border: 1px solid transparent !important;
+      text-decoration: none !important;
+      &:hover { background: #f7f5fa !important; color: $purple !important; border-color: rgba($purple, 0.15) !important; }
+    }
+    &.pagination-previous, &.pagination-next {
+      a, span {
+        border: 1px solid #e0e0e0 !important; border-radius: 8px !important; padding: 6px 10px !important;
+        @include font($primaryFont, 600, 14px);
+      }
+      a:hover { background: $purple !important; color: $white !important; border-color: $purple !important; }
+    }
+    &.disabled span { color: #ccc !important; border-color: #eee !important; }
+  }
 }
-.asce{
-    transform: rotate(180deg);
-}
-::ng-deep {.mat-checkbox-layout .mat-checkbox-label{
-    // margin-top: 6px;
 
-}
-.mat-menu-panel{
-    margin-top: -30px !important;
-    width: 170px;
+::ng-deep .rating-filter-menu {
+  .mat-menu-content {
+    padding: 0 !important;
+  }
 }
 
+.text-muted { color: #bbb !important; @include font($primaryFont, 400, 13px); }
 
-}
-.accept:hover{
-    background-color: black !important;
-}
-.counterdata{
-    background-color: white;
-    color: black;
-    border-radius: 10px;
-    padding: 3px 10px;
-    @include font($primaryFont,400,18px)    
-}
-.nocounter{
-    background-color: #BBBBBB;
-    color: black;
-    border-radius: 10px;
-    padding: 3px 10px;
-    @include font($primaryFont,400,18px)   
+@media screen and (max-width: 768px) {
+  .page-header { flex-direction: column; }
 }

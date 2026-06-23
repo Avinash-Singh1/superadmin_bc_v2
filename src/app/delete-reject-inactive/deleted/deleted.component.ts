@@ -242,9 +242,6 @@ export class DeletedComponent implements OnInit {
       this.patientListData = res?.result?.patient?.data
       this.doctorListData = res?.result?.doctor?.data
       this.hospitalListData = res?.result?.hospital?.data
-      console.log("patientListData: ",this.patientListData);
-      console.log("doctorListData: ",this.doctorListData);
-      console.log("hospitalListData: ",this.hospitalListData);
       this.patientLength = res?.result?.patient?.count
       this.doctorLength = res?.result?.doctor?.count
       this.hospitalLength = res?.result?.hospital?.count
@@ -285,7 +282,6 @@ export class DeletedComponent implements OnInit {
 
   //   this.deleteUserService.DeletepatientList(element).subscribe({
   //     next: (res) => {
-  //       console.log('User deleted:', res);
   //       setTimeout(() => {
   //         this.deletedUsers();
   //       }, 1000);
@@ -301,7 +297,6 @@ export class DeletedComponent implements OnInit {
 
   //   this.deleteUserService.DeleteDoctorList(element).subscribe({
   //     next: (res) => {
-  //       console.log('User deleted:', res);
   //       setTimeout(() => {
   //         this.deletedUsers();
   //       }, 1000);
@@ -315,7 +310,6 @@ export class DeletedComponent implements OnInit {
 
 //   this.deleteUserService.deleteUser(userId).subscribe({
 //   next: (res) => {
-//     console.log('User deleted:', res);
 //   },
 //   error: (err) => {
 //     console.error('Error deleting user:', err);

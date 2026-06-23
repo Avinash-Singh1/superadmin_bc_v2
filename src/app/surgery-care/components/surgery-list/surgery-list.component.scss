@@ -1,42 +1,444 @@
-.surgery-list-wrapper {
-  padding: 48px;
-  gap: 24px;
-  .surgery-item {
-    border: 1px solid rgba($color: #000000, $alpha: 0.3);
-    border-radius: 8px;
-    .image-wrapper {
-      border-right: 1px solid rgba($color: #000000, $alpha: 0.3);
-      padding: 18px;
-      img {
-        width: 60px;
-        height: 60px;
-        object-fit: contain;
-      }
+@import "../../../../assets/scss/main.scss";
+
+// -- Design Tokens --
+$card-radius: 12px;
+$transition: 0.2s ease;
+$shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
+$shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+$shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.1);
+$border-light: 1.5px solid #e8e5ef;
+
+// -- Dashboard --
+.surgery-dashboard {
+  background: #f8f7fc;
+  min-height: 100vh;
+}
+// -- Top Bar --
+.top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 20px 28px;
+  flex-wrap: wrap;
+}
+
+.top-bar-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.page-title {
+  @include font($primaryFont, 700, 22px);
+  color: #1a1a2e;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  svg {
+    color: $purple;
+  }
+}
+
+.count-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  height: 28px;
+  padding: 0 10px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, $purple, lighten($purple, 10%));
+  color: white;
+  @include font($primaryFont, 600, 13px);
+}
+
+.top-bar-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.search-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: white;
+  border: $border-light;
+  border-radius: 10px;
+  min-width: 260px;
+  transition: all $transition;
+
+  svg {
+    color: #9a9a9a;
+    flex-shrink: 0;
+  }
+
+  input {
+    flex: 1;
+    border: none;
+    outline: none;
+    background: transparent;
+    @include font($primaryFont, 400, 14px);
+    color: #1a1a2e;
+
+    &::placeholder {
+      color: #b0b0b0;
     }
-    .button-group {
-      padding-right: 48px;
-      button {
-        padding: 12px 24px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 10px;
-        font-size: 18px;
-        &.edit {
-          border: 1px solid rgba($color: #000000, $alpha: 0.3);
-          border-radius: 5px;
-          background-color: #eee;
-        }
-        &.delete {
-          border: none;
-          background: transparent;
-        }
-      }
+  }
+
+  &:focus-within {
+    border-color: $purple;
+    box-shadow: 0 0 0 3px rgba($purple, 0.08);
+  }
+}
+
+.search-clear {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: none;
+  background: #e8e5ef;
+  cursor: pointer;
+  color: #666;
+  transition: all $transition;
+
+  &:hover {
+    background: $red;
+    color: white;
+  }
+}
+
+.view-toggle {
+  display: flex;
+  background: white;
+  border: $border-light;
+  border-radius: 10px;
+  overflow: hidden;
+
+  button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 12px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    color: #9a9a9a;
+    transition: all $transition;
+
+    &.active {
+      background: $purple;
+      color: white;
+    }
+
+    &:not(.active):hover {
+      background: #f0edf5;
+      color: $purple;
     }
   }
 }
+
+// -- Grid View --
+.surgery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+  padding: 0 28px 28px;
+}
+
+.surgery-card {
+  display: flex;
+  flex-direction: column;
+  background: white;
+  border-radius: $card-radius;
+  box-shadow: $shadow-sm;
+  overflow: hidden;
+  transition: all $transition;
+  border: 2px solid transparent;
+
+  &:hover {
+    box-shadow: $shadow-md;
+    transform: translateY(-3px);
+    border-color: rgba($purple, 0.15);
+  }
+}
+
+.card-visual {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 20px 12px;
+}
+
+.card-icon-wrapper {
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, rgba($purple, 0.08), rgba($purple, 0.04));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border: $border-light;
+
+  .card-icon {
+    width: 36px;
+    height: 36px;
+    object-fit: contain;
+  }
+}
+
+.card-index {
+  @include font($primaryFont, 600, 12px);
+  color: #b0b0b0;
+}
+
+.card-body {
+  padding: 0 20px 16px;
+  flex: 1;
+}
+
+.card-title {
+  @include font($primaryFont, 600, 16px);
+  color: #1a1a2e;
+  margin: 0 0 4px;
+  line-height: 1.4;
+}
+
+.card-slug {
+  @include font($primaryFont, 400, 12px);
+  color: #9a9a9a;
+  margin: 0;
+  word-break: break-all;
+}
+
+.card-actions {
+  display: flex;
+  border-top: 1px solid #f0edf5;
+}
+
+.btn-action {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 12px 8px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  @include font($primaryFont, 500, 13px);
+  transition: all $transition;
+
+  &.edit {
+    color: $purple;
+    border-right: 1px solid #f0edf5;
+
+    &:hover {
+      background: rgba($purple, 0.06);
+    }
+  }
+
+  &.delete {
+    color: #9a9a9a;
+
+    &:hover {
+      background: rgba($red, 0.06);
+      color: $red;
+    }
+  }
+}
+
+// -- Table / List View --
+.surgery-table-wrap {
+  padding: 0 28px 28px;
+}
+
+.surgery-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: white;
+  border-radius: $card-radius;
+  box-shadow: $shadow-sm;
+  overflow: hidden;
+
+  thead tr {
+    background: linear-gradient(135deg, $purple, darken($purple, 8%));
+
+    th {
+      @include font($primaryFont, 600, 13px);
+      color: rgba(white, 0.95);
+      padding: 14px 16px;
+      text-align: left;
+      white-space: nowrap;
+      letter-spacing: 0.3px;
+      text-transform: uppercase;
+
+      &:first-child {
+        border-radius: $card-radius 0 0 0;
+      }
+
+      &:last-child {
+        border-radius: 0 $card-radius 0 0;
+        text-align: center;
+      }
+    }
+  }
+
+  tbody {
+    tr {
+      transition: background $transition;
+
+      &:hover {
+        background: #faf8fd;
+      }
+
+      &:not(:last-child) td {
+        border-bottom: 1px solid #f0edf5;
+      }
+    }
+
+    td {
+      padding: 14px 16px;
+      @include font($primaryFont, 400, 14px);
+      color: #434343;
+      vertical-align: middle;
+    }
+  }
+}
+
+.th-index,
+.td-index {
+  width: 50px;
+}
+
+.td-index {
+  @include font($primaryFont, 600, 13px);
+  color: #b0b0b0;
+}
+
+.th-icon,
+.td-icon {
+  width: 60px;
+}
+
+.table-icon-wrapper {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: rgba($purple, 0.06);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border: 1px solid #f0edf5;
+
+  img {
+    width: 26px;
+    height: 26px;
+    object-fit: contain;
+  }
+}
+
+.td-name {
+  @include font($primaryFont, 500, 14px);
+  color: #1a1a2e;
+}
+
+.td-slug {
+  @include font($primaryFont, 400, 13px);
+  color: #9a9a9a;
+  max-width: 240px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.th-actions,
+.td-actions {
+  width: 100px;
+  text-align: center;
+}
+
+.td-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.btn-table {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  border: $border-light;
+  background: white;
+  cursor: pointer;
+  transition: all $transition;
+
+  &.edit {
+    color: $purple;
+
+    &:hover {
+      background: $purple;
+      color: white;
+      border-color: $purple;
+    }
+  }
+
+  &.delete {
+    color: #9a9a9a;
+
+    &:hover {
+      background: $red;
+      color: white;
+      border-color: $red;
+    }
+  }
+}
+
+// -- Empty State --
+.empty-state {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  gap: 8px;
+  color: #b0b0b0;
+
+  svg {
+    color: #d0cde0;
+    margin-bottom: 8px;
+  }
+
+  p {
+    @include font($primaryFont, 500, 16px);
+    color: #9a9a9a;
+    margin: 0;
+  }
+
+  span {
+    @include font($primaryFont, 400, 13px);
+    color: #b0b0b0;
+  }
+}
+
 ::ng-deep {
   .delete-modal .mat-dialog-container {
     padding: 0;
+    border-radius: 12px !important;
   }
 }

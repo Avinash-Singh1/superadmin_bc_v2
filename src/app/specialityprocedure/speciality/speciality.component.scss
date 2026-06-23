@@ -1,114 +1,768 @@
 @import '../../../assets/scss/main.scss';
-table{
-    // min-width:1500px;
-    width:100%;
-}
-.change-text{
-    color: $blue!important;
-}
-.patientdetail{
-    .activepage{
-        background-color: $light_black;
-        padding: 6px 24px;
-        color:$white;
-        border-radius: 8px;
-        @include font($primaryFont,400,24px)
 
-    }
-    .cursor{
-        padding: 6px 24px;
-        color:$filtercolor;
-        @include font($primaryFont,400,24px)
-    }
+// ════════════════════════════════════════════════════════════════════════════
+// SPECIALITY & PROCEDURE MANAGEMENT - Professional Design
+// ════════════════════════════════════════════════════════════════════════════
 
-}
-.import,.export{
-    color:$filtercolor;
-}
-.active{
-    color:$green;
+// Page Wrapper
+.page-wrapper {
+  background: #f8fafc;
+  padding: 20px 24px;
+  min-height: calc(100vh - 120px);
 
-}
-
-.inactive{
-    color:$red;
-}
-
-.scrolldata {
-    overflow-x: scroll;
-
-}
-::-webkit-scrollbar {
-    height: 4px;
-}
-::-webkit-scrollbar-thumb {
-    background: $black;
-    border-radius: 10px;
-    ;
-}
-::ng-deep {
-    menu1 {  
-    width: 150px !important;
-    padding: 0 16px !important; 
-
-}
-.menu{
-    width: 250px !important;
-    padding: 0 16px !important; 
-}
-}
-
-::ng-deep{
-    .menus{
-        width:150px !important;
-        margin-top: -25px !important;
-
-        .accept{
-            background-color: $lightgreen;
-            color:$green;
-            @include font($primaryFont,600,18px)
-        }
-        .reject{
-            background-color: $lightred;
-            color:$red;
-            @include font($primaryFont,600,18px)
-
-        }
-    }
-    .mat-menu-content{
-        padding: 0px !important;
-    }
-}
-.useimg{
-    height:52px;
-    width: 52px;
-    border-radius: 100%;
-}
-input[type=checkbox] {
-    width:18px;
-    height: 18px;
-    accent-color: $black;
+  @media screen and (max-width: 768px) {
+    padding: 16px;
   }
-  .asce{
-    transform: rotate(180deg);
 }
-.counterdata{
-    background-color: white;
-    color: black;
-    border-radius: 10px;
-    padding: 3px 10px;
-    @include font($primaryFont,400,18px)    
+
+// Page Header
+.page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  gap: 20px;
+  flex-wrap: wrap;
+
+  @media screen and (max-width: 992px) {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .header-left {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .page-title-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .page-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    @include font($primaryFont, 700, 22px);
+    color: #1e293b;
+    margin: 0;
+    line-height: 1.2;
+
+    svg {
+      color: $purple;
+      flex-shrink: 0;
+    }
+
+    @media screen and (max-width: 576px) {
+      font-size: 20px;
+      
+      svg {
+        width: 20px;
+        height: 20px;
+      }
+    }
+  }
+
+  .page-subtitle {
+    @include font($primaryFont, 400, 14px);
+    color: #64748b;
+    margin: 0;
+    line-height: 1.4;
+
+    @media screen and (max-width: 576px) {
+      font-size: 13px;
+    }
+  }
+
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    @media screen and (max-width: 992px) {
+      width: 100%;
+      flex-wrap: wrap;
+    }
+
+    @media screen and (max-width: 576px) {
+      gap: 8px;
+    }
+  }
 }
-.nocounter{
-    background-color: #BBBBBB;
-    color: black;
-    border-radius: 10px;
-    padding: 3px 10px;
-    @include font($primaryFont,400,18px)   
+
+// Tab Switcher
+.tab-switcher {
+  display: inline-flex;
+  gap: 4px;
+  background: $white;
+  padding: 4px;
+  border-radius: 10px;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
+
+  @media screen and (max-width: 576px) {
+    width: 100%;
+  }
+
+  .tab-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    @include font($primaryFont, 500, 14px);
+    color: #64748b;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    min-height: 44px;
+    flex: 1;
+
+    svg {
+      stroke: #94a3b8;
+      transition: stroke 0.2s ease;
+      flex-shrink: 0;
+    }
+
+    .tab-count {
+      background: #f1f5f9;
+      color: #64748b;
+      padding: 3px 10px;
+      border-radius: 12px;
+      @include font($primaryFont, 600, 12px);
+      transition: all 0.2s ease;
+      min-width: 24px;
+      text-align: center;
+    }
+
+    &:hover {
+      color: $purple;
+      background: #f8fafc;
+      
+      svg {
+        stroke: $purple;
+      }
+    }
+
+    &:focus-visible {
+      outline: 2px solid $purple;
+      outline-offset: 2px;
+    }
+
+    &.active {
+      background: $purple;
+      color: $white !important;
+      box-shadow: 0 2px 8px rgba($purple, 0.3);
+      
+      svg {
+        stroke: $white;
+      }
+
+      .tab-count {
+        background: rgba($white, 0.25);
+        color: $white;
+      }
+    }
+
+    @media screen and (max-width: 576px) {
+      padding: 10px 16px;
+      font-size: 13px;
+      justify-content: center;
+    }
+  }
 }
-//  .action{
-// align-items: center;
-//  }
-.name{
-    width: 75%;
+
+// Search Box
+.search-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 14px;
+  background: $white;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  transition: all 0.2s ease;
+  min-width: 240px;
+  height: 44px;
+
+  @media screen and (max-width: 992px) {
+    flex: 1;
+    min-width: 0;
+  }
+
+  svg {
+    stroke: #94a3b8;
+    flex-shrink: 0;
+  }
+
+  input {
+    border: none;
+    outline: none;
+    background: transparent;
+    @include font($primaryFont, 400, 14px);
+    color: #1e293b;
+    width: 100%;
+    flex: 1;
+    padding: 11px 0;
+
+    &::placeholder {
+      color: #94a3b8;
+    }
+  }
+
+  &:focus-within {
+    border-color: $purple;
+    box-shadow: 0 0 0 3px rgba($purple, 0.1);
+
+    svg {
+      stroke: $purple;
+    }
+  }
+}
+
+// Add Button
+.add-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 20px;
+  height: 44px;
+  border: none;
+  border-radius: 10px;
+  background: $purple;
+  color: $white;
+  @include font($primaryFont, 600, 14px);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba($purple, 0.25);
+  white-space: nowrap;
+
+  svg {
+    stroke: $white;
+    flex-shrink: 0;
+  }
+
+  &:hover {
+    background: darken($purple, 5%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba($purple, 0.35);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  &:focus-visible {
+    outline: 2px solid $purple;
+    outline-offset: 2px;
+  }
+
+  @media screen and (max-width: 992px) {
+    flex: 1;
+    justify-content: center;
+  }
+
+  @media screen and (max-width: 576px) {
+    font-size: 13px;
+    padding: 0 16px;
+  }
+}
+
+// Add Button
+.add-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 20px;
+  border: none;
+  border-radius: 10px;
+  background: $purple;
+  @include font($primaryFont, 500, 13px);
+  color: $white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  svg { stroke: $white; }
+  &:hover {
+    background: darken($purple, 8%);
+    box-shadow: 0 4px 12px rgba($purple, 0.3);
+    transform: translateY(-1px);
+  }
+}
+
+// Table Card
+.table-card {
+  background: $white;
+  border-radius: 14px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+}
+
+.table-wrapper {
+  overflow-x: auto;
+  &::-webkit-scrollbar { height: 4px; }
+  &::-webkit-scrollbar-thumb { background: #ccc; border-radius: 4px; }
+}
+
+// Table
+table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 600px;
+
+  thead {
+    tr { background: linear-gradient(135deg, $purple 0%, darken($purple, 8%) 100%); }
+    th {
+      padding: 14px 16px;
+      @include font($primaryFont, 600, 12px);
+      color: rgba($white, 0.9);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+      text-align: left;
+      border: none;
+      &.th-index { width: 60px; text-align: center; }
+      &.th-action { width: 200px; text-align: center; }
+      &.sortable {
+        cursor: pointer; user-select: none;
+        svg { stroke: rgba($white, 0.5); vertical-align: middle; margin-left: 4px; }
+        &:hover svg { stroke: $white; }
+      }
+    }
+  }
+
+  tbody {
+    tr {
+      border-bottom: 1px solid #f0f0f0;
+      transition: background 0.15s ease;
+      &:hover { background: #faf8fd; }
+      &:last-child { border-bottom: none; }
+    }
+    td {
+      padding: 14px 16px;
+      @include font($primaryFont, 400, 13px);
+      color: #444;
+      vertical-align: middle;
+      &.td-index { text-align: center; color: #999; @include font($primaryFont, 500, 12px); }
+      &.td-name { @include font($primaryFont, 500, 14px); color: #1a1a2e; }
+      &.td-action { text-align: center; }
+    }
+  }
+}
+
+// Name Cell
+.name-cell {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.name-icon {
+  width: 36px; height: 36px; border-radius: 10px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(135deg, rgba($purple, 0.1), rgba($purple, 0.05));
+  svg { stroke: $purple; }
+  &.procedure {
+    background: linear-gradient(135deg, rgba(#1565c0, 0.1), rgba(#1565c0, 0.05));
+    svg { stroke: #1565c0; }
+  }
+}
+
+// Action Group
+.action-group {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+.edit-btn {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 6px 14px; border: 1px solid #e0e0e0; border-radius: 8px;
+  background: $white; @include font($primaryFont, 500, 12px); color: $purple;
+  cursor: pointer; transition: all 0.2s ease;
+  svg { stroke: $purple; }
+  &:hover {
+    background: $purple; color: $white; border-color: $purple;
+    box-shadow: 0 2px 8px rgba($purple, 0.25);
+    svg { stroke: $white; }
+  }
+}
+
+.delete-btn {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 6px 14px; border: 1px solid #ffcdd2; border-radius: 8px;
+  background: $white; @include font($primaryFont, 500, 12px); color: #c62828;
+  cursor: pointer; transition: all 0.2s ease;
+  svg { stroke: #c62828; }
+  &:hover {
+    background: #c62828; color: $white; border-color: #c62828;
+    box-shadow: 0 2px 8px rgba(#c62828, 0.25);
+    svg { stroke: $white; }
+  }
+}
+
+// Table Footer
+.table-footer {
+  padding: 14px 20px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.table-info {
+  @include font($primaryFont, 400, 12px);
+  color: #999;
+}
+
+// Empty State
+.empty-state {
+  text-align: center; padding: 60px 20px;
+  svg { stroke: #ccc; margin-bottom: 12px; }
+  p { @include font($primaryFont, 500, 14px); color: #999; margin: 0; }
+}
+
+// Responsive
+@media screen and (max-width: 768px) {
+  .page-header { flex-direction: column; }
+  .header-right { flex-wrap: wrap; }
+  .search-box input { width: 140px; }
+}
+
+
+// ════════════════════════════════════════════════════════════════════════════
+// TABLE CARD - Professional Data Table
+// ════════════════════════════════════════════════════════════════════════════
+
+.table-card {
+  background: $white;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
+  overflow: hidden;
+  border: 1px solid #e2e8f0;
+}
+
+.table-wrapper {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+
+  &::-webkit-scrollbar {
+    height: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #f1f5f9;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 3px;
+
+    &:hover {
+      background: #94a3b8;
+    }
+  }
+}
+
+// Professional Table
+table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 600px;
+
+  thead {
+    tr {
+      background: #f8fafc;
+      border-bottom: 2px solid #e2e8f0;
+    }
+
+    th {
+      padding: 14px 20px;
+      @include font($primaryFont, 600, 13px);
+      color: #475569;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+      text-align: left;
+
+      &.th-index {
+        width: 80px;
+        text-align: center;
+      }
+
+      &.th-action {
+        width: 220px;
+        text-align: right;
+      }
+
+      &.sortable {
+        cursor: pointer;
+        user-select: none;
+        transition: color 0.2s ease;
+
+        svg {
+          stroke: #94a3b8;
+          vertical-align: middle;
+          margin-left: 4px;
+          transition: stroke 0.2s ease;
+        }
+
+        &:hover {
+          color: $purple;
+          
+          svg {
+            stroke: $purple;
+          }
+        }
+      }
+    }
+  }
+
+  tbody {
+    tr {
+      border-bottom: 1px solid #f1f5f9;
+      transition: background 0.15s ease;
+
+      &:hover {
+        background: #fafbfc;
+      }
+
+      &:last-child {
+        border-bottom: none;
+      }
+    }
+
+    td {
+      padding: 16px 20px;
+      @include font($primaryFont, 400, 14px);
+      color: #1e293b;
+      vertical-align: middle;
+
+      &.td-index {
+        text-align: center;
+        color: #64748b;
+        @include font($primaryFont, 500, 13px);
+      }
+
+      &.td-name {
+        @include font($primaryFont, 500, 14px);
+        color: #1e293b;
+      }
+
+      &.td-action {
+        text-align: right;
+      }
+    }
+  }
+}
+
+// Name Cell with Icon
+.name-cell {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+
+  span {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+.name-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f5f0ff;
+
+  svg {
+    stroke: $purple;
+  }
+
+  &.procedure {
+    background: #eff6ff;
+
+    svg {
+      stroke: #2563eb;
+    }
+  }
+}
+
+// Action Buttons Group
+.action-group {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.edit-btn,
+.delete-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 8px;
+  @include font($primaryFont, 500, 13px);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  min-height: 36px;
+
+  svg {
+    flex-shrink: 0;
+  }
+
+  &:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
+  }
+}
+
+.edit-btn {
+  border: 1px solid #e2e8f0;
+  background: $white;
+  color: $purple;
+
+  svg {
+    stroke: $purple;
+  }
+
+  &:hover {
+    background: $purple;
+    color: $white;
+    border-color: $purple;
+    box-shadow: 0 2px 8px rgba($purple, 0.25);
+
+    svg {
+      stroke: $white;
+    }
+  }
+}
+
+.delete-btn {
+  border: 1px solid #fee2e2;
+  background: $white;
+  color: #dc2626;
+
+  svg {
+    stroke: #dc2626;
+  }
+
+  &:hover {
+    background: #dc2626;
+    color: $white;
+    border-color: #dc2626;
+    box-shadow: 0 2px 8px rgba(#dc2626, 0.25);
+
+    svg {
+      stroke: $white;
+    }
+  }
+}
+
+// Table Footer
+.table-footer {
+  padding: 16px 20px;
+  border-top: 1px solid #f1f5f9;
+  background: #fafbfc;
+}
+
+.table-info {
+  @include font($primaryFont, 400, 13px);
+  color: #64748b;
+}
+
+// Empty State
+.empty-state {
+  text-align: center;
+  padding: 64px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+
+  svg {
+    stroke: #cbd5e1;
+  }
+
+  &__message {
+    @include font($primaryFont, 500, 15px);
+    color: #64748b;
+    margin: 0;
+  }
+
+  &__action {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 20px;
+    border: 1px solid $purple;
+    border-radius: 8px;
+    background: $white;
+    color: $purple;
+    @include font($primaryFont, 600, 14px);
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: $purple;
+      color: $white;
+      box-shadow: 0 2px 8px rgba($purple, 0.25);
+    }
+
+    &:focus-visible {
+      outline: 2px solid $purple;
+      outline-offset: 2px;
+    }
+  }
+}
+
+// Responsive
+@media screen and (max-width: 768px) {
+  table {
+    min-width: 100%;
+  }
+
+  tbody td {
+    padding: 12px 14px;
+    font-size: 13px;
+  }
+
+  .action-group {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 6px;
+  }
+
+  .edit-btn,
+  .delete-btn {
+    width: 100%;
+    justify-content: center;
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+}
+
+@media screen and (max-width: 576px) {
+  .name-icon {
+    width: 32px;
+    height: 32px;
+
+    svg {
+      width: 14px;
+      height: 14px;
+    }
+  }
+
+  .empty-state {
+    padding: 48px 16px;
+  }
 }

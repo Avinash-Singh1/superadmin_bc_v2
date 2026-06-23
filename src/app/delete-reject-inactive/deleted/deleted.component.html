@@ -1,387 +1,220 @@
-<div class="d-flex justify-content-between align-items-center ps-5 pt-2">
-<span class="patientdetail d-flex align-items-center gap-3">
-    <div [ngClass]="doctorsList?'activepage':'cursor'"  (click)="chnageDoctorList('doctors')" class="userTables">Patients</div>
-    <div [ngClass]="hospitalsList?'activepage':'cursor'" (click)="chnageDoctorList('hospitals')" class="userTables mx-3">Doctors</div>
-    <div [ngClass]="patientList?'activepage':'cursor'" (click)="chnageDoctorList('patient')" class="userTables">Hospitals</div>
-
-</span>
-
+<!-- Sub-tab Switcher -->
+<div class="sub-header">
+  <div class="tab-switcher">
+    <button class="tab-btn" [class.active]="doctorsList" (click)="chnageDoctorList('doctors')">
+      <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      Patients
+      <span class="tab-count">{{patientLength || 0}}</span>
+    </button>
+    <button class="tab-btn" [class.active]="hospitalsList" (click)="chnageDoctorList('hospitals')">
+      <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+      Doctors
+      <span class="tab-count">{{doctorLength || 0}}</span>
+    </button>
+    <button class="tab-btn" [class.active]="patientList" (click)="chnageDoctorList('patient')">
+      <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+      Hospitals
+      <span class="tab-count">{{hospitalLength || 0}}</span>
+    </button>
+  </div>
 </div>
 
-  
-
-
-
-
-
-
-
-<div class="table-responsive w-100 scrolldata mb-5" *ngIf="doctorsList">
-    <table mat-table  matSort [dataSource]="patientListData" class="mat-elevation-z8 patienttable" >
-        <ng-container matColumnDef="image">
-          <th mat-header-cell *matHeaderCellDef class=" text-center text-headers "> </th>
-          <td mat-cell *matCellDef="let element" class=" text-center tabledata">
-            <img class="patientimg " *ngIf="element?.patientProfilePic!=null || element?.patientProfilePic!=undefined ||  element?.patientProfilePic; else intial" [src]="element?.patientProfilePic" alt="" >
-        <ng-template #intial>
-          <div class="imageintial ">
-         {{element?.name?.[0]?.[0] | uppercase}}{{element?.name?.[1]?.[0] | uppercase}}
-        </div>
-        </ng-template>
-
-
+<!-- ==================== PATIENTS TABLE ==================== -->
+<div class="table-card" *ngIf="doctorsList">
+  <div class="table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th class="th-avatar"></th>
+          <th class="sortable" (click)="sortData('createdAt')">
+            Date/Time
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 15l5 5 5-5"/><path d="M7 9l5-5 5 5"/></svg>
+          </th>
+          <th class="sortable" (click)="sortData('lowerPatientName')">
+            Name
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 15l5 5 5-5"/><path d="M7 9l5-5 5 5"/></svg>
+          </th>
+          <th>Gender</th>
+          <th>Address</th>
+          <th>Mobile</th>
+          <th>Email</th>
+          <th class="sortable" (click)="sortData('age')">
+            Age
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 15l5 5 5-5"/><path d="M7 9l5-5 5 5"/></svg>
+          </th>
+          <th>Blood Group</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let element of patientListData | paginate:{itemsPerPage:itemPerPage,currentPage:page,totalItems:patientLength}">
+          <td class="td-avatar">
+            <img *ngIf="element?.patientProfilePic" class="avatar-img" [src]="element?.patientProfilePic" alt="">
+            <div *ngIf="!element?.patientProfilePic" class="avatar-initials">
+              {{element?.name?.[0]?.[0] | uppercase}}{{element?.name?.[1]?.[0] | uppercase}}
+            </div>
           </td>
-        </ng-container>
-      
-        <ng-container matColumnDef="date">
-          <th mat-header-cell *matHeaderCellDef class=" text-headers"
-          (click)="sortData('createdAt')" > Date/Times
-           <img
-          class="cursor"
-          *ngIf="
-            !sortBy.sortOrder ||
-            sortBy.sortOrder == 'DESC' ||
-            sortBy.sort != 'createdAt'
-          "
-          src="assets/images/svg/sort.svg"
-          alt=""
-        />
-        <img
-          *ngIf="sortBy.sortOrder == 'ASC' && sortBy.sort == 'createdAt'"
-          src="assets/images/svg/sort.svg"
-          class="asce cursor"
-          alt=""
-        />
-        </th>
-          <td mat-cell *matCellDef="let element" class=" tabledata"> {{element.createdAt | date:'dd/MM/yy'}}<ng-container *ngIf="element.createdAt">,</ng-container> {{element.createdAt | date:'hh:mm a'}}</td>
-        </ng-container>
-      
-        <ng-container matColumnDef="name">
-          <th mat-header-cell *matHeaderCellDef class=" text-headers cursor" (click)="sortData('lowerPatientName')"> Name
-            <img
-          class="cursor"
-          *ngIf="
-            !sortBy.sortOrder ||
-            sortBy.sortOrder == 'DESC' ||
-            sortBy.sort != 'lowerPatientName'
-          "
-          src="assets/images/svg/sort.svg"
-          alt=""
-        />
-        <img
-          *ngIf="sortBy.sortOrder == 'ASC' && sortBy.sort == 'lowerPatientName'"
-          src="assets/images/svg/sort.svg"
-          class="asce cursor"
-          alt=""
-        />
-            <!-- <img class="cursor" *ngIf="fullNameASC" src="assets/images/svg/sort.svg" alt="" > 
-            <img *ngIf="fullNameDESC" src="assets/images/svg/sort.svg"  class="asce cursor" alt="">     -->
-                </th>
-          <td mat-cell *matCellDef="let element" class=" tabledata"> {{element.patientName || 'N/A'}} </td>
-        </ng-container>
-      
-        <ng-container matColumnDef="gender">
-          <th mat-header-cell *matHeaderCellDef class=" text-headers"> Gender </th>
-          <td mat-cell *matCellDef="let element" class=" tabledata "><span [ngClass]="element.gender==1?'male':'female'"> {{element?.patientGender==1?'Male':element?.patientGender==2?'Female':'N/A'}}</span></td>
-        </ng-container>
-        <ng-container matColumnDef="address">
-            <th mat-header-cell *matHeaderCellDef class=" text-headers"> Address </th>
-            <td mat-cell *matCellDef="let element" class=" tabledata" >
-              <span>
-                 {{element.patientAddress?.street}}<ng-container *ngIf="element.patientAddress?.city!=null || element.patientAddress?.city!=undefined">,</ng-container> {{element.patientAddress?.city}}
-              </span>
-              <span *ngIf="element.patientAddress?.street == null && element.patientAddress?.city==null">N/A</span>
-                </td>
-          </ng-container>
-          <ng-container matColumnDef="mobile">
-            <th mat-header-cell *matHeaderCellDef class=" text-headers"> Mobile </th>
-            <td mat-cell *matCellDef="let element" class=" tabledata"><span *ngIf="element?.patientPhone!=null || element?.patientPhone!=undefined || element?.patientPhone"> +91</span>{{element.patientPhone || 'N/A'}}  </td>
-          </ng-container>
-          <ng-container matColumnDef="email">
-            <th mat-header-cell *matHeaderCellDef class=" text-headers"> Email ID </th>
-            <td mat-cell *matCellDef="let element" class=" tabledata"> {{element.email || 'N/A'}} </td>
-          </ng-container>
-          <ng-container matColumnDef="age">
-            <th mat-header-cell *matHeaderCellDef class=" text-headers cursor" (click)="sortData('age')"> Age 
-              <img
-          class="cursor"
-          *ngIf="
-            !sortBy.sortOrder ||
-            sortBy.sortOrder == 'DESC' ||
-            sortBy.sort != 'age'
-          "
-          src="assets/images/svg/sort.svg"
-          alt=""
-        />
-        <img
-          *ngIf="sortBy.sortOrder == 'ASC' && sortBy.sort == 'age'"
-          src="assets/images/svg/sort.svg"
-          class="asce cursor"
-          alt=""
-        />
-              <!-- <img class="cursor" *ngIf="ageASC" src="assets/images/svg/sort.svg" alt="" > 
-              <img *ngIf="ageDESC" src="assets/images/svg/sort.svg"  class="asce cursor" alt="">             -->
-             </th>
-            <td mat-cell *matCellDef="let element" class=" tabledata"> {{element.age || 'N/A'}} </td>
-          </ng-container>
-          <ng-container matColumnDef="blood"> 
-            <th mat-header-cell *matHeaderCellDef class=" text-headers"> Blood Group </th>
-            <td mat-cell *matCellDef="let element" class=" tabledata" >{{element?.bloodGroup || 'N/A'}}</td>
-          </ng-container>
-          <!-- <ng-container matColumnDef="status">
-            <th mat-header-cell *matHeaderCellDef class=" text-headers pe-5"> Status</th>
-            <td mat-cell *matCellDef="let element" class=" tabledata pe-5"> 
-               <span class="status" (click)="DeletepatientList(element._id)" >Deleted</span>
-            </td>
-          </ng-container> -->
-          <ng-container matColumnDef="status">
-          <th mat-header-cell *matHeaderCellDef class="text-headers pe-5">Status</th>
-          <td mat-cell *matCellDef="let element" class="tabledata pe-5"> 
-            <button mat-icon-button color="warn" (click)="DeletepatientList(element._id)">
-              <mat-icon>delete</mat-icon>
+          <td>
+            <div class="date-cell">
+              <span class="date-main">{{element.createdAt | date:'dd MMM yyyy'}}</span>
+              <span class="date-time">{{element.createdAt | date:'hh:mm a'}}</span>
+            </div>
+          </td>
+          <td><span class="name-text">{{element.patientName || 'N/A'}}</span></td>
+          <td>
+            <span class="gender-badge" [ngClass]="element?.patientGender==1 ? 'male' : 'female'">
+              {{element?.patientGender==1 ? 'Male' : element?.patientGender==2 ? 'Female' : 'N/A'}}
+            </span>
+          </td>
+          <td>
+            <span *ngIf="element.patientAddress?.street || element.patientAddress?.city" class="address-text">
+              {{element.patientAddress?.street}}<ng-container *ngIf="element.patientAddress?.city">, </ng-container>{{element.patientAddress?.city}}
+            </span>
+            <span *ngIf="!element.patientAddress?.street && !element.patientAddress?.city" class="text-muted">N/A</span>
+          </td>
+          <td><span class="phone-text"><span *ngIf="element?.patientPhone">+91 </span>{{element.patientPhone || 'N/A'}}</span></td>
+          <td><span class="email-text">{{element.email || 'N/A'}}</span></td>
+          <td>{{element.age || 'N/A'}}</td>
+          <td><span class="blood-badge" *ngIf="element?.bloodGroup">{{element?.bloodGroup}}</span><span *ngIf="!element?.bloodGroup" class="text-muted">N/A</span></td>
+          <td>
+            <button class="delete-btn" (click)="DeletepatientList(element._id)">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+              Delete
             </button>
           </td>
-        </ng-container>
-
-        <tr mat-header-row *matHeaderRowDef="displayedPatientsColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedPatientsColumns| paginate:{itemsPerPage:itemPerPage,currentPage:page,totalItems: patientLength}; let i=index"></tr>
-      </table>
-      <div class="nodata text-center" *ngIf="patientLength==0">
-        No Data Found.
-      </div>
- </div>
-<div class="text-center" *ngIf="patientLength>0 && doctorsList">
-      <pagination-controls (pageChange)="updatePageNumer($event)" previousLabel="&lsaquo;"
-        nextLabel="&rsaquo;"></pagination-controls>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="empty-state" *ngIf="patientLength==0">
+    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+    <p>No deleted patients found</p>
+  </div>
+  <div class="pagination-wrapper" *ngIf="patientLength > 0">
+    <span class="pagination-info">Showing {{(page - 1) * itemPerPage + 1}} to {{page * itemPerPage > patientLength ? patientLength : page * itemPerPage}} of {{patientLength}} entries</span>
+    <pagination-controls (pageChange)="updatePageNumer($event)" previousLabel="&lsaquo;" nextLabel="&rsaquo;"></pagination-controls>
+  </div>
 </div>
 
-
-
-
-
-<div class="table-responsive w-100 scrolldata mb-5" *ngIf="hospitalsList">
-        <table mat-table  matSort [dataSource]="doctorListData" class="mat-elevation-z8 " >
-            <ng-container matColumnDef="position">
-              <th mat-header-cell *matHeaderCellDef class=" text-center text-headers "> </th>
-              <td mat-cell *matCellDef="let element" class="text-center  tabledata">
-                <img class="patientimg " *ngIf="element?.doctorProfilePic!=null || element?.doctorProfilePic!=undefined ||  element?.doctorProfilePic; else intial" [src]="element?.doctorProfilePic" alt="" >
-                <ng-template #intial>
-                  <div class="imageintial ">
-                 {{element?.name?.[0]?.[0] | uppercase}}{{element?.name?.[1]?.[0] | uppercase}}
-                </div>
-                </ng-template>             
-               </td>
-            </ng-container>
-            <ng-container matColumnDef="date">
-                <th mat-header-cell *matHeaderCellDef class=" text-headers" > Date/Time </th>
-                <td mat-cell *matCellDef="let element" class=" tabledata"> {{element.createdAt | date:'dd/MM/yy'}}<ng-container *ngIf="element.createdAt">,</ng-container> {{element.createdAt | date:'hh:mm a'}} </td>
-              </ng-container>
-            
-            <ng-container matColumnDef="name">
-                <th mat-header-cell *matHeaderCellDef class=" text-headers cursor"  (click)="sortData('doctorName')"> Name 
-                  <img
-          class="cursor"
-          *ngIf="
-            !sortBy.sortOrder ||
-            sortBy.sortOrder == 'DESC' ||
-            sortBy.sort != 'doctorName'
-          "
-          src="assets/images/svg/sort.svg"
-          alt=""
-        />
-        <img
-          *ngIf="sortBy.sortOrder == 'ASC' && sortBy.sort == 'doctorName'"
-          src="assets/images/svg/sort.svg"
-          class="asce cursor"
-          alt=""
-        />
-                              </th>
-                <td mat-cell *matCellDef="let element" class=" tabledata"> {{element.doctorName}} </td>
-              </ng-container>
-            
-              <ng-container matColumnDef="Gender">
-                <th mat-header-cell *matHeaderCellDef class=" text-headers"> Specialization</th>
-                <td mat-cell *matCellDef="let element" class=" tabledata" >
-
-                  
-                  <div *ngIf="element?.doctorSpecialization.length>0;else nodata">
-                    <ng-container *ngFor="let specialization of element?.doctorSpecialization">{{specialization?.name ||'N/A'}}<br></ng-container>
-                    </div>
-                      <ng-template #nodata>
-                        <span>N/A</span>
-                      </ng-template>
-          
-
-                  </td>
-              </ng-container>
-            
-              <ng-container matColumnDef="Address">
-                <th mat-header-cell *matHeaderCellDef class=" text-headers cursor" (click)="sortData('doctorAddress.city')"> Locality
-                <img
-          class="cursor"
-          *ngIf="
-            !sortBy.sortOrder ||
-            sortBy.sortOrder == 'DESC' ||
-            sortBy.sort != 'doctorAddress.city'
-          "
-          src="assets/images/svg/sort.svg"
-          alt=""
-        />
-        <img
-          *ngIf="sortBy.sortOrder == 'ASC' && sortBy.sort == 'doctorAddress.city'"
-          src="assets/images/svg/sort.svg"
-          class="asce cursor"
-          alt=""
-        />
-      </th>
-                <td mat-cell *matCellDef="let element" class=" tabledata"> {{element.doctorAddress?.city|| 'N/A'}} </td>
-              </ng-container>
-              <ng-container matColumnDef="Mobile">
-                  <th mat-header-cell *matHeaderCellDef class=" text-headers"> Mobile </th>
-                  <td mat-cell *matCellDef="let element" class=" tabledata"> <span *ngIf="element?.doctorPhone!=null || element?.doctorPhone!=undefined || element?.doctorPhone">+91</span>{{element.doctorPhone || 'N/A'}} </td>
-                </ng-container>
-               
-                <!-- <ng-container matColumnDef="BloodGroup">
-                  <th mat-header-cell *matHeaderCellDef class=" text-headers"> status</th>
-                  <td mat-cell *matCellDef="let element" class=" tabledata ">
-                    <span class="status" (click)="DeletedoctorList(element._id)"   >Deleted</span> 
-                  </td>
-                </ng-container> -->
-
-                <ng-container matColumnDef="BloodGroup">
-                <th mat-header-cell *matHeaderCellDef class="text-headers">Status</th>
-                <td mat-cell *matCellDef="let element" class="tabledata">
-                  <button mat-icon-button color="warn" (click)="DeletedoctorList(element._id)">
-                    <mat-icon>delete</mat-icon>
-                  </button>
-                </td>
-              </ng-container>
-
-                
-            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-            <tr mat-row *matRowDef="let row; columns: displayedColumns | paginate:{itemsPerPage:itemPerPageDoctor,currentPage:doctorPage,totalItems: doctorLength}; let i=index"></tr>
-          </table>
-          <div class="nodata text-center" *ngIf="doctorLength==0">
-            No Data Found.
-          </div>
-</div>
-<div class="text-center" *ngIf="doctorLength>0 && hospitalsList">
-          <pagination-controls (pageChange)="updateDoctorPage($event)" previousLabel="&lsaquo;"
-            nextLabel="&rsaquo;"></pagination-controls>
-</div>
-    
-
-
-
-
-
-
-
-<div class="table-responsive w-100 scrolldata mb-5" *ngIf="patientList">
-          <table mat-table  matSort [dataSource]="hospitalListData" class="mat-elevation-z8 " >
-              <ng-container matColumnDef="position">
-                <th mat-header-cell *matHeaderCellDef class=" text-center text-headers "> </th>
-                <td mat-cell *matCellDef="let element" class=" text-center tabledata">
-                
-                  <img class="patientimg " *ngIf="element?.hospitalProfilePic!=null || element?.hospitalProfilePic!=undefined ||  element?.hospitalProfilePic; else intial" [src]="element?.hospitalProfilePic" alt=""  onError="this.src='assets/images/svg/nectorIcon.svg'">
-                  <ng-template #intial>
-                    <div class="imageintial ">
-                   {{element?.name?.[0]?.[0] | uppercase}}{{element?.name?.[1]?.[0] | uppercase}}
-                  </div>
-                  </ng-template>   
-                
-                
-                </td>
-              </ng-container>
-              <ng-container matColumnDef="date">
-                  <th mat-header-cell *matHeaderCellDef class=" text-headers" > Date/Time </th>
-                  <td mat-cell *matCellDef="let element" class=" tabledata">{{element.createdAt | date:'dd/MM/yy'}}<ng-container *ngIf="element.createdAt">,</ng-container> {{element.createdAt | date:'hh:mm a'}} </td>
-                </ng-container>
-              
-              <ng-container matColumnDef="name">
-                  <th mat-header-cell *matHeaderCellDef class=" text-headers cursor" (click)="sortData('establishmentName')">Name 
-                    <img
-          class="cursor"
-          *ngIf="
-            !sortBy.sortOrder ||
-            sortBy.sortOrder == 'DESC' ||
-            sortBy.sort != 'establishmentName'
-          "
-          src="assets/images/svg/sort.svg"
-          alt=""
-        />
-        <img
-          *ngIf="sortBy.sortOrder == 'ASC' && sortBy.sort == 'establishmentName'"
-          src="assets/images/svg/sort.svg"
-          class="asce cursor"
-          alt=""
-        />
-<!--         
-                     <img class="cursor" *ngIf="deletedHospitalASC" src="assets/images/svg/sort.svg" alt="" > 
-                     <img *ngIf="deletedHospitalDESC" src="assets/images/svg/sort.svg"  class="asce cursor" alt=""> -->
-                    </th>
-                  <td mat-cell *matCellDef="let element" class=" tabledata"> {{element.establishmentName || 'N/A'}} </td>
-                </ng-container>
-              
-                <ng-container matColumnDef="Gender">
-                  <th mat-header-cell *matHeaderCellDef class=" text-headers"> Type of Hospital/Clinic</th>
-                  <td mat-cell *matCellDef="let element" class=" tabledata"> 
-                    <ng-container *ngIf="element?.hospitalType?.length>0; else block">
-                    <span *ngFor="let data of element?.hospitalType">
-                      {{data?.name}}
-                    </span>
-                  </ng-container>
-                  <ng-template #block>
-                    N/A
-                  </ng-template>
-                  </td>
-                </ng-container>
-              
-                <ng-container matColumnDef="Address">
-                  <th mat-header-cell *matHeaderCellDef class=" text-headers cursor" (click)="sortData('address.city')"> Locality
-                    <img
-          class="cursor"
-          *ngIf="
-            !sortBy.sortOrder ||
-            sortBy.sortOrder == 'DESC' ||
-            sortBy.sort != 'address.city'
-          "
-          src="assets/images/svg/sort.svg"
-          alt=""
-        />
-        <img
-          *ngIf="sortBy.sortOrder == 'ASC' && sortBy.sort == 'address.city'"
-          src="assets/images/svg/sort.svg"
-          class="asce cursor"
-          alt=""
-        />
-        
-                          </th>
-                  <td mat-cell *matCellDef="let element" class=" tabledata"> {{element?.address?.city || 'N/A'}} </td>
-                </ng-container>
-                <ng-container matColumnDef="Mobile">
-                    <th mat-header-cell *matHeaderCellDef class=" text-headers"> Mobile </th>
-                    <td mat-cell *matCellDef="let element" class=" tabledata"> <span *ngIf="element?.phone!=null || element?.phone!=undefined || element?.phone">+91</span>{{element.phone || 'N/A'}} </td>
-                  </ng-container>
-                 
-                  <ng-container matColumnDef="BloodGroup">
-                    <th mat-header-cell *matHeaderCellDef class=" text-headers"> status</th>
-                    <td mat-cell *matCellDef="let element" class=" tabledata "><span class="status">Delete</span> </td>
-                  </ng-container>
-                  
-              <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-              <tr mat-row *matRowDef="let row; columns: displayedColumns | paginate:{itemsPerPage:itemPerPageHospital,currentPage:hospitalPage,totalItems: hospitalLength}; let i=index"></tr>
-            </table>
-            <div class="nodata text-center" *ngIf="hospitalLength==0">
-              No Data Found.
+<!-- ==================== DOCTORS TABLE ==================== -->
+<div class="table-card" *ngIf="hospitalsList">
+  <div class="table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th class="th-avatar"></th>
+          <th>Date/Time</th>
+          <th class="sortable" (click)="sortData('doctorName')">
+            Name
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 15l5 5 5-5"/><path d="M7 9l5-5 5 5"/></svg>
+          </th>
+          <th>Specialization</th>
+          <th class="sortable" (click)="sortData('doctorAddress.city')">
+            Locality
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 15l5 5 5-5"/><path d="M7 9l5-5 5 5"/></svg>
+          </th>
+          <th>Mobile</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let element of doctorListData | paginate:{itemsPerPage:itemPerPageDoctor,currentPage:doctorPage,totalItems:doctorLength}">
+          <td class="td-avatar">
+            <img *ngIf="element?.doctorProfilePic" class="avatar-img" [src]="element?.doctorProfilePic" alt="">
+            <div *ngIf="!element?.doctorProfilePic" class="avatar-initials">
+              {{element?.name?.[0]?.[0] | uppercase}}{{element?.name?.[1]?.[0] | uppercase}}
             </div>
-          </div>
-          <div class="text-center" *ngIf="hospitalLength>0 && patientList">
-            <pagination-controls (pageChange)="updateHospitalPage($event)" previousLabel="&lsaquo;"
-              nextLabel="&rsaquo;"></pagination-controls>
-          </div>
-    
+          </td>
+          <td>
+            <div class="date-cell">
+              <span class="date-main">{{element.createdAt | date:'dd MMM yyyy'}}</span>
+              <span class="date-time">{{element.createdAt | date:'hh:mm a'}}</span>
+            </div>
+          </td>
+          <td><span class="name-text">{{element.doctorName || 'N/A'}}</span></td>
+          <td>
+            <div *ngIf="element?.doctorSpecialization?.length > 0; else noSpecData">
+              <span class="spec-badge" *ngFor="let spec of element?.doctorSpecialization">{{spec?.name || 'N/A'}}</span>
+            </div>
+            <ng-template #noSpecData><span class="text-muted">N/A</span></ng-template>
+          </td>
+          <td><span class="locality-text">{{element.doctorAddress?.city || 'N/A'}}</span></td>
+          <td><span class="phone-text"><span *ngIf="element?.doctorPhone">+91 </span>{{element.doctorPhone || 'N/A'}}</span></td>
+          <td>
+            <button class="delete-btn" (click)="DeletedoctorList(element._id)">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+              Delete
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="empty-state" *ngIf="doctorLength==0">
+    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+    <p>No deleted doctors found</p>
+  </div>
+  <div class="pagination-wrapper" *ngIf="doctorLength > 0">
+    <span class="pagination-info">Showing {{(doctorPage - 1) * itemPerPageDoctor + 1}} to {{doctorPage * itemPerPageDoctor > doctorLength ? doctorLength : doctorPage * itemPerPageDoctor}} of {{doctorLength}} entries</span>
+    <pagination-controls (pageChange)="updateDoctorPage($event)" previousLabel="&lsaquo;" nextLabel="&rsaquo;"></pagination-controls>
+  </div>
+</div>
 
-
-
-
-        
+<!-- ==================== HOSPITALS TABLE ==================== -->
+<div class="table-card" *ngIf="patientList">
+  <div class="table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th class="th-avatar"></th>
+          <th>Date/Time</th>
+          <th class="sortable" (click)="sortData('establishmentName')">
+            Name
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 15l5 5 5-5"/><path d="M7 9l5-5 5 5"/></svg>
+          </th>
+          <th>Type</th>
+          <th class="sortable" (click)="sortData('address.city')">
+            Locality
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 15l5 5 5-5"/><path d="M7 9l5-5 5 5"/></svg>
+          </th>
+          <th>Mobile</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let element of hospitalListData | paginate:{itemsPerPage:itemPerPageHospital,currentPage:hospitalPage,totalItems:hospitalLength}">
+          <td class="td-avatar">
+            <img *ngIf="element?.hospitalProfilePic" class="avatar-img" [src]="element?.hospitalProfilePic" alt="" onError="this.src='assets/images/svg/nectorIcon.svg'">
+            <div *ngIf="!element?.hospitalProfilePic" class="avatar-initials">
+              {{element?.name?.[0]?.[0] | uppercase}}{{element?.name?.[1]?.[0] | uppercase}}
+            </div>
+          </td>
+          <td>
+            <div class="date-cell">
+              <span class="date-main">{{element.createdAt | date:'dd MMM yyyy'}}</span>
+              <span class="date-time">{{element.createdAt | date:'hh:mm a'}}</span>
+            </div>
+          </td>
+          <td><span class="name-text">{{element.establishmentName || 'N/A'}}</span></td>
+          <td>
+            <ng-container *ngIf="element?.hospitalType?.length > 0; else noTypeData">
+              <span class="type-badge" *ngFor="let data of element?.hospitalType">{{data?.name}}</span>
+            </ng-container>
+            <ng-template #noTypeData><span class="text-muted">N/A</span></ng-template>
+          </td>
+          <td><span class="locality-text">{{element?.address?.city || 'N/A'}}</span></td>
+          <td><span class="phone-text"><span *ngIf="element?.phone">+91 </span>{{element.phone || 'N/A'}}</span></td>
+          <td><span class="status-badge status-deleted">Deleted</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="empty-state" *ngIf="hospitalLength==0">
+    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+    <p>No deleted hospitals found</p>
+  </div>
+  <div class="pagination-wrapper" *ngIf="hospitalLength > 0">
+    <span class="pagination-info">Showing {{(hospitalPage - 1) * itemPerPageHospital + 1}} to {{hospitalPage * itemPerPageHospital > hospitalLength ? hospitalLength : hospitalPage * itemPerPageHospital}} of {{hospitalLength}} entries</span>
+    <pagination-controls (pageChange)="updateHospitalPage($event)" previousLabel="&lsaquo;" nextLabel="&rsaquo;"></pagination-controls>
+  </div>
+</div>

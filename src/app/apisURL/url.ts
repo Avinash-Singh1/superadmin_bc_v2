@@ -99,6 +99,7 @@ export class URLConstant {
   public static adminPrescriptionUploadFile = "v1/prescription/admin";
   public static adminPrescriptionStats = "v1/prescription/admin/stats";
   public static addSurgery = "v1/surgery";
+  public static fetchUrlMeta = "v1/surgery/fetch-url-meta";
   public static appointmentToolTip =
     "v1/admin/dashboard/appointment-surgery-lead/count/range-specialization";
   public static notification = "v1/common/notification";

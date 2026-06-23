@@ -1,27 +1,103 @@
-<main>
-  <app-header>Surgery List</app-header>
-  <section class="surgery-list-wrapper d-flex flex-column">
-    <ng-container *ngFor="let surgery of surgeryList">
-      <div
-        class="surgery-item d-flex justify-content-between align-items-center gap-4"
-      >
-        <div class="d-flex gap-3 align-items-center">
-          <div class="image-wrapper">
-            <img [src]="surgery.imageUrl" />
-          </div>
-          <span class="text-24">{{ surgery.title | titlecase }}</span>
-        </div>
-        <div class="button-group d-flex gap-4">
-          <button class="edit" (click)="onEdit(surgery)">
-            <img src="assets/images/svg/editdate.svg" />
-            <span>Edit</span>
-          </button>
-          <button class="delete" (click)="onDelete(surgery._id)">
-            <img src="assets/images/svg/trash.svg" />
-            <span> Delete </span>
-          </button>
-        </div>
+<main class="surgery-dashboard">
+
+  <!-- Top Bar -->
+  <section class="top-bar">
+    <div class="top-bar-left">
+      <h2 class="page-title">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        All Treatments
+      </h2>
+      <span class="count-badge">{{ surgeryList.length }}</span>
+    </div>
+    <div class="top-bar-right">
+      <div class="search-box">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" placeholder="Search treatments..." [(ngModel)]="searchQuery" (input)="onSearch()" />
+        <button class="search-clear" *ngIf="searchQuery" (click)="searchQuery = ''; onSearch()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
       </div>
-    </ng-container>
+      <div class="view-toggle">
+        <button [class.active]="viewMode === 'grid'" (click)="viewMode = 'grid'" title="Grid View">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        </button>
+        <button [class.active]="viewMode === 'list'" (click)="viewMode = 'list'" title="List View">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Grid View -->
+  <section class="surgery-grid" *ngIf="viewMode === 'grid'">
+    <div class="surgery-card" *ngFor="let surgery of filteredList; let i = index">
+      <div class="card-visual">
+        <div class="card-icon-wrapper">
+          <img [src]="surgery.imageUrl" alt="" class="card-icon" />
+        </div>
+        <span class="card-index">#{{ i + 1 }}</span>
+      </div>
+      <div class="card-body">
+        <h3 class="card-title">{{ surgery.title | titlecase }}</h3>
+        <p class="card-slug" *ngIf="surgery.slug">{{ surgery.slug }}</p>
+      </div>
+      <div class="card-actions">
+        <button class="btn-action edit" (click)="onEdit(surgery)" title="Edit Treatment">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          <span>Edit</span>
+        </button>
+        <button class="btn-action delete" (click)="onDelete(surgery._id)" title="Delete Treatment">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+          <span>Delete</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div class="empty-state" *ngIf="filteredList.length === 0">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <p>No treatments found</p>
+      <span *ngIf="searchQuery">Try adjusting your search query</span>
+    </div>
+  </section>
+
+  <!-- List View -->
+  <section class="surgery-table-wrap" *ngIf="viewMode === 'list'">
+    <table class="surgery-table">
+      <thead>
+        <tr>
+          <th class="th-index">#</th>
+          <th class="th-icon">Icon</th>
+          <th class="th-name">Treatment Name</th>
+          <th class="th-slug">Slug</th>
+          <th class="th-actions">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let surgery of filteredList; let i = index">
+          <td class="td-index">{{ i + 1 }}</td>
+          <td class="td-icon">
+            <div class="table-icon-wrapper">
+              <img [src]="surgery.imageUrl" alt="" />
+            </div>
+          </td>
+          <td class="td-name">{{ surgery.title | titlecase }}</td>
+          <td class="td-slug">{{ surgery.slug || '-' }}</td>
+          <td class="td-actions">
+            <button class="btn-table edit" (click)="onEdit(surgery)" title="Edit">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            </button>
+            <button class="btn-table delete" (click)="onDelete(surgery._id)" title="Delete">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="empty-state" *ngIf="filteredList.length === 0">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <p>No treatments found</p>
+      <span *ngIf="searchQuery">Try adjusting your search query</span>
+    </div>
   </section>
 </main>

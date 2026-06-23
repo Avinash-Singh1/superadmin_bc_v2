@@ -13,17 +13,35 @@ import { EditSurgeryModalComponent } from "../edit-surgery-modal/edit-surgery-mo
 export class SurgeryListComponent implements OnInit {
   constructor(private apiService: ApiService, private matdialog: MatDialog) {}
   surgeryList: any = [];
+  filteredList: any = [];
+  searchQuery = '';
+  viewMode: 'grid' | 'list' = 'grid';
 
   ngOnInit(): void {
     this.getSurgeryList();
   }
+
   getSurgeryList() {
     this.apiService.GetData(URLConstant.masterSurgerylist, {}).subscribe({
       next: (res: any) => {
         const { count, data } = res.result;
         this.surgeryList = count ? data : [];
+        this.onSearch();
       },
     });
+  }
+
+  onSearch() {
+    const q = this.searchQuery.trim().toLowerCase();
+    if (!q) {
+      this.filteredList = [...this.surgeryList];
+    } else {
+      this.filteredList = this.surgeryList.filter(
+        (s: any) =>
+          (s.title && s.title.toLowerCase().includes(q)) ||
+          (s.slug && s.slug.toLowerCase().includes(q))
+      );
+    }
   }
   onDelete(surgeryId: string) {
     const deleteDialog = this.matdialog.open(DeleteModalComponent, {
@@ -35,13 +53,11 @@ export class SurgeryListComponent implements OnInit {
       },
     });
     deleteDialog.afterClosed().subscribe((res: boolean) => {
-      console.log(res);
       if (res) {
         this.apiService
           .DeleteData(`${URLConstant.addSurgery}/${surgeryId}`, {})
           .subscribe({
             next: (res: any) => {
-              console.log(res);
               this.getSurgeryList();
             },
             error: (error: any) => {
@@ -54,6 +70,9 @@ export class SurgeryListComponent implements OnInit {
   onEdit(surgery: any) {
     const editDialog = this.matdialog.open(EditSurgeryModalComponent, {
       width: "80vw",
+      height: "90vh",
+      maxHeight: "90vh",
+      panelClass: "edit-surgery-panel",
       data: {
         patchData: surgery,
       },

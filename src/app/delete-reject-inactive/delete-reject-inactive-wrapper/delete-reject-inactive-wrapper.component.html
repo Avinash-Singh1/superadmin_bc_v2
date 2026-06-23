@@ -1,37 +1,73 @@
 
 <div class="page-wrapper">
   <!-- Page Header -->
-  <div class="page-header">
+  <header class="page-header">
     <div class="header-left">
-      <h1 class="page-title">
-        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-        <span>User Management</span>
-      </h1>
-      <nav class="nav-tabs-modern">
+      <div class="page-title-group">
+        <h1 class="page-title">
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            <line x1="12" y1="8" x2="12" y2="12"/>
+            <line x1="12" y1="16" x2="12.01" y2="16"/>
+          </svg>
+          <span>User Management</span>
+        </h1>
+        <p class="page-subtitle">Review deleted, rejected and inactive accounts</p>
+      </div>
+      <nav class="nav-tabs-modern" aria-label="User management tabs">
         <a *ngFor="let list of deleteRejectInactiveList"
            class="nav-tab"
            (click)="clearSearch()"
            [routerLink]="list.routerLink"
            routerLinkActive="active"
            [routerLinkActiveOptions]="{exact: list.routerLink === '/theme/delete-reject-inactive'}"
-           [ngClass]="{'active': checkCurrentRoute(list.routerLink)}">
-          <svg *ngIf="list.link === 'Deleted'" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-          <svg *ngIf="list.link === 'Rejected'" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
-          <svg *ngIf="list.link === 'Inactive'" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+           [attr.aria-current]="checkCurrentRoute(list.routerLink) ? 'page' : null">
+          <svg *ngIf="list.link === 'Deleted'" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polyline points="3 6 5 6 21 6"/>
+            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+          </svg>
+          <svg *ngIf="list.link === 'Rejected'" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="15" y1="9" x2="9" y2="15"/>
+            <line x1="9" y1="9" x2="15" y2="15"/>
+          </svg>
+          <svg *ngIf="list.link === 'Inactive'" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/>
+          </svg>
           {{list?.link}}
         </a>
       </nav>
     </div>
     <div class="header-right">
       <div class="search-box">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <input type="text" placeholder="Search by Name, Number..." [(ngModel)]="searchTerm" (keyup)="search()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="11" cy="11" r="8"/>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        <input 
+          type="text" 
+          placeholder="Search by Name, Number..." 
+          [(ngModel)]="searchTerm" 
+          (ngModelChange)="onSearchChange()"
+          aria-label="Search users">
+        <button 
+          *ngIf="searchTerm" 
+          class="clear-search-btn" 
+          (click)="clearSearch()"
+          aria-label="Clear search"
+          type="button">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"/>
+            <line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
       </div>
     </div>
-  </div>
+  </header>
 
   <!-- Router Outlet -->
-  <div class="content-area">
+  <main class="content-area">
     <router-outlet></router-outlet>
-  </div>
+  </main>
 </div>

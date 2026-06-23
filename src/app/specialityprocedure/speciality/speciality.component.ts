@@ -170,7 +170,6 @@ export class SpecialityComponent implements OnInit {
       },
     });
     dialogRef.afterClosed().subscribe((res: any) => {
-      // console.log(" closed res: ", res);
       if (res?.name && res?.creation == "Add") {
         let body: any = {
           type: res?.type == "Speciality" ? 10 : 4,
@@ -190,8 +189,6 @@ export class SpecialityComponent implements OnInit {
         });
         this.toastrMessage = res?.type;
         this.toastrCreation = res?.creation;
-        // console.log(res?.creation);
-        // console.log("body: ",body);
         this.apiservice
           .Postdata(URLConstant.master, body, "")
           .subscribe((res: any) => {
@@ -222,7 +219,6 @@ export class SpecialityComponent implements OnInit {
         };
         this.toastrMessage = res?.type;
         this.toastrCreation = res?.creation;
-        console.log(res?.creation);
         this.apiservice
           .PutData(URLConstant.master + "/" + res?.id, body, param)
           .subscribe((res: any) => {
@@ -262,7 +258,6 @@ export class SpecialityComponent implements OnInit {
           sortOrder == "DESC" || sortOrder == "nosort" ? false : true;
         this.nosortImage =
           sortOrder == "nosort" || sortOrder == "ASC" ? false : true;
-        console.log(this.aseImage, this.descImage, this.nosortImage);
         this.getSpecializationList();
         break;
       case sortkey == "fullNameProcedure":

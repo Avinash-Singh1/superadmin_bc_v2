@@ -118,12 +118,19 @@ export class HomeComponent implements OnInit {
     // this.downloadSurgery()
   }
 
-  checkDate() {
-    if (this.todayStartDate && this.todayEndDate) {
-      return `${this.todayStartDate + "-" + this.todayEndDate}`;
-    } else {
-      return ``;
+  formatDate(iso: string): string {
+    if (!iso) return '';
+    const d = new Date(iso);
+    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  }
+
+  checkDate(): string {
+    const start = this.byDefaultFilter ? this.fromDate : this.todayStartDate;
+    const end = this.byDefaultFilter ? this.toDate : this.todayEndDate;
+    if (start && end) {
+      return `${this.formatDate(start)} – ${this.formatDate(end)}`;
     }
+    return '';
   }
 
   byDefaultFilter: boolean = false;
@@ -248,6 +255,7 @@ export class HomeComponent implements OnInit {
       cityName.push(this.appointmentByCity[i]?.cities?.city);
       this.appointmentPercentage.push(this.appointmentByCity[i]?.percentage);
     }
+    if (!document.getElementById("canvas")) return;
     this.chart = new Chart("canvas", {
       type: "doughnut",
       data: {
@@ -424,7 +432,6 @@ export class HomeComponent implements OnInit {
       this.apiservice
         .Postdata(URLConstant.surgeryLeadList, data, "")
         .subscribe((res: any) => {
-          console.log("res1", res);
           let surgerydata = res?.result?.enquiryList?.data;
 
           for (let i = 0; i < surgerydata?.length; i++) {
@@ -463,6 +470,7 @@ export class HomeComponent implements OnInit {
         );
         if (canvas) {
           const ctx = canvas.getContext("2d");
+          if (!document.getElementById("appointment")) return;
           this.appointmentchart = new Chart("appointment", {
             type: "line",
             data: {
@@ -508,7 +516,6 @@ export class HomeComponent implements OnInit {
                       let data = res?.result.filter((res: any) => {
                         return res?._id == context?.label;
                       });
-                      console.log(data);
                       let userdetail: any = [];
                       let userCount: any = [];
                       let tooltipText = "";
@@ -618,6 +625,7 @@ export class HomeComponent implements OnInit {
             gradientStroke.addColorStop(0, "#000000");
             gradientStroke.addColorStop(1, "#FFFFFF");
 
+            if (!document.getElementById("registration")) return;
             this.registrationchart = new Chart("registration", {
               type: "line",
               data: {
@@ -667,6 +675,7 @@ export class HomeComponent implements OnInit {
       appointmentCount.push(this.appointmentByOS[i]?.count);
       OSname.push(this.appointmentByOS[i]?.os);
     }
+    if (!document.getElementById("appointmentByOS")) return;
     this.appointmentByOSChart = new Chart("appointmentByOS", {
       type: "bar",
       data: {
@@ -719,6 +728,7 @@ export class HomeComponent implements OnInit {
       browsername.push(this.appointmentByBrowser[i]?.browser);
     }
 
+    if (!document.getElementById("appointmentByBrowser")) return;
     this.appointmentByBrowserChart = new Chart("appointmentByBrowser", {
       type: "bar",
       data: {
@@ -771,6 +781,7 @@ export class HomeComponent implements OnInit {
       genderCount.push(this.appointmentGender[i]?.count);
       genderName.push(this.appointmentGender[i]?.gender);
     }
+    if (!document.getElementById("appointmentByGender")) return;
     this.appointmentByGender = new Chart("appointmentByGender", {
       type: "bar",
       data: {
@@ -819,6 +830,7 @@ export class HomeComponent implements OnInit {
       DeviceName.push(this.appointmentByDevice[i]?.deviceType);
     }
 
+    if (!document.getElementById("appointmentByDevice")) return;
     this.appointmentByDevices = new Chart("appointmentByDevice", {
       type: "bar",
       data: {
@@ -1012,7 +1024,6 @@ export class HomeComponent implements OnInit {
         this.toDate = this.enddate?.toISOString();
         this.selected = "Date Range";
 
-        //  console.log('goa',this.fromDate)
         break;
       }
     }
@@ -1031,7 +1042,6 @@ export class HomeComponent implements OnInit {
 
   startDate(event: any) {
     this.startdate = event?.value;
-    // console.log(this.startdate)
 
     this.startValues = this.datepipe.transform(this.startdate, "dd-MM-yyyy");
   }
@@ -1042,12 +1052,9 @@ export class HomeComponent implements OnInit {
     this.endValues = this.datepipe.transform(this.enddate, "dd-MM-yyyy");
     this.selectedEndDate = true;
     // this.finalDateValue=this.startValues +"-"+this.endValues
-    // console.log(this.finalDateValue)
     this.selected = "Date Range";
-    console.log(this.globalFilter, "end global filters");
   }
   data8(event: any) {
-    console.log(event);
   }
   appointmentHeader: boolean = true;
   surgeryLeadHeader: boolean = false;
@@ -1134,7 +1141,6 @@ export class HomeComponent implements OnInit {
       );
       this.surgeryList[index].selected = true;
       this.surgeryParam.push(event.source?.value);
-      console.log(this.surgeryParam);
     } else if (value == "surgery" && event?.checked == false) {
       let index = this.surgeryList.findIndex(
         (el: any) => el?._id == event?.source?.value
@@ -1146,7 +1152,6 @@ export class HomeComponent implements OnInit {
           this.surgeryParam.splice(bloods, 1);
         }
       });
-      console.log(this.surgeryParam);
     }
   }
 
@@ -1200,7 +1205,6 @@ export class HomeComponent implements OnInit {
       .Postdata(URLConstant.appointmentList, data, param)
       .subscribe((res: any) => {
         this.result = res?.result?.data;
-        console.log("result", this.result);
         for (let i = 0; i < this.result.length; i++) {
           this.data.push([
             this.result[i]?.slot,
@@ -1230,7 +1234,6 @@ export class HomeComponent implements OnInit {
   ];
 
   exportToCSV() {
-    console.log("data", this.data);
     const headers = this.header;
     var options = {
       fieldSeparator: ",",
@@ -1332,7 +1335,6 @@ export class HomeComponent implements OnInit {
   ];
 
   surgeryExport() {
-    console.log(this.surgeryDetail);
     const headers = this.surgeryHeader;
     var options = {
       fieldSeparator: ",",
@@ -1404,7 +1406,6 @@ export class HomeComponent implements OnInit {
     this.apiservice
       .Postdata(URLConstant.appointmentToolTip, param, "")
       .subscribe((res: any) => {
-        console.log(res);
       });
   }
   getNotificationList: any;
@@ -1503,9 +1504,7 @@ export class HomeComponent implements OnInit {
       },
     });
     if (status == "doctorReject") {
-      console.log("reecyed");
       dialogRef.afterClosed().subscribe((res: any) => {
-        console.log("after not god");
 
         let status = {
           isVerified: res?.isVerified,
@@ -1518,7 +1517,6 @@ export class HomeComponent implements OnInit {
           .patchData(URLConstant.changeDoctorStatus, status, param)
           .subscribe((res: any) => {
             if (res?.success == true) {
-              console.log("not god");
               this.notification();
             }
           });
@@ -1577,7 +1575,6 @@ export class HomeComponent implements OnInit {
   select!: MatSelect;
 
   onDateSelected(event: any) {
-    console.log(event?.value);
     if (event.value) {
       this.selected = "Date Range";
     }
@@ -1588,6 +1585,5 @@ export class HomeComponent implements OnInit {
   }
   closeDropdown() {
     this.dropdown = false;
-    console.log("hdhhd");
   }
 }

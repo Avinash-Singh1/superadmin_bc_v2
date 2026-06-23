@@ -1,267 +1,554 @@
-<main>
-  <app-header>Add Surgery</app-header>
-  <form [formGroup]="surgeryForm" class="w-100 d-flex">
-    <section class="surgery-content w-75">
-      <ng-container
-        *ngFor="let component of componentArray.controls; let i = index"
-        formArrayName="components"
-      >
-        <div
-          *ngIf="i == 0"
-          class="surgery-description d-flex gap-4 align-items-start w-100"
-          [formGroupName]="i"
-        >
-          <div class="content d-flex flex-column w-100">
-            <header
-              class="d-flex gap-3 align-items-center justify-content-between w-100"
-            >
-              <div
-                class="d-flex gap-3 justify-content-between align-items-center"
-              >
-                <div
-                  class="image-wrapper position-relative"
-                  (click)="surgeryIcon.click()"
-                >
-                  <img
-                    class="surgery-icon"
-                    [src]="control['imageUrl'].value"
-                    alt=""
-                  />
-                  <div class="edit-button position-absolute">
-                    <img src="assets/images/svg/editdate.svg" alt="" />
+<main class="add-surgery-page">
+  <!-- â”€â”€ Page Header â”€â”€ -->
+  <header class="page-header">
+    <div class="header-left">
+      <div class="header-icon-wrap">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+        </svg>
+      </div>
+      <div>
+        <h1 class="header-title">Add Treatment</h1>
+        <span class="header-subtitle">Create a new surgery / treatment entry</span>
+      </div>
+    </div>
+    <div class="header-actions">
+      <div class="publish-pill" [class.published]="surgeryForm.get('isPublished')?.value">
+        <label class="switch-mini">
+          <input type="checkbox" [checked]="surgeryForm.get('isPublished')?.value"
+            (change)="surgeryForm.patchValue({isPublished: $any($event.target).checked})">
+          <span class="slider-mini"></span>
+        </label>
+        <span>{{ surgeryForm.get('isPublished')?.value ? 'Published' : 'Draft' }}</span>
+      </div>
+      <button type="button" class="btn-primary" (click)="onSubmit()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+          <polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/>
+        </svg>
+        Save Treatment
+      </button>
+      <button type="button" class="btn-ghost" (click)="onRoute()">Cancel</button>
+    </div>
+  </header>
+
+  <!-- â”€â”€ Tab Navigation â”€â”€ -->
+  <nav class="tab-bar">
+    <button type="button" class="tab-item" [class.active]="activeTab === 'content'" (click)="activeTab = 'content'">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>
+      </svg>
+      Content
+    </button>
+    <button type="button" class="tab-item" [class.active]="activeTab === 'treatment'" (click)="activeTab = 'treatment'">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+      </svg>
+      Treatment Info
+    </button>
+    <button type="button" class="tab-item" [class.active]="activeTab === 'settings'" (click)="activeTab = 'settings'">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="3"/>
+        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+      </svg>
+      Settings
+    </button>
+  </nav>
+
+  <!-- â”€â”€ Body â”€â”€ -->
+  <form [formGroup]="surgeryForm" class="page-body">
+    <div class="body-layout">
+      <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+      <!--  MAIN CONTENT AREA                  -->
+      <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+      <section class="main-area">
+
+        <!-- â”€â”€ TAB: Content â”€â”€ -->
+        <div *ngIf="activeTab === 'content'" class="tab-content fade-in">
+
+          <!-- Hero Section (Component 0) -->
+          <ng-container *ngFor="let component of componentArray.controls; let i = index" formArrayName="components">
+
+            <!-- Section 0: Hero -->
+            <div *ngIf="i === 0" class="card card--hero" [formGroupName]="i">
+              <div class="card__header">
+                <div class="hero-row">
+                  <div class="avatar-edit" (click)="surgeryIcon.click()">
+                    <img class="avatar-img" [src]="control['imageUrl'].value" alt="" />
+                    <div class="avatar-overlay">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2">
+                        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                        <circle cx="12" cy="13" r="4"/>
+                      </svg>
+                    </div>
+                  </div>
+                  <input accept="image/jpeg, image/jpg, image/png" #surgeryIcon type="file"
+                    style="display:none" (change)="onUploadFile($event, 'imageUrl', false)" />
+                  <div>
+                    <h3 class="card__title">{{ component.value.title | titlecase }}</h3>
+                    <span class="card__badge badge--primary">Hero Section</span>
                   </div>
                 </div>
-                <span class="text-24 font-600">{{
-                  component.value.title | titlecase
-                }}</span>
+                <button type="button" class="btn-edit" (click)="onEdit(0)">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M11 5H6a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2v-5"/>
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                  </svg>
+                  {{ component.value.description ? 'Edit' : 'Add' }}
+                </button>
               </div>
-              <input
-                accept="image/jpeg, image/jpg, image/png"
-                #surgeryIcon
-                type="file"
-                style="display: none"
-                (change)="onUploadFile($event, 'imageUrl', false)"
-              />
-              <button class="edit" (click)="onEdit(0)">
-                <img src="assets/images/svg/editdate.svg" alt="" />
-                <span> Edit </span>
-              </button>
-            </header>
-            <div class="position-relative banner-image-wrapper w-90">
-              <img
-                [src]="componentArray.get('0')?.value.image[0]"
-                alt=""
-                class="banner-image"
-              />
-              <button
-                class="upload position-absolute"
-                (click)="bannerImage.click()"
-              >
-                <img src="assets/images/svg/fileupload.svg" />
-                <span>Upload</span>
-              </button>
-              <input
-                accept="image/jpeg, image/jpg, image/png"
-                type="file"
-                #bannerImage
-                style="display: none"
-                (change)="onUploadFile($event, '0')"
-              />
+              <div class="banner-zone">
+                <img *ngIf="componentArray.get('0')?.value.image[0]"
+                  [src]="componentArray.get('0')?.value.image[0]" alt="" class="banner-img" />
+                <img *ngIf="!componentArray.get('0')?.value.image[0]"
+                  src="assets/images/png/dummy-banner.png" alt="" class="banner-img banner-img--placeholder" />
+                <button type="button" class="btn-upload" (click)="bannerImage.click()">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                    <polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
+                  </svg>
+                  Upload Banner
+                </button>
+                <input accept="image/jpeg, image/jpg, image/png" type="file" #bannerImage
+                  style="display:none" (change)="onUploadFile($event, '0')" />
+              </div>
+              <div class="card__preview" *ngIf="component.value.description"
+                [innerHTML]="component.value.description | htmlSanitize"></div>
             </div>
-            <div
-              class="description w-90"
-              [innerHTML]="component.value.description | htmlSanitize"
-            ></div>
-          </div>
-        </div>
-        <div
-          *ngIf="i != 0"
-          class="surgery-description d-flex gap-4 align-items-start w-100"
-          [formGroupName]="i"
-        >
-          <div class="content d-flex flex-column w-100">
-            <header
-              class="d-flex gap-3 justify-content-between w-100 align-items-center"
-            >
-              <span class="text-24 font-600">{{
-                component.value.title | titlecase
-              }}</span>
-              <button class="edit" (click)="onEdit(i)">
-                <img src="assets/images/svg/editdate.svg" alt="" />
-                <span> Edit </span>
-              </button>
-            </header>
-            <div
-              class="description w-90"
-              [innerHTML]="component.value.description | htmlSanitize"
-            ></div>
-            <div class="d-flex flex-column gap-2" *ngIf="i == 3">
-              <div class="d-flex gap-3 image-container w-100">
-                <ng-container
-                  *ngFor="
-                    let image of component.get('image')?.value;
-                    let j = index
-                  "
-                >
-                  <div
-                    class="d-flex align-items-center justify-content-center symptoms-image-wrapper position-relative"
-                  >
+
+            <!-- Sections 1-5 -->
+            <div *ngIf="i !== 0" class="card" [formGroupName]="i">
+              <div class="card__header">
+                <div class="hero-row">
+                  <span class="section-number">{{ i }}</span>
+                  <h3 class="card__title">{{ component.value.title | titlecase }}</h3>
+                </div>
+                <button type="button" class="btn-edit" (click)="onEdit(i)">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M11 5H6a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2v-5"/>
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                  </svg>
+                  {{ component.value.description ? 'Edit' : 'Add' }}
+                </button>
+              </div>
+              <div class="card__preview" [innerHTML]="component.value.description | htmlSanitize"></div>
+
+              <!-- Symptom Images (Component 3) -->
+              <div class="gallery-strip" *ngIf="i == 3">
+                <ng-container *ngFor="let image of component.get('image')?.value; let j = index">
+                  <div class="gallery-thumb">
                     <img [src]="image" alt="" />
-                    <div
-                      class="button-group flex-column gap-2 position-absolute"
-                    >
-                      <button class="change" (click)="symptomsInput.click()">
-                        Change
-                      </button>
-                      <button class="delete" (click)="onDelete(i, j)">
-                        Delete
-                      </button>
-                      <input
-                        style="display: none"
-                        accept="image/jpeg, image/jpg, image/png"
-                        type="file"
-                        #symptomsInput
-                        (change)="onChangeImage($event, i, j)"
-                      />
+                    <div class="gallery-thumb__overlay">
+                      <button type="button" class="btn-gallery" (click)="symptomsInput.click()">Change</button>
+                      <button type="button" class="btn-gallery btn-gallery--danger" (click)="onDelete(i, j)">Delete</button>
+                      <input style="display:none" accept="image/jpeg, image/jpg, image/png" type="file"
+                        #symptomsInput (change)="onChangeImage($event, i, j)" />
                     </div>
                   </div>
                 </ng-container>
-                <div
-                  class="d-flex align-items-center justify-content-center symptoms-image-wrapper add-more"
-                  (click)="symptomImage.click()"
-                >
-                  <div class="text-center">
-                    <span class="text-32 add-icon">+</span>
-                    <span class="">Add more</span>
-                  </div>
+                <div class="gallery-thumb gallery-thumb--add" (click)="symptomImage.click()">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+                  </svg>
+                  <span>Add</span>
                 </div>
-                <input
-                  accept="image/jpeg, image/jpg, image/png"
-                  type="file"
-                  style="display: none"
-                  #symptomImage
-                  (change)="onUploadFile($event, i, true, true)"
-                />
+                <input accept="image/jpeg, image/jpg, image/png" type="file" style="display:none"
+                  #symptomImage (change)="onUploadFile($event, i, true, true)" />
+                <span class="error-hint" *ngIf="imageArray(i).errors?.['imagesRequired'] && imageArray(i).touched">
+                  At least one image is required.
+                </span>
               </div>
-              <span
-                class="error-hint"
-                *ngIf="imageArray(i).errors?.['imagesRequired'] && imageArray(i).touched"
-                >At least one image is required.</span
-              >
-            </div>
-          </div>
-        </div>
-      </ng-container>
-      <div class="d-flex flex-column gap-4" formArrayName="faq">
-        <div
-          class="d-flex gap-3 justify-content-between w-100 align-items-center"
-        >
-          <span class="text-24 font-600">Frequently Asked Questions</span>
-          <div
-            class="d-flex align-items-center cursor-pointer"
-            (click)="onAddFaqs()"
-          >
-            <svg-icon src="assets/images/svg/add-faqs.svg"></svg-icon>
-            <span class="ms-2 mt-1"> Add </span>
-          </div>
-        </div>
-        <div class="" *ngIf="!faqArray.controls.length">No Faqs</div>
-        <div class="d-flex flex-column gap-4">
-          <ng-container
-            *ngFor="let component of faqArray.controls; let i = index"
-          >
-            <div
-              class="border rounded-1 p-3 d-flex justify-content-between align-items-center"
-              [formGroupName]="i"
-            >
-              <div class="d-flex flex-column gap-1">
-                <span class="font-600"
-                  ><strong>Q</strong>: {{ component.value.question }}</span
-                >
-                <span><strong>A</strong>: {{ component.value.answer }}</span>
-              </div>
-              <button class="edit" (click)="onAddFaqs(true, i)">
-                <img src="assets/images/svg/editdate.svg" alt="" />
-                <span> Edit </span>
-              </button>
             </div>
           </ng-container>
+
+          <!-- FAQs -->
+          <div class="card" formArrayName="faq">
+            <div class="card__header">
+              <h3 class="card__title card__title--icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+                </svg>
+                Frequently Asked Questions
+              </h3>
+              <button type="button" class="btn-add" (click)="onAddFaqs()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+                </svg>
+                Add FAQ
+              </button>
+            </div>
+            <div class="empty-state" *ngIf="!faqArray.controls.length">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+              </svg>
+              <span>No FAQs added yet</span>
+            </div>
+            <div class="faq-list">
+              <ng-container *ngFor="let component of faqArray.controls; let i = index">
+                <div class="faq-item" [formGroupName]="i">
+                  <div class="faq-body">
+                    <div class="faq-q">
+                      <span class="faq-badge">Q</span>
+                      {{ component.value.question }}
+                    </div>
+                    <div class="faq-a">
+                      <span class="faq-badge faq-badge--alt">A</span>
+                      {{ component.value.answer }}
+                    </div>
+                  </div>
+                  <button type="button" class="btn-icon-sm" (click)="onAddFaqs(true, i)">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M11 5H6a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2v-5"/>
+                      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                    </svg>
+                  </button>
+                </div>
+              </ng-container>
+            </div>
+          </div>
         </div>
-      </div>
-      <div class="d-flex gap-4">
-        <button class="save" (click)="onSubmit()">Save and Upload</button>
-        <button class="cancel" (click)="onRoute()">Cancel</button>
-      </div>
-    </section>
-    <div class="w-25 seo-container">
-      <div class="w-100">Option</div>
-      <div class="d-flex flex-column">
-        <div
-          class="w-100 accordion-item d-flex justify-content-between align-items-center"
-          (click)="
-            activeAccordion && activeAccordion == 'seoTitle'
-              ? (activeAccordion = '')
-              : (activeAccordion = 'seoTitle')
-          "
-        >
-          <span> SEO Title </span>
-          <img
-            src="assets/images/svg/rightblackarrow.svg"
-            alt=""
-            [ngClass]="{ 'active-accordion': activeAccordion == 'seoTitle' }"
-          />
+
+        <!-- â”€â”€ TAB: Treatment Info â”€â”€ -->
+        <div *ngIf="activeTab === 'treatment'" class="tab-content fade-in">
+
+          <!-- Treatment Content Blocks -->
+          <div class="card">
+            <div class="card__header">
+              <h3 class="card__title card__title--icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>
+                </svg>
+                Treatment Content Blocks
+              </h3>
+              <span class="card__hint">Extended content for SEO treatment pages</span>
+            </div>
+            <div class="blocks-grid">
+              <div class="block-card" *ngFor="let block of [
+                {field: 'symptoms', label: 'Symptoms', icon: 'activity'},
+                {field: 'causes', label: 'Causes', icon: 'alert'},
+                {field: 'whenNeeded', label: 'When Surgery is Needed', icon: 'clock'},
+                {field: 'diagnosis', label: 'Diagnosis Methods', icon: 'search'},
+                {field: 'typesOfSurgery', label: 'Types of Surgery', icon: 'layers'},
+                {field: 'procedureSteps', label: 'Procedure Steps', icon: 'list'},
+                {field: 'benefits', label: 'Benefits', icon: 'check'},
+                {field: 'risks', label: 'Risks and Complications', icon: 'alert-triangle'},
+                {field: 'recoveryTimeline', label: 'Recovery Timeline', icon: 'calendar'},
+                {field: 'successRate', label: 'Success Rate', icon: 'trending-up'}
+              ]">
+                <div class="block-card__top">
+                  <span class="block-card__label">{{ block.label }}</span>
+                  <span class="status-dot" [class.status-dot--active]="surgeryForm.get(block.field)?.value">
+                    {{ surgeryForm.get(block.field)?.value ? 'Added' : 'Empty' }}
+                  </span>
+                </div>
+                <div class="block-card__preview" *ngIf="surgeryForm.get(block.field)?.value"
+                  [innerHTML]="surgeryForm.get(block.field)?.value | htmlSanitize"></div>
+                <div class="block-card__empty" *ngIf="!surgeryForm.get(block.field)?.value">No content added yet</div>
+                <button type="button" class="btn-block" (click)="onEditContentBlock(block.field)">
+                  {{ surgeryForm.get(block.field)?.value ? 'Edit Content' : 'Add Content' }}
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Cost Range -->
+          <div class="card" formGroupName="costRange">
+            <div class="card__header">
+              <h3 class="card__title card__title--icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                </svg>
+                Cost Range
+              </h3>
+            </div>
+            <div class="cost-row">
+              <div class="field">
+                <label class="field__label">Minimum</label>
+                <input type="number" formControlName="min" placeholder="e.g. 25000" class="field__input" />
+              </div>
+              <span class="cost-divider">to</span>
+              <div class="field">
+                <label class="field__label">Maximum</label>
+                <input type="number" formControlName="max" placeholder="e.g. 150000" class="field__input" />
+              </div>
+              <div class="field field--narrow">
+                <label class="field__label">Currency</label>
+                <select formControlName="currency" class="field__input">
+                  <option value="INR">INR</option>
+                  <option value="USD">USD</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Subtopic Pages -->
+          <div class="card">
+            <div class="card__header">
+              <h3 class="card__title card__title--icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>
+                </svg>
+                Subtopic Pages
+              </h3>
+              <span class="card__hint">Dedicated page content for /treatment/slug/cost etc.</span>
+            </div>
+            <div class="subtopic-list">
+              <div class="subtopic-row" *ngFor="let sub of [
+                {key: 'cost', label: 'Cost Page'},
+                {key: 'recovery', label: 'Recovery Page'},
+                {key: 'procedure', label: 'Procedure Page'},
+                {key: 'risks', label: 'Risks Page'},
+                {key: 'successRate', label: 'Success Rate Page'}
+              ]">
+                <div class="subtopic-row__info">
+                  <span class="subtopic-row__label">{{ sub.label }}</span>
+                  <span class="subtopic-row__status" [class.subtopic-row__status--active]="surgeryForm.get('subtopics')?.get(sub.key)?.value">
+                    {{ surgeryForm.get('subtopics')?.get(sub.key)?.value ? 'Content added' : 'No content' }}
+                  </span>
+                </div>
+                <button type="button" class="btn-edit btn-edit--sm" (click)="onEditSubtopic(sub.key)">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M11 5H6a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2v-5"/>
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                  </svg>
+                  {{ surgeryForm.get('subtopics')?.get(sub.key)?.value ? 'Edit' : 'Add' }}
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Related Treatments -->
+          <div class="card">
+            <div class="card__header">
+              <h3 class="card__title card__title--icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/>
+                  <polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/>
+                  <line x1="4" y1="4" x2="9" y2="9"/>
+                </svg>
+                Related Treatments
+              </h3>
+            </div>
+            <div class="chip-grid">
+              <div *ngFor="let s of surgeryList" class="chip"
+                [class.chip--selected]="isRelatedSelected(s._id)" (click)="onToggleRelatedTreatment(s._id)">
+                {{ s.title }}
+              </div>
+            </div>
+          </div>
         </div>
-        <textarea
-          placeholder="Type seo title"
-          formControlName="seoTitle"
-          class="seo-textarea"
-          *ngIf="activeAccordion == 'seoTitle'"
-        ></textarea>
-      </div>
-      <div class="d-flex flex-column">
-        <div
-          class="w-100 accordion-item d-flex justify-content-between align-items-center"
-          (click)="
-            activeAccordion && activeAccordion == 'seoDescription'
-              ? (activeAccordion = '')
-              : (activeAccordion = 'seoDescription')
-          "
-        >
-          <span> SEO Description </span>
-          <img
-            src="assets/images/svg/rightblackarrow.svg"
-            alt=""
-            [ngClass]="{
-              'active-accordion': activeAccordion == 'seoDescription'
-            }"
-          />
+
+        <!-- â”€â”€ TAB: Settings (SEO & E-E-A-T) â”€â”€ -->
+        <div *ngIf="activeTab === 'settings'" class="tab-content fade-in">
+
+          <!-- Medical Reviewer -->
+          <div class="card" formGroupName="medicalReviewer">
+            <div class="card__header">
+              <h3 class="card__title card__title--icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/>
+                  <path d="M20 8v6"/><path d="M23 11h-6"/>
+                </svg>
+                Medical Reviewer (E-E-A-T)
+              </h3>
+            </div>
+            <div class="form-grid">
+              <div class="field">
+                <label class="field__label">Reviewer Name</label>
+                <input type="text" formControlName="name" placeholder="Dr. John Doe" class="field__input" />
+              </div>
+              <div class="field">
+                <label class="field__label">Qualification</label>
+                <input type="text" formControlName="qualification" placeholder="MBBS, MD" class="field__input" />
+              </div>
+              <div class="field">
+                <label class="field__label">Experience (years)</label>
+                <input type="number" formControlName="experience" placeholder="15" class="field__input" />
+              </div>
+              <div class="field">
+                <label class="field__label">Specialization</label>
+                <input type="text" formControlName="specialization" placeholder="Cardiology" class="field__input" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Author -->
+          <div class="card" formGroupName="author">
+            <div class="card__header">
+              <h3 class="card__title card__title--icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+                </svg>
+                Author
+              </h3>
+            </div>
+            <div class="form-grid form-grid--2col">
+              <div class="field">
+                <label class="field__label">Author Name</label>
+                <input type="text" formControlName="name" placeholder="Author Name" class="field__input" />
+              </div>
+              <div class="field">
+                <label class="field__label">Role</label>
+                <input type="text" formControlName="role" placeholder="Medical Writer" class="field__input" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Medical Disclaimer -->
+          <div class="card">
+            <div class="card__header">
+              <h3 class="card__title card__title--icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                  <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+                </svg>
+                Medical Disclaimer
+              </h3>
+            </div>
+            <textarea formControlName="medicalDisclaimer"
+              placeholder="Content is for informational purposes only. Always consult a qualified healthcare professional."
+              class="field__textarea"></textarea>
+          </div>
+
+          <!-- References -->
+          <div class="card">
+            <div class="card__header">
+              <h3 class="card__title card__title--icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+                  <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+                </svg>
+                References
+              </h3>
+            </div>
+
+            <!-- URL Paste & Fetch -->
+            <div class="ref-fetch-row">
+              <input type="text" [formControl]="refUrlControl"
+                     placeholder="Paste article URL and click Fetch" class="field__input"
+                     (keydown.enter)="onFetchReference(); $event.preventDefault()" />
+              <button type="button" class="btn-fetch" (click)="onFetchReference()" [disabled]="fetchingRef">
+                <svg *ngIf="!fetchingRef" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                  <polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+                </svg>
+                {{ fetchingRef ? 'Fetching...' : 'Fetch' }}
+              </button>
+            </div>
+
+            <div class="empty-state" *ngIf="!referencesArray.controls.length">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+                <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+              </svg>
+              <span>No references added</span>
+            </div>
+            <div formArrayName="references" class="ref-list">
+              <div *ngFor="let ref of referencesArray.controls; let ri = index" [formGroupName]="ri" class="ref-item">
+                <div class="ref-item__fields">
+                  <input type="text" formControlName="title" placeholder="Title" class="field__input" />
+                  <div class="ref-item__row">
+                    <input type="text" formControlName="url" placeholder="URL" class="field__input" />
+                    <input type="text" formControlName="source" placeholder="Source" class="field__input field__input--narrow" />
+                  </div>
+                </div>
+                <button type="button" class="btn-icon-danger" (click)="onRemoveReference(ri)">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
-        <textarea
-          placeholder="Type seo description"
-          formControlName="seoDescription"
-          class="seo-textarea"
-          *ngIf="activeAccordion == 'seoDescription'"
-        ></textarea>
-      </div>
-      <div class="">Select Department</div>
-      <mat-select
-        class="department-select"
-        placeholder="Select Department"
-        formControlName="departmentId"
-      >
-        <mat-option
-          *ngFor="let department of departmentList"
-          [value]="department._id"
-        >
-          {{ department.name }}
-        </mat-option>
-      </mat-select>
-      <div
-        class="error-hint"
-        *ngIf="control['departmentId'].errors?.['required'] && control['departmentId'].touched"
-      >
-        Department is required
-      </div>
+
+      </section>
+
+      <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+      <!--  SIDEBAR                            -->
+      <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+      <aside class="sidebar">
+
+        <!-- SEO Settings -->
+        <div class="sidebar-card">
+          <h4 class="sidebar-card__title">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+            SEO Settings
+          </h4>
+
+          <div class="accordion-item">
+            <div class="accordion-trigger" (click)="activeAccordion && activeAccordion == 'seoTitle' ? (activeAccordion = '') : (activeAccordion = 'seoTitle')">
+              <span>SEO Title</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                [class.rotated]="activeAccordion == 'seoTitle'">
+                <polyline points="6 9 12 15 18 9"/>
+              </svg>
+            </div>
+            <textarea placeholder="Type SEO title..." formControlName="seoTitle" class="accordion-body"
+              *ngIf="activeAccordion == 'seoTitle'"></textarea>
+          </div>
+
+          <div class="accordion-item">
+            <div class="accordion-trigger" (click)="activeAccordion && activeAccordion == 'seoDescription' ? (activeAccordion = '') : (activeAccordion = 'seoDescription')">
+              <span>SEO Description</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                [class.rotated]="activeAccordion == 'seoDescription'">
+                <polyline points="6 9 12 15 18 9"/>
+              </svg>
+            </div>
+            <textarea placeholder="Type SEO description..." formControlName="seoDescription" class="accordion-body"
+              *ngIf="activeAccordion == 'seoDescription'"></textarea>
+          </div>
+        </div>
+
+        <!-- Classification -->
+        <div class="sidebar-card">
+          <h4 class="sidebar-card__title">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+            </svg>
+            Classification
+          </h4>
+
+          <div class="sidebar-field">
+            <label class="sidebar-field__label">Department <span class="required">*</span></label>
+            <mat-select class="sidebar-select" placeholder="Select Department" formControlName="departmentId">
+              <mat-option *ngFor="let department of departmentList" [value]="department._id">
+                {{ department.name }}
+              </mat-option>
+            </mat-select>
+            <div class="error-hint" *ngIf="control['departmentId'].errors?.['required'] && control['departmentId'].touched">
+              Department is required
+            </div>
+          </div>
+
+          <div class="sidebar-field">
+            <label class="sidebar-field__label">Specializations</label>
+            <mat-select class="sidebar-select" placeholder="Select Specializations" formControlName="specializationIds" multiple>
+              <mat-option *ngFor="let spec of specializationList" [value]="spec._id">
+                {{ spec.name }}
+              </mat-option>
+            </mat-select>
+            <span class="sidebar-field__hint">Only doctors with these specializations will appear on the treatment page</span>
+          </div>
+        </div>
+
+        <!-- Publish -->
+        <div class="sidebar-card sidebar-card--publish">
+          <label class="publish-toggle">
+            <input type="checkbox" formControlName="isPublished" />
+            <div class="toggle-track">
+              <div class="toggle-knob"></div>
+            </div>
+            <div class="publish-info">
+              <span class="publish-info__label">Publish as Treatment</span>
+              <span class="publish-info__hint">Generates public /treatment/slug URL</span>
+            </div>
+          </label>
+        </div>
+      </aside>
     </div>
   </form>
 </main>

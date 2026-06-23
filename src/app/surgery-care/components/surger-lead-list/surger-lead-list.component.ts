@@ -107,6 +107,14 @@ export class SurgerLeadListComponent implements OnInit {
   get sourceFormArray() {
     return this.filterForm.controls["source"] as UntypedFormArray;
   }
+  get activeFilterCount(): number {
+    const { service, status, source } = this.filterForm.value;
+    return [
+      ...(service || []),
+      ...(status || []),
+      ...(source || []),
+    ].filter(Boolean).length;
+  }
 
   onChangeList(typeOfList: number) {
     this.filterForm.patchValue(
@@ -138,13 +146,11 @@ export class SurgerLeadListComponent implements OnInit {
     this.control["search"].valueChanges
       .pipe(debounceTime(300))
       .subscribe((res: any) => {
-        console.log(res);
 
         this.getSurgeryLeadList();
       });
   }
   onSorting(columnName: string) {
-    console.log("sorting");
     const { sort, sortOrder } = this.filterForm.value;
     sortOrder == "DESC"
       ? this.filterForm.patchValue({
@@ -164,7 +170,6 @@ export class SurgerLeadListComponent implements OnInit {
         { emitEvent: false }
       );
     this.getSurgeryLeadList();
-    console.log(this.filterForm.value);
   }
   onFilterMenuOpen() {
     const { service, source, status } = this.filterForm.value;
@@ -172,7 +177,6 @@ export class SurgerLeadListComponent implements OnInit {
     this.status = status;
     this.source = source;
     this.filterTable = false;
-    console.log(this.filterForm.value);
   }
   onFilterMenuClosed() {
     !this.filterTable
@@ -206,13 +210,11 @@ export class SurgerLeadListComponent implements OnInit {
       },
       { emitEvent: false }
     );
-    console.log(this.filterForm.value);
     this.getSurgeryLeadList();
   }
   getListing() {
     this.apiService.GetData(URLConstant.masterSurgerylist, {}).subscribe({
       next: (res: any) => {
-        console.log(res);
         const { count, data } = res.result;
         count
           ? ((this.serviceList = data), this.addCheckboxesToForm("service"))
@@ -226,7 +228,6 @@ export class SurgerLeadListComponent implements OnInit {
   addCheckboxesToForm(listName: string) {
     switch (listName) {
       case "service":
-        console.log(this.serviceList);
 
         this.serviceList.forEach(() =>
           this.serviceFormArray.push(new UntypedFormControl(false))
@@ -254,7 +255,6 @@ export class SurgerLeadListComponent implements OnInit {
         next: (res: any) => {
           this.todayCount=res?.result?.todayCount
           this.upcomingCount=res?.result?.upcomingCount
-          console.log(res);
           const { count, data } = res.result?.enquiryList;
           count? ((this.totalItems = count), (this.dataSource.data = data)): ((this.totalItems = 0), (this.dataSource.data = []));
         },
@@ -311,7 +311,6 @@ export class SurgerLeadListComponent implements OnInit {
       .PutData(`${URLConstant.surgeryLeadChange}/${id}`, { followUpDate }, {})
       .subscribe({
         next: (res: any) => {
-          console.log(res);
           this.getSurgeryLeadList();
         },
       });
@@ -408,7 +407,6 @@ export class SurgerLeadListComponent implements OnInit {
       )
       .subscribe({
         next: (res: any) => {
-          console.log(res);
           this.getSurgeryLeadList();
         },
         error: (error: any) => {
