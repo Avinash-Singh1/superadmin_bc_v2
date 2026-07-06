@@ -1,6 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { MatDialog } from "@angular/material/dialog";
-import { Router } from "@angular/router";
+import { NavigationEnd, Router } from "@angular/router";
+import { filter } from "rxjs/operators";
 import { URLConstant } from "src/app/apisURL/url";
 import { AcceptRejectComponent } from "src/app/dialogs/accept-reject/accept-reject.component";
 import { ViewDoctorHospitalComponent } from "src/app/dialogs/view-doctor-hospital/view-doctor-hospital.component";
@@ -16,6 +17,26 @@ export class HeaderComponent implements OnInit {
   doctor: boolean = false;
   hospitaldata: boolean = false;
   toggleValue: boolean = true;
+  pageTitle: string = "";
+
+  private readonly titleMap: Record<string, string> = {
+    dashboard:               "Welcome, Admin!",
+    patient:                 "Patients",
+    "doctor-hospital":       "Doctors / Hospitals",
+    "request-approval":      "Request for Approval",
+    "delete-reject-inactive":"User Management",
+    review:                  "Review",
+    appointment:             "Appointment",
+    "speciality-procedure":  "Speciality & Procedure",
+    settings:                "Settings",
+    "sync-sitemap":          "Site Operations",
+    blacklist:               "User Blacklist",
+    "doctor-kyc":            "Doctor KYC",
+    payments:                "Payments",
+    payouts:                 "Payouts",
+    reports:                 "Reports",
+    surgery:                 "Surgery Care",
+  };
 
   constructor(
     public apiservice: ApiService,
@@ -26,6 +47,17 @@ export class HeaderComponent implements OnInit {
   ngOnInit(): void {
     this.notification();
     this.userProfile();
+    this.pageTitle = this.titleFromUrl(this.route.url);
+    this.route.events
+      .pipe(filter((e): e is NavigationEnd => e instanceof NavigationEnd))
+      .subscribe((e) => { this.pageTitle = this.titleFromUrl(e.urlAfterRedirects); });
+  }
+
+  private titleFromUrl(url: string): string {
+    const seg = url.split("/").filter(Boolean);
+    // URL shape: /theme/<route-name>/...
+    const key = seg[1] || "dashboard";
+    return this.titleMap[key] ?? "";
   }
 
   getNotificationList: any;

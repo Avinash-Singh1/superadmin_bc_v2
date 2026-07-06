@@ -7,8 +7,10 @@ import { Subscription, debounceTime, distinctUntilChanged } from 'rxjs';
 import { URLConstant } from 'src/app/apisURL/url';
 import { AddNewDoctorComponent } from 'src/app/dialogs/add-new-doctor/add-new-doctor.component';
 import { ViewDoctorHospitalComponent } from 'src/app/dialogs/view-doctor-hospital/view-doctor-hospital.component';
+import { DeleteConfirmationComponent } from 'src/app/dialogs/delete-confirmation/delete-confirmation.component';
 import { ApiService } from 'src/app/shared/api.service';
 import { GlobalsearchService } from 'src/app/shared/globalsearch.service';
+import { DeleteUserService } from 'src/app/services/delete-user.service';
 export interface PeriodicElement {
   position: string;
   name: string;
@@ -42,8 +44,8 @@ const ELEMENT_DATA: PeriodicElement[] = [
 })
 export class RejectedComponent implements OnInit {
 
-  displayedColumns: string[] = ['position', 'date','name', 'specialization', 'Address','Mobile','document','status'];
-  displayedhospitalColumns: string[] = ['position', 'date','name', 'typeOf', 'Address','Mobile','document','status'];
+  displayedColumns: string[] = ['position', 'date','name', 'specialization', 'Address','Mobile','document','status','action'];
+  displayedhospitalColumns: string[] = ['position', 'date','name', 'typeOf', 'Address','Mobile','document','status','action'];
   search: any;
   subscription!: Subscription;
   dataSource: any;
@@ -75,7 +77,8 @@ export class RejectedComponent implements OnInit {
     private dialog:MatDialog,
     private apiservice:ApiService,
     private toastr:ToastrService,
-    public globalSearch: GlobalsearchService
+    public globalSearch: GlobalsearchService,
+    public deleteUserService: DeleteUserService
 
     ) { }
 
@@ -243,5 +246,32 @@ export class RejectedComponent implements OnInit {
 updateHospitalPage(event:any){
   this.hospitalPage = event;
   this.RejectedList()
+}
+
+dialogRef: any;
+deleteDoctorItem(id: any) {
+  this.dialogRef = this.dialog.open(DeleteConfirmationComponent, {
+    data: { id: id, text: 'Doctor', type: 'doctor' }
+  });
+  this.dialogRef.afterClosed().subscribe((confirmed: boolean) => {
+    if (!confirmed) return;
+    this.deleteUserService.DeleteDoctorList(id).subscribe({
+      next: () => { setTimeout(() => { this.RejectedList(); }, 500); },
+      error: (err: any) => { console.error('Error deleting doctor:', err); }
+    });
+  });
+}
+
+deleteHospitalItem(id: any) {
+  this.dialogRef = this.dialog.open(DeleteConfirmationComponent, {
+    data: { id: id, text: 'Hospital', type: 'hospital' }
+  });
+  this.dialogRef.afterClosed().subscribe((confirmed: boolean) => {
+    if (!confirmed) return;
+    this.deleteUserService.DeleteHospitalList(id).subscribe({
+      next: () => { setTimeout(() => { this.RejectedList(); }, 500); },
+      error: (err: any) => { console.error('Error deleting hospital:', err); }
+    });
+  });
 }
 }

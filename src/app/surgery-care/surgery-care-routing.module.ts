@@ -4,6 +4,7 @@ import { ROUTE_CONSTANT } from "../constant/routeconstant";
 import { SurgerLeadListComponent } from "./components/surger-lead-list/surger-lead-list.component";
 import { AddSurgeryComponent } from "./components/add-surgery/add-surgery.component";
 import { SurgeryListComponent } from "./components/surgery-list/surgery-list.component";
+import { TreatmentCitiesComponent } from "./components/treatment-cities/treatment-cities.component";
 
 const routes: Routes = [
   {
@@ -17,6 +18,10 @@ const routes: Routes = [
   {
     path: ROUTE_CONSTANT.SURGERY.SURGERY_LIST,
     component: SurgeryListComponent,
+  },
+  {
+    path: ROUTE_CONSTANT.SURGERY.TREATMENT_CITIES,
+    component: TreatmentCitiesComponent,
   },
   {
     path: "",

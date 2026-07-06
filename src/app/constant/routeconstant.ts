@@ -22,5 +22,6 @@ export const ROUTE_CONSTANT = {
     LEAD_LIST: "lead-list",
     ADD_SURGERY: "add-surgery",
     SURGERY_LIST: "list",
+    TREATMENT_CITIES: "treatment-cities",
   },
 };

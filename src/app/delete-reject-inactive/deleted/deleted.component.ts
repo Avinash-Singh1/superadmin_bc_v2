@@ -368,6 +368,29 @@ DeletedoctorList(element: any) {
   });
 }
 
+DeleteHospitalList(element: any) {
+  this.dialogRef = this.dialog.open(DeleteConfirmationComponent, {
+    data: {
+      id: element,
+      text: 'Hospital',
+      type: 'hospital'
+    }
+  });
 
+  this.dialogRef.afterClosed().subscribe((confirmed: boolean) => {
+    if (!confirmed) return;
+
+    this.deleteUserService.DeleteHospitalList(element).subscribe({
+      next: (res) => {
+        setTimeout(() => {
+          this.deletedUsers();
+        }, 500);
+      },
+      error: (err) => {
+        console.error('Error deleting hospital:', err);
+      }
+    });
+  });
+}
 
 }

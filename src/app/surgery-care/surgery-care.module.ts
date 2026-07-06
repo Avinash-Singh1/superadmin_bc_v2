@@ -19,6 +19,7 @@ import { EditSurgeryModalComponent } from "./components/edit-surgery-modal/edit-
 import { AngularSvgIconModule } from "angular-svg-icon";
 import { FaqsModalComponent } from "./components/faqs-modal/faqs-modal.component";
 import { ImageUploadModalComponent } from './components/image-upload-modal/image-upload-modal.component';
+import { TreatmentCitiesComponent } from './components/treatment-cities/treatment-cities.component';
 
 @NgModule({
   declarations: [
@@ -33,6 +34,7 @@ import { ImageUploadModalComponent } from './components/image-upload-modal/image
     EditSurgeryModalComponent,
     FaqsModalComponent,
     ImageUploadModalComponent,
+    TreatmentCitiesComponent,
   ],
   imports: [
     CommonModule,

@@ -1,82 +1,92 @@
-<app-header></app-header>
+<div class="sync-page">
+  <div class="sync-card">
 
-<div class="patientsHeader d-flex justify-content-between align-items-center">
-  <h2 class="page-title">Sitemap Management</h2>
-</div>
-
-<!-- Sitemap Meta Info -->
-<div class="sitemap-card" *ngIf="sitemapMeta">
-  <div class="card-body">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-      <h5 class="mb-0">Sitemap Overview</h5>
-      <span class="badge bg-success">{{ sitemapMeta.totalUrls | number }} Total URLs</span>
-    </div>
-    <p class="text-muted mb-2">
-      <strong>Domain:</strong> {{ sitemapMeta.domain }}
-    </p>
-    <p class="text-muted mb-3">
-      <strong>Last Generated:</strong> {{ sitemapMeta.lastGenerated | date:'medium' }}
-    </p>
-
-    <div class="table-responsive">
-      <table class="table table-sm table-bordered">
-        <thead class="table-light">
-          <tr>
-            <th>Category</th>
-            <th class="text-end">URL Count</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let cat of sitemapMeta.categories">
-            <td>{{ cat }}</td>
-            <td class="text-end">{{ sitemapMeta.urlCounts[cat] | number }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-</div>
-
-<!-- Loading Meta -->
-<div class="sitemap-card" *ngIf="loadingMeta">
-  <div class="card-body text-center">
-    <div class="spinner-border text-primary" role="status">
-      <span class="visually-hidden">Loading...</span>
-    </div>
-    <p class="mt-2 text-muted">Loading sitemap info...</p>
-  </div>
-</div>
-
-<!-- Sync Action -->
-<div class="sitemap-card">
-  <div class="card-body text-center">
-    <p class="description">
-      Click the button below to regenerate the sitemap for <b>bookcure.in</b>.
-    </p>
-
-    <button (click)="syncSitemap()" [disabled]="loading" class="btn btn-primary btn-lg">
-      <i class="bi bi-arrow-repeat me-2"></i>
-      {{ loading ? 'Syncing...' : 'Sync Sitemap' }}
-    </button>
-
-    <button (click)="loadMeta()" [disabled]="loadingMeta" class="btn btn-outline-secondary btn-lg ms-2">
-      <i class="bi bi-info-circle me-2"></i>
-      Refresh Stats
-    </button>
-
-    <!-- Progress bar while loading -->
-    <div *ngIf="loading" class="progress-container mt-4">
-      <div class="progress">
-        <div class="progress-bar progress-bar-striped progress-bar-animated w-100"></div>
+    <!-- Card Header -->
+    <div class="sync-card-header">
+      <div class="sync-icon-wrap">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
       </div>
-      <p class="mt-2 text-muted">Syncing Sitemap... Please wait</p>
+      <h2 class="sync-title">Sitemap Synchronization</h2>
+      <p class="sync-subtitle">Manually verify each sitemap section for <strong>nectarplus.health</strong></p>
+
+      <div class="sync-header-actions">
+        <button class="sync-all-btn" (click)="syncAllSequential()" [disabled]="sequentialSyncing">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          Sync All Sequentially
+        </button>
+        <button class="clear-cache-btn" (click)="clearAllCaches()" [disabled]="cacheClearLoading || sequentialSyncing">
+          <svg *ngIf="!cacheClearLoading" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+          <svg *ngIf="cacheClearLoading" class="spinning" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+          {{ cacheClearLoading ? 'Clearing...' : 'Clear All Caches' }}
+        </button>
+        <button class="stop-btn" *ngIf="sequentialSyncing" (click)="stopSequentialSync()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/></svg>
+          Stop
+        </button>
+      </div>
     </div>
 
-    <!-- Success / Error message -->
-    <div *ngIf="!loading && message" class="mt-3">
-      <p [ngClass]="{ 'text-success': message.includes('success'), 'text-danger': message.includes('Failed') }">
-        {{ message }}
-      </p>
+    <!-- Sequential Progress -->
+    <div class="sequential-progress" *ngIf="sequentialSyncing || currentSequentialIndex >= 0">
+      <div class="seq-top">
+        <span class="seq-label">
+          Syncing <strong>{{ currentSequentialIndex + 1 }}</strong> of <strong>{{ sitemapTypes.length }}</strong>
+          <span *ngIf="sitemapTypes[currentSequentialIndex]"> — {{ sitemapTypes[currentSequentialIndex].label }}</span>
+        </span>
+        <span class="countdown-badge" *ngIf="sequentialCountdown > 0">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          Next in {{ sequentialCountdown }}s
+        </span>
+      </div>
+      <div class="seq-bar-track">
+        <div class="seq-bar-fill" [style.width.%]="((currentSequentialIndex) / sitemapTypes.length) * 100"></div>
+      </div>
     </div>
+
+    <!-- Sitemap Type List -->
+    <div class="sitemap-list">
+      <div
+        class="sitemap-row"
+        *ngFor="let item of sitemapTypes; let i = index"
+        [class.row-syncing]="item.status === 'syncing'"
+        [class.row-success]="item.status === 'success'"
+        [class.row-error]="item.status === 'error'"
+      >
+        <div class="row-index">{{ i + 1 }}</div>
+
+        <div class="row-info">
+          <span class="row-label">{{ item.label }}</span>
+          <span class="row-desc">{{ item.description }}</span>
+          <span class="row-message" *ngIf="item.message" [class.msg-error]="item.status === 'error'">
+            {{ item.message }}
+          </span>
+        </div>
+
+        <div class="row-actions">
+          <span class="url-count" *ngIf="item.urlCount != null">
+            {{ item.urlCount | number }} URLs
+          </span>
+
+          <span class="status-badge" [ngClass]="'badge-' + item.status">
+            <svg *ngIf="item.status === 'syncing'" class="spinning" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+            <svg *ngIf="item.status === 'success'" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            <svg *ngIf="item.status === 'error'" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+            <svg *ngIf="item.status === 'idle'" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/></svg>
+            {{ item.status === 'idle' ? 'Idle' : item.status === 'syncing' ? 'Syncing...' : item.status === 'success' ? 'Done' : 'Error' }}
+          </span>
+
+          <button
+            class="row-sync-btn"
+            (click)="syncSingleType(item)"
+            [disabled]="item.status === 'syncing' || sequentialSyncing"
+            [class.btn-syncing]="item.status === 'syncing'"
+          >
+            <svg class="row-btn-icon" [class.spinning]="item.status === 'syncing'" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+            Sync
+          </button>
+        </div>
+      </div>
+    </div>
+
   </div>
 </div>

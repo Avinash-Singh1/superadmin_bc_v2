@@ -1,6 +1,7 @@
 <div class="galaxy d-flex m-0">
   <app-sidebar [toggle]="checkValue() != 'false'"></app-sidebar>
   <div class="wrapper" [ngClass]="{ 'nowrapper': checkValue() == 'false', 'with-sidebar': checkValue() != 'false' }">
+    <app-header></app-header>
     <router-outlet></router-outlet>
   </div>
 </div>

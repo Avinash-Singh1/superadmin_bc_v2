@@ -1,224 +1,364 @@
 @import "../../../assets/scss/main.scss";
 
-.patientsHeader {
-  padding: 24px 50px 24px 24px;
-  .patientdetail {
-    @include font($primaryFont, 600, 24px);
-    color: $black;
-  }
-  .otherFeatures {
-    .filter {
-      border: 1px solid $border;
-      padding: 12px;
-      border-radius: 10px;
-      cursor: pointer;
+$transition: 0.2s ease;
 
-      span {
-        @include font($primaryFont, 400, 18px);
-        color: $filtercolor;
-      }
-    }
-    .export {
-      border: 1px solid $border;
-      padding: 12px;
-      border-radius: 10px;
-      cursor: pointer;
-      span {
-        @include font($primaryFont, 400, 18px);
-        color: $filtercolor;
-      }
-    }
-    .search {
-      position: relative;
-
-      img {
-        position: absolute;
-        left: 20px;
-        top: 17px;
-      }
-      input {
-        height: 51px;
-        width: 300px;
-        border-radius: 10px;
-        border: 1px solid $border;
-        padding-left: 50px;
-
-        ::placeholder {
-          span {
-            @include font($primaryFont, 400, 18px);
-            color: $filtercolor;
-          }
-        }
-      }
-    }
-  }
+// -- Page --
+.sync-page {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 40px 24px;
+  min-height: calc(100vh - 64px);
+  background: #f7f6fa;
 }
-table {
-  min-width: 1500px;
+
+// -- Card --
+.sync-card {
   width: 100%;
-  .headers {
-    background-color: $mat;
-    width: 200px;
-    padding: 22px 0px;
-    color: $black;
-    @include font($primaryFont, 600, 18px);
-  }
-  .tabledata {
-    padding: 22px 0px;
-    @include font($primaryFont, 400, 18px);
-    color: $black;
+  max-width: 860px;
+  background: white;
+  border-radius: 20px;
+  border: 1px solid #eceaf2;
+  overflow: hidden;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+}
 
-    .patientimg {
-      height: 42px;
-      width: 42px;
-      border-radius: 100%;
-    }
-  }
-  .male,
-  .female {
-    padding: 8px 16px;
-    border-radius: 8px;
-  }
-  .male {
-    background-color: $male;
-  }
-  .female {
-    background-color: $female;
-  }
+.sync-card-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 36px 32px 28px;
+  border-bottom: 1px solid #f0edf5;
+  background: linear-gradient(180deg, rgba($purple, 0.03) 0%, transparent 100%);
 }
-.cancel-ok-btn {
-  .cancel,
-  .ok {
-    background: none;
-    border: none;
-    width: 80px;
-    height: 45px;
-    border-radius: 3px;
-    @include font($primaryFont, 400, 18px);
-  }
-  .cancel {
-    border: 1px solid $cancelborder;
-  }
-  .ok {
-    background-color: $okBackground;
-    color: $white;
-  }
-}
-.scrolldata {
-  overflow-x: scroll;
-}
-::-webkit-scrollbar {
-  height: 4px;
-}
-::-webkit-scrollbar-thumb {
-  background: $black;
-  border-radius: 10px;
-}
-.cursor {
-  cursor: pointer;
-}
-::ng-deep .mat-menu-panel {
-  width: 256px !important;
-  padding: 0 0 !important;
 
-  button {
-    @include font($primaryFont, 400, 18px);
-    color: $black;
+.sync-icon-wrap {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, rgba($purple, 0.12), rgba($purple, 0.06));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $purple;
+  margin-bottom: 16px;
+}
+
+.sync-title {
+  @include font($primaryFont, 700, 20px);
+  color: #1a1a2e;
+  margin: 0 0 6px;
+}
+
+.sync-subtitle {
+  @include font($primaryFont, 400, 14px);
+  color: #9a9a9a;
+  margin: 0 0 20px;
+
+  strong {
+    color: $purple;
+    font-weight: 600;
   }
 }
-::ng-deep {
-  .mat-radio-button.mat-accent.mat-radio-checked .mat-radio-outer-circle {
-    border-color: $black;
-  }
-  .mat-radio-button.mat-accent .mat-radio-inner-circle,
-  .mat-radio-button.mat-accent
-    .mat-radio-ripple
-    .mat-ripple-element:not(.mat-radio-persistent-ripple),
-  .mat-radio-button.mat-accent.mat-radio-checked .mat-radio-persistent-ripple,
-  .mat-radio-button.mat-accent:active .mat-radio-persistent-ripple {
-    background-color: $black;
-  }
-  .mat-checkbox {
-    margin-top: 20px !important;
-  }
-  .mat-radio-label-content {
-    @include font($primaryFont, 400, 18px);
-    color: $black;
-  }
+
+// -- Header Actions --
+.sync-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
 }
-.asce {
-  transform: rotate(180deg);
-}
-.reset {
-  padding: 0 10px;
+
+.sync-all-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 42px;
+  padding: 0 24px;
   border: none;
   border-radius: 10px;
-  background-color: $purple !important;
-  color: $white;
-  @include font($primaryFont, 500, 18px);
+  background: $purple;
+  color: white;
+  @include font($primaryFont, 600, 14px);
+  cursor: pointer;
+  transition: all $transition;
+
+  &:hover:not(:disabled) {
+    background: darken($purple, 8%);
+    box-shadow: 0 4px 16px rgba($purple, 0.3);
+    transform: translateY(-1px);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
 }
-.fadebutton {
-  opacity: 0.2;
+
+.clear-cache-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 42px;
+  padding: 0 24px;
+  border: none;
+  border-radius: 10px;
+  background: #d97706;
+  color: white;
+  @include font($primaryFont, 600, 14px);
+  cursor: pointer;
+  transition: all $transition;
+
+  &:hover:not(:disabled) {
+    background: darken(#d97706, 8%);
+    box-shadow: 0 4px 16px rgba(#d97706, 0.3);
+    transform: translateY(-1px);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
 }
-.nofadebutton {
-  opacity: 1;
+
+.stop-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 42px;
+  padding: 0 20px;
+  border: 2px solid #fecaca;
+  border-radius: 10px;
+  background: #fef2f2;
+  color: #dc2626;
+  @include font($primaryFont, 600, 14px);
+  cursor: pointer;
+  transition: all $transition;
+
+  &:hover {
+    background: #fee2e2;
+    border-color: #fca5a5;
+  }
 }
 
+// -- Sequential Progress --
+.sequential-progress {
+  padding: 16px 24px;
+  background: #faf9fd;
+  border-bottom: 1px solid #eceaf2;
+}
 
+.seq-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
 
-// new 
-.patientsHeader {
-  padding: 1rem 2rem;
-  border-bottom: 1px solid #e5e7eb;
-  background: #f9fafb;
+.seq-label {
+  @include font($primaryFont, 400, 13px);
+  color: #6b6b7b;
 
-  .page-title {
-    font-size: 1.5rem;
+  strong {
+    color: #1a1a2e;
     font-weight: 600;
-    margin: 0;
   }
 }
 
-.sitemap-card {
-  max-width: 600px;
-  margin: 2rem auto;
-  background: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-  padding: 2rem;
+.countdown-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  color: #c2410c;
+  @include font($primaryFont, 600, 12px);
+}
 
-  .description {
-    font-size: 0.95rem;
-    color: #6b7280;
-    margin-bottom: 1.5rem;
+.seq-bar-track {
+  width: 100%;
+  height: 5px;
+  border-radius: 3px;
+  background: #eceaf2;
+  overflow: hidden;
+}
+
+.seq-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  background: linear-gradient(90deg, $purple, lighten($purple, 15%));
+  transition: width 0.4s ease;
+}
+
+// -- Sitemap List --
+.sitemap-list {
+  padding: 8px 0 16px;
+}
+
+.sitemap-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 16px 24px;
+  border-bottom: 1px solid #f5f4f9;
+  transition: background $transition;
+
+  &:last-child {
+    border-bottom: none;
   }
 
-  button.btn {
-    min-width: 180px;
-    font-weight: 500;
-    border-radius: 8px;
+  &:hover {
+    background: #faf9fd;
   }
 
-  .progress-container {
-    .progress {
-      height: 10px;
-      border-radius: 6px;
-      overflow: hidden;
-      background-color: #e5e7eb;
-    }
-
-    .progress-bar {
-      background-color: #3b82f6;
-    }
+  &.row-syncing {
+    background: rgba($purple, 0.02);
   }
 
-  .text-success {
-    color: #16a34a !important;
-    font-weight: 500;
+  &.row-success {
+    background: rgba(#059669, 0.02);
   }
 
-  .text-danger {
-    color: #dc2626 !important;
-    font-weight: 500;
+  &.row-error {
+    background: rgba(#dc2626, 0.02);
   }
+}
+
+.row-index {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: #f0edf5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  @include font($primaryFont, 600, 12px);
+  color: $purple;
+  margin-top: 2px;
+}
+
+.row-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.row-label {
+  @include font($primaryFont, 600, 14px);
+  color: #1a1a2e;
+}
+
+.row-desc {
+  @include font($primaryFont, 400, 12px);
+  color: #9a9a9a;
+}
+
+.row-message {
+  @include font($primaryFont, 400, 12px);
+  color: #059669;
+  margin-top: 4px;
+
+  &.msg-error {
+    color: #dc2626;
+  }
+}
+
+.row-actions {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.url-count {
+  @include font($primaryFont, 500, 12px);
+  color: #6b6b7b;
+  white-space: nowrap;
+}
+
+// -- Status Badges --
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  @include font($primaryFont, 500, 12px);
+  white-space: nowrap;
+
+  &.badge-idle {
+    background: #f5f4f9;
+    color: #9a9a9a;
+    border: 1px solid #eceaf2;
+  }
+
+  &.badge-syncing {
+    background: rgba($purple, 0.08);
+    color: $purple;
+    border: 1px solid rgba($purple, 0.2);
+  }
+
+  &.badge-success {
+    background: #ecfdf5;
+    color: #059669;
+    border: 1px solid #a7f3d0;
+  }
+
+  &.badge-error {
+    background: #fef2f2;
+    color: #dc2626;
+    border: 1px solid #fecaca;
+  }
+}
+
+// -- Row Sync Button --
+.row-sync-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 34px;
+  padding: 0 14px;
+  border: 1px solid rgba($purple, 0.3);
+  border-radius: 8px;
+  background: white;
+  color: $purple;
+  @include font($primaryFont, 600, 13px);
+  cursor: pointer;
+  transition: all $transition;
+  white-space: nowrap;
+
+  &:hover:not(:disabled) {
+    background: rgba($purple, 0.06);
+    border-color: $purple;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  &.btn-syncing {
+    background: rgba($purple, 0.04);
+  }
+}
+
+.row-btn-icon {
+  flex-shrink: 0;
+}
+
+// -- Spinner --
+.spinning {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }

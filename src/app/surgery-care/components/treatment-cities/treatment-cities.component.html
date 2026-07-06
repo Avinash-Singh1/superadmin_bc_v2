@@ -1,0 +1,157 @@
+<div class="treatment-cities-container">
+  <!-- Surgery Selector -->
+  <div class="selector-section" *ngIf="!selectedSurgeryId">
+    <h3>Treatment City Management</h3>
+    <p class="hint">Select a treatment to manage its city mappings</p>
+    <div class="search-list">
+      <div
+        class="surgery-item"
+        *ngFor="let surgery of surgeryList"
+        (click)="onSelectSurgery(surgery)"
+      >
+        <span class="surgery-title">{{ surgery.title }}</span>
+        <span class="surgery-slug">{{ surgery.slug }}</span>
+      </div>
+      <div *ngIf="!surgeryList.length" class="empty-state">
+        No treatments found
+      </div>
+    </div>
+  </div>
+
+  <!-- City Mappings List -->
+  <div class="mappings-section" *ngIf="selectedSurgeryId && !showForm">
+    <div class="section-header">
+      <div>
+        <button class="btn-back" (click)="selectedSurgeryId = ''">&larr; Back</button>
+        <h3>City Mappings — {{ selectedSurgeryTitle }}</h3>
+      </div>
+      <button class="btn-add" (click)="onAddCity()">+ Add City</button>
+    </div>
+
+    <table class="city-table" *ngIf="cityMappings.length">
+      <thead>
+        <tr>
+          <th>City</th>
+          <th>Slug</th>
+          <th>SEO Title</th>
+          <th>Cost Range</th>
+          <th>Active</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let m of cityMappings">
+          <td>{{ m.cityName }}</td>
+          <td><code>{{ m.citySlug }}</code></td>
+          <td>{{ m.seoTitle || '—' }}</td>
+          <td>
+            <span *ngIf="m.costRange?.min || m.costRange?.max">
+              {{ m.costRange?.currency || 'INR' }} {{ m.costRange?.min || '—' }} – {{ m.costRange?.max || '—' }}
+            </span>
+            <span *ngIf="!m.costRange?.min && !m.costRange?.max">—</span>
+          </td>
+          <td>
+            <span class="badge" [class.active]="m.isActive" [class.inactive]="!m.isActive">
+              {{ m.isActive ? 'Active' : 'Inactive' }}
+            </span>
+          </td>
+          <td class="actions">
+            <button class="btn-edit" (click)="onEditCity(m)">Edit</button>
+            <button class="btn-delete" (click)="onDeleteCity(m._id)">Delete</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div *ngIf="!cityMappings.length" class="empty-state">
+      No city mappings yet. Click "Add City" to create one.
+    </div>
+  </div>
+
+  <!-- Add / Edit Form -->
+  <div class="form-section" *ngIf="showForm">
+    <div class="section-header">
+      <h3>{{ editingId ? 'Edit' : 'Add' }} City Mapping</h3>
+      <button class="btn-cancel" (click)="onCancelForm()">Cancel</button>
+    </div>
+
+    <form [formGroup]="cityForm" (ngSubmit)="onSaveCity()">
+      <div class="form-row">
+        <div class="form-group">
+          <label>City Name *</label>
+          <input
+            class="form-input"
+            formControlName="cityName"
+            placeholder="e.g. Mumbai"
+            (blur)="getCitySlugFromName()"
+          />
+        </div>
+        <div class="form-group">
+          <label>City Slug *</label>
+          <input
+            class="form-input"
+            formControlName="citySlug"
+            placeholder="e.g. mumbai"
+          />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>SEO Title</label>
+        <input
+          class="form-input"
+          formControlName="seoTitle"
+          placeholder="Custom SEO title for this city page"
+        />
+      </div>
+
+      <div class="form-group">
+        <label>SEO Description</label>
+        <textarea
+          class="form-textarea"
+          formControlName="seoDescription"
+          rows="3"
+          placeholder="Custom meta description for this city page"
+        ></textarea>
+      </div>
+
+      <div class="form-row" formGroupName="costRange">
+        <div class="form-group">
+          <label>Cost Min</label>
+          <input class="form-input" type="number" formControlName="min" placeholder="e.g. 50000" />
+        </div>
+        <div class="form-group">
+          <label>Cost Max</label>
+          <input class="form-input" type="number" formControlName="max" placeholder="e.g. 200000" />
+        </div>
+        <div class="form-group">
+          <label>Currency</label>
+          <input class="form-input" formControlName="currency" placeholder="INR" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Custom Content</label>
+        <textarea
+          class="form-textarea"
+          formControlName="customContent"
+          rows="5"
+          placeholder="City-specific content override"
+        ></textarea>
+      </div>
+
+      <div class="form-group toggle-row">
+        <label>Active</label>
+        <label class="switch">
+          <input type="checkbox" formControlName="isActive" />
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn-cancel" (click)="onCancelForm()">Cancel</button>
+        <button type="submit" class="btn-save">{{ editingId ? 'Update' : 'Create' }}</button>
+      </div>
+    </form>
+  </div>
+</div>

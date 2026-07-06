@@ -100,6 +100,9 @@ export class URLConstant {
   public static adminPrescriptionStats = "v1/prescription/admin/stats";
   public static addSurgery = "v1/surgery";
   public static fetchUrlMeta = "v1/surgery/fetch-url-meta";
+  public static treatmentCity = "v1/surgery/treatment-city";
+  public static treatmentCities = "v1/surgery/treatment-cities";
+  public static doctorSearch = "v1/admin/doctor-verified-list";
   public static appointmentToolTip =
     "v1/admin/dashboard/appointment-surgery-lead/count/range-specialization";
   public static notification = "v1/common/notification";

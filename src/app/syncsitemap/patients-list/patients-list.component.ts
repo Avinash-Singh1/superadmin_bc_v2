@@ -1,15 +1,14 @@
 import { Component, OnInit } from "@angular/core";
 import { UntypedFormBuilder, UntypedFormControl } from "@angular/forms";
 import { MatDialog } from "@angular/material/dialog";
-import { log } from "console";
 import { ToastrService } from "ngx-toastr";
-import { debounceTime, distinctUntilChanged } from "rxjs";
+import { debounceTime, distinctUntilChanged, firstValueFrom, interval, Subscription } from "rxjs";
 import { URLConstant } from "src/app/apisURL/url";
 import { ApiService } from "src/app/shared/api.service";
 import { ngxCsv } from "ngx-csv/ngx-csv";
 import { DeleteConfirmationComponent } from "src/app/dialogs/delete-confirmation/delete-confirmation.component";
 import { DeleteUserService } from "src/app/services/delete-user.service"; 
-import { SitemapService, SitemapMeta } from "../sitemap.service";
+import { SitemapService } from "../sitemap.service";
 
 export interface PeriodicElement {
   name: string;
@@ -23,6 +22,16 @@ export interface PeriodicElement {
 }
 
 const ELEMENT_DATA: PeriodicElement[] = [];
+
+interface SitemapTypeItem {
+  type: string;
+  label: string;
+  description: string;
+  status: 'idle' | 'syncing' | 'success' | 'error';
+  message?: string;
+  urlCount?: number;
+}
+
 @Component({
   selector: "app-patients-list",
   templateUrl: "./patients-list.component.html",
@@ -164,335 +173,112 @@ export class PatientsListComponent implements OnInit {
     private sitemapService: SitemapService
   ) {}
 
-  // patientListForm() {
-  //   this.patientForm = this.fb.group({
-  //     gender: [""],
-  //     age: [""],
-  //     bloodgroup: [""],
-  //   });
-  // }
-
-  // sortData(sort: any) {
-  //   this.page = 1;
-  //   switch (true) {
-  //     case this.sortBy.sort != sort:
-  //       this.sortBy = {
-  //         sort,
-  //         sortOrder: "ASC",
-  //       };
-  //       break;
-  //     case this.sortBy.sortOrder == "DESC":
-  //       this.sortBy = {
-  //         sort: "",
-  //         sortOrder: "",
-  //       };
-  //       break;
-  //     case this.sortBy.sortOrder == "ASC":
-  //       this.sortBy = {
-  //         sort,
-  //         sortOrder: "DESC",
-  //       };
-  //       break;
-  //   }
-  //   this.patientList("", "");
-  // }
-
-  // changeGender(type: any, event: any) {
-  //   if (type == "gender") {
-  //     this.gender = !this.gender;
-  //   } else if (type == "age") {
-  //     this.age = !this.age;
-  //   } else if (type == "bloodGroup") {
-  //     this.bloodGroup = !this.bloodGroup;
-  //   }
-  // }
-
-  // ageBloodFilter(event: any, value: any, type: any) {
-  //   let filter;
-  //   if (value == "age" && event?.checked == true) {
-  //     let index = this.ageLimit.findIndex(
-  //       (el: any) => parseInt(el.value) == parseInt(type)
-  //     );
-  //     this.ageLimit[index].selected = true;
-  //     this.ageParam.push(event.source?.value);
-  //   } else if (value == "age" && event?.checked == false) {
-  //     let index = this.ageLimit.findIndex(
-  //       (el: any) => parseInt(el.value) == parseInt(type)
-  //     );
-  //     this.ageLimit[index].selected = false;
-  //     console.log(this.ageLimit);
-  //     this.ageParam.findIndex((ele: any) => {
-  //       if (ele === event.source.value) {
-  //         let ages = this.ageParam.indexOf(ele);
-  //         this.ageParam.splice(ages, 1);
-  //       }
-  //     });
-  //   }
-
-  //   if (value == "bloodGroup" && event?.checked == true) {
-  //     let index = this.bloodType.findIndex(
-  //       (el: any) => parseInt(el.value) == parseInt(type)
-  //     );
-  //     this.bloodType[index].selected = true;
-  //     this.bloodGroupParam.push(event.source?.value);
-  //   } else if (value == "bloodGroup" && event?.checked == false) {
-  //     let index = this.bloodType.findIndex(
-  //       (el: any) => parseInt(el.value) == parseInt(type)
-  //     );
-  //     this.bloodType[index].selected = false;
-  //     this.bloodGroupParam.findIndex((ele: any) => {
-  //       if (ele === event.source.value) {
-  //         let bloods = this.bloodGroupParam.indexOf(ele);
-  //         this.bloodGroupParam.splice(bloods, 1);
-  //       }
-  //     });
-  //   }
-  // }
-
-  // genderParam: any = "";
-  // genderCheck(event: any, value: any, disable?: any) {
-  //   console.log("hello", event);
-  //   if (disable == true) {
-  //     this.disableResetFilter = true;
-  //   }
-  //   if (event?.value == "male" || event == "male") {
-  //     this.genderParam = 1;
-  //   } else if (event?.value == "female" || event == "female") {
-  //     this.genderParam = 2;
-  //   }
-  //   this.patientList("", "");
-  // }
-
-  // disableResetFilter: boolean = false;
-  // resetcheckbox = new UntypedFormControl();
-  // patientList(event: any, value: any, disable?: any) {
-  //   let data: any = {
-  //     page: this.page,
-  //     size: this.itemsPerPage,
-  //     gender: this.genderParam,
-  //     age: this.ageParam.join(),
-  //     bloodGroup: this.bloodGroupParam.join(),
-  //     search: this.search.value,
-  //   };
-  //   let param = { ...data, ...this.sortBy };
-  //   Object.keys(param).forEach((key) => {
-  //     if (
-  //       param[key] === null ||
-  //       param[key] === undefined ||
-  //       param[key] === ""
-  //     ) {
-  //       delete param[key];
-  //     }
-  //   });
-  //   this.apiservice.GetData(URLConstant.patientList, param).subscribe(
-  //     (res: any) => {
-  //       this.dataSource = res?.result?.data;
-  //       this.totalLength = res?.result?.count;
-  //     },
-  //     (error) => {
-  //       this.toastr.error(error.message);
-  //     }
-  //   );
-  // }
-
-  // searchFunction(value: any) {
-  //   this.page = 1;
-  //   this.patientList(value, "");
-  // }
-  // updatePageNumer(event: any) {
-  //   this.page = event;
-  //   this.patientList(this.patientForm.value.gender, "");
-  //   console.log("helloss", this.patientForm.value.gender);
-  // }
-
-  // result: any;
-  // downloadPatient() {
-  //   this.result = "";
-  //   this.data = [];
-  //   let param: any = {
-  //     isExport: true,
-  //     gender: this.genderParam,
-  //     age: this.ageParam.join(),
-  //     bloodGroup: this.bloodGroupParam.join(),
-  //     search: this.search.value,
-  //   };
-  //   Object.keys(param).forEach((key) => {
-  //     if (
-  //       param[key] === null ||
-  //       param[key] === undefined ||
-  //       param[key] === ""
-  //     ) {
-  //       delete param[key];
-  //     }
-  //   });
-  //   this.apiservice
-  //     .GetData(URLConstant.patientList, param)
-  //     .subscribe((res: any) => {
-  //       this.result = res?.result?.data;
-  //       for (let i = 0; i < this.result.length; i++) {
-  //         this.data.push([
-  //           this.result[i]?.fullName,
-  //           this.result[i]?.gender == 1 ? "Male" : "Female",
-  //           this.result[i]?.address?.city,
-  //           this.result[i]?.phone,
-  //           this.result[i]?.bloodGroup == 1
-  //             ? "A+"
-  //             : this.result[i]?.bloodGroup == 2
-  //             ? "B+"
-  //             : this.result[i]?.bloodGroup == 3
-  //             ? "A-"
-  //             : this.result[i]?.bloodGroup == 4
-  //             ? "B-"
-  //             : this.result[i]?.bloodGroup == 5
-  //             ? "O+"
-  //             : this.result[i]?.bloodGroup == 6
-  //             ? "O-"
-  //             : this.result[i]?.bloodGroup == 7
-  //             ? "AB+"
-  //             : this.result[i]?.bloodGroup == 8
-  //             ? "AB-"
-  //             : "N/A",
-  //         ]);
-  //       }
-  //     });
-  // }
-  // header = ["Name", "Gender", "Address", "Mobile", "Blood Group"];
-
-  // exportToCSV() {
-  //   const headers = this.header;
-  //   var options = {
-  //     fieldSeparator: ",",
-  //     quoteStrings: '"',
-  //     decimalseparator: ".",
-  //     showLabels: true,
-  //     showTitle: true,
-  //     // title: 'Your title',
-  //     useBom: true,
-  //     headers: headers,
-  //   };
-  //   new ngxCsv(this.data, "PatientList", options);
-  // }
-  // resetFilters() {
-  //   this.disableResetFilter = false;
-  //   for (let i = 0; i < this.ageLimit.length; i++) {
-  //     this.ageLimit[i].selected = false;
-  //   }
-  //   for (let i = 0; i < this.bloodType.length; i++) {
-  //     this.bloodType[i].selected = false;
-  //   }
-
-  //   this.patientForm.reset();
-  //   let data: any = {
-  //     page: this.page,
-  //     size: this.itemsPerPage,
-  //   };
-
-  //   this.apiservice.GetData(URLConstant.patientList, data).subscribe(
-  //     (res: any) => {
-  //       this.dataSource = res?.result?.data;
-  //       this.totalLength = res?.result?.count;
-
-  //       for (let i = 0; i < this.dataSource.length; i++) {
-  //         this.dataSource[i]["name"] = this.dataSource[i]?.fullName?.split(" ");
-  //         switch (true) {
-  //           case this.dataSource[i]?.bloodGroup == 1:
-  //             this.dataSource[i].bloodGroup = "A+";
-  //             break;
-  //           case this.dataSource[i]?.bloodGroup == 2:
-  //             this.dataSource[i].bloodGroup = "B+";
-  //             break;
-  //           case this.dataSource[i]?.bloodGroup == 3:
-  //             this.dataSource[i].bloodGroup = "A-";
-  //             break;
-  //           case this.dataSource[i]?.bloodGroup == 4:
-  //             this.dataSource[i].bloodGroup = "B-";
-  //             break;
-  //           case this.dataSource[i]?.bloodGroup == 5:
-  //             this.dataSource[i].bloodGroup = "O+";
-  //             break;
-  //           case this.dataSource[i]?.bloodGroup == 6:
-  //             this.dataSource[i].bloodGroup = "O-";
-  //             break;
-  //           case this.dataSource[i]?.bloodGroup == 7:
-  //             this.dataSource[i].bloodGroup = "AB+";
-  //             break;
-  //           case this.dataSource[i]?.bloodGroup == 8:
-  //             this.dataSource[i].bloodGroup = "AB-";
-  //             break;
-  //           default:
-  //             this.dataSource[i].bloodGroup = "N/A";
-  //         }
-  //         this.bloodGroupList = [
-  //           {
-  //             bg: this.bloodGroups,
-  //           },
-  //         ];
-  //       }
-  //     },
-  //     (error) => {
-  //       this.toastr.error(error.message);
-  //     }
-  //   );
-  // }
-
-  // dialogRef: any;
-  // deletePatient(element:any,val2:any){
-  //   // console.log("deleteDoctor-Val: deletePatient: ",element);
-
-  //    this.dialogRef = this.dialog.open(DeleteConfirmationComponent, {
-  //       data: {
-  //         id: element,
-  //         text: 'patient',
-  //         type: 'patient'
-  //       }
-  //     });
-    
-  //     this.dialogRef.afterClosed().subscribe((confirmed: boolean) => {
-  //       if (!confirmed) return;
-  //           this.patientList("", "");
-  //       // this.deleteUserService.DeleteDoctorList(element).subscribe({
-  //       //   next: (res) => {
-  //       //     setTimeout(() => {
-  //       //     }, 500);
-  //       //   },
-  //       //   error: (err) => {
-  //       //     console.error('Error deleting doctor:', err);
-  //       //   }
-  //       // });
-        
-  //     });
-
-
-
-  // }
-  // EditPatient(val:any,val2:any,page:any){
-  //   // console.log("deleteDoctor-Val-EditPatient :",val2);
-  // }
-
+  ngOnInit(): void {
+  }
 
 loading = false;
-loadingMeta = false;
 message = '';
-sitemapMeta: SitemapMeta | null = null;
 
-ngOnInit(): void {
-  this.loadMeta();
-}
+// ── Per-type sitemap sync ──────────────────────────────────────────────
 
-loadMeta() {
-  this.loadingMeta = true;
+sitemapTypes: SitemapTypeItem[] = [
+  { type: 'index',                    label: 'Index / Static Pages',         description: 'Homepage and core static pages',                         status: 'idle' },
+  { type: 'cities',                   label: 'Cities',                       description: 'City homepages for all covered cities',                  status: 'idle' },
+  { type: 'doctor',                   label: 'Doctors',                      description: 'Doctor profile pages by city',                           status: 'idle' },
+  { type: 'hospital',                 label: 'Hospitals',                    description: 'Hospital pages by city',                                 status: 'idle' },
+  { type: 'treatments',               label: 'Treatments',                   description: 'Surgery and treatment landing pages',                    status: 'idle' },
+  { type: 'medicines',                label: 'Medicines',                    description: 'Medicine category pages (Myupchar)',                     status: 'idle' },
+  { type: 'specialization',           label: 'Specializations',              description: 'City + locality wise specialization pages',              status: 'idle' },
+  { type: 'service',                  label: 'Services',                     description: 'City-wise service pages',                                status: 'idle' },
+  { type: 'city-wise-specialization', label: 'City-Wise Specialization',     description: 'All city × specialization combinations',                 status: 'idle' },
+  { type: 'locality-wise-services',   label: 'Locality-Wise Services',       description: 'City × service × locality pages',                        status: 'idle' },
+  { type: 'hospital-city-localities', label: 'Hospital City Localities',     description: 'City and locality hospital listing pages',               status: 'idle' },
+  { type: 'clinic-city-localities',   label: 'Clinic City Localities',       description: 'City and locality clinic listing pages',                 status: 'idle' },
+  { type: 'doctor-city-localities',   label: 'Doctor City Localities',       description: 'City and locality doctor listing pages',                 status: 'idle' },
+  { type: 'video-consultation-hospitals', label: 'Video Consultation Hospitals', description: 'Video-only hospital profile pages',                  status: 'idle' },
+  { type: 'city-clinic-hospital-types',   label: 'City Clinic & Hospital Types', description: 'Per-city clinic/hospital type pages (heaviest)',     status: 'idle' },
+];
+
+sequentialSyncing = false;
+currentSequentialIndex = -1;
+sequentialCountdown = 0;
+syncCancelled = false;
+private countdownSub?: Subscription;
+
+syncSingleType(item: SitemapTypeItem): void {
+  item.status = 'syncing';
+  item.message = undefined;
+  item.urlCount = undefined;
   const token = localStorage.getItem('token1') || '';
-
-  this.sitemapService.getSitemapMeta(token).subscribe({
-    next: (res: any) => {
-      this.sitemapMeta = res?.result?.data || res?.result || null;
-      this.loadingMeta = false;
+  this.sitemapService.syncSitemapByType(token, item.type).subscribe({
+    next: (res) => {
+      item.status = res.success ? 'success' : 'error';
+      item.message = res.message || (res.success ? '✅ Done' : res.error || '❌ Failed');
+      item.urlCount = res.urlCount;
     },
     error: (err) => {
-      console.error('Failed to load sitemap meta:', err);
-      this.loadingMeta = false;
+      item.status = 'error';
+      item.message = err.error?.error || '❌ Failed to sync';
     },
   });
+}
+
+async syncAllSequential(): Promise<void> {
+  this.sequentialSyncing = true;
+  this.syncCancelled = false;
+  this.currentSequentialIndex = -1;
+  this.sitemapTypes.forEach((t) => { t.status = 'idle'; t.message = undefined; t.urlCount = undefined; });
+  const token = localStorage.getItem('token1') || '';
+  for (let i = 0; i < this.sitemapTypes.length; i++) {
+    if (this.syncCancelled) break;
+    this.currentSequentialIndex = i;
+    const item = this.sitemapTypes[i];
+    item.status = 'syncing';
+    item.message = undefined;
+    item.urlCount = undefined;
+    try {
+      const res = await firstValueFrom(this.sitemapService.syncSitemapByType(token, item.type));
+      item.status = res.success ? 'success' : 'error';
+      item.message = res.message || (res.success ? '✅ Done' : res.error || '❌ Failed');
+      item.urlCount = res.urlCount;
+    } catch (err: any) {
+      item.status = 'error';
+      item.message = err.error?.error || '❌ Failed to sync';
+    }
+    if (!this.syncCancelled && i < this.sitemapTypes.length - 1) {
+      await this.startCountdown(60);
+    }
+  }
+  this.sequentialSyncing = false;
+  this.currentSequentialIndex = -1;
+  this.sequentialCountdown = 0;
+}
+
+private startCountdown(seconds: number): Promise<void> {
+  return new Promise<void>((resolve) => {
+    this.sequentialCountdown = seconds;
+    this.countdownSub = interval(1000).subscribe(() => {
+      if (this.syncCancelled) {
+        this.countdownSub?.unsubscribe();
+        resolve();
+        return;
+      }
+      this.sequentialCountdown--;
+      if (this.sequentialCountdown <= 0) {
+        this.countdownSub?.unsubscribe();
+        resolve();
+      }
+    });
+  });
+}
+
+stopSequentialSync(): void {
+  this.syncCancelled = true;
+  this.countdownSub?.unsubscribe();
+  this.sequentialCountdown = 0;
+  this.sequentialSyncing = false;
+  this.currentSequentialIndex = -1;
+  this.sitemapTypes.forEach((t) => { if (t.status === 'syncing') t.status = 'idle'; });
 }
 
 syncSitemap() {
@@ -507,10 +293,6 @@ syncSitemap() {
         ? res.message || '✅ Sitemap synced successfully'
         : res.error || '❌ Failed';
       this.loading = false;
-      // Refresh meta after successful sync
-      if (res.success) {
-        setTimeout(() => this.loadMeta(), 2000);
-      }
     },
     error: (err) => {
       console.error(err);
@@ -520,5 +302,32 @@ syncSitemap() {
   });
 }
 
+// ── Cache Clearing ─────────────────────────────────────────────────────
+
+cacheClearLoading = false;
+cacheClearMessage = '';
+
+clearAllCaches(): void {
+  this.cacheClearLoading = true;
+  this.cacheClearMessage = '';
+  const token = localStorage.getItem('token1') || '';
+  this.sitemapService.clearCache(token).subscribe({
+    next: (res) => {
+      this.cacheClearLoading = false;
+      if (res.success) {
+        this.cacheClearMessage = res.message || '✅ All caches cleared';
+        this.toastr.success(this.cacheClearMessage, 'Cache Cleared');
+      } else {
+        this.cacheClearMessage = res.error || '❌ Failed to clear caches';
+        this.toastr.error(this.cacheClearMessage, 'Error');
+      }
+    },
+    error: (err) => {
+      this.cacheClearLoading = false;
+      this.cacheClearMessage = err.error?.error || '❌ Failed to clear caches';
+      this.toastr.error(this.cacheClearMessage, 'Error');
+    },
+  });
+}
 
 }

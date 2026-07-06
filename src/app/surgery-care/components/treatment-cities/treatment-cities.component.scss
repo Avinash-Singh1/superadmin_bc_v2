@@ -1,0 +1,337 @@
+$purple: #45197c;
+$lavender: #f2e8ff;
+
+.treatment-cities-container {
+  padding: 24px;
+  max-width: 1100px;
+
+  h3 {
+    font-size: 20px;
+    font-weight: 600;
+    color: #333;
+    margin: 0 0 4px;
+  }
+
+  .hint {
+    color: #888;
+    font-size: 13px;
+    margin: 0 0 16px;
+  }
+}
+
+// Surgery selector
+.search-list {
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+  max-height: 500px;
+  overflow-y: auto;
+
+  .surgery-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    border-bottom: 1px solid #f0f0f0;
+    cursor: pointer;
+    transition: background 0.15s;
+
+    &:hover {
+      background: $lavender;
+    }
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    .surgery-title {
+      font-weight: 500;
+      color: #333;
+    }
+
+    .surgery-slug {
+      font-size: 12px;
+      color: #999;
+      font-family: monospace;
+    }
+  }
+}
+
+// Section header
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.btn-back {
+  background: none;
+  border: none;
+  color: $purple;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 0;
+  margin-bottom: 8px;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.btn-add {
+  background: $purple;
+  color: #fff;
+  border: none;
+  padding: 8px 18px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+
+  &:hover {
+    opacity: 0.9;
+  }
+}
+
+// Table
+.city-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+
+  th {
+    background: #faf8fd;
+    text-align: left;
+    padding: 10px 14px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+
+  td {
+    padding: 10px 14px;
+    font-size: 14px;
+    color: #333;
+    border-top: 1px solid #f0f0f0;
+
+    code {
+      background: #f5f5f5;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-size: 12px;
+    }
+  }
+
+  .badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+
+    &.active {
+      background: #e6f9e6;
+      color: #2a7a2a;
+    }
+
+    &.inactive {
+      background: #fce8e8;
+      color: #b33;
+    }
+  }
+
+  .actions {
+    white-space: nowrap;
+
+    button {
+      background: none;
+      border: none;
+      font-size: 13px;
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: 4px;
+    }
+
+    .btn-edit {
+      color: $purple;
+
+      &:hover {
+        background: $lavender;
+      }
+    }
+
+    .btn-delete {
+      color: #c33;
+
+      &:hover {
+        background: #fce8e8;
+      }
+    }
+  }
+}
+
+// Empty state
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: #999;
+  font-size: 14px;
+}
+
+// Form
+.form-section {
+  background: #fff;
+  border-radius: 10px;
+  padding: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+.form-row {
+  display: flex;
+  gap: 16px;
+
+  .form-group {
+    flex: 1;
+  }
+}
+
+.form-group {
+  margin-bottom: 16px;
+
+  label {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    color: #555;
+    margin-bottom: 6px;
+  }
+}
+
+.form-input {
+  width: 100%;
+  padding: 9px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+
+  &:focus {
+    outline: none;
+    border-color: $purple;
+    box-shadow: 0 0 0 2px rgba($purple, 0.1);
+  }
+}
+
+.form-textarea {
+  width: 100%;
+  padding: 9px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+  resize: vertical;
+  box-sizing: border-box;
+
+  &:focus {
+    outline: none;
+    border-color: $purple;
+    box-shadow: 0 0 0 2px rgba($purple, 0.1);
+  }
+}
+
+// Toggle switch
+.toggle-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  label:first-child {
+    margin-bottom: 0;
+  }
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+
+  input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    inset: 0;
+    background: #ccc;
+    border-radius: 24px;
+    transition: 0.3s;
+
+    &::before {
+      content: "";
+      position: absolute;
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background: #fff;
+      border-radius: 50%;
+      transition: 0.3s;
+    }
+  }
+
+  input:checked + .slider {
+    background: $purple;
+  }
+
+  input:checked + .slider::before {
+    transform: translateX(20px);
+  }
+}
+
+// Form actions
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.btn-cancel {
+  background: #f5f5f5;
+  color: #666;
+  border: none;
+  padding: 8px 20px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+
+  &:hover {
+    background: #eee;
+  }
+}
+
+.btn-save {
+  background: $purple;
+  color: #fff;
+  border: none;
+  padding: 8px 24px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+
+  &:hover {
+    opacity: 0.9;
+  }
+}

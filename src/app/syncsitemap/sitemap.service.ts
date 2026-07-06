@@ -32,6 +32,24 @@ export class SitemapService {
     );
   }
 
+  syncSitemapByType(
+    token: string,
+    type: string
+  ): Observable<{ success: boolean; message?: string; error?: string; urlCount?: number }> {
+    return this.http.get<{ success: boolean; message?: string; error?: string; urlCount?: number }>(
+      `${environment.BASE_URL}sync-sitemap-by-type?type=${type}`,
+      { headers: this.getHeaders(token) }
+    );
+  }
+
+  clearCache(token: string): Observable<{ success: boolean; message?: string; error?: string }> {
+    return this.http.post<{ success: boolean; message?: string; error?: string }>(
+      `${environment.BASE_URL}clear-cache`,
+      {},
+      { headers: this.getHeaders(token) }
+    );
+  }
+
   getSitemapMeta(token: string): Observable<{ result: SitemapMeta }> {
     return this.http.get<{ result: SitemapMeta }>(
       this.metaUrl,
