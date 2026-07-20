@@ -66,6 +66,8 @@ export class URLConstant {
   public static deletedpatientDoctorHospital =
     "v1/admin/get-all-user-type-status";
   public static review = "v1/admin/feedbacks";
+  public static reviewManagement = "v1/reviews/admin/manage/list";
+  public static reviewManagementDetail = "v1/reviews/admin/manage";
   public static activeInactiveDoctor = "v1/doctor/admin-active-inactive";
   public static viewRejectedDoctor = "v1/admin/get-user-details";
   public static viewReviewApproved = "v1/admin/feedbacks-details";
