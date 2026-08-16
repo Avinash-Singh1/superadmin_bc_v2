@@ -1,0 +1,51 @@
+<div class="category-list-container">
+  <div class="page-header">
+    <div class="header-copy">
+      <span class="eyebrow">TAXONOMY</span>
+      <h1>Categories</h1>
+      <p>Organise your health content into clear, discoverable topics.</p>
+    </div>
+    <button class="btn-primary" (click)="startCreate()">
+      <i class="material-icons">add</i>
+      Add Category
+    </button>
+  </div>
+
+  <ng-container *ngIf="isEditorOpen">
+    <form class="category-editor" (ngSubmit)="saveCategory()">
+      <h2>{{ editingCategory ? 'Edit Category' : 'Add Category' }}</h2>
+      <input name="name" [(ngModel)]="categoryForm.name" placeholder="Category name" required>
+      <input name="description" [(ngModel)]="categoryForm.description" placeholder="Description">
+      <input name="color" [(ngModel)]="categoryForm.color" type="color" aria-label="Category color">
+      <input name="displayOrder" [(ngModel)]="categoryForm.displayOrder" type="number" min="0" placeholder="Display order">
+      <button class="btn-primary" type="submit" [disabled]="isSaving">{{ isSaving ? 'Saving...' : 'Save Category' }}</button>
+      <button class="btn-secondary" type="button" (click)="cancelEdit()">Cancel</button>
+    </form>
+  </ng-container>
+
+  <ng-container *ngIf="isLoading">
+    <div class="loading">Loading...</div>
+  </ng-container>
+
+  <ng-container *ngIf="!isLoading">
+    <div class="categories-grid" *ngIf="categories.length; else categoryEmpty">
+      <div class="category-card" *ngFor="let category of categories; trackBy: trackByFn">
+        <div class="category-color" [style.background-color]="category.color"></div>
+        <div class="category-content">
+          <h3>{{ category.name }}</h3>
+          <p>{{ category.description }}</p>
+          <span class="blog-count">{{ (category.blogCount || 0) }} blogs</span>
+        </div>
+        <div class="category-actions">
+          <button class="btn-icon" (click)="startEdit(category)">
+            <i class="material-icons">edit</i>
+          </button>
+          <button class="btn-icon" (click)="deleteCategory(category)">
+            <i class="material-icons">delete</i>
+          </button>
+        </div>
+      </div>
+    </div>
+    <ng-template #categoryEmpty><div class="empty-state"><i class="material-icons">category</i><h3>No categories yet</h3><p>Create a category to organise your blog content.</p><button class="btn-primary" (click)="startCreate()">Add first category</button></div></ng-template>
+  </ng-container>
+</div>

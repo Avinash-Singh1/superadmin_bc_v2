@@ -1,0 +1,222 @@
+<div class="blog-list-container">
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-copy">
+      <span class="eyebrow">CONTENT STUDIO</span>
+      <h1>Blog Posts</h1>
+      <p>Create, curate, and publish trusted health content.</p>
+    </div>
+    <button class="btn-primary" (click)="createBlog()">
+      <i class="material-icons">add</i>
+      Create Blog
+    </button>
+  </div>
+
+  <!-- Filters -->
+  <div class="filters-card">
+    <div class="filters-row">
+      <!-- Search -->
+      <div class="search-box">
+        <i class="material-icons">search</i>
+        <input 
+          type="text" 
+          placeholder="Search blogs..."
+          [(ngModel)]="searchQuery"
+          (keyup.enter)="onSearch()">
+      </div>
+
+      <!-- Status Filter -->
+      <select [(ngModel)]="statusFilter" (change)="onFilterChange()" class="filter-select">
+        <option value="">All Status</option>
+        <option value="published">Published</option>
+        <option value="draft">Draft</option>
+        <option value="scheduled">Scheduled</option>
+        <option value="archived">Archived</option>
+      </select>
+
+      <!-- Category Filter -->
+      <select [(ngModel)]="categoryFilter" (change)="onFilterChange()" class="filter-select">
+        <option value="">All Categories</option>
+        <option *ngFor="let category of categories; trackBy: trackByFn" [value]="category._id">
+          {{ category.name }}
+        </option>
+      </select>
+
+      <!-- Sort -->
+      <select [(ngModel)]="sortBy" (change)="onSortChange()" class="filter-select">
+        <option value="-createdAt">Newest First</option>
+        <option value="createdAt">Oldest First</option>
+        <option value="-views">Most Viewed</option>
+        <option value="-publishDate">Recently Published</option>
+        <option value="title">Title A-Z</option>
+        <option value="-title">Title Z-A</option>
+      </select>
+
+      <!-- Refresh Button -->
+      <button class="btn-icon" (click)="loadBlogs()" title="Refresh">
+        <i class="material-icons">refresh</i>
+      </button>
+    </div>
+
+    <!-- Bulk Actions -->
+    <div *ngIf="selectedBlogs.length > 0" class="bulk-actions">
+      <span class="selection-count">{{ selectedBlogs.length }} selected</span>
+      <button class="btn-bulk" (click)="bulkPublish()">
+        <i class="material-icons">publish</i>
+        Publish
+      </button>
+      <button class="btn-bulk" (click)="bulkArchive()">
+        <i class="material-icons">archive</i>
+        Archive
+      </button>
+      <button class="btn-bulk btn-danger" (click)="bulkDelete()">
+        <i class="material-icons">delete</i>
+        Delete
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-container">
+    <div class="spinner"></div>
+    <p>Loading blogs...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error && !isLoading" class="error-container">
+    <i class="material-icons">error_outline</i>
+    <p>{{ error }}</p>
+    <button class="btn-retry" (click)="loadBlogs()">Try Again</button>
+  </div>
+
+  <!-- Blogs Table -->
+  <div *ngIf="!isLoading && !error" class="table-card">
+    <div class="table-container">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th class="checkbox-col">
+              <input 
+                type="checkbox" 
+                [checked]="selectAll"
+                (change)="toggleSelectAll()">
+            </th>
+            <th>Image</th>
+            <th>Title & Slug</th>
+            <th>Author</th>
+            <th>Category</th>
+            <th>Status</th>
+            <th>Views</th>
+            <th>Published</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let blog of blogs; trackBy: trackByFn" [class.selected]="isSelected(blog)">
+            <td class="checkbox-col">
+              <input 
+                type="checkbox" 
+                [checked]="isSelected(blog)"
+                (change)="toggleSelectBlog(blog)">
+            </td>
+            <td>
+              <img *ngIf="blog.featuredImage" 
+                   [src]="blog.thumbnail || blog.featuredImage" 
+                   alt=""
+                   class="blog-thumbnail">
+              <div *ngIf="!blog.featuredImage" class="no-image">
+                <i class="material-icons">image</i>
+              </div>
+            </td>
+            <td>
+              <div class="title-cell">
+                <strong>{{ blog.title }}</strong>
+                <span class="slug">/{{ blog.slug }}</span>
+                <div class="meta-badges">
+                  <span *ngIf="blog.isFeatured" class="badge badge-featured">
+                    <i class="material-icons">star</i> Featured
+                  </span>
+                  <span *ngIf="blog.isTrending" class="badge badge-trending">
+                    <i class="material-icons">trending_up</i> Trending
+                  </span>
+                </div>
+              </div>
+            </td>
+            <td>{{ blog.author?.name || 'N/A' }}</td>
+            <td>
+              <span 
+                class="category-badge" 
+                [style.background-color]="blog.category?.color || '#E0E0E0'">
+                {{ blog.category?.name || 'Uncategorized' }}
+              </span>
+            </td>
+            <td>
+              <span class="status-badge" [class]="getStatusClass(blog.status)">
+                <i class="material-icons">{{ getStatusIcon(blog.status) }}</i>
+                {{ blog.status }}
+              </span>
+            </td>
+            <td>
+              <strong>{{ (blog.views || 0) | number }}</strong>
+            </td>
+            <td>
+              <span *ngIf="blog.publishDate">{{ blog.publishDate | date:'mediumDate' }}</span>
+              <span *ngIf="!blog.publishDate" class="text-muted">Not published</span>
+            </td>
+            <td>
+              <div class="action-buttons">
+                <button class="btn-action" (click)="editBlog(blog)" title="Edit">
+                  <i class="material-icons">edit</i>
+                </button>
+                <button *ngIf="blog.status === 'published'" class="btn-action" (click)="viewBlog(blog)" title="View">
+                  <i class="material-icons">visibility</i>
+                </button>
+                <button *ngIf="blog.status === 'draft'" class="btn-action" (click)="publishBlog(blog)" title="Publish">
+                  <i class="material-icons">publish</i>
+                </button>
+                <button *ngIf="blog.status === 'published'" class="btn-action" (click)="archiveBlog(blog)" title="Archive">
+                  <i class="material-icons">archive</i>
+                </button>
+                <button class="btn-action btn-danger" (click)="deleteBlog(blog)" title="Delete">
+                  <i class="material-icons">delete</i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Empty State -->
+      <div *ngIf="blogs.length === 0" class="empty-state">
+        <i class="material-icons">article</i>
+        <h3>No blogs found</h3>
+        <p>Create your first blog post to get started</p>
+        <button class="btn-primary" (click)="createBlog()">
+          <i class="material-icons">add</i>
+          Create Blog
+        </button>
+      </div>
+    </div>
+
+    <!-- Pagination -->
+    <div *ngIf="totalPages > 1" class="pagination">
+      <button 
+        class="btn-page" 
+        [disabled]="currentPage === 1"
+        (click)="changePage(currentPage - 1)">
+        <i class="material-icons">chevron_left</i>
+      </button>
+
+      <span class="page-info">
+        Page {{ currentPage }} of {{ totalPages }} ({{ totalBlogs }} total)
+      </span>
+
+      <button 
+        class="btn-page" 
+        [disabled]="currentPage === totalPages"
+        (click)="changePage(currentPage + 1)">
+        <i class="material-icons">chevron_right</i>
+      </button>
+    </div>
+  </div>
+</div>

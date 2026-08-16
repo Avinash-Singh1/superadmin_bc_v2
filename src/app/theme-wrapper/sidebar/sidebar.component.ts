@@ -130,6 +130,41 @@ export class SidebarComponent {
       icon: "assets/images/svg/approval.svg",
       routerLink: `/${ROUTE_CONSTANT.THEME}/${ROUTE_CONSTANT.FEATURE_ANNOUNCEMENTS}`,
     },
+    {
+      label: "Blog Management",
+      icon: "assets/images/svg/mat-blog.svg",
+      routerLink: `/${ROUTE_CONSTANT.THEME}/blog-management`,
+      dropdown: true,
+      collapse: false,
+      dropdownIcon: "assets/images/svg/dropdown.svg",
+      list: [
+        {
+          label: "Dashboard",
+          icon: "assets/images/svg/dashboard.svg",
+          routerLink: `/${ROUTE_CONSTANT.THEME}/blog-management/dashboard`,
+        },
+        {
+          label: "Blog Posts",
+          icon: "assets/images/svg/review.svg",
+          routerLink: `/${ROUTE_CONSTANT.THEME}/blog-management/blog-list`,
+        },
+        {
+          label: "Categories",
+          icon: "assets/images/svg/speciality.svg",
+          routerLink: `/${ROUTE_CONSTANT.THEME}/blog-management/category-list`,
+        },
+        {
+          label: "Tags",
+          icon: "assets/images/svg/prescription.svg",
+          routerLink: `/${ROUTE_CONSTANT.THEME}/blog-management/tag-list`,
+        },
+        {
+          label: "Authors",
+          icon: "assets/images/svg/doctors.svg",
+          routerLink: `/${ROUTE_CONSTANT.THEME}/blog-management/author-list`,
+        },
+      ],
+    },
   ];
   settingbackGround: boolean = false;
   settingRoute() {

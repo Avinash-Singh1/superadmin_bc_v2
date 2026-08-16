@@ -1,0 +1,299 @@
+<div class="author-list-container">
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-copy">
+      <span class="eyebrow">CONTRIBUTORS</span>
+      <h1>Blog Authors</h1>
+      <p>Manage medical professionals and content creators.</p>
+    </div>
+    <button class="btn-primary" (click)="startCreate()">
+      <i class="material-icons">add</i>
+      Add Author
+    </button>
+  </div>
+
+  <!-- Author Editor Form -->
+  <section *ngIf="isEditorOpen" class="author-editor" aria-labelledby="editor-title">
+    <form (ngSubmit)="saveAuthor()" #authorFormElement="ngForm">
+      <div class="editor-header">
+        <h2 id="editor-title">
+          <i class="material-icons" aria-hidden="true">{{ editingAuthor ? 'edit' : 'add_circle_outline' }}</i>
+          {{ editingAuthor ? 'Edit Author' : 'Add New Author' }}
+        </h2>
+        <button 
+          class="btn-icon btn-close" 
+          type="button" 
+          (click)="cancelEdit()"
+          aria-label="Close editor">
+          <i class="material-icons" aria-hidden="true">close</i>
+        </button>
+      </div>
+
+      <div class="form-content">
+        <!-- Profile Image -->
+        <div class="form-group">
+          <label>Profile Picture</label>
+          <div class="image-upload">
+            <div class="image-preview" [class.has-image]="authorForm.profileImage">
+              <img *ngIf="authorForm.profileImage" [src]="authorForm.profileImage" alt="Profile preview">
+              <div *ngIf="!authorForm.profileImage" class="placeholder">
+                <i class="material-icons">person</i>
+                <span>Upload Image</span>
+              </div>
+            </div>
+            <input type="file" #fileInput (change)="onImageSelect($event)" accept="image/*" hidden>
+            <button type="button" class="btn-upload" (click)="fileInput.click()" [disabled]="isUploadingImage">
+              <i class="material-icons">cloud_upload</i>
+              {{ isUploadingImage ? 'Uploading...' : 'Choose Image' }}
+            </button>
+            <small *ngIf="imageUploadError" class="error-message">{{ imageUploadError }}</small>
+          </div>
+        </div>
+
+        <!-- Basic Info Row -->
+        <div class="form-row">
+          <div class="form-group">
+            <label for="author-name">
+              Full Name <span class="required" aria-label="required">*</span>
+            </label>
+            <input 
+              id="author-name"
+              name="name" 
+              type="text"
+              [(ngModel)]="authorForm.name" 
+              placeholder="Dr. John Smith" 
+              required
+              autocomplete="name"
+              [class.invalid]="authorFormElement.submitted && !authorForm.name.trim()">
+            <small *ngIf="authorFormElement.submitted && !authorForm.name.trim()" class="error-message">Name is required</small>
+          </div>
+
+          <div class="form-group">
+            <label for="author-email">
+              Email Address <span class="required" aria-label="required">*</span>
+            </label>
+            <input 
+              id="author-email"
+              name="email" 
+              type="email"
+              [(ngModel)]="authorForm.email" 
+              placeholder="doctor@example.com" 
+              required
+              autocomplete="email"
+              [class.invalid]="authorFormElement.submitted && !isValidEmail(authorForm.email)">
+            <small *ngIf="authorFormElement.submitted && !isValidEmail(authorForm.email)" class="error-message">Valid email is required</small>
+          </div>
+        </div>
+
+        <!-- Professional Info Row -->
+        <div class="form-row">
+          <div class="form-group">
+            <label for="author-qualification">
+              Qualifications
+              <span class="hint">Medical degrees, certifications</span>
+            </label>
+            <input 
+              id="author-qualification"
+              name="qualification" 
+              type="text"
+              [(ngModel)]="authorForm.qualification" 
+              placeholder="MBBS, MD (Cardiology)" 
+              autocomplete="off">
+          </div>
+
+          <div class="form-group">
+            <label for="author-specialization">
+              Specialization
+              <span class="hint">Area of medical expertise</span>
+            </label>
+            <input 
+              id="author-specialization"
+              name="specialization" 
+              type="text"
+              [(ngModel)]="authorForm.specialization" 
+              placeholder="Cardiology, Internal Medicine" 
+              autocomplete="off">
+          </div>
+        </div>
+
+        <!-- Bio -->
+        <div class="form-group">
+          <label for="author-bio">
+            Biography
+            <span class="hint">Professional background and expertise</span>
+          </label>
+          <textarea 
+            id="author-bio"
+            name="bio" 
+            [(ngModel)]="authorForm.bio" 
+            placeholder="Dr. Smith is a board-certified cardiologist with over 15 years of experience..."
+            rows="4"
+            maxlength="500"></textarea>
+          <small class="char-count">{{ (authorForm.bio?.length || 0) }}/500 characters</small>
+        </div>
+
+        <!-- Social Links -->
+        <div class="form-group">
+          <label>Social Links</label>
+          <div class="social-links">
+            <div class="social-input">
+              <i class="material-icons">language</i>
+              <input 
+                type="url"
+                [(ngModel)]="authorForm.website" 
+                name="website"
+                placeholder="https://website.com" 
+                autocomplete="url">
+            </div>
+            <div class="social-input">
+              <i class="fab fa-linkedin"></i>
+              <input 
+                type="url"
+                [(ngModel)]="authorForm.linkedin" 
+                name="linkedin"
+                placeholder="https://linkedin.com/in/profile" 
+                autocomplete="url">
+            </div>
+            <div class="social-input">
+              <i class="fab fa-twitter"></i>
+              <input 
+                type="url"
+                [(ngModel)]="authorForm.twitter" 
+                name="twitter"
+                placeholder="https://twitter.com/username" 
+                autocomplete="url">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button 
+          class="btn-secondary" 
+          type="button" 
+          (click)="cancelEdit()"
+          [disabled]="isSaving">
+          Cancel
+        </button>
+        <button 
+          class="btn-primary" 
+          type="submit" 
+          [disabled]="isSaving || !authorForm.name.trim() || !isValidEmail(authorForm.email)">
+          <i class="material-icons" aria-hidden="true">{{ isSaving ? 'hourglass_empty' : 'save' }}</i>
+          <span>{{ isSaving ? 'Saving...' : (editingAuthor ? 'Update Author' : 'Save Author') }}</span>
+        </button>
+      </div>
+    </form>
+  </section>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-container" role="status">
+    <div class="spinner" aria-hidden="true"></div>
+    <p>Loading authors...</p>
+  </div>
+
+  <!-- Authors List -->
+  <section *ngIf="!isLoading" class="authors-section" aria-labelledby="authors-heading">
+    <div class="section-header">
+      <h2 id="authors-heading" class="sr-only">All Authors</h2>
+      <div *ngIf="authors.length > 0" class="stats-bar">
+        <div class="stat-item">
+          <i class="material-icons" aria-hidden="true">person</i>
+          <span><strong>{{ authors.length }}</strong> Authors</span>
+        </div>
+        <div class="stat-item">
+          <i class="material-icons" aria-hidden="true">article</i>
+          <span><strong>{{ getTotalBlogCount() }}</strong> Total Posts</span>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="authors.length > 0; else noAuthors" class="authors-grid" role="list">
+      <div *ngFor="let author of authors; trackBy: trackByFn"
+           class="author-card" 
+           role="listitem">
+        
+        <div class="author-header">
+          <div class="author-avatar">
+            <img *ngIf="author.profileImage" 
+                 [src]="author.profileImage" 
+                 [alt]="author.name + ' profile picture'"
+                 (error)="onImageError($event)">
+            <div *ngIf="!author.profileImage" class="author-avatar-placeholder" [attr.data-initials]="getInitials(author.name)">
+              {{ getInitials(author.name) }}
+            </div>
+          </div>
+          
+          <div class="author-info">
+            <h3 class="author-name">{{ author.name }}</h3>
+            <p *ngIf="author.qualification" class="author-qualification">{{ author.qualification }}</p>
+            <p *ngIf="author.specialization" class="author-specialization">{{ author.specialization }}</p>
+            <div class="author-stats">
+              <span class="stat">
+                <i class="material-icons" aria-hidden="true">article</i>
+                {{ author.blogCount || 0 }} posts
+              </span>
+              <span class="stat">
+                <i class="material-icons" aria-hidden="true">visibility</i>
+                {{ author.totalViews || 0 }} views
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="author.bio" class="author-bio">
+          <p>{{ author.bio }}</p>
+        </div>
+
+        <div class="author-contact">
+          <a *ngIf="author.email" [href]="'mailto:' + author.email" class="contact-link">
+            <i class="material-icons">email</i>
+            {{ author.email }}
+          </a>
+          <div *ngIf="author.socialLinks?.website || author.socialLinks?.linkedin || author.socialLinks?.twitter" class="social-links">
+            <a *ngIf="author.socialLinks?.website" [href]="author.socialLinks.website" target="_blank" rel="noopener" class="social-link" aria-label="Website">
+              <i class="material-icons">language</i>
+            </a>
+            <a *ngIf="author.socialLinks?.linkedin" [href]="author.socialLinks.linkedin" target="_blank" rel="noopener" class="social-link" aria-label="LinkedIn">
+              <i class="fab fa-linkedin"></i>
+            </a>
+            <a *ngIf="author.socialLinks?.twitter" [href]="author.socialLinks.twitter" target="_blank" rel="noopener" class="social-link" aria-label="Twitter">
+              <i class="fab fa-twitter"></i>
+            </a>
+          </div>
+        </div>
+
+        <div class="author-actions" role="group" [attr.aria-label]="'Actions for ' + author.name">
+          <button 
+            class="btn-action btn-edit" 
+            (click)="startEdit(author)"
+            [attr.aria-label]="'Edit ' + author.name"
+            title="Edit author">
+            <i class="material-icons" aria-hidden="true">edit</i>
+            Edit
+          </button>
+          <button 
+            class="btn-action btn-delete" 
+            (click)="deleteAuthor(author)"
+            [attr.aria-label]="'Delete ' + author.name"
+            title="Delete author">
+            <i class="material-icons" aria-hidden="true">delete</i>
+            Delete
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <ng-template #noAuthors>
+      <div class="empty-state">
+        <i class="material-icons">person_outline</i>
+        <h3>No authors yet</h3>
+        <p>Add medical professionals and content creators who will write blog posts.</p>
+        <button class="btn-primary" (click)="startCreate()">
+          <i class="material-icons">add</i>
+          Add First Author
+        </button>
+      </div>
+    </ng-template>
+  </section>
+</div>

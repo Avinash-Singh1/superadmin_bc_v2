@@ -17,6 +17,7 @@ export const ROUTE_CONSTANT = {
   PAYOUTS: "payouts",
   REPORTS: "reports",
   FEATURE_ANNOUNCEMENTS: "feature-announcements",
+  BLOG_MANAGEMENT: "blog-management",
   SURGERY: {
     SURGERY: "surgery",
     LEAD_LIST: "lead-list",

@@ -1,0 +1,174 @@
+<div class="tag-list-container">
+  <header class="page-header">
+    <div class="header-copy">
+      <span class="eyebrow">TAXONOMY</span>
+      <h1>Tags</h1>
+      <p>Create tags to help users discover related health content.</p>
+    </div>
+    <button class="btn-primary" (click)="startCreate()">
+      <i class="material-icons">add</i>
+      Add Tag
+    </button>
+  </header>
+
+  <!-- Tag Editor Form -->
+  <section *ngIf="isEditorOpen" class="tag-editor" aria-labelledby="editor-title">
+    <form (ngSubmit)="saveTag()" #tagFormElement="ngForm">
+      <div class="editor-header">
+        <h2 id="editor-title">
+          <i class="material-icons" aria-hidden="true">{{ editingTag ? 'edit' : 'add_circle_outline' }}</i>
+          {{ editingTag ? 'Edit Tag' : 'Create New Tag' }}
+        </h2>
+        <button 
+          class="btn-icon btn-close" 
+          type="button" 
+          (click)="cancelEdit()"
+          aria-label="Close editor">
+          <i class="material-icons" aria-hidden="true">close</i>
+        </button>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="tag-name">
+            Tag Name <span class="required" aria-label="required">*</span>
+          </label>
+          <input 
+            id="tag-name"
+            name="name" 
+            type="text"
+            [(ngModel)]="tagForm.name" 
+            placeholder="e.g., Health Tips, Recipes" 
+            required
+            autocomplete="off"
+            [class.invalid]="tagFormElement.submitted && !tagForm.name.trim()">
+          <small *ngIf="tagFormElement.submitted && !tagForm.name.trim()" class="error-message">Tag name is required</small>
+        </div>
+
+        <div class="form-group">
+          <label for="tag-color">
+            Tag Color
+            <span class="hint">Choose a distinctive color</span>
+          </label>
+          <div class="color-picker-wrapper">
+            <input 
+              id="tag-color"
+              name="color" 
+              type="color"
+              [(ngModel)]="tagForm.color"
+              class="color-input"
+              aria-label="Select tag color">
+            <span class="color-preview" [style.background-color]="tagForm.color || '#E0E0E0'">
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="tag-description">
+          Description
+          <span class="hint">Optional: Describe when this tag should be used</span>
+        </label>
+        <textarea 
+          id="tag-description"
+          name="description" 
+          [(ngModel)]="tagForm.description" 
+          placeholder="Describe what content should use this tag..."
+          rows="3"
+          maxlength="200"></textarea>
+        <small class="char-count">{{ (tagForm.description?.length || 0) }}/200</small>
+      </div>
+
+      <div class="form-actions">
+        <button 
+          class="btn-secondary" 
+          type="button" 
+          (click)="cancelEdit()"
+          [disabled]="isSaving">
+          Cancel
+        </button>
+        <button 
+          class="btn-primary" 
+          type="submit" 
+          [disabled]="isSaving || !tagForm.name.trim()">
+          <i class="material-icons" aria-hidden="true">{{ isSaving ? 'hourglass_empty' : 'save' }}</i>
+          <span>{{ isSaving ? 'Saving...' : (editingTag ? 'Update Tag' : 'Save Tag') }}</span>
+        </button>
+      </div>
+    </form>
+  </section>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-container" role="status">
+    <div class="spinner" aria-hidden="true"></div>
+    <p>Loading tags...</p>
+  </div>
+
+  <!-- Tags Content -->
+  <section *ngIf="!isLoading" class="tags-section" aria-labelledby="tags-heading">
+    <div class="section-header">
+      <h2 id="tags-heading" class="sr-only">All Tags</h2>
+      <div *ngIf="tags.length > 0" class="stats-bar">
+        <div class="stat-item">
+          <i class="material-icons" aria-hidden="true">label</i>
+          <span><strong>{{ tags.length }}</strong> Tags</span>
+        </div>
+        <div class="stat-item">
+          <i class="material-icons" aria-hidden="true">article</i>
+          <span><strong>{{ getTotalBlogCount() }}</strong> Total Usage</span>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="tags.length > 0; else noTags" class="tags-cloud" role="list">
+      <div *ngFor="let tag of tags; trackBy: trackByFn"
+           class="tag-chip" 
+           role="listitem"
+           [style.background-color]="tag.color || '#E0E0E0'"
+           [attr.aria-label]="tag.name + ' tag with ' + (tag.blogCount || 0) + ' blogs'">
+        
+        <div class="tag-content">
+          <span class="tag-icon" aria-hidden="true">
+            <i class="material-icons">label</i>
+          </span>
+          <div class="tag-info">
+            <span class="tag-name">{{ tag.name }}</span>
+            <span *ngIf="tag.description" class="tag-description">{{ tag.description }}</span>
+          </div>
+          <span class="tag-count" [attr.aria-label]="'Used in ' + (tag.blogCount || 0) + ' blogs'">
+            {{ (tag.blogCount || 0) }}
+          </span>
+        </div>
+
+        <div class="tag-actions" role="group" [attr.aria-label]="'Actions for ' + tag.name + ' tag'">
+          <button 
+            class="btn-icon btn-edit" 
+            (click)="startEdit(tag)"
+            [attr.aria-label]="'Edit ' + tag.name + ' tag'"
+            title="Edit tag">
+            <i class="material-icons" aria-hidden="true">edit</i>
+          </button>
+          <button 
+            class="btn-icon btn-delete" 
+            (click)="deleteTag(tag)"
+            [attr.aria-label]="'Delete ' + tag.name + ' tag'"
+            title="Delete tag">
+            <i class="material-icons" aria-hidden="true">delete</i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <ng-template #noTags>
+      <div class="empty-state">
+        <i class="material-icons">label_outline</i>
+        <h3>No tags yet</h3>
+        <p>Tags help organize and categorize your content. Create your first tag to get started.</p>
+        <button class="btn-primary" (click)="startCreate()">
+          <i class="material-icons">add</i>
+          Create First Tag
+        </button>
+      </div>
+    </ng-template>
+  </section>
+</div>

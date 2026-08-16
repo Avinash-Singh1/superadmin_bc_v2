@@ -25,10 +25,16 @@ export class InterceptorInterceptor implements HttpInterceptor {
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
     const token: string | null = localStorage.getItem("token1");
+    // Do not send `Bearer null` or another stale non-JWT value. Besides being
+    // rejected by protected endpoints, it creates noisy `jwt malformed` logs
+    // for otherwise public requests such as the blog listing.
+    const isJwt = !!token && token.split(".").length === 3;
+    let headers = request.headers.set("x-api-key", environment.X_API_KEY);
+    if (isJwt) {
+      headers = headers.set("Authorization", `Bearer ${token}`);
+    }
     request = request.clone({
-      headers: request.headers
-        .set("Authorization", `Bearer ${token}`)
-        .set("x-api-key", environment.X_API_KEY),
+      headers,
     });
     return next.handle(request).pipe(
       timeout(25000),

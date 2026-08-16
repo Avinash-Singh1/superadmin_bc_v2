@@ -1,0 +1,424 @@
+<div class="blog-editor-container">
+  <!-- Header -->
+  <div class="page-header">
+    <h1>{{ isEditMode ? 'Edit Blog' : 'Create New Blog' }}</h1>
+    <div class="header-actions">
+      <button class="btn-preview" (click)="openPreview()" type="button">
+        <i class="material-icons">visibility</i>
+        Preview
+      </button>
+      <button class="btn-secondary" (click)="cancel()">Cancel</button>
+      <button class="btn-draft" (click)="saveDraft()" [disabled]="isSaving">
+        Save as Draft
+      </button>
+      <button class="btn-primary" (click)="publish()" [disabled]="isSaving">
+        {{ isSaving ? 'Saving...' : 'Publish' }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-container">
+    <div class="spinner"></div>
+    <p>Loading blog...</p>
+  </div>
+
+  <!-- Form -->
+  <form [formGroup]="blogForm" *ngIf="!isLoading" class="blog-form">
+    
+    <!-- Basic Information -->
+    <div class="form-section">
+      <h2>Basic Information</h2>
+      
+      <div class="form-group">
+        <label>Title *</label>
+        <input type="text" formControlName="title" placeholder="Enter blog title">
+      </div>
+
+      <div class="form-group">
+        <label>Slug *</label>
+        <input type="text" formControlName="slug" placeholder="blog-url-slug">
+        <small>URL-friendly version of the title</small>
+      </div>
+
+      <div class="form-group">
+        <label>Summary *</label>
+        <textarea formControlName="summary" rows="3" placeholder="Brief description..."></textarea>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Author *</label>
+          <select formControlName="author">
+            <option value="">Select Author</option>
+            <option *ngFor="let author of authors" [value]="author._id">
+              {{ author.name }}
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Category *</label>
+          <select formControlName="category">
+            <option value="">Select Category</option>
+            <option *ngFor="let category of categories" [value]="category._id">
+              {{ category.name }}
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Tags</label>
+          <ng-select 
+            [items]="tags"
+            [multiple]="true"
+            [closeOnSelect]="false"
+            [searchable]="true"
+            [clearable]="true"
+            bindLabel="name"
+            bindValue="_id"
+            formControlName="tags"
+            placeholder="Select tags"
+            notFoundText="No tags found"
+            [addTag]="false">
+            <ng-template ng-label-tmp let-item="item" let-clear="clear">
+              <span class="ng-value-label" [style.background-color]="item.color || '#e0e0e0'">
+                {{ item.name }}
+              </span>
+              <span class="ng-value-icon right" (click)="clear(item)" aria-hidden="true">×</span>
+            </ng-template>
+            <ng-template ng-option-tmp let-item="item" let-index="index">
+              <div class="tag-option">
+                <span class="tag-color-indicator" [style.background-color]="item.color || '#e0e0e0'"></span>
+                <span>{{ item.name }}</span>
+              </div>
+            </ng-template>
+          </ng-select>
+          <small>Search and select multiple tags</small>
+        </div>
+      </div>
+    </div>
+
+    <!-- Content -->
+    <div class="form-section">
+      <div class="section-header">
+        <h2>Content *</h2>
+        <div class="content-info">
+          <span class="char-count">
+            {{ getContentLength() }} characters
+          </span>
+        </div>
+      </div>
+      <div class="editor-wrapper">
+        <!-- ngx-editor Rich Text Editor -->
+        <div class="NgxEditor__Wrapper">
+          <ngx-editor-menu [editor]="editor" [toolbar]="toolbar"></ngx-editor-menu>
+          <ngx-editor
+            [editor]="editor"
+            formControlName="content"
+            [placeholder]="'Write your blog content here...'"
+          ></ngx-editor>
+        </div>
+        <small class="editor-note">
+          <i class="material-icons">info</i>
+          Use the rich text editor to format your content. Select text to see formatting options.
+        </small>
+      </div>
+    </div>
+
+    <!-- Images -->
+    <div class="form-section">
+      <h2>Images</h2>
+      
+      <div class="form-row">
+        <div class="form-group">
+          <label>Featured Image *</label>
+          <input type="file" (change)="onImageUpload($event, 'featuredImage')" accept="image/*" [disabled]="uploadingField === 'featuredImage'">
+          <small *ngIf="uploadingField === 'featuredImage'">Uploading image...</small>
+          <img [src]="imagePreviews['featuredImage'] || blogForm.get('featuredImage')?.value" *ngIf="imagePreviews['featuredImage'] || blogForm.get('featuredImage')?.value" class="image-preview" alt="Featured image preview">
+          <small class="field-error" *ngIf="blogForm.get('featuredImage')?.touched && blogForm.get('featuredImage')?.invalid">A featured image is required.</small>
+        </div>
+
+        <div class="form-group">
+          <label>Thumbnail</label>
+          <input type="file" (change)="onImageUpload($event, 'thumbnail')" accept="image/*" [disabled]="uploadingField === 'thumbnail'">
+          <small *ngIf="uploadingField === 'thumbnail'">Uploading image...</small>
+          <img [src]="imagePreviews['thumbnail'] || blogForm.get('thumbnail')?.value" *ngIf="imagePreviews['thumbnail'] || blogForm.get('thumbnail')?.value" class="image-preview" alt="Thumbnail preview">
+        </div>
+      </div>
+      <p class="field-error" *ngIf="uploadError">{{ uploadError }}</p>
+    </div>
+
+    <!-- FAQs -->
+    <div class="form-section">
+      <div class="section-header">
+        <h2>FAQs</h2>
+        <button type="button" class="btn-add" (click)="addFaq()">
+          <i class="material-icons">add</i>
+          Add FAQ
+        </button>
+      </div>
+
+      <div class="faq-list" *ngIf="faqs.length > 0">
+        <div class="faq-item" *ngFor="let faq of faqs; let i = index">
+          <div class="faq-header">
+            <span>FAQ {{ i + 1 }}</span>
+            <button type="button" class="btn-remove" (click)="removeFaq(i)">
+              <i class="material-icons">delete</i>
+            </button>
+          </div>
+          <div class="form-group">
+            <label>Question</label>
+            <input type="text" [(ngModel)]="faq.question" [ngModelOptions]="{standalone: true}" placeholder="Enter question">
+          </div>
+          <div class="form-group">
+            <label>Answer</label>
+            <textarea [(ngModel)]="faq.answer" [ngModelOptions]="{standalone: true}" rows="3" placeholder="Enter answer"></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CTA Section -->
+    <div class="form-section">
+      <h2>Call-to-Action (Optional)</h2>
+      
+      <div class="form-group">
+        <label>CTA Title</label>
+        <input type="text" formControlName="ctaTitle" placeholder="e.g., Book an Appointment">
+      </div>
+
+      <div class="form-group">
+        <label>CTA Description</label>
+        <textarea formControlName="ctaDescription" rows="2" placeholder="Brief description..."></textarea>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Button Text</label>
+          <input type="text" formControlName="ctaButtonText" placeholder="e.g., Book Now">
+        </div>
+
+        <div class="form-group">
+          <label>Button Link</label>
+          <input type="text" formControlName="ctaButtonLink" placeholder="/appointment">
+        </div>
+      </div>
+    </div>
+
+    <!-- SEO Settings -->
+    <div class="form-section">
+      <h2>SEO Settings</h2>
+      
+      <div class="form-group">
+        <label>Meta Title</label>
+        <input type="text" formControlName="metaTitle" placeholder="Enter SEO title">
+      </div>
+
+      <div class="form-group">
+        <label>Meta Description</label>
+        <textarea formControlName="metaDescription" rows="2" placeholder="Enter SEO description"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>Keywords (comma-separated)</label>
+        <input type="text" formControlName="keywords" placeholder="keyword1, keyword2, keyword3">
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Canonical URL</label>
+          <input type="text" formControlName="canonicalUrl" placeholder="https://example.com/blog/slug">
+        </div>
+
+        <div class="form-group">
+          <label>Schema Type</label>
+          <select formControlName="schemaType">
+            <option value="Article">Article</option>
+            <option value="BlogPosting">Blog Posting</option>
+            <option value="NewsArticle">News Article</option>
+            <option value="MedicalWebPage">Medical Web Page</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Publishing Options -->
+    <div class="form-section">
+      <h2>Publishing Options</h2>
+      
+      <div class="form-row">
+        <div class="form-group">
+          <label>Status</label>
+          <select formControlName="status">
+            <option value="draft">Draft</option>
+            <option value="published">Published</option>
+            <option value="scheduled">Scheduled</option>
+            <option value="archived">Archived</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Schedule Date (Optional)</label>
+          <input type="datetime-local" formControlName="scheduleDate">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group checkbox-group">
+          <label>
+            <input type="checkbox" formControlName="isFeatured">
+            <span>Featured Blog</span>
+          </label>
+        </div>
+
+        <div class="form-group checkbox-group">
+          <label>
+            <input type="checkbox" formControlName="isTrending">
+            <span>Trending Blog</span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Form Actions -->
+    <div class="form-actions">
+      <button type="button" class="btn-secondary" (click)="cancel()">Cancel</button>
+      <button type="button" class="btn-draft" (click)="saveDraft()" [disabled]="isSaving">
+        Save as Draft
+      </button>
+      <button type="button" class="btn-primary" (click)="publish()" [disabled]="isSaving">
+        {{ isSaving ? 'Saving...' : 'Publish Blog' }}
+      </button>
+    </div>
+
+  </form>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- BLOG PREVIEW MODAL (Full Frontend Replica) -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="preview-modal" *ngIf="isPreviewOpen" (click)="closePreview()">
+  <div class="preview-modal-content" (click)="$event.stopPropagation()">
+    
+    <!-- Preview Header -->
+    <div class="preview-header">
+      <div class="preview-header-left">
+        <i class="material-icons">visibility</i>
+        <span>Blog Preview</span>
+        <span class="preview-note">This is how your blog will appear on the frontend</span>
+      </div>
+      <button class="preview-close-btn" (click)="closePreview()" type="button">
+        <i class="material-icons">close</i>
+      </button>
+    </div>
+
+    <!-- Preview Body (Exact Frontend Replica) -->
+    <div class="preview-body">
+      <div class="blog-details-preview">
+        
+        <!-- Article -->
+        <article class="article-container-preview">
+          <div class="container-preview">
+            
+            <!-- Main Content -->
+            <main class="article-main-preview">
+              
+              <!-- Article Header -->
+              <header class="article-header-preview">
+                
+                <!-- Category Badge -->
+                <button class="category-badge-preview"
+                     type="button"
+                     [style.background-color]="getPreviewCategory()?.color || '#667eea'">
+                  {{ getPreviewCategory()?.name || 'Uncategorized' }}
+                </button>
+
+                <!-- Title -->
+                <h1 class="article-title-preview">{{ blogForm.get('title')?.value || 'Untitled Blog Post' }}</h1>
+
+                <!-- Summary -->
+                <p class="article-summary-preview">{{ blogForm.get('summary')?.value || 'No summary provided.' }}</p>
+
+                <!-- Meta Information -->
+                <div class="article-meta-preview">
+                  
+                  <!-- Author Info -->
+                  <div class="author-info-preview">
+                    <img [src]="getPreviewAuthor()?.profileImage || 'assets/default-avatar.png'" 
+                         [alt]="getPreviewAuthor()?.name || 'Author'"
+                         class="author-avatar-preview">
+                    <div class="author-details-preview">
+                      <span class="author-name-preview">{{ getPreviewAuthor()?.name || 'Author Name' }}</span>
+                      <span class="author-title-preview">{{ getPreviewAuthor()?.qualification || 'Medical Professional' }}</span>
+                    </div>
+                  </div>
+
+                  <!-- Meta Items -->
+                  <div class="meta-items-preview">
+                    <div class="meta-item-preview">
+                      <i class="icon-calendar"></i>
+                      <span>{{ getCurrentDate() }}</span>
+                    </div>
+                    <div class="meta-item-preview">
+                      <i class="icon-clock"></i>
+                      <span>{{ estimateReadingTime() }} min read</span>
+                    </div>
+                    <div class="meta-item-preview">
+                      <i class="icon-eye"></i>
+                      <span>0 views</span>
+                    </div>
+                  </div>
+                </div>
+              </header>
+
+              <!-- Featured Image -->
+              <div class="featured-image-preview" *ngIf="blogForm.get('featuredImage')?.value">
+                <img [src]="blogForm.get('featuredImage')?.value" 
+                     [alt]="blogForm.get('title')?.value || 'Blog image'"
+                     loading="eager">
+              </div>
+
+              <!-- Article Content — Sanitized and Styled -->
+              <div class="article-content-preview ck-content" [innerHTML]="previewContent"></div>
+
+              <!-- Tags -->
+              <div class="article-tags-preview" *ngIf="getPreviewTags().length > 0">
+                <h4>Related Topics</h4>
+                <div class="tags-list-preview">
+                  <button 
+                    *ngFor="let tag of getPreviewTags()"
+                    class="tag-preview"
+                    type="button"
+                    [style.background-color]="tag.color || '#F5F5F5'">
+                    <i class="icon-tag"></i>
+                    {{ tag.name }}
+                  </button>
+                </div>
+              </div>
+
+              <!-- FAQs -->
+              <div class="faqs-section-preview" *ngIf="faqs.length > 0">
+                <h2>Frequently Asked Questions</h2>
+                <div class="faq-list-preview">
+                  <div class="faq-item-preview" *ngFor="let faq of faqs; let i = index">
+                    <button class="faq-question-preview" type="button">
+                      <span class="faq-number-preview">Q{{ i + 1 }}</span>
+                      <h4>{{ faq.question || 'Question not provided' }}</h4>
+                      <span class="faq-chevron-preview">▼</span>
+                    </button>
+                    <div class="faq-answer-preview">
+                      <p>{{ faq.answer || 'Answer not provided' }}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </main>
+          </div>
+        </article>
+      </div>
+    </div>
+  </div>
+</div>

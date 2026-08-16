@@ -117,6 +117,13 @@ const routes: Routes = [
           ),
       },
       {
+        path: "blog-management",
+        loadChildren: () =>
+          import("../blog-management/blog-management.module").then(
+            (m) => m.BlogManagementModule
+          ),
+      },
+      {
         path: "",
         redirectTo: ROUTE_CONSTANT.DASHBOARD,
         pathMatch: "full",

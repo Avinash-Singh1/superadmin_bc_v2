@@ -1,0 +1,663 @@
+// ══════════════════════════════════════════════════════════════════════
+// PROFESSIONAL HEALTHCARE BLOG TYPOGRAPHY
+// Inspired by Mayo Clinic, Healthline, WebMD, and Medium
+// ══════════════════════════════════════════════════════════════════════
+
+// ── Design Tokens ─────────────────────────────────────────────────────
+$article-max-width: 760px;          // Optimal reading width
+$article-font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+$article-serif: Georgia, 'Times New Roman', serif;
+$article-mono: 'SF Mono', Monaco, 'Cascadia Code', 'Courier New', monospace;
+
+// Color Palette
+$text-primary: #1a1a1a;
+$text-secondary: #4a4a4a;
+$text-muted: #6c757d;
+$text-light: #868e96;
+
+$brand-primary: #0066cc;            // Healthcare blue
+$brand-accent: #00a896;             // Teal accent
+$brand-warning: #f59e0b;           // Warning/highlight
+
+$bg-surface: #ffffff;
+$bg-subtle: #f8f9fa;
+$bg-muted: #e9ecef;
+$bg-code: #1e1e1e;
+
+$border-light: #e9ecef;
+$border-medium: #dee2e6;
+
+// Spacing Scale (rem-based for accessibility)
+$space-xs: 0.5rem;    // 8px
+$space-sm: 0.75rem;   // 12px
+$space-md: 1rem;      // 16px
+$space-lg: 1.5rem;    // 24px
+$space-xl: 2rem;      // 32px
+$space-2xl: 3rem;     // 48px
+$space-3xl: 4rem;     // 64px
+
+// Typography Scale
+$text-xs: 0.8125rem;  // 13px
+$text-sm: 0.875rem;   // 14px
+$text-base: 1rem;     // 16px
+$text-lg: 1.125rem;   // 18px
+$text-xl: 1.25rem;    // 20px
+$text-2xl: 1.5rem;    // 24px
+$text-3xl: 1.875rem;  // 30px
+$text-4xl: 2.25rem;   // 36px
+
+// Line Heights
+$leading-tight: 1.25;
+$leading-snug: 1.375;
+$leading-normal: 1.5;
+$leading-relaxed: 1.625;
+$leading-loose: 1.75;
+
+// ══════════════════════════════════════════════════════════════════════
+// MAIN ARTICLE CONTENT WRAPPER
+// ══════════════════════════════════════════════════════════════════════
+
+& {
+  // Base article container
+  max-width: $article-max-width;
+  margin: 0 auto;
+  font-family: $article-font-family;
+  font-size: $text-lg;
+  line-height: $leading-loose;
+  color: $text-primary;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  
+  // Better text rendering
+  text-rendering: optimizeLegibility;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  
+  // Remove all inline styles from CKEditor content
+  * {
+    margin-bottom: 0 !important;
+    margin-top: 0 !important;
+    padding: 0 !important;
+    font-family: inherit !important;
+    font-size: inherit !important;
+    color: inherit !important;
+    line-height: inherit !important;
+    background: none !important;
+    border: none !important;
+  }
+  
+  // CRITICAL: Hide excessive <br> tags
+  // Multiple consecutive <br> tags should not create huge gaps
+  br + br,
+  br + br + br {
+    display: none !important;
+  }
+  
+  // Hide <br> tags between block elements
+  p + br,
+  h1 + br, h2 + br, h3 + br, h4 + br, h5 + br, h6 + br,
+  br + p,
+  br + h1, br + h2, br + h3, br + h4, br + h5, br + h6,
+  br + ul, br + ol, br + table, br + hr, br + blockquote,
+  ul + br, ol + br, table + br, hr + br, blockquote + br {
+    display: none !important;
+  }
+  
+  // Reapply our professional spacing and styling
+  > * {
+    margin-bottom: $space-lg;
+    
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+  
+  // ── Headings ────────────────────────────────────────────────────────
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: $article-font-family !important;
+    font-weight: 700 !important;
+    line-height: $leading-tight !important;
+    color: $text-primary !important;
+    letter-spacing: -0.02em !important;
+    margin-top: $space-2xl !important;
+    margin-bottom: $space-lg !important;
+    scroll-margin-top: 5rem;
+    
+    // Ensure first heading has no top margin
+    &:first-child {
+      margin-top: 0 !important;
+    }
+    
+    // Improve heading kerning
+    text-wrap: balance;
+  }
+  
+  h1 {
+    font-size: $text-4xl !important;
+    margin-top: $space-3xl !important;
+    
+    @media (max-width: 768px) {
+      font-size: $text-3xl !important;
+    }
+  }
+  
+  h2 {
+    font-size: $text-3xl !important;
+    margin-top: $space-2xl !important;
+    padding-bottom: $space-sm !important;
+    border-bottom: 2px solid $border-light !important;
+    
+    @media (max-width: 768px) {
+      font-size: $text-2xl !important;
+    }
+  }
+  
+  h3 {
+    font-size: $text-2xl !important;
+    margin-top: $space-xl !important;
+    
+    @media (max-width: 768px) {
+      font-size: $text-xl !important;
+    }
+  }
+  
+  h4 {
+    font-size: $text-xl !important;
+    font-weight: 600 !important;
+    margin-top: $space-xl !important;
+  }
+  
+  h5 {
+    font-size: $text-lg !important;
+    font-weight: 600 !important;
+    margin-top: $space-lg !important;
+    color: $text-secondary !important;
+  }
+  
+  h6 {
+    font-size: $text-base !important;
+    font-weight: 600 !important;
+    margin-top: $space-lg !important;
+    color: $text-secondary !important;
+    text-transform: uppercase;
+    letter-spacing: 0.05em !important;
+  }
+  
+  // ── Paragraphs ──────────────────────────────────────────────────────
+  
+  p {
+    margin-bottom: $space-lg !important;
+    line-height: $leading-loose !important;
+    color: $text-primary !important;
+    font-size: $text-lg !important;
+    
+    // Remove excessive spacing from empty paragraphs
+    &:empty {
+      margin-bottom: $space-sm !important;
+      
+      & + p:empty {
+        display: none; // Hide multiple consecutive empty paragraphs
+      }
+    }
+    
+    // Tighter spacing after headings
+    h1 + &, h2 + &, h3 + &, h4 + &, h5 + &, h6 + & {
+      margin-top: 0 !important;
+    }
+    
+    @media (max-width: 768px) {
+      font-size: $text-base !important;
+    }
+  }
+  
+  // ── Links ───────────────────────────────────────────────────────────
+  
+  a {
+    color: $brand-primary !important;
+    text-decoration: underline !important;
+    text-decoration-thickness: 1px !important;
+    text-underline-offset: 2px !important;
+    transition: all 0.2s ease !important;
+    font-weight: 500 !important;
+    
+    &:hover {
+      color: darken($brand-primary, 10%) !important;
+      text-decoration-thickness: 2px !important;
+    }
+    
+    &:visited {
+      color: adjust-hue($brand-primary, 20deg) !important;
+    }
+    
+    // External link indicator
+    &[target="_blank"]::after {
+      content: "↗";
+      display: inline-block;
+      margin-left: 0.25em;
+      font-size: 0.85em;
+      vertical-align: super;
+    }
+  }
+  
+  // ── Text Formatting ─────────────────────────────────────────────────
+  
+  strong, b {
+    font-weight: 700 !important;
+    color: $text-primary !important;
+  }
+  
+  em, i {
+    font-style: italic !important;
+  }
+  
+  u {
+    text-decoration: underline !important;
+    text-decoration-thickness: 1px !important;
+  }
+  
+  s, strike, del {
+    text-decoration: line-through !important;
+    opacity: 0.7;
+  }
+  
+  mark {
+    background-color: #fff3cd !important;
+    padding: 0.125em 0.25em !important;
+    border-radius: 2px !important;
+    color: $text-primary !important;
+  }
+  
+  code {
+    font-family: $article-mono !important;
+    font-size: 0.9em !important;
+    background-color: $bg-muted !important;
+    padding: 0.2em 0.4em !important;
+    border-radius: 3px !important;
+    color: #c7254e !important;
+    font-weight: 500 !important;
+  }
+  
+  // ── Lists ───────────────────────────────────────────────────────────
+  
+  ul, ol {
+    margin-bottom: $space-lg !important;
+    padding-left: $space-xl !important;
+    
+    li {
+      margin-bottom: $space-sm !important;
+      line-height: $leading-relaxed !important;
+      color: $text-primary !important;
+      
+      &:last-child {
+        margin-bottom: 0 !important;
+      }
+      
+      // CRITICAL: Hide any <br> tags inside list items
+      br {
+        display: none !important;
+      }
+      
+      // Nested lists
+      ul, ol {
+        margin-top: $space-sm !important;
+        margin-bottom: $space-sm !important;
+      }
+    }
+    
+    // CRITICAL: Hide any <br> tags that are direct children of lists
+    > br {
+      display: none !important;
+    }
+  }
+  
+  ul {
+    list-style-type: disc !important;
+    
+    ul {
+      list-style-type: circle !important;
+      
+      ul {
+        list-style-type: square !important;
+      }
+    }
+    
+    li::marker {
+      color: $brand-primary !important;
+    }
+  }
+  
+  ol {
+    list-style-type: decimal !important;
+    
+    ol {
+      list-style-type: lower-alpha !important;
+      
+      ol {
+        list-style-type: lower-roman !important;
+      }
+    }
+    
+    li::marker {
+      color: $brand-primary !important;
+      font-weight: 600 !important;
+    }
+  }
+  
+  // ── Blockquotes ─────────────────────────────────────────────────────
+  
+  blockquote {
+    margin: $space-xl 0 !important;
+    padding: $space-lg $space-xl !important;
+    border-left: 4px solid $brand-accent !important;
+    background: linear-gradient(90deg, rgba(0, 168, 150, 0.08) 0%, transparent 100%) !important;
+    border-radius: 0 8px 8px 0 !important;
+    font-style: italic !important;
+    color: $text-secondary !important;
+    
+    p {
+      margin-bottom: $space-md !important;
+      
+      &:last-child {
+        margin-bottom: 0 !important;
+      }
+    }
+    
+    // Citation
+    cite, footer {
+      display: block;
+      margin-top: $space-sm !important;
+      font-size: $text-sm !important;
+      font-style: normal !important;
+      color: $text-muted !important;
+      
+      &::before {
+        content: "— ";
+      }
+    }
+  }
+  
+  // ── Images ──────────────────────────────────────────────────────────
+  
+  img {
+    max-width: 100% !important;
+    height: auto !important;
+    display: block !important;
+    margin: $space-xl auto !important;
+    border-radius: 8px !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
+    
+    // Ensure responsive
+    width: auto !important;
+    
+    // Loading states
+    &[loading="lazy"] {
+      opacity: 1;
+      transition: opacity 0.3s ease;
+    }
+    
+    @media (max-width: 768px) {
+      margin: $space-lg auto !important;
+      border-radius: 6px !important;
+    }
+  }
+  
+  // Image with caption (figure)
+  figure {
+    margin: $space-xl 0 !important;
+    
+    img {
+      margin-bottom: $space-md !important;
+    }
+    
+    figcaption {
+      text-align: center !important;
+      font-size: $text-sm !important;
+      color: $text-muted !important;
+      font-style: italic !important;
+      line-height: $leading-normal !important;
+      padding: 0 $space-lg !important;
+    }
+  }
+  
+  // ── Tables ──────────────────────────────────────────────────────────
+  
+  table {
+    width: 100% !important;
+    margin: $space-xl 0 !important;
+    border-collapse: collapse !important;
+    border-radius: 8px !important;
+    overflow: hidden !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+    font-size: $text-base !important;
+    
+    // Responsive wrapper
+    display: block !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+    
+    @media (max-width: 768px) {
+      font-size: $text-sm !important;
+      margin: $space-lg 0 !important;
+    }
+    
+    thead {
+      background: linear-gradient(180deg, #f8f9fa 0%, #e9ecef 100%) !important;
+      
+      tr {
+        border-bottom: 2px solid $brand-primary !important;
+      }
+      
+      th {
+        padding: $space-md $space-lg !important;
+        text-align: left !important;
+        font-weight: 700 !important;
+        color: $text-primary !important;
+        font-size: $text-sm !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.05em !important;
+        white-space: nowrap !important;
+      }
+    }
+    
+    tbody {
+      tr {
+        border-bottom: 1px solid $border-light !important;
+        transition: background-color 0.15s ease !important;
+        
+        &:nth-child(even) {
+          background-color: $bg-subtle !important;
+        }
+        
+        &:hover {
+          background-color: rgba(0, 102, 204, 0.04) !important;
+        }
+        
+        &:last-child {
+          border-bottom: none !important;
+        }
+      }
+      
+      td {
+        padding: $space-md $space-lg !important;
+        color: $text-primary !important;
+        line-height: $leading-normal !important;
+        vertical-align: top !important;
+      }
+    }
+  }
+  
+  // ── Horizontal Rules ────────────────────────────────────────────────
+  
+  hr {
+    margin: $space-2xl 0 !important;
+    border: none !important;
+    border-top: 2px solid $border-light !important;
+    opacity: 1 !important;
+    
+    @media (max-width: 768px) {
+      margin: $space-xl 0 !important;
+    }
+  }
+  
+  // ── Code Blocks ─────────────────────────────────────────────────────
+  
+  pre {
+    margin: $space-xl 0 !important;
+    padding: $space-lg !important;
+    background-color: $bg-code !important;
+    border-radius: 8px !important;
+    overflow-x: auto !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+    
+    code {
+      background: none !important;
+      padding: 0 !important;
+      color: #e9ecef !important;
+      font-size: $text-sm !important;
+      line-height: $leading-relaxed !important;
+      display: block !important;
+    }
+    
+    // Scrollbar styling
+    &::-webkit-scrollbar {
+      height: 8px !important;
+    }
+    
+    &::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.05) !important;
+      border-radius: 4px !important;
+    }
+    
+    &::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.2) !important;
+      border-radius: 4px !important;
+      
+      &:hover {
+        background: rgba(255, 255, 255, 0.3) !important;
+      }
+    }
+  }
+  
+  // ── Media Embeds (iframes) ──────────────────────────────────────────
+  
+  iframe {
+    max-width: 100% !important;
+    margin: $space-xl 0 !important;
+    border-radius: 8px !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
+    display: block !important;
+    
+    @media (max-width: 768px) {
+      margin: $space-lg 0 !important;
+    }
+  }
+  
+  // Responsive video wrapper (16:9 aspect ratio)
+  .video-wrapper,
+  .embed-wrapper {
+    position: relative !important;
+    padding-bottom: 56.25% !important; // 16:9 aspect ratio
+    height: 0 !important;
+    margin: $space-xl 0 !important;
+    border-radius: 8px !important;
+    overflow: hidden !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
+    
+    iframe {
+      position: absolute !important;
+      top: 0 !important;
+      left: 0 !important;
+      width: 100% !important;
+      height: 100% !important;
+      margin: 0 !important;
+      border-radius: 0 !important;
+      box-shadow: none !important;
+    }
+  }
+  
+  // ── Special Elements ────────────────────────────────────────────────
+  
+  // Subscript and Superscript
+  sub, sup {
+    font-size: 0.75em !important;
+    line-height: 0 !important;
+    position: relative !important;
+    vertical-align: baseline !important;
+  }
+  
+  sub {
+    bottom: -0.25em !important;
+  }
+  
+  sup {
+    top: -0.5em !important;
+  }
+  
+  // Abbreviations
+  abbr[title] {
+    text-decoration: underline dotted !important;
+    cursor: help !important;
+    border-bottom: none !important;
+  }
+  
+  // Keyboard input
+  kbd {
+    font-family: $article-mono !important;
+    font-size: 0.9em !important;
+    padding: 0.2em 0.4em !important;
+    background-color: $bg-muted !important;
+    border: 1px solid $border-medium !important;
+    border-radius: 3px !important;
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1) !important;
+    color: $text-primary !important;
+  }
+  
+  // Definition lists
+  dl {
+    margin-bottom: $space-lg !important;
+    
+    dt {
+      font-weight: 700 !important;
+      color: $text-primary !important;
+      margin-top: $space-md !important;
+      
+      &:first-child {
+        margin-top: 0 !important;
+      }
+    }
+    
+    dd {
+      margin-left: $space-xl !important;
+      margin-bottom: $space-sm !important;
+      color: $text-secondary !important;
+    }
+  }
+  
+  // ── Accessibility ───────────────────────────────────────────────────
+  
+  // Focus indicators for keyboard navigation
+  a, button {
+    &:focus-visible {
+      outline: 2px solid $brand-primary !important;
+      outline-offset: 2px !important;
+      border-radius: 2px !important;
+    }
+  }
+  
+  // Skip link (for screen readers)
+  .skip-link {
+    position: absolute !important;
+    top: -40px !important;
+    left: 0 !important;
+    background: $brand-primary !important;
+    color: white !important;
+    padding: $space-sm $space-md !important;
+    text-decoration: none !important;
+    z-index: 100 !important;
+    
+    &:focus {
+      top: 0 !important;
+    }
+  }
+}
