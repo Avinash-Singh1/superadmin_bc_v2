@@ -1,85 +1,354 @@
 @import "../../../assets/scss/main.scss";
 
-.welcomeText {
-  @include font($primaryFont, 700, 2.25rem);
-  color: $white;
+/* ========================================
+   PROFESSIONAL LOGIN FORM
+   Modern, accessible form design
+======================================== */
+
+$form-primary: #243ffa;
+$form-primary-dark: #1a2eb8;
+$form-primary-light: #eef1ff;
+$form-text-dark: #1f2937;
+$form-text-body: #4b5563;
+$form-text-muted: #6b7280;
+$form-border: #d1d5db;
+$form-border-focus: #243ffa;
+$form-error: #dc2626;
+$form-error-bg: #fef2f2;
+$form-success: #10b981;
+$form-white: #ffffff;
+$form-bg-light: #f9fafb;
+
+.auth-login-form {
+  width: 100%;
 }
 
-.loginUser {
-  background-color: $white;
-  hr{
-    border-bottom: 1px solid rgba(0, 0, 0, 0.3);
+/* ========================================
+   LOGIN HEADER
+======================================== */
+.login-header {
+  margin-bottom: 32px;
+}
+
+.login-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: $form-text-dark;
+  line-height: 1.3;
+  margin: 0 0 8px;
+
+  @media (max-width: 767px) {
+    font-size: 24px;
   }
-  .login-content {
-    padding: 23px 32px 32px 32px;
+}
 
-    .email,
-    .password {
-      width: 420px;
-      height: 48px;
-      margin-top: 12px;
-    }
-    .parentpassword{
-      margin-top: 20px;
-      position: relative;
-      .showhide{
-        background: none;;
-      
-      .securepassword{
-        position: absolute;
-      right:20px;
-      top:52px;
-      }
-    }
-      
-    }
+.login-subtitle {
+  font-size: 14px;
+  color: $form-text-body;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* ========================================
+   FORM GROUPS
+======================================== */
+.login-form {
+  width: 100%;
+}
+
+.form-group {
+  margin-bottom: 24px;
+
+  &:last-of-type {
+    margin-bottom: 20px;
+  }
+}
+
+.form-label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 14px;
+  font-weight: 600;
+  color: $form-text-dark;
+  margin-bottom: 8px;
+}
+
+.form-label-required {
+  color: $form-error;
+}
+
+/* ========================================
+   INPUT FIELDS
+======================================== */
+.form-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.form-input-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: $form-text-muted;
+  pointer-events: none;
+  flex-shrink: 0;
+}
+
+.form-input {
+  width: 100%;
+  height: 48px;
+  padding: 0 48px;
+  font-size: 14px;
+  color: $form-text-dark;
+  background: $form-white;
+  border: 1.5px solid $form-border;
+  border-radius: 10px;
+  transition: all 0.2s ease;
+  font-family: inherit;
+
+  &::placeholder {
+    color: $form-text-muted;
   }
 
-  .admin-login,
-  .passwordheader,
-  .emailheader {
-    @include font($primaryFont, 400, 18px);
-    color: #000000;
+  &:hover {
+    border-color: darken($form-border, 10%);
   }
 
-  .admin-login {
-    padding: 20px 32px 20px 32px;
+  &:focus {
+    outline: none;
+    border-color: $form-border-focus;
+    box-shadow: 0 0 0 4px rgba($form-primary, 0.08);
   }
 
-  .forgotpassword {
-    margin-top: 28px;
+  &.form-input-error {
+    border-color: $form-error;
 
-    .rememberme {
-      .keeplogin {
-        @include font($primaryFont, 400, 18px);
-        color: #000000;
-      }
-
-      .checkuncheck {
-        width: 18px;
-        height: 18px;
-      }
-    }
-
-    .forgetpass {
-      @include font($primaryFont, 400, 18px);
-      color: #000000;
-      text-decoration: none;
-    }
-  }
-  .login{
-    button{
-    width: 100%;
-    background-color:$purple;
-    color:$white;
-    margin-top:18px;
-    @include font($primaryFont, 600, 18px);
-    padding: 8px 0;
-    border: none;
-
+    &:focus {
+      box-shadow: 0 0 0 4px rgba($form-error, 0.08);
     }
   }
 }
-input[type=checkbox] {
-  accent-color: $purple;
+
+.form-input-toggle {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  padding: 4px;
+  cursor: pointer;
+  color: $form-text-muted;
+  transition: color 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    color: $form-text-dark;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $form-primary;
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+}
+
+/* ========================================
+   ERROR MESSAGES
+======================================== */
+.form-error {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  margin-top: 8px;
+  padding: 8px 12px;
+  background: $form-error-bg;
+  border-radius: 8px;
+  font-size: 12px;
+  color: $form-error;
+  line-height: 1.5;
+
+  svg {
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  span {
+    flex: 1;
+  }
+}
+
+/* ========================================
+   FORM OPTIONS (Remember Me & Forgot)
+======================================== */
+.form-options {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 28px;
+  gap: 16px;
+
+  @media (max-width: 480px) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+}
+
+.form-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  margin: 0;
+
+  input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: $form-primary;
+    border-radius: 4px;
+  }
+}
+
+.form-checkbox-label {
+  font-size: 14px;
+  color: $form-text-body;
+  user-select: none;
+}
+
+.form-link {
+  font-size: 14px;
+  font-weight: 600;
+  color: $form-primary;
+  text-decoration: none;
+  transition: color 0.2s ease;
+
+  &:hover {
+    color: $form-primary-dark;
+    text-decoration: underline;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $form-primary;
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+}
+
+/* ========================================
+   SUBMIT BUTTON
+======================================== */
+.btn-submit {
+  width: 100%;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 0 24px;
+  font-size: 15px;
+  font-weight: 600;
+  color: $form-white;
+  background: linear-gradient(135deg, $form-primary 0%, $form-primary-dark 100%);
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba($form-primary, 0.25);
+  font-family: inherit;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba($form-primary, 0.35);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  &:focus-visible {
+    outline: 3px solid rgba($form-primary, 0.4);
+    outline-offset: 2px;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  svg {
+    flex-shrink: 0;
+    transition: transform 0.3s ease;
+  }
+
+  &:hover svg {
+    transform: translateX(4px);
+  }
+}
+
+/* ========================================
+   HELP TEXT & VERSION
+======================================== */
+.form-help {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-top: 24px;
+  padding: 14px 16px;
+  background: $form-bg-light;
+  border-radius: 10px;
+  border: 1px solid $form-border;
+
+  svg {
+    flex-shrink: 0;
+    color: $form-text-muted;
+    margin-top: 1px;
+  }
+
+  p {
+    margin: 0;
+    font-size: 12px;
+    color: $form-text-body;
+    line-height: 1.6;
+  }
+}
+
+.form-version {
+  margin: 16px 0 0;
+  font-size: 11px;
+  color: $form-text-muted;
+  text-align: center;
+}
+
+/* ========================================
+   RESPONSIVE
+======================================== */
+@media (max-width: 767px) {
+  .login-header {
+    margin-bottom: 28px;
+  }
+
+  .form-group {
+    margin-bottom: 20px;
+  }
+
+  .form-input {
+    height: 46px;
+  }
+
+  .btn-submit {
+    height: 50px;
+    font-size: 14px;
+  }
+
+  .form-help {
+    padding: 12px 14px;
+  }
 }
