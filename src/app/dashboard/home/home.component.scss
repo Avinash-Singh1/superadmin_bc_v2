@@ -137,7 +137,7 @@
     height: 3px;
     border-radius: 12px 12px 0 0;
   }
-  &.kpi-accent-0::before { background: linear-gradient(90deg, #45197c, #7c3aed); }
+  &.kpi-accent-0::before { background: linear-gradient(90deg, #243ffa, #7c3aed); }
   &.kpi-accent-1::before { background: linear-gradient(90deg, #0891b2, #22d3ee); }
   &.kpi-accent-2::before { background: linear-gradient(90deg, #059669, #34d399); }
   &.kpi-accent-3::before { background: linear-gradient(90deg, #d97706, #fbbf24); }
@@ -250,7 +250,7 @@
 
   &.active {
     background: #fff;
-    color: #45197c;
+    color: #243ffa;
     font-weight: 600;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
   }
@@ -331,7 +331,7 @@
 
   &.active {
     background: #f5f0ff;
-    color: #45197c;
+    color: #243ffa;
     font-weight: 600;
   }
   &:hover:not(.active) {

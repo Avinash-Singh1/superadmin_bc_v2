@@ -1,11 +1,110 @@
-<div class="admin-signin row align-items-center   ">
-    <div class="col-md-6 d-flex justify-content-center">
-        <img src="assets/images/svg/Illustration.svg" alt="">
-    </div>
-    <div class="col-md-6 d-flex justify-content-left">
-      <div>
-        <router-outlet></router-outlet>   
-        <!-- <app-login></app-login> -->
+<div class="admin-auth-wrapper">
+  <!-- Left Panel - Visual & Branding -->
+  <div class="auth-visual-panel">
+    <div class="auth-visual-content">
+      <!-- Logo -->
+      <div class="auth-logo">
+        <img src="assets/images/svg/logo.svg" alt="Nectar Healthcare" />
+      </div>
+
+      <!-- Hero Illustration -->
+      <div class="auth-hero-illustration">
+        <img src="assets/images/svg/doctor-img.png" alt="Healthcare Management Platform" />
+      </div>
+
+      <!-- Feature Highlights -->
+      <div class="auth-features">
+        <div class="auth-feature-item">
+          <div class="auth-feature-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+              <polyline points="22 4 12 14.01 9 11.01"/>
+            </svg>
+          </div>
+          <div class="auth-feature-text">
+            <strong>Verified Providers</strong>
+            <span>Manage doctor profiles, credentials & approvals</span>
+          </div>
+        </div>
+
+        <div class="auth-feature-item">
+          <div class="auth-feature-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+              <line x1="16" y1="2" x2="16" y2="6"/>
+              <line x1="8" y1="2" x2="8" y2="6"/>
+              <line x1="3" y1="10" x2="21" y2="10"/>
+            </svg>
+          </div>
+          <div class="auth-feature-text">
+            <strong>Appointments & Scheduling</strong>
+            <span>Oversee bookings, slots & consultation flow</span>
+          </div>
+        </div>
+
+        <div class="auth-feature-item">
+          <div class="auth-feature-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="1" x2="12" y2="23"/>
+              <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+            </svg>
+          </div>
+          <div class="auth-feature-text">
+            <strong>Analytics & Insights</strong>
+            <span>Monitor platform metrics & performance data</span>
+          </div>
+        </div>
+
+        <div class="auth-feature-item">
+          <div class="auth-feature-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
+          </div>
+          <div class="auth-feature-text">
+            <strong>Security & Compliance</strong>
+            <span>HIPAA-compliant data protection & access control</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Trust Badge -->
+      <div class="auth-trust-badge">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        </svg>
+        <span>Enterprise-grade security • SOC 2 Type II certified</span>
       </div>
     </div>
+  </div>
+
+  <!-- Right Panel - Authentication Form -->
+  <div class="auth-form-panel">
+    <div class="auth-form-container">
+      <!-- Header -->
+      <div class="auth-header">
+        <div class="auth-badge">Super Admin Portal</div>
+        <h1 class="auth-title">Healthcare Platform Management</h1>
+        <p class="auth-subtitle">Centralized control center for managing doctor consultations, provider verification, and platform operations</p>
+      </div>
+
+      <!-- Authentication views (login, forgot password, etc.) will render here -->
+      <router-outlet></router-outlet>
+
+      <!-- Footer Info -->
+      <div class="auth-footer">
+        <p class="auth-footer-text">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" y1="8" x2="12" y2="12"/>
+            <line x1="12" y1="16" x2="12.01" y2="16"/>
+          </svg>
+          Access restricted to authorized administrators only
+        </p>
+        <p class="auth-footer-help">
+          Need help? Contact <a href="mailto:support@nectar.health">support@nectar.health</a>
+        </p>
+      </div>
+    </div>
+  </div>
 </div>

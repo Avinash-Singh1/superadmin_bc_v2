@@ -148,7 +148,7 @@
   }
 
   &:hover {
-    background: darken(#45197c, 6%);
+    background: darken(#243ffa, 6%);
     color: $white;
   }
 }
@@ -463,7 +463,7 @@
   box-shadow: 0 2px 8px rgba($purple, 0.25);
 
   &:hover {
-    background: darken(#45197c, 5%);
+    background: darken(#243ffa, 5%);
     box-shadow: 0 4px 12px rgba($purple, 0.35);
   }
 }
@@ -614,7 +614,7 @@ table {
 
 .cell-doctor {
   @include font($primaryFont, 500, 12.5px);
-  color: #45197c;
+  color: #243ffa;
 }
 
 .cell-phone {
