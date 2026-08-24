@@ -63,8 +63,12 @@
   <div class="kpi-grid">
     <div
       *ngFor="let cards of ListedCards; let i = index"
-      class="kpi-card"
+      class="kpi-card kpi-card--clickable"
       [ngClass]="'kpi-accent-' + i"
+      (click)="navigateKpi(i)"
+      role="button"
+      tabindex="0"
+      title="View details"
     >
       <div class="kpi-icon-wrap">
         <img [src]="cards?.img" alt="" />
@@ -82,6 +86,101 @@
         </svg>
         <span>{{ cards?.percentage }}%</span>
         <span class="trend-label">vs {{ fromdata ? fromdata : "yesterday" }}</span>
+      </div>
+      <div class="kpi-goto">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+          <path d="M5 3L9.5 7L5 11" stroke="#243ffa" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Management Directory -->
+  <div class="quick-directory">
+    <div
+      class="quick-link-card"
+      *ngFor="let link of quickLinks"
+      (click)="goTo(link.route)"
+      role="button"
+      tabindex="0"
+    >
+      <div class="quick-link-icon">
+        <img [src]="link.icon" alt="" />
+      </div>
+      <div class="quick-link-body">
+        <span class="quick-link-label">{{ link.label }}</span>
+        <span class="quick-link-desc">{{ link.description }}</span>
+      </div>
+      <svg class="quick-link-arrow" width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <path d="M6 3.5L11 8L6 12.5" stroke="#8c8ca1" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- Activity Preview: Upcoming Appointments + Recent Surgery Leads -->
+  <div class="activity-row">
+    <div class="activity-card">
+      <div class="activity-card__header">
+        <span class="activity-card__title">Upcoming Appointments</span>
+        <button class="activity-view-all" (click)="goTo('/theme/appointment')">
+          View All
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+            <path d="M4 2.5L8 6L4 9.5" stroke="#243ffa" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </div>
+      <div class="activity-card__body">
+        <div class="activity-empty" *ngIf="!loadingAppointments && !recentAppointments?.length">
+          No upcoming appointments.
+        </div>
+        <div class="activity-row-item" *ngFor="let appt of recentAppointments">
+          <div class="activity-avatar">
+            <img *ngIf="appt?.patientProfilePic && appt?.patientProfilePic !== 'N/A'" [src]="appt?.patientProfilePic" alt="" />
+            <div class="avatar-initials" *ngIf="!appt?.patientProfilePic || appt?.patientProfilePic === 'N/A'">
+              {{ appt?.patientName?.charAt(0) | uppercase }}
+            </div>
+          </div>
+          <div class="activity-details">
+            <span class="activity-name">{{ appt?.patientName }}</span>
+            <span class="activity-sub">Dr. {{ appt?.doctorName }} · {{ appt?.establishmentName }}</span>
+          </div>
+          <div class="activity-time">
+            <span>{{ appt?.slot | date: "MMM d, h:mm a" }}</span>
+            <span class="activity-badge activity-badge--booked">Booked</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="activity-card">
+      <div class="activity-card__header">
+        <span class="activity-card__title">Recent Surgery Leads</span>
+        <button class="activity-view-all" (click)="goTo('/theme/surgery/lead-list')">
+          View All
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+            <path d="M4 2.5L8 6L4 9.5" stroke="#243ffa" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </div>
+      <div class="activity-card__body">
+        <div class="activity-empty" *ngIf="!loadingSurgeryLeads && !recentSurgeryLeads?.length">
+          No recent surgery leads.
+        </div>
+        <div class="activity-row-item" *ngFor="let lead of recentSurgeryLeads">
+          <div class="activity-avatar">
+            <div class="avatar-initials avatar-initials--amber">
+              {{ lead?.name?.charAt(0) | uppercase }}
+            </div>
+          </div>
+          <div class="activity-details">
+            <span class="activity-name">{{ lead?.name || "N/A" }}</span>
+            <span class="activity-sub">{{ lead?.surgeryMasterName }} · {{ lead?.city }}</span>
+          </div>
+          <div class="activity-time">
+            <span>{{ lead?.createdAt | date: "MMM d" }}</span>
+            <span class="activity-badge activity-badge--lead">{{ lead?.source || "Website" }}</span>
+          </div>
+        </div>
       </div>
     </div>
   </div>

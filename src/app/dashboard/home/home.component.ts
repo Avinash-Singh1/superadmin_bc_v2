@@ -1,6 +1,7 @@
 import { DatePipe } from "@angular/common";
 import { Component, OnInit, ViewChild } from "@angular/core";
 import { UntypedFormBuilder } from "@angular/forms";
+import { Router } from "@angular/router";
 import { Chart, registerables } from "chart.js";
 import { ToastrService } from "ngx-toastr";
 import { URLConstant } from "src/app/apisURL/url";
@@ -10,6 +11,7 @@ import { MatDialog } from "@angular/material/dialog";
 import { AcceptRejectComponent } from "src/app/dialogs/accept-reject/accept-reject.component";
 import { MatSelect } from "@angular/material/select";
 import { MatDatepickerInputEvent } from "@angular/material/datepicker";
+import { ROUTE_CONSTANT } from "src/app/constant/routeconstant";
 
 @Component({
   selector: "app-home",
@@ -22,9 +24,61 @@ export class HomeComponent implements OnInit {
     public apiservice: ApiService,
     public datepipe: DatePipe,
     public toastr: ToastrService,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    public router: Router
   ) {
     Chart.register(...registerables);
+  }
+
+  // KPI card index -> destination route (matches ListedCards order built in cardsDetail())
+  private readonly kpiRoutes: string[] = [
+    `/${ROUTE_CONSTANT.THEME}/${ROUTE_CONSTANT.APPOINTMENT}`,
+    `/${ROUTE_CONSTANT.THEME}/${ROUTE_CONSTANT.SURGERY.SURGERY}/${ROUTE_CONSTANT.SURGERY.LEAD_LIST}`,
+    `/${ROUTE_CONSTANT.THEME}/${ROUTE_CONSTANT.PATIENT}`,
+    `/${ROUTE_CONSTANT.THEME}/${ROUTE_CONSTANT.REQUEST_APPROVAL}`,
+    `/${ROUTE_CONSTANT.THEME}/${ROUTE_CONSTANT.REQUEST_APPROVAL}`,
+  ];
+
+  quickLinks = [
+    {
+      label: "Doctor & Hospital Registry",
+      description: "Manage all active doctors and hospitals",
+      icon: "assets/images/svg/doctors.svg",
+      route: `/${ROUTE_CONSTANT.THEME}/${ROUTE_CONSTANT.DOCTOR_HOSPITAL}`,
+    },
+    {
+      label: "Requests & Approvals",
+      description: "Review pending doctor & hospital sign-ups",
+      icon: "assets/images/svg/approval.svg",
+      route: `/${ROUTE_CONSTANT.THEME}/${ROUTE_CONSTANT.REQUEST_APPROVAL}`,
+    },
+    {
+      label: "Reviews",
+      description: "Moderate patient feedback & ratings",
+      icon: "assets/images/svg/review.svg",
+      route: `/${ROUTE_CONSTANT.THEME}/${ROUTE_CONSTANT.REVIEW}`,
+    },
+    {
+      label: "Prescriptions",
+      description: "Browse prescriptions issued by doctors",
+      icon: "assets/images/svg/prescription.svg",
+      route: `/${ROUTE_CONSTANT.THEME}/${ROUTE_CONSTANT.PRESCRIPTION}`,
+    },
+    {
+      label: "Payments",
+      description: "Track transactions, refunds & payouts",
+      icon: "assets/images/svg/icons8-expensive-price 1.svg",
+      route: `/${ROUTE_CONSTANT.THEME}/${ROUTE_CONSTANT.PAYMENTS}`,
+    },
+  ];
+
+  goTo(route: string): void {
+    if (route) this.router.navigateByUrl(route);
+  }
+
+  navigateKpi(index: number): void {
+    const route = this.kpiRoutes[index];
+    if (route) this.goTo(route);
   }
 
   filterForm: any;
@@ -103,6 +157,13 @@ export class HomeComponent implements OnInit {
   arr: any = [30, 20, 35, 15];
   chartValues = ["Data1", "Data2", "Data3", "Data4"];
   color: any = ["#C6C7F8", "black", "#BAEDBD", "#95A4FC"];
+
+  // Activity preview state
+  recentAppointments: any[] = [];
+  loadingAppointments: boolean = true;
+  recentSurgeryLeads: any[] = [];
+  loadingSurgeryLeads: boolean = true;
+
   ngOnInit(): void {
     this.cardsDetail();
     this.appointmentToolTip();
@@ -115,7 +176,45 @@ export class HomeComponent implements OnInit {
     this.registrationChart();
     this.downloadPatient();
     this.notification();
+    this.getUpcomingAppointments();
+    this.getRecentSurgeryLeads();
     // this.downloadSurgery()
+  }
+
+  // Top 3 upcoming (booked, future) appointments for the activity preview
+  getUpcomingAppointments(): void {
+    this.loadingAppointments = true;
+    const param: any = {
+      page: 1,
+      size: 3,
+      sortOrder: "ASC",
+      status: 0, // BOOKING_STATUS.BOOKED
+      fromDate: new Date().toISOString(),
+    };
+    this.apiservice.Postdata(URLConstant.appointmentList, "", param).subscribe({
+      next: (res: any) => {
+        this.recentAppointments = res?.result?.data || [];
+        this.loadingAppointments = false;
+      },
+      error: () => {
+        this.loadingAppointments = false;
+      },
+    });
+  }
+
+  // Top 3 most recent surgery enquiries for the activity preview
+  getRecentSurgeryLeads(): void {
+    this.loadingSurgeryLeads = true;
+    const param: any = { typeOfList: 1, page: 1, size: 3 };
+    this.apiservice.Postdata(URLConstant.surgeryLeadList, param, {}).subscribe({
+      next: (res: any) => {
+        this.recentSurgeryLeads = res?.result?.enquiryList?.data || [];
+        this.loadingSurgeryLeads = false;
+      },
+      error: () => {
+        this.loadingSurgeryLeads = false;
+      },
+    });
   }
 
   formatDate(iso: string): string {
