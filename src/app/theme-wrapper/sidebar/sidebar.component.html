@@ -1,14 +1,17 @@
 <aside class="sidebar" [class.collapsed]="!toggle">
   <!-- Brand -->
   <div class="sidebar-brand">
-    <!-- <svg-icon src="assets/images/svg/nectar-logo.svg" class="brand-logo"></svg-icon> -->
-     <img src="" alt="">
+    <img class="brand-logo" src="assets/images/bookcure_f.png" alt="Bookcure Logo">
+    <span class="brand-context">Admin console</span>
   </div>
 
   <!-- Navigation -->
   <nav class="sidebar-nav">
     <ul class="nav-list">
       <ng-container *ngFor="let item of menuList; let i = index">
+        <li class="nav-section" *ngIf="item.section">
+          <span>{{ item.section | translate }}</span>
+        </li>
         <!-- Regular nav item (no dropdown) -->
         <li
           class="nav-item"
@@ -60,6 +63,7 @@
   <!-- Footer -->
   <div class="sidebar-footer">
     <div class="footer-divider"></div>
+    <span class="footer-label">Account</span>
     <div class="nav-item logout-item" (click)="logout()">
       <div class="nav-link">
         <span class="nav-icon">

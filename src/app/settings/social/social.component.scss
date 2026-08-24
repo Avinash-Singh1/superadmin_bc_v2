@@ -1,32 +1,22 @@
 @import '../../../assets/scss/main.scss';
 
-.profile{
-    .contentHeader
-    {
-        padding:0 30px;
-        .profileHeader  {
-        
-        @include font($primaryFont,600,24px)
-
-    }
-    .addFaq{
-        width: 100px;
-    height: 50px;
-    }
-}
-.questionAnswer{
-    border: 1px solid #D9D9D9;
-    .socialLogo{
-        width: 52px;
-        height: 52px;
-        border-radius: 100%;
-    }
-    .socialName{
-        @include font($primaryFont,400,18px)
-    }
-}
-.editFaq{
-    width: 100px;
-    height: 50px;
-}
-}
+.settings-page { padding: 34px 40px 44px; }
+.settings-page__header { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; padding-bottom: 24px; border-bottom: 1px solid #e7ece9; }
+.settings-page__header h2 { margin: 4px 0 7px; color: #17241e; @include font($primaryFont, 600, 25px); }
+.settings-page__header p { margin: 0; color: #6d7973; @include font($primaryFont, 400, 15px); }
+.settings-page__eyebrow { color: #167657; letter-spacing: .08em; text-transform: uppercase; @include font($primaryFont, 600, 11px); }
+.primary-action { display: inline-flex; align-items: center; justify-content: center; gap: 8px; flex: 0 0 auto; min-height: 42px; padding: 0 16px; border: 0; border-radius: 6px; background: #176b50; color: #fff; @include font($primaryFont, 600, 14px); }
+.primary-action span { font-size: 21px; font-weight: 400; line-height: 1; }
+.social-list { display: grid; gap: 12px; padding-top: 24px; }
+.social-item { display: flex; align-items: center; justify-content: space-between; gap: 20px; min-height: 86px; padding: 16px 20px; border: 1px solid #dde6e1; border-radius: 7px; background: #fff; transition: border-color 160ms ease, box-shadow 160ms ease; }
+.social-item:hover { border-color: #b9d9cc; box-shadow: 0 5px 14px rgba(29, 74, 56, .06); }
+.social-item__identity { display: flex; align-items: center; min-width: 0; gap: 15px; }
+.social-logo { width: 48px; height: 48px; flex: 0 0 48px; border: 1px solid #e1e8e4; border-radius: 50%; object-fit: contain; padding: 8px; }
+.social-item h3 { margin: 0 0 4px; color: #27362e; @include font($primaryFont, 600, 16px); }
+.social-item p { overflow: hidden; margin: 0; color: #738078; text-overflow: ellipsis; white-space: nowrap; @include font($primaryFont, 400, 14px); }
+.secondary-action { flex: 0 0 auto; min-height: 34px; padding: 0 10px; border: 1px solid #c9ddd4; border-radius: 5px; background: #fff; color: #176b50; @include font($primaryFont, 600, 13px); }
+.secondary-action:hover { background: #eef7f2; }
+.empty-state { margin-top: 24px; padding: 44px 24px; border: 1px dashed #cbd8d2; border-radius: 7px; text-align: center; }
+.empty-state h3 { margin: 0 0 7px; color: #2a3931; @include font($primaryFont, 600, 17px); }
+.empty-state p { margin: 0; color: #728078; @include font($primaryFont, 400, 14px); }
+@media (max-width: 575px) { .settings-page { padding: 25px 20px 32px; } .settings-page__header { flex-direction: column; } .primary-action { width: 100%; } .social-item { padding: 16px; } }

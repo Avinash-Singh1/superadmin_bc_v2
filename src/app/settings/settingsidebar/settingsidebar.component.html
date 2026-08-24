@@ -1,12 +1,13 @@
 <div class="sidenavdata">
-  <ul class="navbar-nav flex-column w-100 pe-4" *ngFor="let item of items">
+  <ul class="navbar-nav" *ngFor="let item of items">
     <li
-      class="nav-item d-flex flex-row align-items-center justify-content-between"
+      class="nav-item"
       routerLink="{{ item.route }}"
       routerLinkActive="active"
       [ngClass]="{ active: checkCurrentRoute(item.route) }"
     >
-      <span>{{ item?.list }}</span>
+      <span class="nav-item__label">{{ item?.list }}</span>
+      <span class="nav-item__arrow" aria-hidden="true">›</span>
     </li>
   </ul>
 </div>

@@ -1,25 +1,63 @@
 @import '../../../assets/scss/main.scss';
 
 .sidenavdata{
-    height: 100vh;
-    padding-top: 30px;
-    .navbar-nav{
-        padding-left: 20px;
+    padding: 12px;
+
+    .navbar-nav {
+        margin: 0;
+        padding: 0;
+        list-style: none;
     }
 
-.nav-item{
-    margin-bottom: 10px;
-    padding:23px 0 23px 52px;
-    background-color: $mat;
-    cursor: pointer;
-    @include font($primaryFont,600,18px);
+    .nav-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        min-height: 48px;
+        margin: 3px 0;
+        padding: 0 14px;
+        border-radius: 6px;
+        color: #4f5d57;
+        cursor: pointer;
+        transition: background-color 160ms ease, color 160ms ease;
+        @include font($primaryFont, 600, 15px);
 
-   
-    &.active{
-        background-color: rgba(255, 255, 255, 0.1);
-        color: $white;
-        @include font($primaryFont,600,18px);
-         background-color: $light_black;  
+        &:hover {
+            background: #eef6f2;
+            color: #146a50;
+        }
+
+        &.active {
+            background: #e2f2eb;
+            color: #126348;
+        }
+    }
+
+    .nav-item__arrow {
+        color: #9aa6a0;
+        font-size: 22px;
+        line-height: 1;
     }
 }
+
+@media (max-width: 991px) {
+    .sidenavdata {
+        display: flex;
+        gap: 4px;
+        overflow-x: auto;
+        padding: 10px;
+
+        .navbar-nav {
+            flex: 0 0 auto;
+        }
+
+        .nav-item {
+            min-height: 42px;
+            white-space: nowrap;
+        }
+
+        .nav-item__arrow {
+            display: none;
+        }
+    }
 }

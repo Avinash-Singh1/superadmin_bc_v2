@@ -1004,3 +1004,12 @@ $danger: #ef4444;
     font-style: italic;
   }
 }
+
+// Operational editor visual layer
+.blog-editor-container { --brand: #243ffa; --brand-light: #5268ff; --brand-dark: #172dbd; padding: 28px; background: #f6f8fc; animation: none; }
+.page-header { position: static; margin: 0 0 20px; padding: 18px 20px; border-color: #e1e7f0; border-radius: 8px; box-shadow: 0 4px 14px rgba(23,32,51,.05); backdrop-filter: none; }.page-header:hover { box-shadow: 0 4px 14px rgba(23,32,51,.05); }.page-header h1 { color: #172033; font-family: inherit; letter-spacing: 0; }
+.btn-primary, .btn-draft { border-radius: 6px; box-shadow: none; transform: none !important; }.btn-primary { background: #243ffa; }.btn-primary::before { display: none; }.btn-primary:hover:not(:disabled) { background: #172dbd; box-shadow: none; }.btn-draft { background: #64748b; }.btn-draft:hover:not(:disabled) { background: #475569; box-shadow: none; }
+.form-section { border-color: #e1e7f0; border-radius: 8px; box-shadow: 0 4px 14px rgba(23,32,51,.05); animation: none; }.form-section::before { display: none; }.form-section:hover { transform: none; box-shadow: 0 6px 18px rgba(23,32,51,.08); }.form-section h2 { color: #172033; font-family: inherit; }.form-section h2::before { background: #243ffa; }
+.form-group label::before { background: #243ffa; }.form-group input[type="text"], .form-group input[type="datetime-local"], .form-group input[type="file"], .form-group textarea, .form-group select { border-color: #cfd8e6; border-radius: 6px; background: #fff; }.form-group input[type="text"]:focus, .form-group input[type="datetime-local"]:focus, .form-group textarea:focus, .form-group select:focus { border-color: #243ffa; box-shadow: 0 0 0 3px rgba(36,63,250,.12); transform: none; }
+.section-header .btn-add { background: #243ffa; border-radius: 6px; }.section-header .btn-add:hover { background: #172dbd; transform: none; box-shadow: none; }.section-header .btn-add:hover i { transform: none; }.faq-list .faq-item { border-color: #e1e7f0; border-radius: 6px; background: #f8faff; }.faq-list .faq-item:hover { transform: none; border-color: #cfd8e6; box-shadow: none; }.faq-list .faq-item .btn-remove:hover { transform: none; box-shadow: none; }
+.form-actions { border-color: #e1e7f0; border-radius: 8px; box-shadow: 0 4px 14px rgba(23,32,51,.05); }.editor-wrapper { border-color: #cfd8e6; border-radius: 6px; }.editor-note { background: #eef1ff; border-radius: 6px; border-left-color: #243ffa; }

@@ -1,18 +1,14 @@
-<div class="galaxy d-flex m-0" >
-    <div class="sidenav ">
-      <span class="settingHeader">Settings</span>
-      <hr class="horizontalrow mt-4">
-        <app-settingsidebar class=""></app-settingsidebar>
+<main class="settings-shell">
+  <aside class="settings-sidebar">
+    <div class="settings-sidebar__heading">
+      <span class="settings-sidebar__eyebrow">Administration</span>
+      <h1>Settings</h1>
+      <p>Manage account preferences and shared content.</p>
     </div>
-    <div class="onlySpace">
+    <app-settingsidebar></app-settingsidebar>
+  </aside>
 
-    </div>
-    <div class="wrapper">
-    <div>
-      <router-outlet></router-outlet>
-      <!-- <app-profile></app-profile> -->
-    </div>
-  </div>
-  </div>
-  
-    
+  <section class="settings-content">
+    <router-outlet></router-outlet>
+  </section>
+</main>

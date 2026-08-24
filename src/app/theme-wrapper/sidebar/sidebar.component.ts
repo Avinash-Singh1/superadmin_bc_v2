@@ -24,11 +24,13 @@ export class SidebarComponent {
       label: "DASHBOARD",
       icon: "assets/images/svg/dashboard.svg",
       routerLink: `/${ROUTE_CONSTANT.THEME}/${ROUTE_CONSTANT.DASHBOARD}`,
+      section: "OVERVIEW",
     },
     {
       label: "APPOINTMENT",
       icon: "assets/images/svg/appointment.svg",
       routerLink: `/${ROUTE_CONSTANT.THEME}/${ROUTE_CONSTANT.APPOINTMENT}`,
+      section: "CARE OPERATIONS",
     },
     {
       label: "PATIENTS",
@@ -41,19 +43,25 @@ export class SidebarComponent {
       routerLink: `/${ROUTE_CONSTANT.THEME}/${ROUTE_CONSTANT.DOCTOR_HOSPITAL}`,
     },
     {
+      label: "Doctor KYC",
+      icon: "assets/images/svg/settings.svg",
+      routerLink: `/${ROUTE_CONSTANT.THEME}/${ROUTE_CONSTANT.KYC}`,
+    },
+    {
       label: "REQUEST_FOR_APPROVAL",
       icon: "assets/images/svg/approval.svg",
       routerLink: `/${ROUTE_CONSTANT.THEME}/${ROUTE_CONSTANT.REQUEST_APPROVAL}`,
     },
     {
-      label: "DELETED/REJECTED/INACTIVE",
-      icon: "assets/images/svg/delete.svg",
-      routerLink: `/${ROUTE_CONSTANT.THEME}/${ROUTE_CONSTANT.DELETE_REJECT_INACTIVE}`,
-    },
-    {
       label: "REVIEW",
       icon: "assets/images/svg/review.svg",
       routerLink: `/${ROUTE_CONSTANT.THEME}/${ROUTE_CONSTANT.REVIEW}`,
+    },
+    {
+      label: "PRESCRIPTIONS",
+      icon: "assets/images/svg/prescription.svg",
+      routerLink: `/${ROUTE_CONSTANT.THEME}/${ROUTE_CONSTANT.PRESCRIPTION}`,
+      section: "CLINICAL CONTENT",
     },
     {
       label: "SPECIALITY/PROCEDURE",
@@ -64,6 +72,7 @@ export class SidebarComponent {
       label: "SURGERY_CARE",
       icon: "assets/images/svg/surgerycare.svg",
       routerLink: `/${ROUTE_CONSTANT.THEME}/${ROUTE_CONSTANT.SURGERY.SURGERY}`,
+      section: "",
       dropdown: true,
       collapse: false,
       dropdownIcon: "assets/images/svg/dropdown.svg",
@@ -86,34 +95,10 @@ export class SidebarComponent {
       ],
     },
     {
-      label: "SETTINGS",
-      icon: "assets/images/svg/settings.svg",
-      routerLink: `/${ROUTE_CONSTANT.THEME}/${ROUTE_CONSTANT.SETTINGS}`,
-    },
-    {
-      label: "Sync Sitemap ",
-      icon: "assets/images/svg/sync_2.svg",
-      routerLink: `/${ROUTE_CONSTANT.THEME}/${ROUTE_CONSTANT.SYNC_SITEMAP}`,
-    },
-    {
-      label: "Black List Users",
-      icon: "assets/images/svg/sync_2.svg",
-      routerLink: `/${ROUTE_CONSTANT.THEME}/${ROUTE_CONSTANT.BLACKLIST}`,
-    },
-    {
-      label: "PRESCRIPTIONS",
-      icon: "assets/images/svg/prescription.svg",
-      routerLink: `/${ROUTE_CONSTANT.THEME}/${ROUTE_CONSTANT.PRESCRIPTION}`,
-    },
-    {
-      label: "Doctor KYC",
-      icon: "assets/images/svg/settings.svg",
-      routerLink: `/${ROUTE_CONSTANT.THEME}/${ROUTE_CONSTANT.KYC}`,
-    },
-    {
       label: "Payments",
       icon: "assets/images/svg/appointment.svg",
       routerLink: `/${ROUTE_CONSTANT.THEME}/${ROUTE_CONSTANT.PAYMENTS}`,
+      section: "FINANCE",
     },
     {
       label: "Payouts",
@@ -129,11 +114,13 @@ export class SidebarComponent {
       label: "Feature Announcements",
       icon: "assets/images/svg/approval.svg",
       routerLink: `/${ROUTE_CONSTANT.THEME}/${ROUTE_CONSTANT.FEATURE_ANNOUNCEMENTS}`,
+      section: "PUBLISHING",
     },
     {
       label: "Blog Management",
       icon: "assets/images/svg/mat-blog.svg",
       routerLink: `/${ROUTE_CONSTANT.THEME}/blog-management`,
+      section: "",
       dropdown: true,
       collapse: false,
       dropdownIcon: "assets/images/svg/dropdown.svg",
@@ -164,6 +151,27 @@ export class SidebarComponent {
           routerLink: `/${ROUTE_CONSTANT.THEME}/blog-management/author-list`,
         },
       ],
+    },
+    {
+      label: "Sync Sitemap ",
+      icon: "assets/images/svg/sync_2.svg",
+      routerLink: `/${ROUTE_CONSTANT.THEME}/${ROUTE_CONSTANT.SYNC_SITEMAP}`,
+      section: "ADMINISTRATION",
+    },
+    {
+      label: "Black List Users",
+      icon: "assets/images/svg/sync_2.svg",
+      routerLink: `/${ROUTE_CONSTANT.THEME}/${ROUTE_CONSTANT.BLACKLIST}`,
+    },
+    {
+      label: "DELETED/REJECTED/INACTIVE",
+      icon: "assets/images/svg/delete.svg",
+      routerLink: `/${ROUTE_CONSTANT.THEME}/${ROUTE_CONSTANT.DELETE_REJECT_INACTIVE}`,
+    },
+    {
+      label: "SETTINGS",
+      icon: "assets/images/svg/settings.svg",
+      routerLink: `/${ROUTE_CONSTANT.THEME}/${ROUTE_CONSTANT.SETTINGS}`,
     },
   ];
   settingbackGround: boolean = false;

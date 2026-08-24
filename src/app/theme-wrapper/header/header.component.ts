@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, EventEmitter, OnInit, Output } from "@angular/core";
 import { MatDialog } from "@angular/material/dialog";
 import { NavigationEnd, Router } from "@angular/router";
 import { filter } from "rxjs/operators";
@@ -13,6 +13,8 @@ import { ApiService } from "src/app/shared/api.service";
   styleUrls: ["./header.component.scss"],
 })
 export class HeaderComponent implements OnInit {
+  @Output() sidebarToggle = new EventEmitter<boolean>();
+
   all: boolean = true;
   doctor: boolean = false;
   hospitaldata: boolean = false;
@@ -45,6 +47,7 @@ export class HeaderComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.toggleValue = localStorage.getItem("toggleSidenav") !== "false";
     this.notification();
     this.userProfile();
     this.pageTitle = this.titleFromUrl(this.route.url);
@@ -308,7 +311,6 @@ export class HeaderComponent implements OnInit {
 
   toggleSideBar() {
     this.toggleValue = !this.toggleValue;
-    localStorage.setItem("toggleSidenav", JSON.stringify(this.toggleValue));
-    console.log(this.toggleValue);
+    this.sidebarToggle.emit(this.toggleValue);
   }
 }

@@ -818,3 +818,60 @@
     text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3) !important;
   }
 }
+
+// Operational admin visual layer
+.blog-list-container {
+  --brand: #243ffa;
+  --brand-light: #5268ff;
+  --brand-dark: #172dbd;
+  padding: 28px;
+  background: #f6f8fc;
+  color: #172033;
+  animation: none;
+}
+
+.page-header {
+  margin-bottom: 20px;
+  padding: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.page-header h1 { color: #172033; font-family: inherit; letter-spacing: 0; }
+.page-header .btn-primary,
+.btn-retry {
+  background: #243ffa !important;
+  border-radius: 6px !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+.page-header .btn-primary::before { display: none; }
+.page-header .btn-primary:hover,
+.btn-retry:hover { background: #172dbd !important; }
+
+.filters-card,
+.table-card,
+.loading-container,
+.error-container {
+  border: 1px solid #e1e7f0;
+  border-radius: 8px;
+  box-shadow: 0 4px 14px rgba(23, 32, 51, .05);
+}
+
+.filters-row .search-box input,
+.filters-row .filter-select,
+.filters-row .btn-icon {
+  border-color: #cfd8e6;
+  border-radius: 6px;
+}
+.filters-row .search-box input:focus,
+.filters-row .filter-select:focus { border-color: #243ffa; box-shadow: 0 0 0 3px rgba(36, 63, 250, .12); }
+.data-table thead { background: #f6f8fc !important; }
+.data-table tbody tr:hover { background: #f8faff !important; }
+.data-table tbody tr.selected { background: #eef1ff !important; }
+.data-table .category-badge,
+.data-table .status-badge,
+.meta-badges .badge { border-radius: 4px !important; }
+.action-buttons .btn-action { border-radius: 6px; transform: none !important; }
+.action-buttons .btn-action:hover { background: #eef1ff; border-color: #8da0ff; }
+.bulk-actions { background: #f6f8fc; border-radius: 6px; animation: none; }

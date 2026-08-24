@@ -1,38 +1,72 @@
 @import '../../../assets/scss/main.scss';
-.sidenav{
-    width: 384px;
-    padding-top:20px;
-    @media (max-width:991px) {
-      width: 100%;
-  }
-  .settingHeader{
-    @include font($primaryFont,600,24px);
-    padding-left: 30px;
 
-  }
-    
-  }
-  .wrapper{
-    width: calc( 100% - 384px );
-    min-height: 100%;
-    @media (max-width:991px) {
-      width: 100%;
-  }
-  
-  }
-  .galaxy{
-   min-height: 100%;
-    @media (max-width:991px) {
-      flex-direction: column;
-  }
-  .onlySpace{
-    width:20px;
-    background-color: #EEEEEE;
+.settings-shell {
+  display: grid;
+  grid-template-columns: 280px minmax(0, 1fr);
+  gap: 24px;
+  min-height: 100%;
+  padding: 28px;
+  background: #f5f7f8;
+}
+
+.settings-sidebar {
+  align-self: start;
+  overflow: hidden;
+  border: 1px solid #e1e7e5;
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: 0 8px 24px rgba(30, 48, 43, 0.06);
+}
+
+.settings-sidebar__heading {
+  padding: 28px 24px 22px;
+  border-bottom: 1px solid #e9eeec;
+
+  h1 {
+    margin: 5px 0 8px;
+    color: #18251f;
+    @include font($primaryFont, 600, 26px);
   }
 
+  p {
+    margin: 0;
+    color: #68736e;
+    line-height: 1.5;
+    @include font($primaryFont, 400, 14px);
   }
-  .horizontalrow{
-    margin-top: 12px;
+}
 
+.settings-sidebar__eyebrow {
+  color: #147a5b;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  @include font($primaryFont, 600, 11px);
+}
+
+.settings-content {
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid #e1e7e5;
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: 0 8px 24px rgba(30, 48, 43, 0.06);
+}
+
+@media (max-width: 991px) {
+  .settings-shell {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    padding: 16px;
   }
+}
+
+@media (max-width: 575px) {
+  .settings-shell {
+    padding: 10px;
+  }
+
+  .settings-sidebar__heading {
+    padding: 20px;
+  }
+}
   

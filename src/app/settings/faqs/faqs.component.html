@@ -1,18 +1,31 @@
-<div class="profile">
-    <div class="contentHeader my-3 d-flex justify-content-between">
-        <span class="profileHeader">Frequently asked questions</span>
-        <img class="addFaq cursor" src="assets/images/svg/adddata.svg" alt="" (click)="addreview('Add','')">
-        
-    </div>
-    <hr>
-    <div class="p-3 ">
-        <div class=" questionAnswer mt-3 p-3 d-flex justify-content-between" *ngFor="let data of faqResult">
+<section class="settings-page content-list-page">
+    <header class="settings-page__header">
         <div>
-            <p class="question m-0 p-0">Q: <span>{{data?.question}}</span></p>
-            <p class="answer">A: <span>{{data?.answer}}</span></p>
+            <span class="settings-page__eyebrow">Knowledge base</span>
+            <h2>Frequently asked questions</h2>
+            <p>Keep the answers shown across the platform accurate and easy to scan.</p>
         </div>
-        <img class="editFaq cursor" src="assets/images/svg/editdata.svg" alt="" (click)="addreview('Edit',data?._id)">
-    </div>
-</div>
+        <button class="primary-action" type="button" (click)="addreview('Add','')">
+            <span aria-hidden="true">+</span> Add FAQ
+        </button>
+    </header>
 
-</div>
+    <div class="faq-list" *ngIf="faqResult?.length; else emptyFaqs">
+        <article class="faq-item" *ngFor="let data of faqResult">
+            <div class="faq-item__content">
+                <span class="faq-item__label">Question</span>
+                <h3>{{data?.question}}</h3>
+                <span class="faq-item__label">Answer</span>
+                <p>{{data?.answer}}</p>
+            </div>
+            <button class="secondary-action" type="button" (click)="addreview('Edit',data?._id)" aria-label="Edit FAQ" title="Edit FAQ">Edit</button>
+        </article>
+    </div>
+
+    <ng-template #emptyFaqs>
+        <div class="empty-state">
+            <h3>No FAQs yet</h3>
+            <p>Add the first question to begin building the knowledge base.</p>
+        </div>
+    </ng-template>
+</section>

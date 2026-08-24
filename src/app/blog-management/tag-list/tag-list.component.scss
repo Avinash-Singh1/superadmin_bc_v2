@@ -755,6 +755,8 @@ $danger: #ef4444;
   }
 }
 
+.tag-list-container { padding: 28px; background: #f6f8fc; animation: none; }.page-header .header-copy h1 { color: #172033; background: none; -webkit-text-fill-color: currentColor; letter-spacing: 0; }.page-header .btn-primary { background: #243ffa; border-radius: 6px; box-shadow: none; }.page-header .btn-primary::before { display: none; }.page-header .btn-primary:hover { background: #172dbd; transform: none; }.tag-editor { border-radius: 8px; box-shadow: 0 4px 14px rgba(23,32,51,.05); }.tag-editor::before { background: #243ffa; }.tag-chip { border-radius: 8px; border: 1px solid #dbe3ef; box-shadow: 0 3px 10px rgba(23,32,51,.04); animation: none; }.tag-chip::before { display: none; }.tag-chip:hover { transform: none; box-shadow: 0 6px 18px rgba(23,32,51,.08); border-color: #cfd8e6; }.tag-chip .tag-icon, .tag-chip .tag-count { border-radius: 6px; box-shadow: none; backdrop-filter: none; }.tag-chip .btn-edit, .tag-chip .btn-delete { border-radius: 6px; box-shadow: none; backdrop-filter: none; }.tag-chip .btn-edit:hover, .tag-chip .btn-delete:hover { transform: none; }
+
 // Loading State
 .loading-container {
   display: flex;

@@ -1,7 +1,8 @@
-<div class="galaxy d-flex m-0">
-  <app-sidebar [toggle]="checkValue() != 'false'"></app-sidebar>
-  <div class="wrapper" [ngClass]="{ 'nowrapper': checkValue() == 'false', 'with-sidebar': checkValue() != 'false' }">
-    <app-header></app-header>
+<div class="galaxy d-flex m-0" [class.sidebar-open]="isSidebarOpen">
+  <app-sidebar [toggle]="isSidebarOpen"></app-sidebar>
+  <button class="sidebar-backdrop" type="button" aria-label="Close navigation" (click)="closeSidebar()"></button>
+  <div class="wrapper" [ngClass]="{ 'nowrapper': !isSidebarOpen, 'with-sidebar': isSidebarOpen }">
+    <app-header (sidebarToggle)="setSidebarOpen($event)"></app-header>
     <router-outlet></router-outlet>
   </div>
 </div>

@@ -93,6 +93,9 @@
     }
   }
 }
+
+.category-list-container { --brand: #243ffa; --brand-light: #5268ff; --brand-dark: #172dbd; padding: 28px; background: #f6f8fc; animation: none; }
+.page-header h1 { color: #172033; background: none; -webkit-text-fill-color: currentColor; letter-spacing: 0; }.btn-primary { background: #243ffa !important; border-radius: 6px !important; box-shadow: none !important; transform: none !important; }.btn-primary::before { display: none; }.btn-primary:hover { background: #172dbd !important; }.category-card, .category-editor { border-radius: 8px; box-shadow: 0 4px 14px rgba(23,32,51,.05); animation: none; }.category-card:hover { transform: none; border-color: #cfd8e6; box-shadow: 0 6px 18px rgba(23,32,51,.08); }.category-card .category-color { border-radius: 2px; }
  .category-list-container,
  .tag-list-container,
  .author-list-container {

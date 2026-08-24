@@ -634,3 +634,82 @@
     filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
   }
 }
+
+// Dashboard palette: one primary accent with neutral data surfaces.
+.dashboard-container {
+  --brand: #243ffa;
+  --brand-light: #5268ff;
+  --brand-dark: #172dbd;
+  --ink: #172033;
+  --muted: #667085;
+  --line: #e4e7ec;
+  padding: 28px;
+  background: #f7f8fa;
+  animation: none;
+}
+
+.page-header { margin-bottom: 20px; }
+.page-header h1 { color: #172033; font-family: inherit; letter-spacing: 0; }
+.page-header .btn-refresh,
+.btn-retry {
+  border-radius: 6px;
+  background: #243ffa;
+  box-shadow: none;
+  transform: none !important;
+}
+.page-header .btn-refresh:hover,
+.btn-retry:hover { background: #172dbd; box-shadow: none; }
+
+.stat-card,
+.card,
+.loading-container,
+.error-container {
+  border: 1px solid #e4e7ec;
+  border-radius: 8px;
+  box-shadow: none;
+}
+.stat-card { border-left: 3px solid #243ffa !important; }
+.stat-card:hover,
+.card:hover { transform: none; box-shadow: 0 2px 8px rgba(16, 24, 40, .06); }
+.stat-card::before { display: none; }
+.stat-card .stat-icon { border-radius: 6px; background: #eef1ff !important; }
+.stat-card .stat-icon i { color: #243ffa !important; filter: none; }
+.stat-content h3 { color: #172033; background: none; -webkit-text-fill-color: currentColor; letter-spacing: 0; }
+
+.card .card-header { padding: 16px 20px; background: #fff; border-bottom-color: #e4e7ec; }
+.card .card-header h2 { color: #172033; font-family: inherit; font-size: 16px; letter-spacing: 0; }
+.card .card-body { padding: 20px; }
+.category-bar { height: 6px; background: #eaecf0 !important; border-radius: 3px; }
+.category-bar .category-bar-fill { background: #243ffa !important; box-shadow: none; border-radius: 3px; }
+
+.tag-cloud { gap: 8px; }
+.tag-cloud .tag-chip {
+  border: 1px solid #d0d5dd;
+  border-radius: 4px !important;
+  background: #fff !important;
+  color: #344054 !important;
+  box-shadow: none;
+  transform: none !important;
+}
+.tag-cloud .tag-chip:hover { border-color: #98a2b3; background: #f9fafb !important; box-shadow: none; }
+
+.data-table thead { background: #f9fafb !important; }
+.data-table thead th { color: #475467; font-size: 11px; letter-spacing: .06em; }
+.data-table tbody tr { border-bottom-color: #eaecf0; }
+.data-table tbody tr:hover { background: #f9fafb !important; box-shadow: none; }
+.data-table .category-badge,
+.data-table .status-badge { border-radius: 4px; box-shadow: none; }
+.data-table .status-badge.status-published { color: #067647; background: #ecfdf3; }
+.data-table .status-badge.status-draft { color: #475467; background: #f2f4f7; }
+.data-table .status-badge.status-scheduled { color: #175cd3; background: #eff8ff; }
+.data-table .status-badge.status-archived { color: #475467; background: #f2f4f7; }
+.empty-message { border: 0; border-radius: 0; background: transparent; font-style: normal; }
+
+.dashboard-container { --brand: #243ffa; --brand-light: #5268ff; --brand-dark: #172dbd; padding: 28px; background: #f6f8fc; animation: none; }
+.page-header::before { display: none; }
+.page-header .btn-refresh, .btn-retry { background: #243ffa; border-radius: 6px; box-shadow: none; transform: none !important; }
+.page-header .btn-refresh:hover, .btn-retry:hover { background: #172dbd; box-shadow: none; }
+.stat-card, .card { border-radius: 8px; box-shadow: 0 4px 14px rgba(23,32,51,.05); transition: border-color .2s ease, box-shadow .2s ease; }
+.stat-card:hover, .card:hover { transform: none; box-shadow: 0 6px 18px rgba(23,32,51,.08); }
+.stat-card::before { display: none; }.stat-card .stat-icon { border-radius: 8px; }.stat-content h3 { color: #172033; background: none; -webkit-text-fill-color: currentColor; }
+.card .card-header { background: #fff; }.category-bar { background: #e8edf5 !important; }.category-bar .category-bar-fill { background: #243ffa; box-shadow: none; }.tag-chip { background: #eef1ff; color: #243ffa !important; transform: none !important; box-shadow: none; }.data-table thead { background: #f6f8fc !important; }.data-table tbody tr:hover { background: #f8faff !important; box-shadow: none; }

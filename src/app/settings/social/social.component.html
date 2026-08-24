@@ -1,23 +1,33 @@
-<div class="profile">
-    <div class="contentHeader my-3 d-flex justify-content-between">
-        <span class="profileHeader">Social</span>
-        <img class="addFaq cursor" src="assets/images/svg/adddata.svg" alt="" (click)="addreview('Add','')">
-
-    </div>
-    <hr>
-    <div class="p-3 ">
-        <div class=" questionAnswer mt-3 p-3 d-flex justify-content-between align-items-center" *ngFor="let data of socialData">
-        <div class="d-flex align-items-center">
-           <!-- <img src="../../../assets/images/png/ateeqahmad.jpg" alt="" class="socialLogo"> -->
-
-           <img class="socialLogo"  [src]="data?.logo" alt=""  onError="this.src='assets/images/svg/nectorIcon.svg'">
-           
-
-           <span class="ms-2 socialName">{{data?.master?.name | titlecase}}</span>
+<section class="settings-page social-page">
+    <header class="settings-page__header">
+        <div>
+            <span class="settings-page__eyebrow">Platform presence</span>
+            <h2>Social links</h2>
+            <p>Maintain the social profiles available to users across the platform.</p>
         </div>
-        <img class="editFaq cursor" src="assets/images/svg/editdata.svg" alt=""  (click)="addreview('Edit',data?._id)">
-    </div>
-</div>
+        <button class="primary-action" type="button" (click)="addreview('Add','')">
+            <span aria-hidden="true">+</span> Add social link
+        </button>
+    </header>
 
-</div>
+    <div class="social-list" *ngIf="socialData?.length; else emptySocialLinks">
+        <article class="social-item" *ngFor="let data of socialData">
+            <div class="social-item__identity">
+                <img class="social-logo" [src]="data?.logo" [alt]="(data?.master?.name || 'Social') + ' logo'" onError="this.src='assets/images/svg/nectorIcon.svg'">
+                <div>
+                    <h3>{{data?.master?.name | titlecase}}</h3>
+                    <p>{{data?.url || 'No link configured'}}</p>
+                </div>
+            </div>
+            <button class="secondary-action" type="button" (click)="addreview('Edit',data?._id)" aria-label="Edit social link" title="Edit social link">Edit</button>
+        </article>
+    </div>
+
+    <ng-template #emptySocialLinks>
+        <div class="empty-state">
+            <h3>No social links yet</h3>
+            <p>Add a platform link to make it available across the site.</p>
+        </div>
+    </ng-template>
+</section>
 

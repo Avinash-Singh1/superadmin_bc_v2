@@ -36,15 +36,21 @@ $transition: 0.3s ease;
   }
 }
 
-// Overlay for mobile when sidebar is open
+ .sidebar-backdrop {
+  display: none;
+}
+
 @media (max-width: 991px) {
-  .galaxy::before {
-    content: '';
+  .sidebar-backdrop {
+    display: block;
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
+    width: 100%;
+    padding: 0;
+    border: 0;
     background: rgba(0, 0, 0, 0.5);
     z-index: 99;
     opacity: 0;
@@ -52,7 +58,7 @@ $transition: 0.3s ease;
     transition: opacity $transition;
   }
   
-  .galaxy.sidebar-open::before {
+  .galaxy.sidebar-open .sidebar-backdrop {
     opacity: 1;
     pointer-events: all;
   }
