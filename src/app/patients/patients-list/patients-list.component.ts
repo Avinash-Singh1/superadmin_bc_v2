@@ -207,7 +207,7 @@ export class PatientsListComponent implements OnInit {
   }
 
   // ── Export (fresh fetch) ──
-  header = ["Name", "Gender", "City", "Mobile", "Email", "Age", "Blood Group"];
+  header = ["Name", "Gender", "City", "Mobile", "Email", "Age", "Blood Group", "Doctor Name", "Doctor City", "Specialization"];
 
   exportToCSV() {
     const ageParam = this.ageLimit.filter((a) => a.selected).map((a) => a.value).join();
@@ -234,6 +234,9 @@ export class PatientsListComponent implements OnInit {
         r?.email || "N/A",
         r?.age || "N/A",
         this.getBloodGroupLabel(r?.bloodGroup),
+        r?.doctorName || "N/A",
+        r?.doctorCity || "N/A",
+        r?.doctorSpecialization?.join(", ") || "N/A",
       ]);
       const wsData = [this.header, ...rows];
       const ws = XLSX.utils.aoa_to_sheet(wsData);

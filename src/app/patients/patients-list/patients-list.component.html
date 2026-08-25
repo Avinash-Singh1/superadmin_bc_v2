@@ -205,6 +205,9 @@
               </span>
             </th>
             <th>Blood</th>
+            <th>Doctor Name</th>
+            <th>Doctor City</th>
+            <th>Specialization</th>
             <th class="col-action">Action</th>
           </tr>
         </thead>
@@ -241,6 +244,9 @@
               </span>
               <span *ngIf="getBloodGroupLabel(element?.bloodGroup) === 'N/A'">N/A</span>
             </td>
+            <td class="cell-doctor">{{ element?.doctorName || 'N/A' }}</td>
+            <td class="cell-doctor-city">{{ element?.doctorCity || 'N/A' }}</td>
+            <td class="cell-doctor">{{ element?.doctorSpecialization?.join(', ') || 'N/A' }}</td>
             <!-- Action -->
             <td class="col-action">
               <button class="action-btn" [matMenuTriggerFor]="actionMenu" aria-label="Actions">
