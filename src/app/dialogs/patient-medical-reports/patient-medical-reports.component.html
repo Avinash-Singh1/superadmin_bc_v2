@@ -1,0 +1,26 @@
+<section class="medical-reports-dialog">
+  <header>
+    <div>
+      <h2>Medical Reports</h2>
+      <p>{{ data.patientName || 'Patient' }}</p>
+    </div>
+    <button type="button" (click)="close()" aria-label="Close">&#215;</button>
+  </header>
+
+  <main>
+    <p *ngIf="loading">Loading medical reports...</p>
+    <p *ngIf="error" class="error">{{ error }}</p>
+    <p *ngIf="!loading && !error && !reports.length" class="empty">No active medical reports are available.</p>
+    <article *ngFor="let report of reports" class="report">
+      <div>
+        <h3>{{ report.title || 'Medical document' }}</h3>
+        <p>{{ reportType(report.type) }} | {{ report.date | date: 'dd MMM yyyy' }}</p>
+      </div>
+      <div class="documents">
+        <button type="button" *ngFor="let document of report.url" (click)="openDocument(document.url)">
+          Open {{ document.fileType === 'image' ? 'image' : 'PDF' }}
+        </button>
+      </div>
+    </article>
+  </main>
+</section>

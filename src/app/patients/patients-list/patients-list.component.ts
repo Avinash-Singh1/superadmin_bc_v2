@@ -8,6 +8,7 @@ import { ApiService } from "src/app/shared/api.service";
 import * as XLSX from "xlsx";
 import { DeleteConfirmationComponent } from "src/app/dialogs/delete-confirmation/delete-confirmation.component";
 import { DeleteUserService } from "src/app/services/delete-user.service";
+import { PatientMedicalReportsComponent } from "src/app/dialogs/patient-medical-reports/patient-medical-reports.component";
 
 @Component({
   selector: "app-patients-list",
@@ -283,5 +284,13 @@ export class PatientsListComponent implements OnInit {
 
   EditPatient(val: any, val2: any, page: any) {
     // placeholder for edit functionality
+  }
+
+  viewMedicalReports(patient: any) {
+    this.dialog.open(PatientMedicalReportsComponent, {
+      autoFocus: false,
+      maxWidth: "760px",
+      data: { patientId: patient?._id, patientName: patient?.fullName },
+    });
   }
 }

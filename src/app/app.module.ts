@@ -37,6 +37,7 @@ import { TranslateLoader, TranslateModule } from "@ngx-translate/core";
 import { AngularSvgIconModule } from "angular-svg-icon";
 import { NgxEditorModule } from "ngx-editor";
 import { DeleteConfirmationComponent } from "./dialogs/delete-confirmation/delete-confirmation.component";
+import { PatientMedicalReportsComponent } from "./dialogs/patient-medical-reports/patient-medical-reports.component";
 
 const ngxUiLoaderConfig: NgxUiLoaderConfig = {
   bgsColor: "blue",
@@ -61,6 +62,7 @@ const ngxUiLoaderConfig: NgxUiLoaderConfig = {
     AddeditSpecialityComponent,
     ReadMoreComponent,
     DeleteConfirmationComponent,
+    PatientMedicalReportsComponent,
   ],
   imports: [
     BrowserModule,

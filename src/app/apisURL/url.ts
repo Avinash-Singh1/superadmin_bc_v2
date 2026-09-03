@@ -40,6 +40,7 @@ export class URLConstant {
   public static login = "v1/admin/admin-login";
   public static forgotPassword = "v1/admin/admin-forgot-password";
   public static patientList = "v1/patient/admin";
+  public static patientMedicalReports = "v1/medical-reports/admin/patient";
   public static doctorList = "v1/doctor/admin-doctor-list";
   public static hospitalList = "v1/hospital/admin/list";
   public static importDoctorList = "v1/common/import/doctor";

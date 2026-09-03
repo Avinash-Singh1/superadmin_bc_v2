@@ -268,6 +268,12 @@
                   </svg>
                   Edit
                 </button>
+                <button mat-menu-item (click)="viewMedicalReports(element)">
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="margin-right:8px">
+                    <path d="M4 1.5h5l3 3v10H4zM9 1.5v3h3M6 8h4M6 10.5h4" stroke="#666" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                  Medical reports
+                </button>
                 <button mat-menu-item (click)="deletePatient(element?._id, 'patient')" class="delete-action">
                   <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="margin-right:8px">
                     <path d="M3 4.5h10M6 4.5V3a1 1 0 011-1h2a1 1 0 011 1v1.5M12 4.5l-.5 8a1.5 1.5 0 01-1.5 1.5H6a1.5 1.5 0 01-1.5-1.5L4 4.5" stroke="#e53935" stroke-width="1.2" stroke-linecap="round"/>
