@@ -156,6 +156,21 @@
   <!-- Scrollable Content -->
   <div class="dialog-body">
 
+    <div class="info-section" *ngIf="establishmentImages?.length">
+      <div class="section-header">
+        <img src="assets/images/svg/documents.svg" alt="" class="section-icon">
+        <h4 class="section-title">Establishment Photos</h4>
+      </div>
+      <div class="proof-grid">
+        <div class="proof-item" *ngFor="let image of establishmentImages" (click)="fullViewProof(image)">
+          <img [src]="image?.url" alt="Establishment photo" onError="this.src='assets/images/svg/nectorIcon.svg'">
+          <div class="proof-overlay">
+            <span>View</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Documents Section -->
     <div class="info-section">
       <div class="section-header">

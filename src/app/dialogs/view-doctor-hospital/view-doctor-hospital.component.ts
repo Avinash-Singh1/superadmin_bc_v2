@@ -14,6 +14,7 @@ export class ViewDoctorHospitalComponent implements OnInit {
   getVIewId:any;
   viewUser:any;
   hospitalDetail:any;
+  establishmentImages:any[]=[];
   identityProof:any=[]
 medicalProof:any=[]
 medicalProof1:any=[]
@@ -85,6 +86,9 @@ else if(this.viewUser=='hospitalpopup'){
   }
   this.apiService.GetData(URLConstant.viewHospitalDetail,param).subscribe((res:any)=>{
     this.hospitalDetail=res?.result[0]
+    this.establishmentImages=Array.isArray(this.hospitalDetail?.establishmentImages)
+      ? this.hospitalDetail.establishmentImages
+      : [];
     console.log("my",this.hospitalDetail)
 
     this.identityProofRejected=this.hospitalDetail?.identityProof;
