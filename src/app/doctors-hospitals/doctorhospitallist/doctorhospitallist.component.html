@@ -34,6 +34,11 @@
         <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 1L7 7M7 7L13 13M7 7L13 1M7 7L1 13" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
         Reset
       </button>
+      <div class="bulk-status-actions" *ngIf="doctorsList && specializationParam.length">
+        <span class="bulk-status-actions__label">{{ specializationParam.length }} specialization{{ specializationParam.length === 1 ? '' : 's' }} selected</span>
+        <button class="btn-action bulk-status-actions__activate" [disabled]="bulkStatusUpdating" (click)="updateDoctorsBySpecialization(2)">Activate all</button>
+        <button class="btn-action bulk-status-actions__deactivate" [disabled]="bulkStatusUpdating" (click)="updateDoctorsBySpecialization(5)">Deactivate all</button>
+      </div>
       <!-- Sample CSV -->
       <button class="btn-action" (click)="doctorsList ? SampleCSVDoctor() : SampleCSVHospital()">
         <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M4 2h5l4 4v7.5a1.5 1.5 0 01-1.5 1.5h-7A1.5 1.5 0 013 13.5v-10A1.5 1.5 0 014.5 2z" stroke="currentColor" stroke-width="1.2"/><path d="M9 2v4h4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
@@ -134,6 +139,13 @@
       </div>
     </div>
     <div class="filter-panel-footer">
+      <div class="filter-bulk-actions" *ngIf="doctorsList && specializationParam.length">
+        <span>{{ specializationParam.length }} specialization{{ specializationParam.length === 1 ? '' : 's' }} selected</span>
+        <div class="filter-bulk-actions__buttons">
+          <button class="filter-bulk-actions__activate" [disabled]="bulkStatusUpdating" (click)="updateDoctorsBySpecialization(2)">Activate all</button>
+          <button class="filter-bulk-actions__deactivate" [disabled]="bulkStatusUpdating" (click)="updateDoctorsBySpecialization(5)">Deactivate all</button>
+        </div>
+      </div>
       <button class="fp-clear" (click)="clearAllFilters()">Clear All</button>
       <button class="fp-apply" (click)="applyFilters()">Apply Filters</button>
     </div>

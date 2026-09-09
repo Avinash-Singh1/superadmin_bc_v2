@@ -139,6 +139,46 @@ $card-radius: 14px;
   border-color: $purple;
   &:hover { background: darken(#243ffa, 6%); }
 }
+.bulk-status-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding-left: 8px;
+  border-left: 1px solid #e5e1ee;
+
+  &__label {
+    @include font($primaryFont, 500, 12px);
+    color: #666;
+    white-space: nowrap;
+  }
+
+  &__activate {
+    color: #16803c;
+    border-color: #9bd9b1;
+
+    &:hover:not(:disabled) {
+      color: #0e642d;
+      border-color: #16803c;
+      background: #f0fdf4;
+    }
+  }
+
+  &__deactivate {
+    color: #c62828;
+    border-color: #f3aaa4;
+
+    &:hover:not(:disabled) {
+      color: #a61f1f;
+      border-color: #c62828;
+      background: #fff5f5;
+    }
+  }
+
+  .btn-action:disabled {
+    cursor: not-allowed;
+    opacity: .55;
+  }
+}
 .file-dropdown {
   display: inline-flex;
 }
@@ -284,6 +324,7 @@ $card-radius: 14px;
 }
 .filter-panel-footer {
   display: flex;
+  flex-wrap: wrap;
   gap: 10px;
   padding: 16px 20px;
   border-top: 1px solid #f0eef3;
@@ -310,6 +351,41 @@ $card-radius: 14px;
     @include font($primaryFont, 600, 13px);
     transition: background .2s;
     &:hover { background: darken(#243ffa, 6%); }
+  }
+}
+.filter-bulk-actions {
+  width: 100%;
+  @include font($primaryFont, 500, 12px);
+  color: #666;
+
+  &__buttons {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+  }
+
+  button {
+    flex: 1;
+    height: 36px;
+    border-radius: 8px;
+    background: $white;
+    cursor: pointer;
+    @include font($primaryFont, 600, 12px);
+  }
+
+  &__activate {
+    color: #16803c;
+    border: 1px solid #9bd9b1;
+  }
+
+  &__deactivate {
+    color: #c62828;
+    border: 1px solid #f3aaa4;
+  }
+
+  button:disabled {
+    cursor: not-allowed;
+    opacity: .55;
   }
 }
 

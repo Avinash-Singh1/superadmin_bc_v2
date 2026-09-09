@@ -119,6 +119,7 @@ export class DoctorhospitallistComponent implements OnInit {
   filterSpecOpen = true;
   filterHospTypeOpen = true;
   filterCitiesOpen = true;
+  bulkStatusUpdating = false;
   specialization = [
     "Dental",
     "Orthopaedics",
@@ -693,6 +694,42 @@ export class DoctorhospitallistComponent implements OnInit {
       .patchData(URLConstant.activeInactiveDoctor, data, param)
       .subscribe((res: any) => {
         this.doctorList("", "");
+      });
+  }
+
+  updateDoctorsBySpecialization(status: 2 | 5): void {
+    if (!this.specializationParam.length || this.bulkStatusUpdating) return;
+
+    const action = status === 2 ? "activate" : "deactivate";
+    const specializationNames = (this.OccupationList || [])
+      .filter((specialization: any) => this.specializationParam.includes(specialization._id))
+      .map((specialization: any) => specialization.name)
+      .join(", ");
+
+    if (!window.confirm(`Are you sure you want to ${action} all doctors in: ${specializationNames}?`)) {
+      return;
+    }
+
+    this.bulkStatusUpdating = true;
+    this.loader.start();
+    this.apiservice
+      .patchData(URLConstant.bulkActiveInactiveDoctors, {
+        isVerified: status,
+        specializationIds: this.specializationParam,
+      }, {})
+      .subscribe({
+        next: (res: any) => {
+          const result = res?.result?.data || {};
+          this.toastr.success(`${result.updated || 0} doctors ${action}d; ${result.unchanged || 0} already unchanged.`);
+          this.doctorList("", "");
+          this.loader.stop();
+          this.bulkStatusUpdating = false;
+        },
+        error: (error: any) => {
+          this.toastr.error(error?.message || `Unable to ${action} doctors.`);
+          this.loader.stop();
+          this.bulkStatusUpdating = false;
+        },
       });
   }
 

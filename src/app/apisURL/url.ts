@@ -70,6 +70,7 @@ export class URLConstant {
   public static reviewManagement = "v1/reviews/admin/manage/list";
   public static reviewManagementDetail = "v1/reviews/admin/manage";
   public static activeInactiveDoctor = "v1/doctor/admin-active-inactive";
+  public static bulkActiveInactiveDoctors = "v1/doctor/admin-bulk-active-inactive";
   public static viewReviewApproved = "v1/admin/feedbacks-details";
   public static deleteApprovedReview = "v1/admin/feedbacks";
   public static hardDeleteFeedback = "v1/admin/feedbacks/hard-delete";
