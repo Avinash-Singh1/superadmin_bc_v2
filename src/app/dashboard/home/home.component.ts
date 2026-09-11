@@ -99,6 +99,7 @@ export class HomeComponent implements OnInit {
   appointmentchart: any;
   registrationchart: any;
   appointmentCount: any;
+  appointmentStatusCounts: any = {};
   surgeryCount: any;
   patientCount: any;
   doctorCount: any;
@@ -276,6 +277,7 @@ export class HomeComponent implements OnInit {
           this.doctorCount = res?.result?.doctorCount;
           this.hospitalCount = res?.result?.hospitalCount;
           this.appointmentCount = res?.result?.appointmentCount;
+          this.appointmentStatusCounts = res?.result?.appointmentStatusCounts || {};
           this.ListedCards = [
             {
               header: "Appointments",

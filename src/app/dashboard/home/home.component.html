@@ -94,6 +94,12 @@
       </div>
     </div>
   </div>
+  <div class="appointment-movement" style="margin:16px 0;padding:16px 20px;border:1px solid #e8ddec;border-radius:14px;background:#fff">
+    <strong>Appointment movement</strong>
+    <span style="margin-left:24px">Booked: {{ appointmentStatusCounts[0] || 0 }}</span>
+    <span style="margin-left:18px">Completed: {{ appointmentStatusCounts[1] || 0 }}</span>
+    <span style="margin-left:18px">Visited only: {{ appointmentStatusCounts[3] || 0 }}</span>
+  </div>
 
   <!-- Quick Management Directory -->
   <div class="quick-directory">
