@@ -766,3 +766,20 @@ table {
     padding: 48px 16px;
   }
 }
+
+.visibility-card {
+  display: grid;
+  gap: 16px;
+  margin: 0 0 24px;
+  padding: 20px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.visibility-card h2 { margin: 0 0 6px; font-size: 18px; }
+.visibility-card p { margin: 0; color: #6b7280; }
+.visibility-actions { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.visibility-list { display: flex; gap: 12px 24px; flex-wrap: wrap; }
+.visibility-item { display: inline-flex; gap: 8px; align-items: center; color: #374151; }
+.visibility-all { color: #166534 !important; }

@@ -52,6 +52,7 @@ export class URLConstant {
   public static addHospital = "v1/hospital/admin";
   public static deleteHospital = "v1/hospital/admin";
   public static specialization = "v1/master/specialization";
+  public static publicVisibility = "v1/public-visibility/admin";
   public static procedure = "v1/master/procedure";
   public static cityList = "v1/city/all-city";
   public static masterData = "v1/master/hospital-type";

@@ -34,10 +34,61 @@ export class SpecialityComponent implements OnInit {
 
   ngOnInit(): void {
     this.getSpecializationList();
+    this.getPublicVisibility();
     this.getProcedureList();
     this.search.valueChanges
       .pipe(debounceTime(500), distinctUntilChanged())
       .subscribe((val) => this.searchFunction(val));
+  }
+  publicVisibilityMode: 'restricted' | 'all' = 'restricted';
+  activeSpecializationIds: string[] = [];
+  visibilitySaving = false;
+
+  getPublicVisibility() {
+    this.apiservice.GetData(URLConstant.publicVisibility, {}).subscribe((res: any) => {
+      const data = res?.result?.data || res?.result;
+      this.publicVisibilityMode = data?.mode === 'all' ? 'all' : 'restricted';
+      this.activeSpecializationIds = (data?.activeSpecializations || []).map((item: any) => String(item?._id || item));
+    });
+  }
+
+  isPublicSpecializationActive(id: string): boolean {
+    return this.publicVisibilityMode === 'all' || this.activeSpecializationIds.includes(String(id));
+  }
+
+  togglePublicSpecialization(id: string): void {
+    this.publicVisibilityMode = 'restricted';
+    const value = String(id);
+    this.activeSpecializationIds = this.activeSpecializationIds.includes(value)
+      ? this.activeSpecializationIds.filter((item) => item !== value)
+      : [...this.activeSpecializationIds, value];
+  }
+
+  enableAllPublicSpecializations(): void {
+    this.publicVisibilityMode = 'all';
+    this.activeSpecializationIds = [];
+  }
+
+  savePublicVisibility(): void {
+    if (this.publicVisibilityMode === 'restricted' && !this.activeSpecializationIds.length) {
+      this.toastr.error('Select at least one specialization or choose Show All.');
+      return;
+    }
+    this.visibilitySaving = true;
+    this.apiservice.PutData(URLConstant.publicVisibility, {
+      mode: this.publicVisibilityMode,
+      specializationIds: this.activeSpecializationIds,
+    }, {}).subscribe({
+      next: () => {
+        this.visibilitySaving = false;
+        this.toastr.success('Patient-facing specialization visibility updated.');
+        this.getPublicVisibility();
+      },
+      error: () => {
+        this.visibilitySaving = false;
+        this.toastr.error('Unable to update specialization visibility.');
+      },
+    });
   }
   doctorsList: boolean = true;
   hospitalsList: boolean = false;
