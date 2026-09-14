@@ -197,356 +197,760 @@
   color: #1d4ed8;
 }
 
-/* ── Document ────────────────────────── */
+/* ── Document ────────────────────────────────────────────────────────── */
 .rx-document {
-  background: #fff;
-  border: 1px solid #e5e7eb;
-  border-radius: 16px;
-  padding: 32px;
-  max-width: 960px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  position: relative;
+  overflow: hidden;
+  background: #ffffff;
+  border: 1px solid #dce4ee;
+  border-radius: 14px;
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 36px 40px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  font-size: 0.88rem;
+  color: #1e293b;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+
+  @media (max-width: 768px) { padding: 20px 16px; }
 }
 
-/* ── Letterhead ──────────────────────── */
+/* ── Watermark ───────────────────────────────────────────────────────────────── */
+.rx-watermark {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-25deg);
+  opacity: 0.045;
+  pointer-events: none;
+  user-select: none;
+  z-index: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+
+  &__icon svg {
+    width: 240px;
+    height: 240px;
+    color: #2563eb;
+  }
+
+  &__text {
+    font-size: 3.2rem;
+    font-weight: 900;
+    letter-spacing: 8px;
+    color: #2563eb;
+    white-space: nowrap;
+    margin-top: 10px;
+  }
+}
+
+// All inner content above watermark
+.rx-letterhead,
+.rx-divider-primary,
+.rx-patient-strip,
+.rx-vitals-strip,
+.rx-clinical-section,
+.rx-medications-section,
+.rx-labtest-section,
+.rx-advice-section,
+.rx-notes-followup-grid,
+.rx-footer-signature-row,
+.rx-document-footer {
+  position: relative;
+  z-index: 1;
+}
+
+/* ── Letterhead ──────────────────────────────────────────────────────────────── */
 .rx-letterhead {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 4px;
-}
-
-.rx-brand-name {
-  font-size: 1.4rem;
-  font-weight: 800;
-  color: #1d4ed8;
-}
-
-.rx-brand-sub {
-  font-size: 0.72rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: #94a3b8;
-  margin-top: 4px;
-  background: #fef3c7;
-  color: #92400e;
-  padding: 2px 8px;
-  border-radius: 4px;
-  display: inline-block;
-}
-
-.rx-id-pill {
-  font-family: 'Courier New', monospace;
-  font-size: 0.8rem;
-  font-weight: 700;
-  color: #374151;
-  background: #f1f5f9;
-  padding: 4px 12px;
-  border-radius: 6px;
-  margin-bottom: 4px;
-  text-align: right;
-}
-
-.rx-date-text {
-  font-size: 0.8rem;
-  color: #64748b;
-  text-align: right;
-}
-
-.rx-divider {
-  border: none;
-  border-top: 1px solid #e5e7eb;
-  margin: 20px 0;
-}
-
-/* ── Info Grid ───────────────────────── */
-.rx-info-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  margin-bottom: 20px;
-}
-
-/* ── Cards ───────────────────────────── */
-.rx-card {
-  border-radius: 12px;
-  padding: 18px;
-  border: 1px solid;
-
-  &--doctor {
-    background: linear-gradient(135deg, #eff6ff, #f5f3ff);
-    border-color: #dbeafe;
-  }
-
-  &--patient {
-    background: linear-gradient(135deg, #f0fdf4, #f5f3ff);
-    border-color: #bbf7d0;
-  }
-}
-
-.rx-card__label {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 0.68rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: #6b7280;
-  margin-bottom: 8px;
-
-  mat-icon {
-    font-size: 14px;
-    width: 14px;
-    height: 14px;
-  }
-}
-
-.rx-card__name {
-  font-size: 1rem;
-  font-weight: 700;
-  color: #111827;
-  margin-bottom: 8px;
-}
-
-.rx-card__detail {
-  font-size: 0.8rem;
-  color: #4b5563;
-  margin-bottom: 3px;
-}
-
-.rx-card__row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-bottom: 8px;
-}
-
-.rx-chip {
-  display: inline-block;
-  padding: 2px 10px;
-  border-radius: 20px;
-  font-size: 0.72rem;
-  font-weight: 600;
-  background: #f3f4f6;
-  color: #374151;
-  border: 1px solid #e5e7eb;
-
-  &--blood {
-    background: #fff1f2;
-    color: #be123c;
-    border-color: #fecdd3;
-  }
-}
-
-/* ── Vitals ──────────────────────────── */
-.rx-vitals {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 20px;
-}
-
-.vital-chip {
-  padding: 5px 14px;
-  background: #f0fdf4;
-  border: 1px solid #bbf7d0;
-  border-radius: 20px;
-  font-size: 0.78rem;
-  color: #065f46;
-  font-weight: 500;
-}
-
-/* ── Section Headers ─────────────────── */
-.section-header {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 0.85rem;
-  font-weight: 700;
-  border-radius: 8px;
-  padding: 10px 16px;
+  gap: 24px;
   margin-bottom: 16px;
 
-  mat-icon {
-    font-size: 18px;
-    width: 18px;
-    height: 18px;
+  @media (max-width: 640px) { flex-direction: column; gap: 14px; }
+
+  &__left {
+    flex: 1;
+    min-width: 0;
   }
 
-  &--digital {
+  &__right {
+    text-align: right;
+    flex-shrink: 0;
+
+    @media (max-width: 640px) { text-align: left; }
+  }
+}
+
+.rx-letterhead__logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.rx-logo-text {
+  font-size: 1.35rem;
+  font-weight: 900;
+  color: #2563eb;
+  letter-spacing: -0.5px;
+}
+
+.rx-logo-sub {
+  color: #0f172a;
+  font-weight: 700;
+  margin-left: 2px;
+}
+
+.rx-doctor-name {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #0f172a;
+  line-height: 1.2;
+}
+
+.rx-doctor-quals {
+  font-size: 0.85rem;
+  color: #2563eb;
+  font-weight: 600;
+  margin-top: 2px;
+}
+
+.rx-doctor-reg {
+  font-size: 0.78rem;
+  color: #64748b;
+  margin-top: 2px;
+}
+
+.rx-clinic-name {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.rx-clinic-detail {
+  font-size: 0.8rem;
+  color: #64748b;
+  margin-top: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+
+  @media (max-width: 640px) { justify-content: flex-start; }
+}
+
+.rx-tiny-icon {
+  font-size: 14px !important;
+  width: 14px !important;
+  height: 14px !important;
+}
+
+.rx-doc-meta-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+
+  @media (max-width: 640px) { justify-content: flex-start; }
+}
+
+.rx-meta-tag {
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 6px;
+
+  &--id {
     background: #eff6ff;
     color: #1d4ed8;
     border: 1px solid #bfdbfe;
   }
 
-  &--upload {
-    background: #f0fdf4;
-    color: #15803d;
-    border: 1px solid #bbf7d0;
-  }
-}
-
-/* ── Section ─────────────────────────── */
-.rx-section {
-  margin-bottom: 24px;
-}
-
-.rx-section-title {
-  font-size: 0.75rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: #1d4ed8;
-  border-bottom: 2px solid #dbeafe;
-  padding-bottom: 6px;
-  margin-bottom: 12px;
-}
-
-.rx-info-row {
-  display: grid;
-  grid-template-columns: 170px 1fr;
-  gap: 8px;
-  font-size: 0.875rem;
-  margin-bottom: 8px;
-  align-items: baseline;
-}
-
-.rx-info-label {
-  font-weight: 600;
-  color: #374151;
-}
-
-/* ── Tags ────────────────────────────── */
-.tag {
-  display: inline-block;
-  padding: 2px 8px;
-  background: #eff6ff;
-  border: 1px solid #bfdbfe;
-  border-radius: 10px;
-  font-size: 0.72rem;
-  color: #1d4ed8;
-  margin: 2px;
-
-  &--danger {
-    background: #fff1f2;
-    border-color: #fecdd3;
-    color: #be123c;
-  }
-}
-
-/* ── Medications Table ───────────────── */
-.rx-med-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.85rem;
-
-  thead tr {
-    background: linear-gradient(135deg, #f8faff, #faf5ff);
-  }
-
-  th,
-  td {
-    padding: 10px 12px;
-    text-align: left;
-    border-bottom: 1px solid #f1f5f9;
-  }
-
-  th {
-    font-weight: 700;
+  &--date {
+    background: #f8fafc;
     color: #475569;
-    font-size: 0.72rem;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-  }
-
-  tbody tr:hover td {
-    background: #fafbff;
+    border: 1px solid #e2e8f0;
   }
 }
 
-.med-strength {
-  font-size: 0.78rem;
-  color: #6b7280;
+/* ── Divider ─────────────────────────────────────────────────────────────────── */
+.rx-divider-primary {
+  height: 3px;
+  background: linear-gradient(90deg, #2563eb 0%, #3b82f6 50%, #93c5fd 100%);
+  border-radius: 2px;
+  margin: 14px 0 16px;
 }
 
-/* ── File Preview ────────────────────── */
-.rx-file-empty {
-  padding: 16px 20px;
-  border: 2px dashed #cbd5e1;
-  border-radius: 12px;
-  color: #64748b;
+/* ── Patient Strip ───────────────────────────────────────────────────────────── */
+.rx-patient-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px 24px;
   background: #f8fafc;
-  font-size: 0.875rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 12px 18px;
+  margin-bottom: 14px;
+
+  &__item {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+
+    &--right {
+      margin-left: auto;
+
+      @media (max-width: 640px) { margin-left: 0; }
+    }
+  }
 }
 
-.rx-file-preview {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
+.rx-ps-label {
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #64748b;
+  font-weight: 700;
 }
 
-.rx-file-actions {
+.rx-ps-value {
+  font-size: 0.92rem;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.rx-blood-pill {
+  color: #dc2626;
+  font-weight: 800;
+}
+
+/* ── Vitals Strip ────────────────────────────────────────────────────────────── */
+.rx-vitals-strip {
   display: flex;
-  gap: 10px;
+  align-items: center;
+  gap: 12px;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 10px;
+  padding: 10px 16px;
+  margin-bottom: 14px;
   flex-wrap: wrap;
 }
 
-/* ── Image Preview ────────────────────── */
-.rx-image-wrapper {
-  border: 2px solid #e2e8f0;
+.rx-vitals-label {
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #15803d;
+}
+
+.rx-vitals-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+}
+
+.rx-vital-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #ffffff;
+  padding: 3px 9px;
+  border-radius: 6px;
+  border: 1px solid #86efac;
+  font-size: 0.78rem;
+}
+
+.rx-vital-key {
+  color: #64748b;
+  font-weight: 600;
+}
+
+.rx-vital-val {
+  color: #166534;
+  font-weight: 800;
+}
+
+/* ── Clinical Details ────────────────────────────────────────────────────────── */
+.rx-clinical-section {
+  margin-bottom: 16px;
+  padding: 12px 16px;
+  background: #fafbff;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+}
+
+.rx-clinical-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 6px;
+  align-items: baseline;
+
+  &:last-child { margin-bottom: 0; }
+
+  @media (max-width: 576px) { flex-direction: column; gap: 2px; }
+}
+
+.rx-clinical-label {
+  font-weight: 700;
+  font-size: 0.8rem;
+  color: #475569;
+  white-space: nowrap;
+  min-width: 120px;
+}
+
+.rx-clinical-value {
+  font-size: 0.88rem;
+  color: #0f172a;
+}
+
+.rx-diagnosis-badge {
+  font-weight: 800;
+  color: #1e3a8a;
+  background: #dbeafe;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.rx-allergy-badge {
+  color: #dc2626;
+  font-weight: 700;
+  background: #fee2e2;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.rx-tag {
+  display: inline-block;
+  background: #f1f5f9;
+  color: #334155;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 2px 8px;
   border-radius: 12px;
-  overflow: hidden;
+  margin-right: 4px;
+  margin-bottom: 4px;
+}
+
+/* ── Section Title ───────────────────────────────────────────────────────────── */
+.rx-section-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1.5px solid #dbeafe;
+  padding-bottom: 6px;
+  margin-bottom: 10px;
+}
+
+.rx-symbol {
+  font-size: 1.6rem;
+  font-weight: 900;
+  color: #2563eb;
+  font-family: serif;
+  line-height: 1;
+}
+
+.rx-section-heading {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #1e3a8a;
+  letter-spacing: -0.01em;
+}
+
+.rx-section-icon {
+  font-size: 20px !important;
+  width: 20px !important;
+  height: 20px !important;
+  color: #2563eb;
+}
+
+/* ── Medications Section ─────────────────────────────────────────────────────── */
+.rx-medications-section { margin-bottom: 18px; }
+
+.rx-table-responsive {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.rx-med-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+
+  thead tr {
+    background: #f8fafc;
+  }
+
+  th {
+    color: #475569;
+    font-weight: 700;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 8px 10px;
+    text-align: left;
+    border-bottom: 2px solid #cbd5e1;
+  }
+
+  td {
+    padding: 9px 10px;
+    border-bottom: 1px solid #e2e8f0;
+    vertical-align: top;
+  }
+
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover td { background: #f8faff; }
+}
+
+.rx-med-name-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.rx-med-name {
+  font-size: 0.88rem;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.rx-med-strength {
+  color: #2563eb;
+  font-weight: 700;
+  font-size: 0.78rem;
+}
+
+.rx-med-type {
+  color: #64748b;
+  font-size: 0.75rem;
+}
+
+.rx-freq-pill {
+  display: inline-block;
+  background: #eff6ff;
+  color: #1d4ed8;
+  padding: 2px 7px;
+  border-radius: 4px;
+  font-weight: 700;
+  font-size: 0.78rem;
+}
+
+.rx-substitute {
+  display: inline-block;
+  color: #7c3aed;
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-left: 4px;
+}
+
+/* ── Lab Tests Section ───────────────────────────────────────────────────────── */
+.rx-labtest-section { margin-bottom: 18px; }
+
+.rx-lab-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+
+  thead tr {
+    background: #f8fafc;
+  }
+
+  th {
+    color: #475569;
+    font-weight: 700;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 8px 10px;
+    text-align: left;
+    border-bottom: 2px solid #cbd5e1;
+  }
+
+  td {
+    padding: 9px 10px;
+    border-bottom: 1px solid #e2e8f0;
+    vertical-align: top;
+  }
+
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover td { background: #f8faff; }
+}
+
+/* ── Advice Section ──────────────────────────────────────────────────────────── */
+.rx-advice-section { margin-bottom: 18px; }
+
+.rx-advice-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+
+  @media (max-width: 600px) { grid-template-columns: 1fr; }
+}
+
+.rx-advice-item {
   background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 0.82rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+
+  &--warning {
+    background: #fff7ed;
+    border-color: #fed7aa;
+    color: #9a3412;
+  }
+}
+
+.rx-advice-label {
+  font-weight: 800;
+  font-size: 0.75rem;
+  color: #475569;
+}
+
+.rx-advice-text {
+  color: #0f172a;
+  line-height: 1.4;
+}
+
+/* ── Notes & Followup Grid ───────────────────────────────────────────────────── */
+.rx-notes-followup-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 18px;
+
+  @media (max-width: 600px) { grid-template-columns: 1fr; }
+}
+
+.rx-followup-card,
+.rx-doctor-notes-card {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 10px 14px;
+}
+
+.rx-card-mini-title {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #2563eb;
+  margin-bottom: 4px;
+}
+
+.rx-mini-icon {
+  font-size: 16px !important;
+  width: 16px !important;
+  height: 16px !important;
+}
+
+.rx-followup-details {
+  font-size: 0.85rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.rx-notes-text {
+  margin: 0;
+  font-size: 0.82rem;
+  color: #475569;
+  font-style: italic;
+}
+
+/* ── Signature & Disclaimer ──────────────────────────────────────────────────── */
+.rx-footer-signature-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 20px;
+  margin-top: 24px;
+  padding-top: 14px;
+  border-top: 1px solid #e2e8f0;
+
+  @media (max-width: 600px) { flex-direction: column; align-items: stretch; }
+}
+
+.rx-footer-disclaimer {
+  max-width: 480px;
+}
+
+.rx-disclaimer-text {
+  margin: 0;
+  font-size: 0.72rem;
+  color: #64748b;
+  line-height: 1.4;
+}
+
+.rx-disclaimer-sub {
+  margin: 3px 0 0;
+  font-size: 0.68rem;
+  color: #94a3b8;
+}
+
+.rx-signature-block {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  text-align: right;
+  min-width: 180px;
+
+  @media (max-width: 600px) { align-items: flex-start; text-align: left; }
+}
+
+.rx-signature-img-wrap {
+  margin-bottom: 4px;
+  max-height: 50px;
+}
+
+.rx-sig-img {
+  max-height: 46px;
+  object-fit: contain;
+}
+
+.rx-sig-line {
+  width: 160px;
+  border-top: 1.5px solid #0f172a;
+  margin-bottom: 6px;
+}
+
+.rx-sig-name {
+  font-size: 0.92rem;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.rx-sig-quals {
+  font-size: 0.78rem;
+  color: #2563eb;
+  font-weight: 600;
+}
+
+.rx-sig-reg {
+  font-size: 0.72rem;
+  color: #64748b;
+}
+
+/* ── Document Footer ─────────────────────────────────────────────────────────── */
+.rx-document-footer {
+  margin-top: 20px;
+  padding-top: 8px;
+  border-top: 1px dashed #cbd5e1;
+  font-size: 0.7rem;
+  color: #94a3b8;
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+
+/* ── Uploaded Attachment Card ────────────────────────────────────────────────── */
+.rx-uploaded-attachment-card {
+  margin-top: 24px;
+  background: #ffffff;
+  border: 1px solid #dce4ee;
+  border-radius: 12px;
+  padding: 16px 20px;
+}
+
+.rx-attachment-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.rx-attachment-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #0f172a;
+
+  mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    color: #2563eb;
+  }
+}
+
+.rx-attachment-body {
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #e2e8f0;
+}
+
+.rx-attachment-image {
+  width: 100%;
+  max-height: 500px;
+  object-fit: contain;
+  display: block;
+}
+
+.rx-attachment-frame {
+  width: 100%;
+  min-height: 480px;
+  border: none;
+}
+
+.rx-image-wrapper {
   text-align: center;
+  background: #f8fafc;
   cursor: zoom-in;
 
   &--zoomed {
     cursor: zoom-out;
 
-    .rx-uploaded-image {
+    .rx-attachment-image {
       max-height: none;
-      transform: scale(1.5);
+      transform: scale(1.4);
       transform-origin: top center;
     }
   }
 }
 
-.rx-uploaded-image {
-  width: 100%;
-  max-height: 600px;
-  object-fit: contain;
-  transition: transform 0.3s ease;
-  display: block;
-}
-
 .rx-image-hint {
-  padding: 8px;
-  font-size: 0.75rem;
+  padding: 6px;
+  font-size: 0.72rem;
   color: #94a3b8;
   background: #f1f5f9;
-  border-top: 1px solid #e2e8f0;
 }
 
-/* ── PDF Frame ────────────────────────── */
 .rx-pdf-wrapper {
-  border: 2px solid #e2e8f0;
+  background: #f8fafc;
+}
+
+/* ── Audit Trail ─────────────────────────────────────────────────────────────── */
+.rx-audit-section {
+  margin-top: 24px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
   border-radius: 12px;
-  overflow: hidden;
+  padding: 16px 20px;
 }
 
-.rx-uploaded-frame {
-  width: 100%;
-  min-height: 540px;
-  border: none;
-  display: block;
-}
-
-/* ── Audit Log ───────────────────────── */
 .audit-log {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
+  margin-top: 8px;
 }
 
 .audit-entry {
@@ -555,62 +959,65 @@
   align-items: center;
   font-size: 0.8rem;
   padding: 8px 14px;
-  background: #f9fafb;
+  background: #f8fafc;
   border-radius: 8px;
-  border-left: 3px solid #6366f1;
+  border-left: 3px solid #2563eb;
 }
 
 .audit-action {
-  font-weight: 600;
-  color: #374151;
+  font-weight: 700;
+  color: #0f172a;
 }
 
 .audit-time {
-  color: #6b7280;
+  color: #64748b;
 }
 
 .audit-note {
-  color: #9ca3af;
+  color: #94a3b8;
   font-style: italic;
   font-size: 0.75rem;
 }
 
-/* ── Print ───────────────────────────── */
+/* ── Print Styles ────────────────────────────────────────────────────────────── */
 @media print {
-  .no-print {
+  .no-print,
+  .mat-toolbar,
+  .sidebar,
+  .header,
+  .app-sidebar,
+  .admin-header {
     display: none !important;
   }
 
+  body,
   .detail-page {
-    background: #fff;
-    padding: 0;
+    background: #ffffff !important;
+    padding: 0 !important;
+    margin: 0 !important;
   }
 
   .rx-document {
-    max-width: 100%;
-    border: none;
-    box-shadow: none;
-    border-radius: 0;
-    padding: 10mm;
+    box-shadow: none !important;
+    border: none !important;
+    border-radius: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .rx-watermark {
+    display: flex !important;
+    opacity: 0.05 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
   }
 
   @page {
     size: A4;
     margin: 10mm;
-  }
-}
-
-/* ── Responsive ──────────────────────── */
-@media (max-width: 640px) {
-  .rx-info-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .rx-info-row {
-    grid-template-columns: 1fr;
-  }
-
-  .rx-document {
-    padding: 16px;
   }
 }

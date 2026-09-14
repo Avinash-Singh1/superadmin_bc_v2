@@ -26,22 +26,34 @@
       <div class="detail-actions-right">
         <span class="rx-status-badge" [ngClass]="getStatusClass()">{{ getStatusLabel() }}</span>
         <span class="rx-type-chip">{{ getPrescriptionTypeLabel() }}</span>
-        <!-- Print only for structured prescriptions -->
-        <button class="btn-action btn-print" (click)="printPrescription()" *ngIf="!isUploadOnly()">
+        
+        <!-- Print Button -->
+        <button class="btn-action btn-print" (click)="printPrescription()" title="Print prescription">
           <mat-icon>print</mat-icon> Print
         </button>
+
+        <!-- Open / Download PDF -->
         <button class="btn-action btn-pdf" (click)="openPdf()"
-          *ngIf="prescription?.generatedPdfUrl || prescription?.uploadedPdfUrl">
+          *ngIf="prescription?.generatedPdfUrl || prescription?.uploadedPdfUrl" title="Open PDF">
           <mat-icon>picture_as_pdf</mat-icon> Open PDF
         </button>
-        <label class="btn-action btn-upload">
+
+        <button class="btn-action btn-download" (click)="downloadFile()"
+          *ngIf="hasUploadedFile()" title="Download attached file">
+          <mat-icon>download</mat-icon> Download File
+        </button>
+
+        <!-- Upload / Replace Attachment -->
+        <label class="btn-action btn-upload" title="Upload or replace prescription document">
           <input type="file" accept="application/pdf,image/jpeg,image/jpg,image/png"
             class="hidden-file-input" (change)="onAttachmentSelected($event)">
           <mat-icon>{{ hasUploadedFile() ? 'swap_horiz' : 'upload_file' }}</mat-icon>
           {{ isUploading ? 'Uploading…' : (hasUploadedFile() ? 'Replace File' : 'Upload File') }}
         </label>
+
+        <!-- Remove Attachment -->
         <button class="btn-action btn-remove" (click)="removeAttachment()"
-          *ngIf="hasUploadedFile()" [disabled]="isRemovingFile">
+          *ngIf="hasUploadedFile()" [disabled]="isRemovingFile" title="Remove attached file">
           <mat-icon>delete_outline</mat-icon>
           {{ isRemovingFile ? 'Removing…' : 'Remove File' }}
         </button>
@@ -53,130 +65,166 @@
       <mat-icon>warning</mat-icon> {{ error }}
     </div>
 
-    <!-- Document -->
-    <div class="rx-document">
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <!-- UNIFIED PRESCRIPTION DOCUMENT -->
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <div class="rx-document" id="admin-rx-document">
 
-      <!-- Letterhead -->
+      <!-- Subtle Background Watermark -->
+      <div class="rx-watermark">
+        <div class="rx-watermark__icon">
+          <svg viewBox="0 0 100 100" fill="currentColor">
+            <path d="M50 10 C30 10 15 25 15 45 C15 65 35 80 50 90 C65 80 85 65 85 45 C85 25 70 10 50 10 Z M50 28 A12 12 0 0 1 50 52 A12 12 0 0 1 50 28 Z M45 40 L55 40 M50 35 L50 45 M35 60 L65 60 M50 52 L50 72" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="rx-watermark__text">BOOKCURE HEALTH</div>
+      </div>
+
+      <!-- Letterhead / Doctor Header -->
       <div class="rx-letterhead">
         <div class="rx-letterhead__left">
-          <div class="rx-brand-name">Bookcure Health</div>
-          <div class="rx-brand-sub">Admin View — Prescription Record</div>
+          <div class="rx-letterhead__logo">
+            <span class="rx-logo-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
+                <path d="M12 5v14M5 12h14" stroke="#dc2626" stroke-width="2"/>
+              </svg>
+            </span>
+            <span class="rx-logo-text">Bookcure<span class="rx-logo-sub">Health</span></span>
+          </div>
+          <div class="rx-doctor-name">Dr. {{ getDoctorName() }}</div>
+          <div class="rx-doctor-quals" *ngIf="getDoctorQualification() || getDoctorSpecialization()">
+            {{ getDoctorQualification() }}
+            <span *ngIf="getDoctorQualification() && getDoctorSpecialization()"> · </span>
+            {{ getDoctorSpecialization() }}
+          </div>
+          <div *ngIf="getDoctorRegNo()" class="rx-doctor-reg">
+            Reg. No: <strong>{{ getDoctorRegNo() }}</strong>
+          </div>
         </div>
+
         <div class="rx-letterhead__right">
-          <div class="rx-id-pill">{{ getRxId() }}</div>
-          <div class="rx-date-text">{{ formatDate(prescription?.prescriptionDate || prescription?.createdAt) }}</div>
-        </div>
-      </div>
-
-      <div class="rx-divider"></div>
-
-      <!-- Doctor + Patient Cards -->
-      <div class="rx-info-grid">
-
-        <!-- Doctor Card -->
-        <div class="rx-card rx-card--doctor">
-          <div class="rx-card__label">
-            <mat-icon>medical_services</mat-icon> Doctor
+          <div class="rx-clinic-name">{{ getHospitalName() }}</div>
+          <div class="rx-clinic-detail" *ngIf="getDoctorLocation()">
+            <mat-icon class="rx-tiny-icon">location_on</mat-icon>
+            {{ getDoctorLocation() }}
           </div>
-          <div class="rx-card__name">{{ getDoctorName() }}</div>
-          <div class="rx-card__detail" *ngIf="getDoctorQualification()">
-            🎓 {{ getDoctorQualification() }}
+          <div class="rx-clinic-detail" *ngIf="getDoctorPhone()">
+            <mat-icon class="rx-tiny-icon">call</mat-icon>
+            {{ getDoctorPhone() }}
           </div>
-          <div class="rx-card__detail" *ngIf="getDoctorSpecialization()">
-            🏥 {{ getDoctorSpecialization() }}
-          </div>
-          <div class="rx-card__detail" *ngIf="getDoctorRegNo()">
-            📋 Reg. No: {{ getDoctorRegNo() }}
-          </div>
-          <div class="rx-card__detail" *ngIf="getDoctorPhone()">
-            📞 {{ getDoctorPhone() }}
-          </div>
-        </div>
-
-        <!-- Patient Card -->
-        <div class="rx-card rx-card--patient">
-          <div class="rx-card__label">
-            <mat-icon>person</mat-icon> Patient
-          </div>
-          <div class="rx-card__name">{{ getPatientName() }}</div>
-          <div class="rx-card__row">
-            <span class="rx-chip" *ngIf="getPatientAge()">{{ getPatientAge() }}</span>
-            <span class="rx-chip" *ngIf="getPatientGender()">{{ getPatientGender() }}</span>
-            <span class="rx-chip rx-chip--blood" *ngIf="getPatientBloodGroup()">
-              🩸 {{ getPatientBloodGroup() }}
-            </span>
-          </div>
-          <div class="rx-card__detail" *ngIf="getPatientPhone()">
-            📞 {{ getPatientPhone() }}
+          <div class="rx-doc-meta-row">
+            <div class="rx-meta-tag rx-meta-tag--id" *ngIf="prescription?.prescriptionId">
+              Rx: {{ getRxId() }}
+            </div>
+            <div class="rx-meta-tag rx-meta-tag--date">
+              Date: {{ formatDate(prescription?.prescriptionDate || prescription?.createdAt) }}
+            </div>
           </div>
         </div>
       </div>
 
-      <!-- Vitals -->
-      <div class="rx-vitals" *ngIf="prescription?.vitalSigns">
-        <div class="vital-chip" *ngIf="prescription.vitalSigns.bloodPressure">
-          ❤️ BP: {{ prescription.vitalSigns.bloodPressure }}
+      <div class="rx-divider-primary"></div>
+
+      <!-- Patient Information Strip -->
+      <div class="rx-patient-strip">
+        <div class="rx-patient-strip__item">
+          <span class="rx-ps-label">Patient Name</span>
+          <span class="rx-ps-value">{{ getPatientName() }}</span>
         </div>
-        <div class="vital-chip" *ngIf="prescription.vitalSigns.temperature">
-          🌡️ Temp: {{ prescription.vitalSigns.temperature }}°
+        <div class="rx-patient-strip__item" *ngIf="getPatientAge() || getPatientGender()">
+          <span class="rx-ps-label">Age / Gender</span>
+          <span class="rx-ps-value">
+            {{ getPatientAge() }}
+            <span *ngIf="getPatientAge() && getPatientGender()"> / </span>
+            {{ getPatientGender() }}
+          </span>
         </div>
-        <div class="vital-chip" *ngIf="prescription.vitalSigns.pulse">
-          💓 Pulse: {{ prescription.vitalSigns.pulse }}
+        <div class="rx-patient-strip__item" *ngIf="getPatientPhone()">
+          <span class="rx-ps-label">Contact</span>
+          <span class="rx-ps-value">{{ getPatientPhone() }}</span>
         </div>
-        <div class="vital-chip" *ngIf="prescription.vitalSigns.weight">
-          ⚖️ Wt: {{ prescription.vitalSigns.weight }}
+        <div class="rx-patient-strip__item" *ngIf="getPatientBloodGroup()">
+          <span class="rx-ps-label">Blood Group</span>
+          <span class="rx-ps-value rx-blood-pill">{{ getPatientBloodGroup() }}</span>
         </div>
-        <div class="vital-chip" *ngIf="prescription.vitalSigns.height">
-          📏 Ht: {{ prescription.vitalSigns.height }}
-        </div>
-        <div class="vital-chip" *ngIf="prescription.vitalSigns.spo2">
-          🫁 SpO₂: {{ prescription.vitalSigns.spo2 }}%
+        <div class="rx-patient-strip__item rx-patient-strip__item--right" *ngIf="prescription?.validUntil">
+          <span class="rx-ps-label">Valid Until</span>
+          <span class="rx-ps-value">{{ formatDate(prescription.validUntil) }}</span>
         </div>
       </div>
 
-      <div class="rx-divider" *ngIf="hasStructuredContent()"></div>
-
-      <!-- ── STRUCTURED PRESCRIPTION ─────────────────── -->
-      <ng-container *ngIf="hasStructuredContent()">
-
-        <div class="section-header section-header--digital">
-          <mat-icon>description</mat-icon>
-          Digital Prescription
+      <!-- Vitals Strip -->
+      <div class="rx-vitals-strip" *ngIf="hasVitals()">
+        <span class="rx-vitals-label">Vitals:</span>
+        <div class="rx-vitals-list">
+          <span class="rx-vital-pill" *ngIf="prescription?.vitalSigns?.bloodPressure || prescription?.vitalSigns?.bp">
+            <span class="rx-vital-key">BP:</span>
+            <span class="rx-vital-val">{{ prescription?.vitalSigns?.bloodPressure || prescription?.vitalSigns?.bp }}</span>
+          </span>
+          <span class="rx-vital-pill" *ngIf="prescription?.vitalSigns?.pulse">
+            <span class="rx-vital-key">Pulse:</span>
+            <span class="rx-vital-val">{{ prescription?.vitalSigns?.pulse }} bpm</span>
+          </span>
+          <span class="rx-vital-pill" *ngIf="prescription?.vitalSigns?.temperature || prescription?.vitalSigns?.temp">
+            <span class="rx-vital-key">Temp:</span>
+            <span class="rx-vital-val">{{ prescription?.vitalSigns?.temperature || prescription?.vitalSigns?.temp }}°F</span>
+          </span>
+          <span class="rx-vital-pill" *ngIf="prescription?.vitalSigns?.weight">
+            <span class="rx-vital-key">Weight:</span>
+            <span class="rx-vital-val">{{ prescription?.vitalSigns?.weight }} kg</span>
+          </span>
+          <span class="rx-vital-pill" *ngIf="prescription?.vitalSigns?.height">
+            <span class="rx-vital-key">Height:</span>
+            <span class="rx-vital-val">{{ prescription?.vitalSigns?.height }} cm</span>
+          </span>
+          <span class="rx-vital-pill" *ngIf="prescription?.vitalSigns?.spo2">
+            <span class="rx-vital-key">SpO₂:</span>
+            <span class="rx-vital-val">{{ prescription?.vitalSigns?.spo2 }}%</span>
+          </span>
+          <span class="rx-vital-pill" *ngIf="prescription?.vitalSigns?.bloodSugar || prescription?.vitalSigns?.sugar">
+            <span class="rx-vital-key">Sugar:</span>
+            <span class="rx-vital-val">{{ prescription?.vitalSigns?.bloodSugar || prescription?.vitalSigns?.sugar }} mg/dL</span>
+          </span>
         </div>
+      </div>
 
-        <!-- Clinical -->
-        <div class="rx-section" *ngIf="prescription?.chiefComplaint || prescription?.diagnosis">
-          <div class="rx-section-title">Clinical Details</div>
-          <div class="rx-info-row" *ngIf="prescription?.chiefComplaint">
-            <span class="rx-info-label">Chief Complaint</span>
-            <span>{{ prescription.chiefComplaint }}</span>
-          </div>
-          <div class="rx-info-row" *ngIf="prescription?.diagnosis">
-            <span class="rx-info-label">Diagnosis</span>
-            <span>{{ prescription.diagnosis }}</span>
-          </div>
-          <div class="rx-info-row" *ngIf="prescription?.symptoms?.length">
-            <span class="rx-info-label">Symptoms</span>
-            <span>
-              <span class="tag" *ngFor="let s of prescription.symptoms">{{ s }}</span>
-            </span>
-          </div>
-          <div class="rx-info-row" *ngIf="prescription?.allergies?.length">
-            <span class="rx-info-label">Allergies</span>
-            <span>
-              <span class="tag tag--danger" *ngFor="let a of prescription.allergies">{{ a }}</span>
-            </span>
-          </div>
+      <!-- Clinical Details -->
+      <div class="rx-clinical-section" *ngIf="prescription?.chiefComplaint || prescription?.diagnosis || prescription?.symptoms?.length || prescription?.allergies?.length">
+        <div class="rx-clinical-row" *ngIf="prescription?.chiefComplaint">
+          <span class="rx-clinical-label">Chief Complaint:</span>
+          <span class="rx-clinical-value">{{ prescription.chiefComplaint }}</span>
         </div>
+        <div class="rx-clinical-row" *ngIf="prescription?.diagnosis">
+          <span class="rx-clinical-label">Diagnosis:</span>
+          <span class="rx-clinical-value rx-diagnosis-badge">{{ prescription.diagnosis }}</span>
+        </div>
+        <div class="rx-clinical-row" *ngIf="prescription?.symptoms?.length">
+          <span class="rx-clinical-label">Symptoms:</span>
+          <span class="rx-clinical-value">
+            <span class="rx-tag" *ngFor="let s of prescription.symptoms">{{ s }}</span>
+          </span>
+        </div>
+        <div class="rx-clinical-row" *ngIf="prescription?.allergies?.length">
+          <span class="rx-clinical-label">Known Allergies:</span>
+          <span class="rx-clinical-value">
+            <span class="rx-tag rx-allergy-badge" *ngFor="let a of prescription.allergies">{{ a }}</span>
+          </span>
+        </div>
+      </div>
 
-        <!-- Medications -->
-        <div class="rx-section" *ngIf="getMedications().length">
-          <div class="rx-section-title">Medications</div>
+      <!-- Medications Table -->
+      <div class="rx-medications-section" *ngIf="hasMedications()">
+        <div class="rx-section-title">
+          <span class="rx-symbol">℞</span>
+          <span class="rx-section-heading">Medications Prescribed</span>
+        </div>
+        <div class="rx-table-responsive">
           <table class="rx-med-table">
             <thead>
               <tr>
-                <th>#</th>
-                <th>Medicine</th>
+                <th style="width: 36px;">#</th>
+                <th>Medicine / Generic</th>
                 <th>Dosage</th>
                 <th>Frequency</th>
                 <th>Duration</th>
@@ -184,138 +232,204 @@
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let m of getMedications(); let i = index">
+              <tr *ngFor="let med of getMedications(); let i = index">
                 <td>{{ i + 1 }}</td>
-                <td>{{ m.name }}<span class="med-strength" *ngIf="m.strength"> · {{ m.strength }}</span></td>
-                <td>{{ m.dosage || '—' }}</td>
-                <td>{{ m.frequency || '—' }}</td>
-                <td>{{ m.duration || '—' }}</td>
-                <td>{{ m.instructions || '—' }}</td>
+                <td>
+                  <div class="rx-med-name-wrap">
+                    <span class="rx-med-name">{{ med.name || med.medicineName }}</span>
+                    <span class="rx-med-strength" *ngIf="med.strength">({{ med.strength }})</span>
+                    <span class="rx-med-type" *ngIf="med.dosageForm || med.type">[{{ med.dosageForm || med.type }}]</span>
+                  </div>
+                  <div class="rx-substitute" *ngIf="med.genericName">Generic: {{ med.genericName }}</div>
+                </td>
+                <td>{{ med.dosage || '—' }}</td>
+                <td>
+                  <span class="rx-freq-pill" *ngIf="med.frequency">{{ med.frequency }}</span>
+                  <span *ngIf="!med.frequency">—</span>
+                </td>
+                <td>{{ med.duration || '—' }}</td>
+                <td>{{ med.instructions || med.instruction || '—' }}</td>
               </tr>
             </tbody>
           </table>
         </div>
+      </div>
 
-        <!-- Advice -->
-        <div class="rx-section" *ngIf="prescription?.advice">
-          <div class="rx-section-title">Advice & Instructions</div>
-          <div class="rx-info-row" *ngIf="prescription.advice.diet">
-            <span class="rx-info-label">Diet</span>
-            <span>{{ prescription.advice.diet }}</span>
-          </div>
-          <div class="rx-info-row" *ngIf="prescription.advice.exercise">
-            <span class="rx-info-label">Exercise</span>
-            <span>{{ prescription.advice.exercise }}</span>
-          </div>
-          <div class="rx-info-row" *ngIf="prescription.advice.precautions">
-            <span class="rx-info-label">Precautions</span>
-            <span>{{ prescription.advice.precautions }}</span>
-          </div>
-          <div class="rx-info-row" *ngIf="prescription.advice.generalInstructions">
-            <span class="rx-info-label">General</span>
-            <span>{{ prescription.advice.generalInstructions }}</span>
-          </div>
-          <div class="rx-info-row" *ngIf="prescription.advice.emergencyWarningSigns">
-            <span class="rx-info-label">⚠️ Warning Signs</span>
-            <span>{{ prescription.advice.emergencyWarningSigns }}</span>
-          </div>
-          <div class="rx-info-row" *ngIf="prescription.advice.referralNotes">
-            <span class="rx-info-label">Referral</span>
-            <span>{{ prescription.advice.referralNotes }}</span>
-          </div>
+      <!-- Lab Tests Section -->
+      <div class="rx-labtest-section" *ngIf="hasLabTests()">
+        <div class="rx-section-title">
+          <mat-icon class="rx-section-icon">science</mat-icon>
+          <span class="rx-section-heading">Diagnostic & Lab Tests</span>
         </div>
-
-        <!-- Lab Tests -->
-        <div class="rx-section" *ngIf="getLabTests().length">
-          <div class="rx-section-title">Lab Tests</div>
-          <table class="rx-med-table">
+        <div class="rx-table-responsive">
+          <table class="rx-lab-table">
             <thead>
-              <tr><th>#</th><th>Test</th><th>Urgency</th><th>Instructions</th></tr>
+              <tr>
+                <th style="width: 36px;">#</th>
+                <th>Test Name</th>
+                <th>Urgency</th>
+                <th>Instructions / Notes</th>
+              </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let t of getLabTests(); let i = index">
+              <tr *ngFor="let test of getLabTestsList(); let i = index">
                 <td>{{ i + 1 }}</td>
-                <td>{{ t.testName }}</td>
-                <td>{{ t.urgency || 'routine' }}</td>
-                <td>{{ t.instructions || '—' }}</td>
+                <td><strong>{{ test.testName || test.name || test }}</strong></td>
+                <td>
+                  <span class="rx-meta-tag" [ngClass]="test.urgency === 'urgent' ? 'rx-meta-tag--id' : 'rx-meta-tag--date'">
+                    {{ (test.urgency || 'Routine') | titlecase }}
+                  </span>
+                </td>
+                <td>{{ test.instructions || test.notes || '—' }}</td>
               </tr>
             </tbody>
           </table>
         </div>
+      </div>
 
-        <!-- Follow-up / Notes -->
-        <div class="rx-section" *ngIf="prescription?.doctorNotes || prescription?.followUp?.date">
-          <div class="rx-section-title">Notes & Follow-Up</div>
-          <div class="rx-info-row" *ngIf="prescription?.followUp?.date">
-            <span class="rx-info-label">Follow-Up</span>
-            <span>{{ formatDate(prescription.followUp.date) }}</span>
-          </div>
-          <div class="rx-info-row" *ngIf="prescription?.doctorNotes">
-            <span class="rx-info-label">Doctor Notes</span>
-            <span>{{ prescription.doctorNotes }}</span>
-          </div>
+      <!-- Advice & Instructions Section -->
+      <div class="rx-advice-section" *ngIf="hasAdvice()">
+        <div class="rx-section-title">
+          <mat-icon class="rx-section-icon">tips_and_updates</mat-icon>
+          <span class="rx-section-heading">Advice & Instructions</span>
         </div>
-
-      </ng-container>
-      <!-- /STRUCTURED -->
-
-      <!-- ── UPLOADED DOCUMENT ─────────────────────── -->
-      <div class="rx-section no-print" *ngIf="hasUploadedFile() || !hasStructuredContent()">
-        <div class="rx-divider" *ngIf="hasStructuredContent()"></div>
-
-        <div class="section-header section-header--upload">
-          <mat-icon>upload_file</mat-icon>
-          Uploaded Prescription Document
-        </div>
-
-        <div class="rx-file-empty" *ngIf="!hasUploadedFile()">
-          No uploaded prescription file yet. Use "Upload File" to attach a PDF or image.
-        </div>
-
-        <div *ngIf="hasUploadedFile()" class="rx-file-preview">
-          <div class="rx-file-actions">
-            <a class="btn-action btn-pdf" [href]="prescription.uploadedPdfUrl"
-              target="_blank" rel="noopener noreferrer">
-              <mat-icon>open_in_new</mat-icon> Open in New Tab
-            </a>
-            <button class="btn-action btn-download" (click)="downloadFile()">
-              <mat-icon>download</mat-icon> Download
-            </button>
+        <div class="rx-advice-grid">
+          <div class="rx-advice-item" *ngIf="prescription?.advice?.diet">
+            <span class="rx-advice-label">Dietary Instructions:</span>
+            <span class="rx-advice-text">{{ prescription.advice.diet }}</span>
           </div>
-
-          <!-- Image Preview -->
-          <div *ngIf="isUploadedImage()" class="rx-image-wrapper" [class.rx-image-wrapper--zoomed]="imageZoomed">
-            <img [src]="prescription.uploadedPdfUrl"
-              class="rx-uploaded-image"
-              alt="Uploaded prescription"
-              (click)="toggleZoom()"
-              [title]="imageZoomed ? 'Click to zoom out' : 'Click to zoom in'">
-            <div class="rx-image-hint">{{ imageZoomed ? '🔍 Click to zoom out' : '🔍 Click to zoom in' }}</div>
+          <div class="rx-advice-item" *ngIf="prescription?.advice?.exercise">
+            <span class="rx-advice-label">Physical Activity / Exercise:</span>
+            <span class="rx-advice-text">{{ prescription.advice.exercise }}</span>
           </div>
-
-          <!-- PDF Embed -->
-          <div *ngIf="!isUploadedImage()" class="rx-pdf-wrapper">
-            <iframe [src]="prescription.uploadedPdfUrl | safeUrl"
-              class="rx-uploaded-frame"
-              title="Uploaded prescription PDF">
-            </iframe>
+          <div class="rx-advice-item" *ngIf="prescription?.advice?.precautions">
+            <span class="rx-advice-label">Precautions:</span>
+            <span class="rx-advice-text">{{ prescription.advice.precautions }}</span>
+          </div>
+          <div class="rx-advice-item" *ngIf="prescription?.advice?.generalInstructions">
+            <span class="rx-advice-label">General Advice:</span>
+            <span class="rx-advice-text">{{ prescription.advice.generalInstructions }}</span>
+          </div>
+          <div class="rx-advice-item rx-advice-item--warning" *ngIf="prescription?.advice?.emergencyWarningSigns">
+            <span class="rx-advice-label">⚠️ Emergency Warning Signs:</span>
+            <span class="rx-advice-text">{{ prescription.advice.emergencyWarningSigns }}</span>
+          </div>
+          <div class="rx-advice-item" *ngIf="prescription?.advice?.referralNotes">
+            <span class="rx-advice-label">Referral Notes:</span>
+            <span class="rx-advice-text">{{ prescription.advice.referralNotes }}</span>
           </div>
         </div>
       </div>
 
-      <!-- Audit Log -->
-      <div class="rx-section no-print" *ngIf="prescription?.auditLogs?.length">
-        <div class="rx-divider"></div>
-        <div class="rx-section-title">Audit Log</div>
-        <div class="audit-log">
-          <div class="audit-entry" *ngFor="let log of prescription.auditLogs">
-            <span class="audit-action">{{ log.action }}</span>
-            <span class="audit-time">{{ formatDate(log.at) }}</span>
-            <span class="audit-note" *ngIf="log.note">{{ log.note }}</span>
+      <!-- Notes & Follow-up Grid -->
+      <div class="rx-notes-followup-grid" *ngIf="prescription?.followUp?.date || prescription?.followUpDate || prescription?.doctorNotes">
+        <div class="rx-followup-card" *ngIf="prescription?.followUp?.date || prescription?.followUpDate">
+          <div class="rx-card-mini-title">
+            <mat-icon class="rx-mini-icon">event</mat-icon>
+            Next Follow-Up
+          </div>
+          <div class="rx-followup-details">
+            <strong>{{ formatDate(prescription?.followUp?.date || prescription?.followUpDate) }}</strong>
+            <span *ngIf="prescription?.followUp?.instructions" class="rx-notes-text">
+              {{ prescription.followUp.instructions }}
+            </span>
           </div>
         </div>
+
+        <div class="rx-doctor-notes-card" *ngIf="prescription?.doctorNotes">
+          <div class="rx-card-mini-title">
+            <mat-icon class="rx-mini-icon">edit_note</mat-icon>
+            Doctor Notes
+          </div>
+          <p class="rx-notes-text">{{ prescription.doctorNotes }}</p>
+        </div>
+      </div>
+
+      <!-- Signature & Disclaimer Row -->
+      <div class="rx-footer-signature-row">
+        <div class="rx-footer-disclaimer">
+          <p class="rx-disclaimer-text">
+            This is a computer-generated medical prescription issued via Bookcure Health Platform.
+          </p>
+          <p class="rx-disclaimer-sub">
+            Please consult your doctor if you experience any adverse side effects. Valid only when prescribed by a verified registered medical practitioner.
+          </p>
+        </div>
+
+        <div class="rx-signature-block">
+          <div class="rx-signature-img-wrap" *ngIf="prescription?.doctorDetails?.signatureUrl">
+            <img [src]="prescription.doctorDetails.signatureUrl" alt="Doctor Signature" class="rx-sig-img" />
+          </div>
+          <div class="rx-sig-line"></div>
+          <div class="rx-sig-name">Dr. {{ getDoctorName() }}</div>
+          <div class="rx-sig-quals" *ngIf="getDoctorQualification()">{{ getDoctorQualification() }}</div>
+          <div class="rx-sig-reg" *ngIf="getDoctorRegNo()">Reg. No: {{ getDoctorRegNo() }}</div>
+        </div>
+      </div>
+
+      <!-- Document Footer -->
+      <div class="rx-document-footer">
+        <span>Bookcure Health</span>
+        <span>•</span>
+        <span>Confidential Medical Record</span>
+        <span>•</span>
+        <span>Rx ID: {{ getRxId() }}</span>
       </div>
 
     </div><!-- /rx-document -->
+
+    <!-- Uploaded Prescription Attachment Card (if present) -->
+    <div class="rx-uploaded-attachment-card no-print" *ngIf="hasUploadedFile()">
+      <div class="rx-attachment-header">
+        <span class="rx-attachment-title">
+          <mat-icon>attach_file</mat-icon>
+          Attached Prescription Document
+        </span>
+        <div class="rx-file-actions">
+          <a class="btn-action btn-pdf" [href]="prescription.uploadedPdfUrl"
+            target="_blank" rel="noopener noreferrer">
+            <mat-icon>open_in_new</mat-icon> Open File
+          </a>
+          <button class="btn-action btn-download" (click)="downloadFile()">
+            <mat-icon>download</mat-icon> Download
+          </button>
+        </div>
+      </div>
+
+      <div class="rx-attachment-body">
+        <!-- Image Preview -->
+        <div *ngIf="isUploadedImage()" class="rx-image-wrapper" [class.rx-image-wrapper--zoomed]="imageZoomed">
+          <img [src]="prescription.uploadedPdfUrl"
+            class="rx-attachment-image"
+            alt="Uploaded prescription"
+            (click)="toggleZoom()"
+            [title]="imageZoomed ? 'Click to zoom out' : 'Click to zoom in'">
+          <div class="rx-image-hint">{{ imageZoomed ? '🔍 Click to zoom out' : '🔍 Click to zoom in' }}</div>
+        </div>
+
+        <!-- PDF Embed -->
+        <div *ngIf="!isUploadedImage()" class="rx-pdf-wrapper">
+          <iframe [src]="prescription.uploadedPdfUrl | safeUrl"
+            class="rx-attachment-frame"
+            title="Uploaded prescription PDF">
+          </iframe>
+        </div>
+      </div>
+    </div>
+
+    <!-- Audit Log Section (Admin only, hidden on print) -->
+    <div class="rx-audit-section no-print" *ngIf="prescription?.auditLogs?.length">
+      <div class="rx-section-title">
+        <mat-icon class="rx-section-icon">history</mat-icon>
+        <span class="rx-section-heading">Audit Trail</span>
+      </div>
+      <div class="audit-log">
+        <div class="audit-entry" *ngFor="let log of prescription.auditLogs">
+          <span class="audit-action">{{ log.action }}</span>
+          <span class="audit-time">{{ formatDate(log.at) }}</span>
+          <span class="audit-note" *ngIf="log.note">{{ log.note }}</span>
+        </div>
+      </div>
+    </div>
   </ng-container>
 </div>
