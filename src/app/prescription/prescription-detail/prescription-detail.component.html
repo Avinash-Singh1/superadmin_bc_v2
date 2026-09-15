@@ -70,310 +70,345 @@
     <!-- ═══════════════════════════════════════════════════════════════ -->
     <div class="rx-document" id="admin-rx-document">
 
+      <!-- Top Right Decorative Graphic Elements -->
+      <div class="rx-decor-top-right">
+        <svg width="140" height="140" viewBox="0 0 140 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="130" cy="10" r="75" fill="#a5f3fc" fill-opacity="0.4" />
+          <rect x="70" y="-15" width="65" height="65" rx="18" fill="#38bdf8" fill-opacity="0.25" />
+          <rect x="95" y="25" width="55" height="55" rx="14" fill="#0284c7" fill-opacity="0.2" />
+        </svg>
+      </div>
+
       <!-- Subtle Background Watermark -->
       <div class="rx-watermark">
-        <div class="rx-watermark__icon">
-          <svg viewBox="0 0 100 100" fill="currentColor">
-            <path d="M50 10 C30 10 15 25 15 45 C15 65 35 80 50 90 C65 80 85 65 85 45 C85 25 70 10 50 10 Z M50 28 A12 12 0 0 1 50 52 A12 12 0 0 1 50 28 Z M45 40 L55 40 M50 35 L50 45 M35 60 L65 60 M50 52 L50 72" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
-          </svg>
+        <div class="rx-watermark__text">
+          {{ prescription?.status === 'draft' ? 'NOT VALID FOR MEDICAL USE' : 'BOOKCURE.IN' }}
         </div>
-        <div class="rx-watermark__text">BOOKCURE HEALTH</div>
       </div>
 
-      <!-- Letterhead / Doctor Header -->
-      <div class="rx-letterhead">
-        <div class="rx-letterhead__left">
-          <div class="rx-letterhead__logo">
-            <span class="rx-logo-icon">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
-                <path d="M12 5v14M5 12h14" stroke="#dc2626" stroke-width="2"/>
-              </svg>
+      <!-- 1. Top Header: Branding & Slogan -->
+      <div class="rx-brand-header">
+        <div class="rx-brand-logo-wrap">
+          <div class="rx-brand-icon">
+            <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M16 28S3 20 3 11a7 7 0 0 1 12-4.9A7 7 0 0 1 27 11c0 9-11 17-11 17z" fill="#0284c7" />
+              <path d="M7 12h4l2-4 3 8 2.5-5 2 2.5H23" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </div>
+          <div class="rx-brand-title-group">
+            <span class="rx-brand-name">BookCure<span class="rx-brand-dot-in">.in</span></span>
+            <span class="rx-brand-slogan">BETTER HEALTH. BRIGHTER TOMORROW.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. Doctor Information & Date/Rx Card -->
+      <div class="rx-doc-info-row">
+        <div class="rx-doc-left">
+          <h2 class="rx-doc-name">Dr. {{ getDoctorName() }}</h2>
+          <div class="rx-doc-quals">
+            {{ getDoctorQualification() || 'MBBS' }}
+            <span *ngIf="getDoctorSpecialization()">({{ getDoctorSpecialization() }})</span>
+          </div>
+          <div class="rx-doc-reg">
+            Reg. No: {{ getDoctorRegNo() || 'N/A' }}
+          </div>
+        </div>
+
+        <div class="rx-doc-meta-card">
+          <div class="rx-meta-grid-row">
+            <div class="rx-meta-cell rx-meta-cell--label">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2" class="rx-meta-svg"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              Date:
+            </div>
+            <div class="rx-meta-cell rx-meta-cell--value">
+              {{ formatDate(prescription?.prescriptionDate || prescription?.createdAt) }}
+            </div>
+          </div>
+          <div class="rx-meta-grid-row">
+            <div class="rx-meta-cell rx-meta-cell--label">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2" class="rx-meta-svg"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              Rx No:
+            </div>
+            <div class="rx-meta-cell rx-meta-cell--value rx-meta-cell--rx">
+              {{ getRxId() }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. Patient Information Strip -->
+      <div class="rx-patient-info-strip">
+        <div class="rx-patient-row">
+          <span class="rx-p-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </span>
+          <span class="rx-p-text">
+            <span class="rx-p-label">Patient Name:</span>
+            <span class="rx-p-val">{{ getPatientName() }}</span>
+          </span>
+        </div>
+
+        <div class="rx-patient-row">
+          <span class="rx-p-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </span>
+          <span class="rx-p-text">
+            <span class="rx-p-label">Age / Gender:</span>
+            <span class="rx-p-val">
+              {{ getPatientAge() || '—' }}
+              <span *ngIf="getPatientAge() && getPatientGender()"> / </span>
+              {{ getPatientGender() }}
             </span>
-            <span class="rx-logo-text">Bookcure<span class="rx-logo-sub">Health</span></span>
+          </span>
+        </div>
+
+        <div class="rx-patient-row">
+          <span class="rx-p-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          </span>
+          <span class="rx-p-text">
+            <span class="rx-p-label">Contact:</span>
+            <span class="rx-p-val">{{ getPatientPhone() || '—' }}</span>
+          </span>
+        </div>
+
+        <div class="rx-patient-row">
+          <span class="rx-p-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
+          </span>
+          <span class="rx-p-text">
+            <span class="rx-p-label">Blood Group:</span>
+            <span class="rx-p-val">{{ getPatientBloodGroup() || '—' }}</span>
+          </span>
+        </div>
+      </div>
+
+      <!-- 4. Vitals Container -->
+      <div class="rx-vitals-container" *ngIf="hasVitals()">
+        <div class="rx-vitals-header">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          <span>Vitals</span>
+        </div>
+        <div class="rx-vitals-body">
+          <div class="rx-vital-item" *ngIf="getVitalDisplay('bloodPressure')">
+            <span class="rx-vital-name">BP:</span>
+            <span class="rx-vital-value">{{ getVitalDisplay('bloodPressure') }}</span>
           </div>
-          <div class="rx-doctor-name">Dr. {{ getDoctorName() }}</div>
-          <div class="rx-doctor-quals" *ngIf="getDoctorQualification() || getDoctorSpecialization()">
-            {{ getDoctorQualification() }}
-            <span *ngIf="getDoctorQualification() && getDoctorSpecialization()"> · </span>
-            {{ getDoctorSpecialization() }}
+
+          <div class="rx-vital-item" *ngIf="getVitalDisplay('temperature')">
+            <span class="rx-vital-name">Temp:</span>
+            <span class="rx-vital-value">{{ getVitalDisplay('temperature') }}°F</span>
           </div>
-          <div *ngIf="getDoctorRegNo()" class="rx-doctor-reg">
-            Reg. No: <strong>{{ getDoctorRegNo() }}</strong>
+
+          <div class="rx-vital-item" *ngIf="getVitalDisplay('pulse')">
+            <span class="rx-vital-name">Pulse:</span>
+            <span class="rx-vital-value">{{ getVitalDisplay('pulse') }} bpm</span>
+          </div>
+
+          <div class="rx-vital-item" *ngIf="getVitalDisplay('spo2')">
+            <span class="rx-vital-name">SpO2:</span>
+            <span class="rx-vital-value">{{ getVitalDisplay('spo2') }}%</span>
+          </div>
+
+          <div class="rx-vital-item" *ngIf="getVitalDisplay('weight')">
+            <span class="rx-vital-name">Weight:</span>
+            <span class="rx-vital-value">{{ getVitalDisplay('weight') }} kg</span>
+          </div>
+
+          <div class="rx-vital-item" *ngIf="getVitalDisplay('height')">
+            <span class="rx-vital-name">Height:</span>
+            <span class="rx-vital-value">{{ getVitalDisplay('height') }} cm</span>
+          </div>
+
+          <div class="rx-vital-item" *ngIf="getVitalDisplay('bloodSugar')">
+            <span class="rx-vital-name">Sugar:</span>
+            <span class="rx-vital-value">{{ getVitalDisplay('bloodSugar') }} mg/dL</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 5. Clinical Findings / Assessment -->
+      <div class="rx-clinical-list" *ngIf="prescription?.chiefComplaint || prescription?.diagnosis || hasSymptoms() || hasAllergies() || prescription?.history">
+        <!-- Chief Complaint -->
+        <div class="rx-clinical-item" *ngIf="prescription?.chiefComplaint">
+          <div class="rx-c-badge">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          </div>
+          <div class="rx-c-content">
+            <h4 class="rx-c-title">Chief Complaint</h4>
+            <p class="rx-c-desc">{{ prescription.chiefComplaint }}</p>
           </div>
         </div>
 
-        <div class="rx-letterhead__right">
-          <div class="rx-clinic-name">{{ getHospitalName() }}</div>
-          <div class="rx-clinic-detail" *ngIf="getDoctorLocation()">
-            <mat-icon class="rx-tiny-icon">location_on</mat-icon>
-            {{ getDoctorLocation() }}
+        <!-- Diagnosis -->
+        <div class="rx-clinical-item" *ngIf="prescription?.diagnosis">
+          <div class="rx-c-badge">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
           </div>
-          <div class="rx-clinic-detail" *ngIf="getDoctorPhone()">
-            <mat-icon class="rx-tiny-icon">call</mat-icon>
-            {{ getDoctorPhone() }}
+          <div class="rx-c-content">
+            <h4 class="rx-c-title">Diagnosis</h4>
+            <p class="rx-c-desc">{{ prescription.diagnosis }}</p>
           </div>
-          <div class="rx-doc-meta-row">
-            <div class="rx-meta-tag rx-meta-tag--id" *ngIf="prescription?.prescriptionId">
-              Rx: {{ getRxId() }}
+        </div>
+
+        <!-- Symptoms -->
+        <div class="rx-clinical-item" *ngIf="hasSymptoms()">
+          <div class="rx-c-badge">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+          </div>
+          <div class="rx-c-content">
+            <h4 class="rx-c-title">Symptoms</h4>
+            <div class="rx-c-desc">
+              <span class="rx-symptom-tag" *ngFor="let s of getSymptomsList()">{{ s }}</span>
             </div>
-            <div class="rx-meta-tag rx-meta-tag--date">
-              Date: {{ formatDate(prescription?.prescriptionDate || prescription?.createdAt) }}
-            </div>
+          </div>
+        </div>
+
+        <!-- Known Allergies -->
+        <div class="rx-clinical-item">
+          <div class="rx-c-badge">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#e11d48" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          </div>
+          <div class="rx-c-content">
+            <h4 class="rx-c-title">Known Allergies</h4>
+            <p class="rx-c-desc" [style.color]="hasAllergies() ? '#e11d48' : '#475569'">
+              {{ hasAllergies() ? getAllergiesDisplay() : 'None reported' }}
+            </p>
           </div>
         </div>
       </div>
 
-      <div class="rx-divider-primary"></div>
+      <!-- 6. Medications Prescribed Table -->
+      <div class="rx-section-block" *ngIf="hasMedications()">
+        <div class="rx-block-heading">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2"><path d="M10.5 20.5L3.5 13.5A5 5 0 0 1 10.5 6.5L17.5 13.5A5 5 0 0 1 10.5 20.5z"/><line x1="8.5" y1="8.5" x2="15.5" y2="15.5"/></svg>
+          <span class="rx-block-title">Prescribed Medications</span>
+        </div>
 
-      <!-- Patient Information Strip -->
-      <div class="rx-patient-strip">
-        <div class="rx-patient-strip__item">
-          <span class="rx-ps-label">Patient Name</span>
-          <span class="rx-ps-value">{{ getPatientName() }}</span>
-        </div>
-        <div class="rx-patient-strip__item" *ngIf="getPatientAge() || getPatientGender()">
-          <span class="rx-ps-label">Age / Gender</span>
-          <span class="rx-ps-value">
-            {{ getPatientAge() }}
-            <span *ngIf="getPatientAge() && getPatientGender()"> / </span>
-            {{ getPatientGender() }}
-          </span>
-        </div>
-        <div class="rx-patient-strip__item" *ngIf="getPatientPhone()">
-          <span class="rx-ps-label">Contact</span>
-          <span class="rx-ps-value">{{ getPatientPhone() }}</span>
-        </div>
-        <div class="rx-patient-strip__item" *ngIf="getPatientBloodGroup()">
-          <span class="rx-ps-label">Blood Group</span>
-          <span class="rx-ps-value rx-blood-pill">{{ getPatientBloodGroup() }}</span>
-        </div>
-        <div class="rx-patient-strip__item rx-patient-strip__item--right" *ngIf="prescription?.validUntil">
-          <span class="rx-ps-label">Valid Until</span>
-          <span class="rx-ps-value">{{ formatDate(prescription.validUntil) }}</span>
-        </div>
-      </div>
-
-      <!-- Vitals Strip -->
-      <div class="rx-vitals-strip" *ngIf="hasVitals()">
-        <span class="rx-vitals-label">Vitals:</span>
-        <div class="rx-vitals-list">
-          <span class="rx-vital-pill" *ngIf="prescription?.vitalSigns?.bloodPressure || prescription?.vitalSigns?.bp">
-            <span class="rx-vital-key">BP:</span>
-            <span class="rx-vital-val">{{ prescription?.vitalSigns?.bloodPressure || prescription?.vitalSigns?.bp }}</span>
-          </span>
-          <span class="rx-vital-pill" *ngIf="prescription?.vitalSigns?.pulse">
-            <span class="rx-vital-key">Pulse:</span>
-            <span class="rx-vital-val">{{ prescription?.vitalSigns?.pulse }} bpm</span>
-          </span>
-          <span class="rx-vital-pill" *ngIf="prescription?.vitalSigns?.temperature || prescription?.vitalSigns?.temp">
-            <span class="rx-vital-key">Temp:</span>
-            <span class="rx-vital-val">{{ prescription?.vitalSigns?.temperature || prescription?.vitalSigns?.temp }}°F</span>
-          </span>
-          <span class="rx-vital-pill" *ngIf="prescription?.vitalSigns?.weight">
-            <span class="rx-vital-key">Weight:</span>
-            <span class="rx-vital-val">{{ prescription?.vitalSigns?.weight }} kg</span>
-          </span>
-          <span class="rx-vital-pill" *ngIf="prescription?.vitalSigns?.height">
-            <span class="rx-vital-key">Height:</span>
-            <span class="rx-vital-val">{{ prescription?.vitalSigns?.height }} cm</span>
-          </span>
-          <span class="rx-vital-pill" *ngIf="prescription?.vitalSigns?.spo2">
-            <span class="rx-vital-key">SpO₂:</span>
-            <span class="rx-vital-val">{{ prescription?.vitalSigns?.spo2 }}%</span>
-          </span>
-          <span class="rx-vital-pill" *ngIf="prescription?.vitalSigns?.bloodSugar || prescription?.vitalSigns?.sugar">
-            <span class="rx-vital-key">Sugar:</span>
-            <span class="rx-vital-val">{{ prescription?.vitalSigns?.bloodSugar || prescription?.vitalSigns?.sugar }} mg/dL</span>
-          </span>
-        </div>
-      </div>
-
-      <!-- Clinical Details -->
-      <div class="rx-clinical-section" *ngIf="prescription?.chiefComplaint || prescription?.diagnosis || prescription?.symptoms?.length || prescription?.allergies?.length">
-        <div class="rx-clinical-row" *ngIf="prescription?.chiefComplaint">
-          <span class="rx-clinical-label">Chief Complaint:</span>
-          <span class="rx-clinical-value">{{ prescription.chiefComplaint }}</span>
-        </div>
-        <div class="rx-clinical-row" *ngIf="prescription?.diagnosis">
-          <span class="rx-clinical-label">Diagnosis:</span>
-          <span class="rx-clinical-value rx-diagnosis-badge">{{ prescription.diagnosis }}</span>
-        </div>
-        <div class="rx-clinical-row" *ngIf="prescription?.symptoms?.length">
-          <span class="rx-clinical-label">Symptoms:</span>
-          <span class="rx-clinical-value">
-            <span class="rx-tag" *ngFor="let s of prescription.symptoms">{{ s }}</span>
-          </span>
-        </div>
-        <div class="rx-clinical-row" *ngIf="prescription?.allergies?.length">
-          <span class="rx-clinical-label">Known Allergies:</span>
-          <span class="rx-clinical-value">
-            <span class="rx-tag rx-allergy-badge" *ngFor="let a of prescription.allergies">{{ a }}</span>
-          </span>
-        </div>
-      </div>
-
-      <!-- Medications Table -->
-      <div class="rx-medications-section" *ngIf="hasMedications()">
-        <div class="rx-section-title">
-          <span class="rx-symbol">℞</span>
-          <span class="rx-section-heading">Medications Prescribed</span>
-        </div>
-        <div class="rx-table-responsive">
-          <table class="rx-med-table">
+        <div class="rx-table-container">
+          <table class="rx-table">
             <thead>
               <tr>
-                <th style="width: 36px;">#</th>
-                <th>Medicine / Generic</th>
-                <th>Dosage</th>
-                <th>Frequency</th>
-                <th>Duration</th>
-                <th>Instructions</th>
+                <th class="th-num">#</th>
+                <th class="th-med">Medicine / Generic</th>
+                <th class="th-dose">Dosage</th>
+                <th class="th-freq">Frequency</th>
+                <th class="th-dur">Duration</th>
+                <th class="th-inst">Instructions</th>
               </tr>
             </thead>
             <tbody>
               <tr *ngFor="let med of getMedications(); let i = index">
-                <td>{{ i + 1 }}</td>
-                <td>
-                  <div class="rx-med-name-wrap">
-                    <span class="rx-med-name">{{ med.name || med.medicineName }}</span>
-                    <span class="rx-med-strength" *ngIf="med.strength">({{ med.strength }})</span>
-                    <span class="rx-med-type" *ngIf="med.dosageForm || med.type">[{{ med.dosageForm || med.type }}]</span>
+                <td class="td-num">{{ i + 1 }}</td>
+                <td class="td-med">
+                  <div class="rx-med-name">{{ med.name || med.medicineName }}</div>
+                  <div class="rx-med-sub" *ngIf="med.genericName">Generic: {{ med.genericName }}</div>
+                  <div class="rx-med-sub" *ngIf="med.strength || med.dosageForm">
+                    <span *ngIf="med.strength">{{ med.strength }}</span>
+                    <span *ngIf="med.strength && med.dosageForm"> • </span>
+                    <span *ngIf="med.dosageForm">{{ med.dosageForm }}</span>
                   </div>
-                  <div class="rx-substitute" *ngIf="med.genericName">Generic: {{ med.genericName }}</div>
                 </td>
-                <td>{{ med.dosage || '—' }}</td>
-                <td>
-                  <span class="rx-freq-pill" *ngIf="med.frequency">{{ med.frequency }}</span>
-                  <span *ngIf="!med.frequency">—</span>
+                <td class="td-dose">{{ med.dosage || '–' }}</td>
+                <td class="td-freq">
+                  <div>{{ med.frequency || '–' }}</div>
+                  <div class="rx-freq-timing" *ngIf="med.timing">{{ timingLabel(med.timing) }}</div>
                 </td>
-                <td>{{ med.duration || '—' }}</td>
-                <td>{{ med.instructions || med.instruction || '—' }}</td>
+                <td class="td-dur">{{ med.duration || '–' }}</td>
+                <td class="td-inst">
+                  <div>{{ med.instructions || med.instruction || '–' }}</div>
+                  <span class="rx-sub-badge" *ngIf="med.allowGenericSubstitute !== false">Generic Sub Allowed</span>
+                </td>
               </tr>
             </tbody>
           </table>
         </div>
       </div>
 
-      <!-- Lab Tests Section -->
-      <div class="rx-labtest-section" *ngIf="hasLabTests()">
-        <div class="rx-section-title">
-          <mat-icon class="rx-section-icon">science</mat-icon>
-          <span class="rx-section-heading">Diagnostic & Lab Tests</span>
+      <!-- Diagnostic / Lab Investigations (if present) -->
+      <div class="rx-section-block" *ngIf="hasLabTests()">
+        <div class="rx-block-heading">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2"><path d="M6 2v14a6 6 0 0 0 12 0V2"/><line x1="6" y1="6" x2="18" y2="6"/></svg>
+          <span class="rx-block-title">Diagnostic Investigations</span>
         </div>
-        <div class="rx-table-responsive">
-          <table class="rx-lab-table">
+        <div class="rx-table-container">
+          <table class="rx-table">
             <thead>
               <tr>
-                <th style="width: 36px;">#</th>
-                <th>Test Name</th>
-                <th>Urgency</th>
-                <th>Instructions / Notes</th>
+                <th class="th-num">#</th>
+                <th>Test / Investigation Name</th>
+                <th>Reason / Notes</th>
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let test of getLabTestsList(); let i = index">
-                <td>{{ i + 1 }}</td>
+              <tr *ngFor="let test of getLabTestsList(); let j = index">
+                <td class="td-num">{{ j + 1 }}</td>
                 <td><strong>{{ test.testName || test.name || test }}</strong></td>
-                <td>
-                  <span class="rx-meta-tag" [ngClass]="test.urgency === 'urgent' ? 'rx-meta-tag--id' : 'rx-meta-tag--date'">
-                    {{ (test.urgency || 'Routine') | titlecase }}
-                  </span>
-                </td>
-                <td>{{ test.instructions || test.notes || '—' }}</td>
+                <td>{{ test.instructions || test.notes || test.reason || '–' }}</td>
               </tr>
             </tbody>
           </table>
         </div>
       </div>
 
-      <!-- Advice & Instructions Section -->
-      <div class="rx-advice-section" *ngIf="hasAdvice()">
-        <div class="rx-section-title">
-          <mat-icon class="rx-section-icon">tips_and_updates</mat-icon>
-          <span class="rx-section-heading">Advice & Instructions</span>
+      <!-- 7. Advice & Instructions Section -->
+      <div class="rx-section-block" *ngIf="hasAdvice()">
+        <div class="rx-advice-banner">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+          <span>Advice &amp; Instructions</span>
         </div>
-        <div class="rx-advice-grid">
-          <div class="rx-advice-item" *ngIf="prescription?.advice?.diet">
-            <span class="rx-advice-label">Dietary Instructions:</span>
-            <span class="rx-advice-text">{{ prescription.advice.diet }}</span>
-          </div>
-          <div class="rx-advice-item" *ngIf="prescription?.advice?.exercise">
-            <span class="rx-advice-label">Physical Activity / Exercise:</span>
-            <span class="rx-advice-text">{{ prescription.advice.exercise }}</span>
-          </div>
-          <div class="rx-advice-item" *ngIf="prescription?.advice?.precautions">
-            <span class="rx-advice-label">Precautions:</span>
-            <span class="rx-advice-text">{{ prescription.advice.precautions }}</span>
-          </div>
-          <div class="rx-advice-item" *ngIf="prescription?.advice?.generalInstructions">
-            <span class="rx-advice-label">General Advice:</span>
-            <span class="rx-advice-text">{{ prescription.advice.generalInstructions }}</span>
-          </div>
-          <div class="rx-advice-item rx-advice-item--warning" *ngIf="prescription?.advice?.emergencyWarningSigns">
-            <span class="rx-advice-label">⚠️ Emergency Warning Signs:</span>
-            <span class="rx-advice-text">{{ prescription.advice.emergencyWarningSigns }}</span>
-          </div>
-          <div class="rx-advice-item" *ngIf="prescription?.advice?.referralNotes">
-            <span class="rx-advice-label">Referral Notes:</span>
-            <span class="rx-advice-text">{{ prescription.advice.referralNotes }}</span>
+
+        <div class="rx-advice-list">
+          <div class="rx-advice-item" *ngFor="let item of getAdviceList(); let k = index">
+            <div class="rx-advice-num">{{ k + 1 }}</div>
+            <div class="rx-advice-content">{{ item }}</div>
           </div>
         </div>
       </div>
 
-      <!-- Notes & Follow-up Grid -->
-      <div class="rx-notes-followup-grid" *ngIf="prescription?.followUp?.date || prescription?.followUpDate || prescription?.doctorNotes">
-        <div class="rx-followup-card" *ngIf="prescription?.followUp?.date || prescription?.followUpDate">
-          <div class="rx-card-mini-title">
-            <mat-icon class="rx-mini-icon">event</mat-icon>
-            Next Follow-Up
-          </div>
-          <div class="rx-followup-details">
-            <strong>{{ formatDate(prescription?.followUp?.date || prescription?.followUpDate) }}</strong>
-            <span *ngIf="prescription?.followUp?.instructions" class="rx-notes-text">
-              {{ prescription.followUp.instructions }}
-            </span>
-          </div>
+      <!-- 8. Follow Up & Doctor Notes -->
+      <div *ngIf="hasFollowUp() || prescription?.doctorNotes" class="rx-followup-row">
+        <div *ngIf="hasFollowUp()" class="rx-followup-box">
+          <strong>Next Visit / Follow-Up:</strong>
+          <span *ngIf="followUpDate"> {{ formatDate(followUpDate) }}</span>
+          <span *ngIf="followUpNotes"> – {{ followUpNotes }}</span>
         </div>
-
-        <div class="rx-doctor-notes-card" *ngIf="prescription?.doctorNotes">
-          <div class="rx-card-mini-title">
-            <mat-icon class="rx-mini-icon">edit_note</mat-icon>
-            Doctor Notes
-          </div>
-          <p class="rx-notes-text">{{ prescription.doctorNotes }}</p>
+        <div *ngIf="prescription?.doctorNotes" class="rx-notes-box">
+          <strong>Notes:</strong> {{ prescription.doctorNotes }}
         </div>
       </div>
 
-      <!-- Signature & Disclaimer Row -->
-      <div class="rx-footer-signature-row">
-        <div class="rx-footer-disclaimer">
-          <p class="rx-disclaimer-text">
-            This is a computer-generated medical prescription issued via Bookcure Health Platform.
-          </p>
-          <p class="rx-disclaimer-sub">
-            Please consult your doctor if you experience any adverse side effects. Valid only when prescribed by a verified registered medical practitioner.
-          </p>
-        </div>
-
-        <div class="rx-signature-block">
-          <div class="rx-signature-img-wrap" *ngIf="prescription?.doctorDetails?.signatureUrl">
-            <img [src]="prescription.doctorDetails.signatureUrl" alt="Doctor Signature" class="rx-sig-img" />
+      <!-- 9. Signature Block (Bottom Right) -->
+      <div class="rx-bottom-sig-row">
+        <div class="rx-sig-container">
+          <div class="rx-stamp-sig-wrap">
+            <img *ngIf="getDoctorStampUrl()" [src]="getDoctorStampUrl()" alt="Doctor Stamp" class="rx-stamp-img" />
+            <div class="rx-sig-wrap">
+              <div class="rx-sig-handwriting" *ngIf="!getDoctorSignatureUrl()">
+                Dr. {{ getDoctorName() }}
+              </div>
+              <img *ngIf="getDoctorSignatureUrl()" [src]="getDoctorSignatureUrl()" alt="Doctor Signature" class="rx-sig-img" />
+            </div>
           </div>
           <div class="rx-sig-line"></div>
-          <div class="rx-sig-name">Dr. {{ getDoctorName() }}</div>
-          <div class="rx-sig-quals" *ngIf="getDoctorQualification()">{{ getDoctorQualification() }}</div>
-          <div class="rx-sig-reg" *ngIf="getDoctorRegNo()">Reg. No: {{ getDoctorRegNo() }}</div>
+          <div class="rx-sig-title">Authorized Signature</div>
+          <div class="rx-sig-doc-detail">Dr. {{ getDoctorName() }}<span *ngIf="getDoctorQualification()">, {{ getDoctorQualification() }}</span></div>
+          <div class="rx-sig-clinic">BOOKCURE HEALTH</div>
         </div>
       </div>
 
-      <!-- Document Footer -->
-      <div class="rx-document-footer">
-        <span>Bookcure Health</span>
-        <span>•</span>
-        <span>Confidential Medical Record</span>
-        <span>•</span>
-        <span>Rx ID: {{ getRxId() }}</span>
+      <!-- 10. Bottom Footer & Corner Graphics -->
+      <div class="rx-bottom-footer">
+        <div class="rx-footer-tagline">
+          Your Health. Our Priority.
+        </div>
+        <div class="rx-decor-bottom-right">
+          <svg width="90" height="35" viewBox="0 0 90 35" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M35 35L55 0H90V35H35Z" fill="#0284c7" fill-opacity="0.8"/>
+            <path d="M0 35L25 0H50L25 35H0Z" fill="#0d9488" fill-opacity="0.85"/>
+          </svg>
+        </div>
       </div>
 
     </div><!-- /rx-document -->

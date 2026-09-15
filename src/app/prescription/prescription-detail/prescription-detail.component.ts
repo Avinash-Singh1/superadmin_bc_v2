@@ -70,50 +70,87 @@ export class PrescriptionDetailComponent implements OnInit {
     if (printContent) {
       const printWindow = window.open('', '_blank', 'height=900,width=900');
       if (printWindow) {
-        printWindow.document.write('<!DOCTYPE html><html><head><title>Prescription - Bookcure Health</title>');
+        printWindow.document.write('<!DOCTYPE html><html><head><title>Prescription - BookCure.in</title>');
         printWindow.document.write('<style>');
         printWindow.document.write(`
           * { box-sizing: border-box; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-          body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 15px; color: #1e293b; background: #fff; }
-          .rx-document, .prescription-document { max-width: 880px; margin: 0 auto; background: #fff; padding: 24px; position: relative; overflow: hidden; border: none; box-shadow: none; }
-          .rx-watermark, .prescription-watermark { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-30deg); font-size: 48px; font-weight: 900; color: rgba(37, 99, 235, 0.05); text-transform: uppercase; letter-spacing: 8px; pointer-events: none; user-select: none; z-index: 0; white-space: nowrap; font-family: Arial, sans-serif; display: flex !important; flex-direction: column; align-items: center; justify-content: center; width: 100%; }
-          .rx-watermark__icon svg { width: 200px; height: 200px; color: rgba(37, 99, 235, 0.05); }
-          .rx-watermark__text { font-size: 3rem; font-weight: 900; letter-spacing: 8px; color: rgba(37, 99, 235, 0.05); margin-top: 8px; }
-          .rx-letterhead, .doc-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; margin-bottom: 12px; }
-          .rx-letterhead__logo { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
-          .rx-logo-text { font-size: 1.3rem; font-weight: 900; color: #2563eb; }
-          .rx-logo-sub { color: #0f172a; font-weight: 700; margin-left: 2px; }
-          .rx-doctor-name, .doc-name { font-size: 20px; font-weight: 800; color: #0f172a; margin: 0 0 3px 0; }
-          .rx-doctor-quals, .doc-specialization { font-size: 13px; color: #2563eb; margin: 2px 0; font-weight: 600; }
-          .rx-doctor-reg, .doc-qualification { font-size: 12px; color: #64748b; margin: 2px 0; }
-          .rx-clinic-name, .clinic-info strong { font-size: 15px; font-weight: 800; color: #0f172a; }
-          .rx-clinic-detail, .clinic-info p { font-size: 12px; color: #64748b; margin: 2px 0; line-height: 1.5; }
-          .rx-doc-meta-row { display: flex; gap: 8px; margin-top: 6px; }
-          .rx-meta-tag { font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 4px; background: #eff6ff; color: #1d4ed8; }
-          .rx-divider-primary, .doc-divider { height: 3px; background: linear-gradient(90deg, #2563eb, #3b82f6); margin: 12px 0 14px; border-radius: 2px; }
-          .rx-patient-strip, .patient-details { background: #f8fafc; padding: 12px 16px; border-radius: 8px; margin: 12px 0; border: 1px solid #e2e8f0; border-left: 4px solid #2563eb; display: flex; flex-wrap: wrap; gap: 16px 24px; }
-          .rx-ps-label, .detail-label { font-size: 10px; font-weight: 700; text-transform: uppercase; color: #64748b; letter-spacing: 0.05em; display: block; }
-          .rx-ps-value, .detail-value { font-size: 14px; font-weight: 800; color: #0f172a; }
-          .rx-vitals-strip { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 8px 14px; margin: 12px 0; display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
-          .rx-vitals-label { font-size: 11px; font-weight: 800; text-transform: uppercase; color: #15803d; }
-          .rx-vital-pill { background: #fff; border: 1px solid #86efac; border-radius: 4px; padding: 2px 8px; font-size: 12px; }
-          .rx-clinical-section, .assessment-section { background: #fafbff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px 14px; margin: 12px 0; }
-          .rx-section-title { font-size: 13px; font-weight: 800; color: #1e3a8a; border-bottom: 1.5px solid #dbeafe; padding-bottom: 4px; margin: 14px 0 8px; display: flex; align-items: center; gap: 6px; }
-          .rx-symbol { font-size: 1.4rem; font-weight: 900; color: #2563eb; font-family: serif; }
-          .rx-med-table, .medications-table table { width: 100%; border-collapse: collapse; font-size: 12px; margin: 10px 0; }
-          .rx-med-table thead, .medications-table thead { background: #f8fafc; color: #475569; }
-          .rx-med-table th, .medications-table th { padding: 8px 10px; text-align: left; font-size: 11px; font-weight: 700; text-transform: uppercase; color: #475569; border-bottom: 2px solid #cbd5e1; }
-          .rx-med-table td, .medications-table td { padding: 8px 10px; border-bottom: 1px solid #e2e8f0; color: #334155; }
-          .rx-freq-pill { background: #eff6ff; color: #1d4ed8; padding: 2px 6px; border-radius: 4px; font-weight: 700; font-size: 11px; }
-          .rx-advice-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 10px 0; }
-          .rx-advice-item, .additional-section { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 8px 12px; font-size: 12px; }
-          .rx-notes-followup-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 12px 0; }
-          .rx-followup-card, .rx-doctor-notes-card { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 10px 12px; }
-          .rx-footer-signature-row, .prescription-footer { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 24px; padding-top: 14px; border-top: 1px solid #e2e8f0; }
-          .rx-signature-block, .signature-section { text-align: right; min-width: 180px; }
-          .rx-sig-line, .signature-line { width: 160px; border-top: 1.5px solid #0f172a; margin-left: auto; margin-bottom: 6px; }
-          .rx-sig-name, .doctor-name { font-size: 14px; font-weight: 800; color: #0f172a; }
-          .rx-document-footer, .footer-note { text-align: center; margin-top: 14px; font-size: 11px; color: #94a3b8; }
+          body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; margin: 0; padding: 15px; color: #1e293b; background: #fff; }
+          .rx-document { max-width: 820px; margin: 0 auto; background: #fff; padding: 30px 40px; position: relative; overflow: hidden; border: none; box-shadow: none; }
+          .rx-decor-top-right { position: absolute; top: 0; right: 0; pointer-events: none; }
+          .rx-watermark { position: absolute; top: 52%; left: 50%; transform: translate(-50%, -50%) rotate(-32deg); opacity: 0.055; pointer-events: none; user-select: none; z-index: 0; display: flex; align-items: center; justify-content: center; width: 120%; }
+          .rx-watermark__text { font-size: 3.4rem; font-weight: 900; letter-spacing: 7px; color: #0f4c81; white-space: nowrap; text-transform: uppercase; }
+          .rx-brand-header { margin-bottom: 24px; position: relative; z-index: 1; }
+          .rx-brand-logo-wrap { display: flex; align-items: center; gap: 12px; }
+          .rx-brand-name { font-size: 26px; font-weight: 800; color: #0a2540; line-height: 1.1; letter-spacing: -0.5px; }
+          .rx-brand-dot-in { color: #008080; font-weight: 800; }
+          .rx-brand-slogan { font-size: 8.5px; font-weight: 700; letter-spacing: 2px; color: #0284c7; text-transform: uppercase; margin-top: 3px; }
+          .rx-doc-info-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; margin-bottom: 20px; position: relative; z-index: 1; }
+          .rx-doc-left { flex: 1; }
+          .rx-doc-name { font-size: 22px; font-weight: 800; color: #0a2540; margin: 0 0 4px 0; letter-spacing: -0.3px; }
+          .rx-doc-quals { font-size: 13.5px; font-weight: 500; color: #475569; margin-bottom: 3px; }
+          .rx-doc-reg { font-size: 13px; font-weight: 500; color: #475569; }
+          .rx-doc-meta-card { border: 1.5px solid #dce4ee; border-radius: 8px; overflow: hidden; min-width: 230px; background: #ffffff; }
+          .rx-meta-grid-row { display: flex; border-bottom: 1px solid #dce4ee; }
+          .rx-meta-grid-row:last-child { border-bottom: none; }
+          .rx-meta-cell { padding: 6px 12px; font-size: 12.5px; display: flex; align-items: center; }
+          .rx-meta-cell--label { background: #f8fafc; border-right: 1px solid #dce4ee; color: #0a2540; font-weight: 600; width: 85px; gap: 6px; }
+          .rx-meta-cell--value { flex: 1; color: #334155; font-weight: 500; }
+          .rx-meta-cell--rx { font-weight: 700; color: #0a2540; letter-spacing: 0.5px; }
+          .rx-patient-info-strip { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px 28px; margin-bottom: 18px; position: relative; z-index: 1; }
+          .rx-patient-row { display: flex; align-items: center; gap: 10px; }
+          .rx-p-icon { width: 22px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+          .rx-p-text { font-size: 13px; display: flex; gap: 6px; flex-wrap: wrap; }
+          .rx-p-label { font-weight: 700; color: #0a2540; }
+          .rx-p-val { color: #334155; font-weight: 500; }
+          .rx-vitals-container { border: 1px solid #bae6fd; border-radius: 8px; overflow: hidden; margin-bottom: 20px; position: relative; z-index: 1; }
+          .rx-vitals-header { background: #0f2942; color: #ffffff; padding: 6px 14px; font-size: 12.5px; font-weight: 700; display: flex; align-items: center; gap: 6px; }
+          .rx-vitals-body { background: #f0f9ff; padding: 8px 16px; display: flex; align-items: center; justify-content: space-around; flex-wrap: wrap; gap: 12px 18px; }
+          .rx-vital-item { display: flex; align-items: center; gap: 6px; font-size: 12.5px; color: #0a2540; }
+          .rx-vital-name { font-weight: 700; color: #0a2540; }
+          .rx-vital-value { font-weight: 500; color: #334155; }
+          .rx-clinical-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 22px; position: relative; z-index: 1; }
+          .rx-clinical-item { display: flex; align-items: flex-start; gap: 12px; }
+          .rx-c-badge { width: 32px; height: 32px; border-radius: 50%; background: #e0f2fe; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+          .rx-c-content { flex: 1; }
+          .rx-c-title { font-size: 13.5px; font-weight: 700; color: #0a2540; margin: 0 0 2px 0; }
+          .rx-c-desc { font-size: 13px; color: #475569; margin: 0; line-height: 1.4; }
+          .rx-symptom-tag { display: inline-block; background: #f1f5f9; border: 1px solid #e2e8f0; padding: 2px 8px; border-radius: 4px; margin-right: 6px; font-size: 12px; }
+          .rx-section-block { margin-bottom: 22px; position: relative; z-index: 1; }
+          .rx-block-heading { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+          .rx-block-title { font-size: 15px; font-weight: 800; color: #0a2540; }
+          .rx-table-container { border-radius: 6px; overflow: hidden; border: 1px solid #dce4ee; }
+          .rx-table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+          .rx-table thead tr { background: #0f4c81; color: #ffffff; }
+          .rx-table th { padding: 9px 12px; font-weight: 600; text-align: left; border-right: 1px solid rgba(255, 255, 255, 0.15); font-size: 12px; }
+          .rx-table th:last-child { border-right: none; }
+          .rx-table tbody tr { border-bottom: 1px solid #e2e8f0; background: #ffffff; }
+          .rx-table tbody tr:nth-child(even) { background: #fafcff; }
+          .rx-table tbody tr:last-child { border-bottom: none; }
+          .rx-table td { padding: 10px 12px; vertical-align: middle; color: #334155; border-right: 1px solid #f1f5f9; }
+          .rx-table td:last-child { border-right: none; }
+          .rx-med-name { font-weight: 700; color: #0a2540; font-size: 13px; }
+          .rx-med-sub { font-size: 11.5px; color: #64748b; margin-top: 1px; }
+          .rx-freq-timing { font-size: 11px; color: #0284c7; font-weight: 600; margin-top: 1px; }
+          .rx-sub-badge { display: inline-block; font-size: 10.5px; color: #059669; background: #ecfdf5; border: 1px solid #a7f3d0; padding: 1px 6px; border-radius: 4px; margin-top: 3px; }
+          .rx-advice-banner { background: #e0f2fe; color: #0369a1; padding: 7px 14px; border-radius: 6px; font-size: 13.5px; font-weight: 700; display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+          .rx-advice-list { display: flex; flex-direction: column; gap: 8px; }
+          .rx-advice-item { display: flex; align-items: center; gap: 10px; }
+          .rx-advice-num { width: 20px; height: 20px; border-radius: 50%; background: #0d9488; color: #ffffff; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+          .rx-advice-content { font-size: 13px; color: #334155; line-height: 1.4; }
+          .rx-followup-row { margin-top: 14px; display: flex; flex-direction: column; gap: 6px; font-size: 12.5px; color: #475569; position: relative; z-index: 1; }
+          .rx-followup-box, .rx-notes-box { background: #f8fafc; padding: 6px 12px; border-radius: 6px; border-left: 3px solid #0284c7; }
+          .rx-followup-box strong, .rx-notes-box strong { color: #0a2540; }
+          .rx-bottom-sig-row { display: flex; justify-content: flex-end; margin-top: 24px; margin-bottom: 20px; position: relative; z-index: 1; }
+          .rx-sig-container { text-align: right; min-width: 220px; }
+          .rx-sig-handwriting { font-family: "Brush Script MT", "Caveat", "Dancing Script", cursive; font-size: 26px; color: #0f4c81; margin-bottom: 4px; }
+          .rx-sig-img { max-height: 48px; object-fit: contain; margin-bottom: 4px; }
+          .rx-sig-line { border-bottom: 1.5px solid #0f4c81; width: 100%; margin-bottom: 5px; }
+          .rx-sig-title { font-size: 12.5px; font-weight: 800; color: #0a2540; }
+          .rx-sig-doc-detail { font-size: 11.5px; color: #475569; margin-top: 1px; }
+          .rx-sig-clinic { font-size: 10.5px; font-weight: 700; color: #0284c7; letter-spacing: 0.5px; margin-top: 1px; }
+          .rx-bottom-footer { border-top: 1.5px solid #e2e8f0; padding-top: 10px; display: flex; justify-content: space-between; align-items: center; position: relative; margin-top: 16px; z-index: 1; }
+          .rx-footer-tagline { font-size: 12px; font-weight: 500; color: #64748b; letter-spacing: 1.5px; }
+          .rx-decor-bottom-right { display: flex; align-items: center; }
           .no-print { display: none !important; }
           @page { size: A4; margin: 10mm; }
         `);
@@ -269,6 +306,24 @@ export class PrescriptionDetailComponent implements OnInit {
     return this.prescription?.doctorDetails?.phone || '';
   }
 
+  getDoctorSignatureUrl(): string {
+    return (
+      this.prescription?.signatureImage ||
+      this.prescription?.doctorDetails?.signatureUrl ||
+      (this.prescription?.doctorId && typeof this.prescription.doctorId === 'object' && this.prescription.doctorId.signatureUrl) ||
+      ''
+    );
+  }
+
+  getDoctorStampUrl(): string {
+    return (
+      this.prescription?.stampImage ||
+      this.prescription?.doctorDetails?.stampUrl ||
+      (this.prescription?.doctorId && typeof this.prescription.doctorId === 'object' && this.prescription.doctorId.stampUrl) ||
+      ''
+    );
+  }
+
   getPatientName(): string {
     const p = this.prescription?.patientId;
     if (p && typeof p === 'object') return p?.userId?.fullName || '';
@@ -337,18 +392,101 @@ export class PrescriptionDetailComponent implements OnInit {
     return this.getLabTestsList().length > 0;
   }
 
+  getVitalDisplay(key: string): string | null {
+    const v = this.prescription?.vitalSigns as any;
+    if (!v) return null;
+    switch (key) {
+      case 'bloodPressure': return v.bloodPressure || v.bp || null;
+      case 'pulse': return v.pulse || v.heartRate || null;
+      case 'temperature': return v.temperature || v.temp || null;
+      case 'spo2': return v.spo2 || v.oxygen || null;
+      case 'weight': return v.weight || null;
+      case 'height': return v.height || null;
+      case 'bmi': return v.bmi || null;
+      case 'bloodSugar': return v.bloodSugar || v.sugar || v.glucose || v.rbs || v.fbs || null;
+      case 'respiratoryRate': return v.respiratoryRate || v.rr || null;
+      default: return v[key] || null;
+    }
+  }
+
+  getAdviceList(): string[] {
+    const a: any = this.prescription?.advice;
+    if (!a) return [];
+    if (typeof a === 'string') {
+      return a.split(/\r?\n/).map((s: string) => s.trim()).filter((s: string) => s.length > 0);
+    }
+    const list: string[] = [];
+    if (a.diet) list.push(`Diet: ${a.diet}`);
+    if (a.exercise) list.push(`Exercise: ${a.exercise}`);
+    if (a.lifestyle) list.push(`Lifestyle: ${a.lifestyle}`);
+    if (a.precautions) list.push(`Precautions: ${a.precautions}`);
+    if (a.generalInstructions) list.push(a.generalInstructions);
+    if (a.restrictions) list.push(`Restrictions: ${a.restrictions}`);
+    if (a.emergencyWarningSigns) list.push(`Warning Signs: ${a.emergencyWarningSigns}`);
+    if (a.referralNotes) list.push(`Referral: ${a.referralNotes}`);
+    if (a.other) list.push(a.other);
+    return list;
+  }
+
   hasAdvice(): boolean {
-    const a = this.prescription?.advice;
+    return this.getAdviceList().length > 0;
+  }
+
+  hasAllergies(): boolean {
+    const a = this.prescription?.allergies;
     if (!a) return false;
-    if (typeof a === 'string') return a.trim().length > 0;
-    return !!(
-      a.diet ||
-      a.exercise ||
-      a.precautions ||
-      a.generalInstructions ||
-      a.emergencyWarningSigns ||
-      a.referralNotes
-    );
+    if (Array.isArray(a)) return a.length > 0;
+    return !!String(a).trim();
+  }
+
+  getAllergiesDisplay(): string {
+    const a = this.prescription?.allergies;
+    if (!a) return '';
+    if (Array.isArray(a)) return a.join(', ');
+    return String(a);
+  }
+
+  hasSymptoms(): boolean {
+    const s = this.prescription?.symptoms;
+    if (!s) return false;
+    if (Array.isArray(s)) return s.length > 0;
+    return !!String(s).trim();
+  }
+
+  getSymptomsList(): string[] {
+    const s = this.prescription?.symptoms;
+    if (!s) return [];
+    if (Array.isArray(s)) return s;
+    return String(s).split(',').map((item: string) => item.trim()).filter(Boolean);
+  }
+
+  hasFollowUp(): boolean {
+    const f: any = this.prescription?.followUp;
+    const fd = (this.prescription as any)?.followUpDate;
+    return !!(fd || f?.date || f?.notes || f?.instructions);
+  }
+
+  get followUpDate(): Date | string | null {
+    return this.prescription?.followUp?.date || (this.prescription as any)?.followUpDate || null;
+  }
+
+  get followUpNotes(): string {
+    return this.prescription?.followUp?.notes || (this.prescription?.followUp as any)?.instructions || '';
+  }
+
+  timingLabel(val: any): string {
+    if (!val) return '';
+    if (Array.isArray(val)) {
+      return val.map((v) => this.timingLabel(v)).filter(Boolean).join(', ');
+    }
+    const str = String(val).trim();
+    const map: Record<string, string> = {
+      before_food: 'Before Food',
+      after_food: 'After Food',
+      empty_stomach: 'Empty Stomach',
+      with_food: 'With Food',
+    };
+    return map[str] || str;
   }
 
   getStatusClass(): string {
