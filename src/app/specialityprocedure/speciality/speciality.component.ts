@@ -26,6 +26,13 @@ export class SpecialityComponent implements OnInit {
   descProcedure: boolean = false;
   noProcedure: boolean = false;
   sortByProcedure: any = {};
+  doctorsList: boolean = true;
+  hospitalsList: boolean = false;
+  search = new UntypedFormControl();
+  totalLength: any;
+  totalLengthProcedure: any;
+  sortBy: any = {};
+
   constructor(
     private apiservice: ApiService,
     private dialog: MatDialog,
@@ -34,69 +41,12 @@ export class SpecialityComponent implements OnInit {
 
   ngOnInit(): void {
     this.getSpecializationList();
-    this.getPublicVisibility();
     this.getProcedureList();
     this.search.valueChanges
       .pipe(debounceTime(500), distinctUntilChanged())
       .subscribe((val) => this.searchFunction(val));
   }
-  publicVisibilityMode: 'restricted' | 'all' = 'restricted';
-  activeSpecializationIds: string[] = [];
-  visibilitySaving = false;
 
-  getPublicVisibility() {
-    this.apiservice.GetData(URLConstant.publicVisibility, {}).subscribe((res: any) => {
-      const data = res?.result?.data || res?.result;
-      this.publicVisibilityMode = data?.mode === 'all' ? 'all' : 'restricted';
-      this.activeSpecializationIds = (data?.activeSpecializations || []).map((item: any) => String(item?._id || item));
-    });
-  }
-
-  isPublicSpecializationActive(id: string): boolean {
-    return this.publicVisibilityMode === 'all' || this.activeSpecializationIds.includes(String(id));
-  }
-
-  togglePublicSpecialization(id: string): void {
-    this.publicVisibilityMode = 'restricted';
-    const value = String(id);
-    this.activeSpecializationIds = this.activeSpecializationIds.includes(value)
-      ? this.activeSpecializationIds.filter((item) => item !== value)
-      : [...this.activeSpecializationIds, value];
-  }
-
-  enableAllPublicSpecializations(): void {
-    this.publicVisibilityMode = 'all';
-    this.activeSpecializationIds = [];
-  }
-
-  savePublicVisibility(): void {
-    if (this.publicVisibilityMode === 'restricted' && !this.activeSpecializationIds.length) {
-      this.toastr.error('Select at least one specialization or choose Show All.');
-      return;
-    }
-    this.visibilitySaving = true;
-    this.apiservice.PutData(URLConstant.publicVisibility, {
-      mode: this.publicVisibilityMode,
-      specializationIds: this.activeSpecializationIds,
-    }, {}).subscribe({
-      next: () => {
-        this.visibilitySaving = false;
-        this.toastr.success('Patient-facing specialization visibility updated.');
-        this.getPublicVisibility();
-      },
-      error: () => {
-        this.visibilitySaving = false;
-        this.toastr.error('Unable to update specialization visibility.');
-      },
-    });
-  }
-  doctorsList: boolean = true;
-  hospitalsList: boolean = false;
-  search = new UntypedFormControl();
-  // sortBy: any = {
-  //   order:"",
-  //   sortBy:""
-  // };
   chnageDoctorList(list: any) {
     this.sortBy = {
       order: "",
@@ -113,8 +63,7 @@ export class SpecialityComponent implements OnInit {
       this.getProcedureList();
     }
   }
-  totalLength: any;
-  totalLengthProcedure: any;
+
   getSpecializationList(username?: any) {
     let data: any = {
       search: this.search.value,
@@ -138,6 +87,7 @@ export class SpecialityComponent implements OnInit {
         this.totalLength = res?.result?.count;
       });
   }
+
   getProcedureList() {
     let data: any = {
       search: this.search.value,
@@ -160,6 +110,7 @@ export class SpecialityComponent implements OnInit {
         this.totalLengthProcedure = res?.result?.count;
       });
   }
+
   searchFunction(value: any) {
     if (this.doctorsList == true) {
       this.getSpecializationList();
@@ -201,8 +152,8 @@ export class SpecialityComponent implements OnInit {
     imageUrl?: any,
     description?: any,
     links?: any,
-    breadcrumb?:any,
-    sections?:any
+    breadcrumb?: any,
+    sections?: any
   ) {
     let dialogRef = this.dialog.open(AddeditSpecialityComponent, {
       maxHeight: "100vh",
@@ -217,7 +168,7 @@ export class SpecialityComponent implements OnInit {
         description: creation == "Edit" ? description : "",
         links: creation == "Edit" ? links : "",
         breadcrumb: creation == "Edit" ? breadcrumb : "",
-        sections: creation == "Edit" ? sections : []
+        sections: creation == "Edit" ? sections : [],
       },
     });
     dialogRef.afterClosed().subscribe((res: any) => {
@@ -230,7 +181,7 @@ export class SpecialityComponent implements OnInit {
             description: res?.description,
             links: res?.links,
             breadcrumb: res?.breadcrumb,
-            sections: res?.sections || []
+            sections: res?.sections || [],
           },
         };
         Object.keys(body?.content).forEach((key) => {
@@ -263,7 +214,7 @@ export class SpecialityComponent implements OnInit {
           description: res?.description,
           links: res?.links,
           breadcrumb: res?.breadcrumb,
-          sections: res?.sections || [] 
+          sections: res?.sections || [],
         };
         let param = {
           type: res?.type == "Speciality" ? 10 : 4,
@@ -289,8 +240,6 @@ export class SpecialityComponent implements OnInit {
       }
     });
   }
-
-  sortBy: any = {};
 
   sortData(sortkey?: any, sortOrder?: any, tablename?: any) {
     switch (true) {

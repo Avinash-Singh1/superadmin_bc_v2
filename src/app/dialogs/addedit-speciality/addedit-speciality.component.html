@@ -1,155 +1,153 @@
-<form class="profile" [formGroup]="addFaqForm">
-  <div class="contentHeader my-3">
-    <span class="profileHeader">{{ header }} {{ faq }}</span>
+<form class="dialog-wrapper" [formGroup]="addFaqForm">
+  <!-- Dialog Header -->
+  <div class="dialog-header">
+    <div class="header-icon" [ngClass]="{'procedure-icon': faq === 'Procedure'}">
+      <svg *ngIf="faq === 'Speciality'" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+      <svg *ngIf="faq === 'Procedure'" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+    </div>
+    <div class="header-text">
+      <h2 class="dialog-title">{{ header }} {{ faq }}</h2>
+      <p class="dialog-subtitle">{{ header === 'Edit' ? 'Update the details below' : 'Fill in the details to create a new ' + faq.toLowerCase() }}</p>
+    </div>
+    <button type="button" class="close-btn" (click)="closeModal()">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
   </div>
-  <hr />
 
-  <div class="text-center" *ngIf="faq == 'Speciality'">
-    <div>
-      <img class="image-container" [src]="addFaqForm.get('profilePic')?.value" alt="" />
-      <label for="file-ip-1" class="cursor chnagePhoto ms-3">Upload Image</label>
-      <input
-        class="form-control uploadImage"
-        id="file-ip-1"
-        type="file"
-        (change)="onChange($event)"
-        formControlName="profilePic"
-      />
-      <div *ngIf="submitted && addFaqForm.get('profilePic')?.errors?.['required']" class="emailerror">
+  <!-- Dialog Body -->
+  <div class="dialog-body">
+    <!-- Image Upload (Speciality only) -->
+    <div class="image-upload-section" *ngIf="faq == 'Speciality'">
+      <div class="image-preview">
+        <img *ngIf="addFaqForm.get('profilePic')?.value" class="preview-img" [src]="addFaqForm.get('profilePic')?.value" alt="" />
+        <div *ngIf="!addFaqForm.get('profilePic')?.value" class="placeholder-img">
+          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        </div>
+      </div>
+      <div class="upload-info">
+        <label for="file-ip-1" class="upload-btn">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          Upload Image
+        </label>
+        <input class="file-input" id="file-ip-1" type="file" (change)="onChange($event)" formControlName="profilePic" />
+        <span class="upload-hint">PNG, JPG up to 2MB</span>
+      </div>
+      <div *ngIf="submitted && addFaqForm.get('profilePic')?.errors?.['required']" class="field-error">
         Please upload an image
+      </div>
+    </div>
+
+    <!-- Name Field -->
+    <div class="form-group">
+      <label class="field-label">{{ faq }} Name <span class="required">*</span></label>
+      <div class="input-wrapper">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        <input type="text" [placeholder]="'Enter ' + faq.toLowerCase() + ' name'" formControlName="question" />
+      </div>
+      <div *ngIf="submitted && addFaqForm.get('question')?.errors?.['required']" class="field-error">
+        {{ faq }} name is required
+      </div>
+    </div>
+
+    <!-- Primary Specialization -->
+    <div class="form-group">
+      <label class="field-label">Primary Specialization <span class="required">*</span></label>
+      <div class="tags-display" *ngIf="selectedPrimarySpecializations.length">
+        <span class="tag" *ngFor="let tag of selectedPrimarySpecializations; let i = index">
+          {{ tag }}
+          <button type="button" class="tag-remove" (click)="removePrimarySpecialization(i)">
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </span>
+      </div>
+      <div class="input-wrapper">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" placeholder="Search primary specialization..." formControlName="primarySpecializationSearch" />
+      </div>
+      <ul class="suggestion-dropdown" *ngIf="filteredPrimarySuggestions.length">
+        <li *ngFor="let item of filteredPrimarySuggestions" (click)="selectPrimarySpecialization(item)">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          {{ item }}
+        </li>
+      </ul>
+      <div *ngIf="submitted && !selectedPrimarySpecializations.length" class="field-error">
+        Primary specialization is required
+      </div>
+    </div>
+
+    <!-- Secondary Specialization -->
+    <div class="form-group">
+      <label class="field-label">Secondary Specialization</label>
+      <div class="tags-display" *ngIf="selectedSecondarySpecializations.length">
+        <span class="tag secondary" *ngFor="let tag of selectedSecondarySpecializations; let i = index">
+          {{ tag }}
+          <button type="button" class="tag-remove" (click)="removeSecondarySpecialization(i)">
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </span>
+      </div>
+      <div class="input-wrapper">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" placeholder="Search secondary specialization..." formControlName="secondarySpecializationSearch" />
+      </div>
+      <ul class="suggestion-dropdown" *ngIf="filteredSecondarySuggestions.length">
+        <li *ngFor="let item of filteredSecondarySuggestions" (click)="selectSecondarySpecialization(item)">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          {{ item }}
+        </li>
+      </ul>
+    </div>
+
+    <!-- Description -->
+    <div class="form-group">
+      <label class="field-label">Description</label>
+      <div class="editor-wrapper">
+        <ngx-editor-menu [editor]="editor" [toolbar]="toolbar"></ngx-editor-menu>
+        <ngx-editor [editor]="editor" formControlName="description" placeholder="Type description..."></ngx-editor>
+      </div>
+    </div>
+
+    <!-- Links -->
+    <div class="form-group">
+      <label class="field-label">Links</label>
+      <div class="editor-wrapper">
+        <ngx-editor-menu [editor]="editor1" [toolbar]="toolbar"></ngx-editor-menu>
+        <ngx-editor [editor]="editor1" formControlName="links" placeholder="Type link..."></ngx-editor>
+      </div>
+    </div>
+
+    <!-- Dynamic Sections -->
+    <div *ngFor="let section of additionalSections; let i = index" class="dynamic-section">
+      <div class="section-header">
+        <span class="section-label">Section {{ i + 1 }}</span>
+        <button type="button" class="section-delete-btn" (click)="deleteSection(i)">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+          Remove
+        </button>
+      </div>
+      <div class="input-wrapper">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7V4h16v3"/><path d="M9 20h6"/><path d="M12 4v16"/></svg>
+        <input type="text" placeholder="Section title" [value]="section.title" (input)="updateTitle($event, i)" />
+      </div>
+      <div class="editor-wrapper mt-8">
+        <ngx-editor-menu [editor]="section.editor" [toolbar]="toolbar"></ngx-editor-menu>
+        <ngx-editor [editor]="section.editor" (contentChanged)="updateContent($event, i)" placeholder="Type content..."></ngx-editor>
       </div>
     </div>
   </div>
 
-  <div class="mx-4 mt-3 d-flex flex-column">
-    <label class="profileDetail">{{ faq }}<span class="mandatory">*</span></label>
-    <input
-      type="text"
-      class="mt-2 form-control inputHeight"
-      [placeholder]="faq"
-      formControlName="question"
-    />
-    <div *ngIf="submitted && addFaqForm.get('question')?.errors?.['required']" class="emailerror mt-2">
-      {{ faq }} is required
+  <!-- Dialog Footer -->
+  <div class="dialog-footer">
+    <button type="button" class="add-section-btn" (click)="addSection()">
+      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Add Section
+    </button>
+    <div class="footer-actions">
+      <button class="cancel-btn" type="button" (click)="closeModal()">Cancel</button>
+      <button class="save-btn" type="submit" (click)="addEditdata()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        {{ header === 'Edit' ? 'Update' : 'Save' }}
+      </button>
     </div>
   </div>
-
-<!-- Primary Specialization MultiSelect ⭐ REQUIRED -->
-<div class="mx-4 mt-3">
-  <label class="profileDetail">Primary Specialization<span class="mandatory">*</span></label>
-  
-  <!-- Selected primary tags display -->
-  <div class="tag-container mt-2" *ngIf="selectedPrimarySpecializations.length">
-    <span class="tag" *ngFor="let tag of selectedPrimarySpecializations; let i = index">
-      {{ tag }}
-      <span class="remove-tag" (click)="removePrimarySpecialization(i)">×</span>
-    </span>
-  </div>
-
-  <!-- Primary input -->
-  <input
-    type="text"
-    class="mt-2 form-control inputHeight"
-    placeholder="Type to search primary specialization"
-    formControlName="primarySpecializationSearch"
-  />
-
-  <!-- Primary suggestions -->
-  <ul class="suggestion-list" *ngIf="filteredPrimarySuggestions.length">
-    <li
-      *ngFor="let item of filteredPrimarySuggestions; let i = index"
-      (click)="selectPrimarySpecialization(item)">
-      {{ item }}
-    </li>
-  </ul>
-
-  <div *ngIf="submitted && !selectedPrimarySpecializations.length" class="emailerror mt-2">
-    Primary specialization is required
-  </div>
-</div>
-
-<!-- Secondary Specialization MultiSelect ⭐ REQUIRED -->
-<div class="mx-4 mt-3">
-  <label class="profileDetail">Secondary Specialization</label>
-  
-  <!-- Selected secondary tags display -->
-  <div class="tag-container mt-2" *ngIf="selectedSecondarySpecializations.length">
-    <span class="tag" *ngFor="let tag of selectedSecondarySpecializations; let i = index">
-      {{ tag }}
-      <span class="remove-tag" (click)="removeSecondarySpecialization(i)">×</span>
-    </span>
-  </div>
-
-  <!-- Secondary input -->
-  <input
-    type="text"
-    class="mt-2 form-control inputHeight"
-    placeholder="Type to search secondary specialization"
-    formControlName="secondarySpecializationSearch"
-  />
-
-  <!-- Secondary suggestions -->
-  <ul class="suggestion-list" *ngIf="filteredSecondarySuggestions.length">
-    <li
-      *ngFor="let item of filteredSecondarySuggestions"
-      (click)="selectSecondarySpecialization(item)">
-      {{ item }}
-    </li>
-  </ul>
-</div>
-
-
-  <div class="mx-4 mt-3">
-    <label>Description</label>
-    <div class="NgxEditor__Wrapper mt-2">
-      <ngx-editor-menu [editor]="editor" [toolbar]="toolbar"></ngx-editor-menu>
-      <ngx-editor [editor]="editor" formControlName="description" placeholder="Type description"></ngx-editor>
-    </div>
-  </div>
-
-  <div class="mx-4 mt-3">
-    <label>Links</label>
-    <div class="NgxEditor__Wrapper mt-2">
-      <ngx-editor-menu [editor]="editor1" [toolbar]="toolbar"></ngx-editor-menu>
-      <ngx-editor [editor]="editor1" formControlName="links" placeholder="Type link"></ngx-editor>
-    </div>
-  </div>
-
-  <!-- Dynamic Sections -->
- <!-- Dynamic Sections -->
-<div *ngFor="let section of additionalSections; let i = index" class="mx-4 mt-3">
-  
-  <!-- Ensure title updates correctly -->
-  <input 
-    type="text" 
-    class="form-control inputHeight" 
-    placeholder="Section Title"
-    [value]="section.title" 
-    (input)="updateTitle($event, i)" 
-  />
-
-  <div class="NgxEditor__Wrapper mt-2">
-    <ngx-editor-menu [editor]="section.editor" [toolbar]="toolbar"></ngx-editor-menu>
-    <ngx-editor 
-      [editor]="section.editor" 
-      (contentChanged)="updateContent($event, i)"
-      placeholder="Type content">
-    </ngx-editor>
-  </div>
-
-  <button type="button" class="btn btn-sm btn-danger mt-2" (click)="deleteSection(i)">Delete</button>
-  <hr />
-</div>
-
-
- 
-    
-<div class="mt-4 d-flex justify-content-end gap-3 m-2">
-  <button type="button" class="btn btn-primary" (click)="addSection()">+ Add Section</button>
-  <button class="btn btn-outline-secondary" type="button" (click)="closeModal()">Cancel</button>
-  <button class="btn btn-success" type="submit" (click)="addEditdata()">Save</button>
-</div>
-
-
-  
 </form>

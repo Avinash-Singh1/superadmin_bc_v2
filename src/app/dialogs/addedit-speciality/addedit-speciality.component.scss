@@ -1,127 +1,393 @@
 @import "../../../assets/scss/main.scss";
 
-.profile {
-  .contentHeader {
-    .profileHeader {
-      padding-left: 30px;
-      @include font($primaryFont, 600, 24px);
+// Dialog Wrapper
+.dialog-wrapper {
+  display: flex;
+  flex-direction: column;
+  max-height: 90vh;
+}
+
+// Dialog Header
+.dialog-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 20px 24px;
+  border-bottom: 1px solid #f0f0f0;
+  position: sticky;
+  top: 0;
+  background: $white;
+  z-index: 1;
+
+  .header-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, rgba($purple, 0.1), rgba($purple, 0.05));
+    svg { stroke: $purple; }
+    &.procedure-icon {
+      background: linear-gradient(135deg, rgba(#1565c0, 0.1), rgba(#1565c0, 0.05));
+      svg { stroke: #1565c0; }
     }
   }
-  .profileDetail {
-    @include font($primaryFont, 400, 18px);
-    color: #151515;
+
+  .header-text {
+    flex: 1;
+    .dialog-title {
+      @include font($primaryFont, 700, 18px);
+      color: #1a1a2e;
+      margin: 0;
+    }
+    .dialog-subtitle {
+      @include font($primaryFont, 400, 12px);
+      color: #999;
+      margin: 4px 0 0 0;
+    }
   }
-  .inputHeight {
-    height: 45px;
+
+  .close-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    border: none;
+    background: #f5f5f5;
+    cursor: pointer;
+    display: flex;
     align-items: center;
-    border-radius: 5px;
+    justify-content: center;
+    transition: all 0.2s ease;
+    svg { stroke: #888; }
+    &:hover { background: #ffebee; svg { stroke: #c62828; } }
   }
-  .NgxEditor__Wrapper {
-    border-radius: 5px !important;
+}
+
+// Dialog Body
+.dialog-body {
+  padding: 20px 24px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+// Image Upload
+.image-upload-section {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  background: #faf8fd;
+  border: 1px dashed rgba($purple, 0.2);
+  border-radius: 12px;
+  margin-bottom: 20px;
+
+  .image-preview {
+    width: 80px;
+    height: 80px;
+    border-radius: 14px;
+    overflow: hidden;
+    flex-shrink: 0;
+    border: 2px solid #f0f0f0;
+    .preview-img { width: 100%; height: 100%; object-fit: cover; }
+    .placeholder-img {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #f0edf5;
+      svg { stroke: #bbb; }
+    }
   }
 
-  .cancel {
-    border: none;
-    @include font($primaryFont, 400, 18px);
-    border-radius: 5px;
-    background-color: transparent;
-    border: 1px solid #d9d9d9;
-    color: black;
-    padding: 10px 35px;
+  .upload-info {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
   }
-  .save {
-    border: none;
-    @include font($primaryFont, 600, 18px);
-    border-radius: 5px;
-    background-color: $light_black;
-    border: 1px solid #d9d9d9;
+
+  .upload-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 16px;
+    border-radius: 8px;
+    background: $purple;
+    @include font($primaryFont, 500, 12px);
     color: $white;
-    padding: 10px 35px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    width: fit-content;
+    svg { stroke: $white; }
+    &:hover {
+      background: darken($purple, 8%);
+      box-shadow: 0 2px 8px rgba($purple, 0.3);
+    }
   }
-  .edit {
-    display: flex;
-    justify-content: space-between;
-  }
-  .add {
-    margin-top: 18px;
-    display: flex;
-    justify-content: end;
-    border-top: 1px solid black;
+
+  .file-input { display: none; }
+
+  .upload-hint {
+    @include font($primaryFont, 400, 11px);
+    color: #999;
   }
 }
 
-.socialForm {
-  @include font($primaryFont, 500, 18px);
-  color: $black;
-}
-.footerbtns {
-  margin-top: 100px !important;
-}
-.hr {
-  border: 1px solid black !important;
-}
-.profilePhotoHeader {
-  @include font($primaryFont, 600, 18px);
-  color: #7f7f7f;
-}
-.image-container {
-  border-radius: 100%;
-  width: 100px;
-  height: 100px;
-  object-fit: cover;
-  background-color: #eeeeee;
-}
-.chnagePhoto {
-  @include font($primaryFont, 600, 18px);
-  color: #243ffa;
-}
-.uploadImage {
-  display: none;
-}
-.emailerror {
-  text-align: end;
-}
-::placeholder {
-  /* Chrome, Firefox, Opera, Safari 10.1+ */
-  color: #7a7a7a !important;
-  opacity: 1; /* Firefox */
+// Form Groups
+.form-group {
+  margin-bottom: 18px;
 }
 
+.field-label {
+  display: block;
+  @include font($primaryFont, 500, 13px);
+  color: #444;
+  margin-bottom: 8px;
+  .required { color: #c62828; margin-left: 2px; }
+}
 
-// new 
-.tag-container {
+.input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 14px;
+  border: 1px solid #e8e8e8;
+  border-radius: 10px;
+  background: $white;
+  transition: all 0.2s ease;
+  svg { stroke: #bbb; flex-shrink: 0; transition: stroke 0.2s ease; }
+  input {
+    flex: 1;
+    border: none;
+    outline: none;
+    background: transparent;
+    padding: 10px 0;
+    @include font($primaryFont, 400, 13px);
+    color: #333;
+    &::placeholder { color: #bbb; }
+  }
+  &:focus-within {
+    border-color: $purple;
+    box-shadow: 0 0 0 3px rgba($purple, 0.08);
+    svg { stroke: $purple; }
+  }
+}
+
+.field-error {
+  @include font($primaryFont, 400, 11px);
+  color: #c62828;
+  margin-top: 6px;
+  text-align: right;
+}
+
+// Tags
+.tags-display {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
+  margin-bottom: 8px;
 }
 
 .tag {
-  background: #e3e3e3;
-  padding: 4px 10px;
-  border-radius: 14px;
-  font-size: 13px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px 4px 12px;
+  background: linear-gradient(135deg, rgba($purple, 0.08), rgba($purple, 0.04));
+  border: 1px solid rgba($purple, 0.15);
+  border-radius: 20px;
+  @include font($primaryFont, 500, 12px);
+  color: $purple;
+  &.secondary {
+    background: linear-gradient(135deg, rgba(#1565c0, 0.08), rgba(#1565c0, 0.04));
+    border-color: rgba(#1565c0, 0.15);
+    color: #1565c0;
+    .tag-remove svg { stroke: #1565c0; }
+    .tag-remove:hover { background: rgba(#1565c0, 0.1); }
+  }
 }
 
-.remove-tag {
-  margin-left: 6px;
+.tag-remove {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
   cursor: pointer;
-  font-weight: bold;
-}
-
-.suggestion-list {
-  list-style: none;
-  border: 1px solid #ccc;
-  margin-top: 4px;
+  transition: background 0.15s ease;
   padding: 0;
-  max-height: 150px;
+  svg { stroke: $purple; }
+  &:hover { background: rgba($purple, 0.1); }
+}
+
+// Suggestion Dropdown
+.suggestion-dropdown {
+  list-style: none;
+  padding: 4px;
+  margin: 6px 0 0 0;
+  border: 1px solid #e8e8e8;
+  border-radius: 10px;
+  background: $white;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  max-height: 180px;
   overflow-y: auto;
+  &::-webkit-scrollbar { width: 4px; }
+  &::-webkit-scrollbar-thumb { background: #ddd; border-radius: 4px; }
+  li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    @include font($primaryFont, 400, 13px);
+    color: #444;
+    transition: all 0.15s ease;
+    svg { stroke: #bbb; }
+    &:hover {
+      background: #faf8fd;
+      color: $purple;
+      svg { stroke: $purple; }
+    }
+  }
 }
 
-.suggestion-list li {
-  padding: 8px;
+// Editor Wrapper
+.editor-wrapper {
+  border: 1px solid #e8e8e8;
+  border-radius: 10px;
+  overflow: hidden;
+  transition: border-color 0.2s ease;
+  &:focus-within { border-color: $purple; box-shadow: 0 0 0 3px rgba($purple, 0.08); }
+}
+
+::ng-deep {
+  .NgxEditor__MenuBar { border-bottom: 1px solid #f0f0f0 !important; background: #faf8fd !important; }
+  .NgxEditor { min-height: 120px !important; padding: 12px !important; }
+  .NgxEditor__Placeholder::before { color: #bbb !important; }
+}
+
+// Dynamic Sections
+.dynamic-section {
+  margin-bottom: 18px;
+  padding: 16px;
+  background: #faf8fd;
+  border: 1px solid #f0edf5;
+  border-radius: 12px;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.section-label {
+  @include font($primaryFont, 600, 12px);
+  color: $purple;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.section-delete-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border: 1px solid #ffcdd2;
+  border-radius: 8px;
+  background: $white;
+  @include font($primaryFont, 500, 11px);
+  color: #c62828;
   cursor: pointer;
+  transition: all 0.2s ease;
+  svg { stroke: #c62828; }
+  &:hover {
+    background: #c62828;
+    color: $white;
+    border-color: #c62828;
+    svg { stroke: $white; }
+  }
 }
 
-.suggestion-list li:hover {
-  background: #f5f5f5;
+.mt-8 { margin-top: 8px; }
+
+// Dialog Footer
+.dialog-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+  border-top: 1px solid #f0f0f0;
+  background: #faf8fd;
+  position: sticky;
+  bottom: 0;
+}
+
+.add-section-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border: 1px dashed rgba($purple, 0.3);
+  border-radius: 8px;
+  background: transparent;
+  @include font($primaryFont, 500, 12px);
+  color: $purple;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  svg { stroke: $purple; }
+  &:hover { background: rgba($purple, 0.05); border-color: $purple; }
+}
+
+.footer-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.cancel-btn {
+  padding: 8px 20px;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  background: $white;
+  @include font($primaryFont, 500, 13px);
+  color: #666;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  &:hover { border-color: #bbb; background: #f9f9f9; }
+}
+
+.save-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 22px;
+  border: none;
+  border-radius: 10px;
+  background: $purple;
+  @include font($primaryFont, 600, 13px);
+  color: $white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  svg { stroke: $white; }
+  &:hover {
+    background: darken($purple, 8%);
+    box-shadow: 0 4px 12px rgba($purple, 0.3);
+    transform: translateY(-1px);
+  }
+}
+
+// Global dialog panel override
+::ng-deep .view-popup {
+  .mat-dialog-container {
+    padding: 0 !important;
+    border-radius: 16px !important;
+    overflow: hidden;
+  }
 }
