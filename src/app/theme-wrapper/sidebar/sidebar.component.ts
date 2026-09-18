@@ -33,6 +33,12 @@ export class SidebarComponent {
       section: "CARE OPERATIONS",
     },
     {
+      label: "PROFILE VISITS",
+      icon: "assets/images/svg/appointment.svg",
+      routerLink: `/${ROUTE_CONSTANT.THEME}/${ROUTE_CONSTANT.APPOINTMENT}/visits`,
+      section: "CARE OPERATIONS",
+    },
+    {
       label: "PATIENTS",
       icon: "assets/images/svg/patient.svg",
       routerLink: `/${ROUTE_CONSTANT.THEME}/${ROUTE_CONSTANT.PATIENT}`,

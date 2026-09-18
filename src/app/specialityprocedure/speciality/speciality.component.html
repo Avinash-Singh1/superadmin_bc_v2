@@ -67,6 +67,24 @@
     </div>
   </header>
 
+  <section class="visibility-card" *ngIf="doctorsList" aria-labelledby="visibility-title">
+    <div>
+      <h2 id="visibility-title">Patient-facing doctor visibility</h2>
+      <p>Choose which specializations patients can discover and book. Doctors and specialization records are not deleted.</p>
+    </div>
+    <div class="visibility-actions">
+      <button type="button" class="tab-btn" [class.active]="publicVisibilityMode === 'all'" (click)="enableAllPublicSpecializations()">Show all specializations</button>
+      <button type="button" class="add-btn" [disabled]="visibilitySaving" (click)="savePublicVisibility()">{{ visibilitySaving ? 'Saving...' : 'Save visibility' }}</button>
+    </div>
+    <div class="visibility-list" *ngIf="publicVisibilityMode !== 'all'">
+      <label *ngFor="let speciality of dataSource" class="visibility-item">
+        <input type="checkbox" [checked]="isPublicSpecializationActive(speciality?._id)" (change)="togglePublicSpecialization(speciality?._id)" />
+        <span>{{ speciality?.name }}</span>
+      </label>
+    </div>
+    <p class="visibility-all" *ngIf="publicVisibilityMode === 'all'">All active specializations are visible to patients.</p>
+  </section>
+
   <!-- Speciality Table -->
   <main class="table-card" *ngIf="doctorsList">
     <div class="table-wrapper">
