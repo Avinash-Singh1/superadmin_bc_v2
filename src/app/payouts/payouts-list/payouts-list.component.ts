@@ -95,12 +95,20 @@ export class PayoutsListComponent implements OnInit {
   acting = false;
 
   // Initiate dialog
+  isInitiateModalOpen = false;
   initiating: EligibleDoctor | null = null;
   initiateMode: "IMPS" | "NEFT" | "UPI" | "manual" = "manual";
+  initiateAmountRupees: number | null = null;
   initiateReference = "";
   initiateNotes = "";
   initiateUseRzpx = false;
   initiateNarration = "";
+
+  // Doctor search in initiate modal
+  doctorSearchQuery = "";
+  doctorSearchResults: any[] = [];
+  searchingDoctors = false;
+  doctorSearchTimer: any = null;
 
   // Mark/cancel form
   markReference = "";
@@ -197,9 +205,29 @@ export class PayoutsListComponent implements OnInit {
   }
 
   // ----- Initiate -----
+  openNewInitiate(): void {
+    this.isInitiateModalOpen = true;
+    this.initiating = null;
+    this.doctorSearchQuery = "";
+    this.doctorSearchResults = [];
+    this.initiateMode = "manual";
+    this.initiateAmountRupees = null;
+    this.initiateReference = "";
+    this.initiateNotes = "";
+    this.initiateUseRzpx = false;
+    this.initiateNarration = "";
+    if (this.eligibleRows.length > 0) {
+      this.doctorSearchResults = this.eligibleRows;
+    } else {
+      this.searchDoctors("");
+    }
+  }
+
   openInitiate(doc: EligibleDoctor): void {
+    this.isInitiateModalOpen = true;
     this.initiating = doc;
     this.initiateMode = "manual";
+    this.initiateAmountRupees = doc.pendingBalance > 0 ? doc.pendingBalance / 100 : null;
     this.initiateReference = "";
     this.initiateNotes = "";
     this.initiateUseRzpx = false;
@@ -207,25 +235,93 @@ export class PayoutsListComponent implements OnInit {
   }
 
   closeInitiate(): void {
+    this.isInitiateModalOpen = false;
     this.initiating = null;
+    this.doctorSearchQuery = "";
+    this.doctorSearchResults = [];
+  }
+
+  onDoctorSearchInput(val: string): void {
+    this.doctorSearchQuery = val;
+    clearTimeout(this.doctorSearchTimer);
+    this.doctorSearchTimer = setTimeout(() => {
+      this.searchDoctors(val);
+    }, 300);
+  }
+
+  searchDoctors(query: string): void {
+    this.searchingDoctors = true;
+    this.api.GetData(URLConstant.payoutsEligible, { search: query.trim(), min: 0 }).subscribe({
+      next: (res: any) => {
+        this.searchingDoctors = false;
+        const d = res?.result || {};
+        this.doctorSearchResults = d.rows || [];
+      },
+      error: () => {
+        this.searchingDoctors = false;
+      },
+    });
+  }
+
+  selectDoctor(doc: EligibleDoctor): void {
+    this.initiating = doc;
+    this.initiateAmountRupees = doc.pendingBalance > 0 ? doc.pendingBalance / 100 : null;
+  }
+
+  changeSelectedDoctor(): void {
+    this.initiating = null;
+    this.searchDoctors(this.doctorSearchQuery);
+  }
+
+  getCalculatedNetRupees(): number {
+    if (!this.initiating) return 0;
+    const gross = (this.initiateAmountRupees ?? (this.initiating.pendingBalance / 100)) * 100;
+    const tds = (gross * this.tdsBps) / 10000;
+    return Math.max(0, (gross - tds) / 100);
+  }
+
+  getCalculatedTdsRupees(): number {
+    if (!this.initiating) return 0;
+    const gross = (this.initiateAmountRupees ?? (this.initiating.pendingBalance / 100)) * 100;
+    return (gross * this.tdsBps) / 10000 / 100;
   }
 
   submitInitiate(): void {
-    if (!this.initiating) return;
+    if (!this.initiating) {
+      this.snack.open("Please select a doctor for payout", "Close", { duration: 3000 });
+      return;
+    }
+
+    const maxPaise = this.initiating.pendingBalance || 0;
+    if (maxPaise <= 0) {
+      this.snack.open("Cannot initiate payout: Doctor has no pending balance.", "Close", { duration: 4000 });
+      return;
+    }
+
     const body: any = {
       doctorUserId: this.initiating.doctorUserId,
       mode: this.initiateMode,
       useRzpx: this.initiateUseRzpx,
     };
-    if (this.initiateReference) body.reference = this.initiateReference;
-    if (this.initiateNotes) body.notes = this.initiateNotes;
-    if (this.initiateNarration) body.narration = this.initiateNarration;
+
+    if (this.initiateAmountRupees !== null && this.initiateAmountRupees > 0) {
+      const amountPaise = Math.round(this.initiateAmountRupees * 100);
+      if (amountPaise > maxPaise) {
+        this.snack.open(`Amount cannot exceed pending balance (${this.formatPaise(maxPaise)})`, "Close", { duration: 4000 });
+        return;
+      }
+      body.amount = amountPaise;
+    }
+
+    if (this.initiateReference) body.reference = this.initiateReference.trim();
+    if (this.initiateNotes) body.notes = this.initiateNotes.trim();
+    if (this.initiateNarration) body.narration = this.initiateNarration.trim();
 
     this.acting = true;
     this.api.Postdata(URLConstant.payoutsInitiate, body, {}).subscribe({
       next: (res: any) => {
         this.acting = false;
-        this.snack.open("Payout created", "Close", { duration: 2500 });
+        this.snack.open("Payout initiated successfully!", "Close", { duration: 3000 });
         this.closeInitiate();
         this.tab = "history";
         this.fetchHistory();
@@ -236,8 +332,8 @@ export class PayoutsListComponent implements OnInit {
       },
       error: (err: any) => {
         this.acting = false;
-        const msg = err?.error?.message || err?.message || "Payout failed";
-        this.snack.open(msg, "Close", { duration: 4000 });
+        const msg = err?.error?.message || err?.message || err?.error?.msgCode || "Payout initiation failed";
+        this.snack.open(msg, "Close", { duration: 5000 });
       },
     });
   }
