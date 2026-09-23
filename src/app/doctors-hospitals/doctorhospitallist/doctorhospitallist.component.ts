@@ -336,12 +336,17 @@ export class DoctorhospitallistComponent implements OnInit {
     });
   }
 
-  deleteDoctor(id: string, type: string) {
+  deleteDoctor(id: string, type: string, establishmentId?: string) {
+    // When deleting from the hospital list, an establishment-owning row should
+    // soft-delete just that establishment, not the whole hospital account.
+    const actualType = type === "hospital" && establishmentId ? "establishment" : type;
+    const actualId = type === "hospital" && establishmentId ? establishmentId : id;
+
     this.dialogRef = this.dialog.open(DeleteConfirmationComponent, {
       data: {
-        id,
-        text: type === "doctor" ? "Doctor" : "Hospital",
-        type,
+        id: actualId,
+        text: actualType === "establishment" ? "Establishment" : type === "doctor" ? "Doctor" : "Hospital",
+        type: actualType,
       },
     });
 
@@ -663,14 +668,17 @@ export class DoctorhospitallistComponent implements OnInit {
 
   activeInactiveHospital(status: any, id: any) {
     let param = {
-      hospitalId: id,
+      userId: id,
     };
-    let data = {
-      isVerified: status,
-    };
-    this.apiservice
-      .PutData(URLConstant.addHospital, data, param)
-      .subscribe((res: any) => {});
+    this.apiservice.DeleteData(URLConstant.deleteHospital, param).subscribe(
+      (res: any) => {
+        this.toastr.success("Hospital has been marked for deletion");
+        this.hospitalList("");
+      },
+      (error: any) => {
+        this.toastr.error(error?.message || "Failed to update hospital status");
+      }
+    );
   }
   activeInactiveDoctor(status: any, id: any) {
     let param = {

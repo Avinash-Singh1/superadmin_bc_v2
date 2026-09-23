@@ -33,6 +33,10 @@ interface KycRow {
   verifiedAt?: string | null;
   platformCommissionBps?: number | null;
   updatedAt?: string;
+  source?: string | null;
+  submittedFrom?: string | null;
+  user?: UserRow | null;
+  doctor?: DoctorRow | null;
 }
 
 interface WalletRow {
@@ -49,6 +53,38 @@ interface UserRow {
   fullName?: string;
   email?: string;
   phone?: string;
+}
+
+interface ProofDoc {
+  url?: string;
+  fileType?: string;
+  urlType?: string;
+}
+
+interface MedicalRegistration {
+  registrationNumber?: string;
+  council?: string;
+  year?: string;
+}
+
+interface Education {
+  degree?: string;
+  college?: string;
+  year?: string;
+}
+
+interface DoctorRow {
+  _id?: string;
+  city?: string;
+  state?: string;
+  gender?: number;
+  specialization?: Array<{ _id: string; name: string }>;
+  medicalRegistration?: MedicalRegistration[];
+  education?: Education[];
+  identityProof?: ProofDoc[];
+  medicalProof?: ProofDoc[];
+  establishmentProof?: ProofDoc[];
+  profilePic?: string;
 }
 
 @Component({
@@ -77,9 +113,13 @@ export class KycListComponent implements OnInit {
   selected: KycRow | null = null;
   selectedWallet: WalletRow | null = null;
   selectedUser: UserRow | null = null;
+  selectedDoctor: DoctorRow | null = null;
 
   reasonText = "";
   commissionPct: number | null = null; // % shown in UI; converted to bps on submit
+  searchQuery = "";
+  activeSearchQuery = "";
+  searchTimer: any = null;
 
   constructor(private api: ApiService, private snack: MatSnackBar) {}
 
@@ -91,6 +131,11 @@ export class KycListComponent implements OnInit {
     this.loading = true;
     const params: any = { page: this.page, limit: this.itemsPerPage };
     if (this.status) params.status = this.status;
+    const trimmed = (this.searchQuery || "").trim();
+    if (trimmed) {
+      params.search = trimmed;
+    }
+    this.activeSearchQuery = trimmed;
 
     this.api.GetData(URLConstant.kycList, params).subscribe({
       next: (res: any) => {
@@ -111,15 +156,110 @@ export class KycListComponent implements OnInit {
     this.fetch();
   }
 
+  onSearchInput(val: string): void {
+    this.searchQuery = val;
+    clearTimeout(this.searchTimer);
+    this.searchTimer = setTimeout(() => {
+      this.page = 1;
+      this.fetch();
+    }, 350);
+  }
+
+  triggerSearchNow(): void {
+    clearTimeout(this.searchTimer);
+    this.page = 1;
+    this.fetch();
+  }
+
+  searchInAll(): void {
+    this.status = "";
+    this.page = 1;
+    this.fetch();
+  }
+
+  clearSearch(): void {
+    this.searchQuery = "";
+    this.activeSearchQuery = "";
+    clearTimeout(this.searchTimer);
+    this.page = 1;
+    this.fetch();
+  }
+
   onPageChange(p: number): void {
     this.page = p;
     this.fetch();
   }
 
+  getDisplayName(r: KycRow | null): string {
+    if (!r) return "—";
+    return r.user?.fullName || r.bank?.beneficiaryName || r.pan?.nameOnPan || "—";
+  }
+
+  getDisplayAvatar(r: KycRow | null): string {
+    const name = this.getDisplayName(r);
+    return name && name !== "—" ? name.charAt(0).toUpperCase() : "U";
+  }
+
+  getDisplaySubtitle(r: KycRow | null): string {
+    if (!r) return "";
+    return r.user?.phone || r.user?.email || r.userId || "";
+  }
+
+  hasAnyDoctorProofs(): boolean {
+    if (!this.selectedDoctor) return false;
+    const { identityProof, medicalProof, establishmentProof } = this.selectedDoctor;
+    return (
+      (identityProof != null && identityProof.some((p) => !!p.url)) ||
+      (medicalProof != null && medicalProof.some((p) => !!p.url)) ||
+      (establishmentProof != null && establishmentProof.some((p) => !!p.url)) ||
+      false
+    );
+  }
+
+  getLocation(doc: DoctorRow | null): string {
+    if (!doc) return "—";
+    return [doc.city, doc.state].filter(Boolean).join(", ") || "—";
+  }
+
+  getSourceLabel(r: KycRow | null): string {
+    if (!r) return "";
+    const s = (r.source || (r as any).submittedFrom || "").toLowerCase();
+    if (s.includes("android") || s.includes("mobile") || s.includes("flutter")) {
+      return "Android App";
+    }
+    if (s.includes("web")) {
+      return "Web App";
+    }
+    return "";
+  }
+
+  getSourceIcon(r: KycRow | null): "android" | "web" | "" {
+    const s = (r?.source || (r as any)?.submittedFrom || "").toLowerCase();
+    if (s.includes("android") || s.includes("mobile") || s.includes("flutter")) {
+      return "android";
+    }
+    if (s.includes("web")) {
+      return "web";
+    }
+    return "";
+  }
+
+  getChequeUrl(r: KycRow | null): string | null {
+    if (!r) return null;
+    return (
+      r.cancelledChequeUrl ||
+      (r as any).chequeUrl ||
+      (r.bank as any)?.cancelledChequeUrl ||
+      (r.bank as any)?.chequeUrl ||
+      null
+    );
+  }
+
   openDetail(row: KycRow): void {
     this.selected = row;
     this.selectedWallet = null;
-    this.selectedUser = null;
+    this.selectedUser = row.user || null;
+    this.selectedDoctor = row.doctor || null;
     this.reasonText = "";
     this.commissionPct = row.platformCommissionBps != null ? row.platformCommissionBps / 100 : null;
     this.loadingDetail = true;
@@ -130,7 +270,8 @@ export class KycListComponent implements OnInit {
         const r = res?.result || {};
         this.selected = r.kyc || row;
         this.selectedWallet = r.wallet || null;
-        this.selectedUser = r.user || null;
+        this.selectedUser = r.user || row.user || null;
+        this.selectedDoctor = r.doctor || row.doctor || null;
         this.commissionPct =
           this.selected?.platformCommissionBps != null
             ? this.selected.platformCommissionBps / 100
@@ -147,10 +288,15 @@ export class KycListComponent implements OnInit {
     this.selected = null;
     this.selectedWallet = null;
     this.selectedUser = null;
+    this.selectedDoctor = null;
   }
 
   approve(): void {
     if (!this.selected) return;
+    if (!this.getChequeUrl(this.selected)) {
+      this.snack.open("Cannot approve: Cancelled cheque is mandatory but not uploaded.", "Close", { duration: 4000 });
+      return;
+    }
     const body: any = { note: this.reasonText || undefined };
     if (typeof this.commissionPct === "number" && this.commissionPct >= 0 && this.commissionPct <= 100) {
       body.commissionBps = Math.round(this.commissionPct * 100);
@@ -163,7 +309,10 @@ export class KycListComponent implements OnInit {
           this.closeDetail();
           this.fetch();
         },
-        error: () => this.snack.open("Approve failed", "Close", { duration: 3000 }),
+        error: (err: any) => {
+          const msg = err?.error?.message || err?.error?.msgCode || "Approve failed";
+          this.snack.open(msg, "Close", { duration: 4000 });
+        },
       });
   }
 

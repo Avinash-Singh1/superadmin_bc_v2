@@ -39,36 +39,63 @@ export class DeleteConfirmationComponent implements OnInit {
 
   delete() {
     this.isDisabled = true;
-    // console.log("This tpye: ",this.type);
-    if(this.type=='patient') {
-          // console.log("pateint if condition",this.type);
-          const url =
-            this.type === "patient"
-              ? URLConstant.deletepatient
-              : URLConstant.deleteHospital;
 
-          this.apiservice
-            .MarkDeleted(url, { userId: this.userId })
-            .subscribe((res: any) => {
-              if (res.success) this.dialogRef.close(true);
-              return this.toastr.success(res.message);
-            });
-    
-    }else{
-        // console.log(" not pateint if condition",this.type);
-        const url =
-        this.type === "doctor"
-          ? URLConstant.deleteDoctor
-          : URLConstant.deleteHospital;
-
+    // For patients, use the existing patient delete endpoint
+    if (this.type === "patient") {
       this.apiservice
-        .DeleteData(url, { userId: this.userId })
+        .MarkDeleted(URLConstant.deletepatient, { userId: this.userId })
         .subscribe((res: any) => {
           if (res.success) this.dialogRef.close(true);
           return this.toastr.success(res.message);
         });
     }
-
-    
+    // For doctors/hospitals/establishments, use the SOFT DELETE endpoints
+    // (moves the record into the recycle bin instead of hard-deleting it)
+    else if (this.type === "doctor") {
+      this.apiservice
+        .PutData(URLConstant.softDeleteDoctor + this.userId, {}, {})
+        .subscribe({
+          next: (res: any) => {
+            if (res.status === 200) {
+              this.toastr.success("Doctor has been moved to recycle bin");
+              this.dialogRef.close(true);
+            }
+          },
+          error: (err: any) => {
+            this.isDisabled = false;
+            this.toastr.error(err?.error?.msgCode || "Failed to delete doctor");
+          },
+        });
+    } else if (this.type === "hospital") {
+      this.apiservice
+        .PutData(URLConstant.softDeleteHospital + this.userId, {}, {})
+        .subscribe({
+          next: (res: any) => {
+            if (res.status === 200) {
+              this.toastr.success("Hospital has been moved to recycle bin");
+              this.dialogRef.close(true);
+            }
+          },
+          error: (err: any) => {
+            this.isDisabled = false;
+            this.toastr.error(err?.error?.msgCode || "Failed to delete hospital");
+          },
+        });
+    } else if (this.type === "establishment") {
+      this.apiservice
+        .PutData(URLConstant.softDeleteEstablishment + this.userId, {}, {})
+        .subscribe({
+          next: (res: any) => {
+            if (res.status === 200) {
+              this.toastr.success("Establishment has been moved to recycle bin");
+              this.dialogRef.close(true);
+            }
+          },
+          error: (err: any) => {
+            this.isDisabled = false;
+            this.toastr.error(err?.error?.msgCode || "Failed to delete establishment");
+          },
+        });
+    }
   }
 }

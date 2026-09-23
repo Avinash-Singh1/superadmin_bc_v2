@@ -51,6 +51,11 @@ export class URLConstant {
   public static deletepatient = "v1/doctor/admin-delete-doctor-patient";
   public static addHospital = "v1/hospital/admin";
   public static deleteHospital = "v1/hospital/admin";
+  public static softDeleteDoctor = "v1/admin/soft-delete-doctor/"; // append :id
+  public static softDeleteHospital = "v1/admin/soft-delete-hospital/"; // append :id
+  public static softDeleteEstablishment = "v1/admin/soft-delete-establishment/"; // append :id
+  public static deleteHospitalUsers = "v1/admin/delete-hospital-users/"; // append :id
+  public static deleteEstablishmentUsers = "v1/admin/delete-establishment-users/"; // append :id
   public static specialization = "v1/master/specialization";
   public static publicVisibility = "v1/public-visibility/admin";
   public static procedure = "v1/master/procedure";

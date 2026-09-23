@@ -378,7 +378,7 @@
                   <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="margin-right:8px"><path d="M11.5 2.5l2 2-8 8H3.5v-2l8-8z" stroke="#666" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                   Edit
                 </button>
-                <button mat-menu-item (click)="deleteDoctor(element?._id, 'hospital')" class="delete-action">
+                <button mat-menu-item (click)="deleteDoctor(element?._id, 'hospital', element?.establishmentId)" class="delete-action">
                   <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="margin-right:8px"><path d="M3 4.5h10M6 4.5V3a1 1 0 011-1h2a1 1 0 011 1v1.5M12 4.5l-.5 8a1.5 1.5 0 01-1.5 1.5H6a1.5 1.5 0 01-1.5-1.5L4 4.5" stroke="#e53935" stroke-width="1.2" stroke-linecap="round"/></svg>
                   Delete
                 </button>
