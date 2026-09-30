@@ -1,51 +1,268 @@
 <div class="category-list-container">
-  <div class="page-header">
+
+  <!-- ═════════════════════════════════════════════════════════
+       PAGE HEADER
+  ══════════════════════════════════════════════════════════ -->
+  <header class="page-header">
     <div class="header-copy">
-      <span class="eyebrow">TAXONOMY</span>
-      <h1>Categories</h1>
-      <p>Organise your health content into clear, discoverable topics.</p>
+      <span class="eyebrow">CONTENT TAXONOMY</span>
+      <h1>Blog Categories</h1>
+      <p>Organize clinical content, medical topics, and patient guides into discoverable categories.</p>
     </div>
-    <button class="btn-primary" (click)="startCreate()">
+
+    <button class="btn-primary" (click)="startCreate()" *ngIf="!isEditorOpen">
       <i class="material-icons">add</i>
-      Add Category
+      <span>Add Category</span>
     </button>
+  </header>
+
+  <!-- ═════════════════════════════════════════════════════════
+       CATEGORY STATS BAR
+  ══════════════════════════════════════════════════════════ -->
+  <section class="stats-bar" *ngIf="!isLoading && categories.length > 0">
+    <div class="stat-item">
+      <div class="stat-item__icon cat-icon">
+        <i class="material-icons">folder_special</i>
+      </div>
+      <div>
+        <span class="stat-item__val">{{ categories.length }}</span>
+        <span class="stat-item__lbl">Total Categories</span>
+      </div>
+    </div>
+
+    <div class="stat-item">
+      <div class="stat-item__icon article-icon">
+        <i class="material-icons">article</i>
+      </div>
+      <div>
+        <span class="stat-item__val">{{ getTotalBlogCount() }}</span>
+        <span class="stat-item__lbl">Assigned Articles</span>
+      </div>
+    </div>
+
+    <div class="stat-item">
+      <div class="stat-item__icon lead-icon">
+        <i class="material-icons">star</i>
+      </div>
+      <div>
+        <span class="stat-item__val text-truncate">{{ getTopCategory() }}</span>
+        <span class="stat-item__lbl">Top Topic</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═════════════════════════════════════════════════════════
+       CATEGORY EDITOR (DRAWER / CARD FORM)
+  ══════════════════════════════════════════════════════════ -->
+  <section *ngIf="isEditorOpen" class="category-editor" aria-labelledby="editor-title">
+    <form (ngSubmit)="saveCategory()" #categoryFormElement="ngForm">
+      <div class="editor-header">
+        <div class="editor-title-wrap">
+          <div class="editor-icon-badge" [style.background-color]="(categoryForm.color || '#2563eb') + '20'" [style.color]="categoryForm.color || '#2563eb'">
+            <i class="material-icons">{{ editingCategory ? 'edit' : 'add_circle' }}</i>
+          </div>
+          <div>
+            <h2 id="editor-title">{{ editingCategory ? 'Edit Category' : 'Create New Category' }}</h2>
+            <p>{{ editingCategory ? 'Update topic parameters, taxonomy metadata, and color identity.' : 'Add a new medical category to classify patient health guides.' }}</p>
+          </div>
+        </div>
+
+        <button class="btn-close" type="button" (click)="cancelEdit()" aria-label="Close editor">
+          <i class="material-icons">close</i>
+        </button>
+      </div>
+
+      <div class="form-grid">
+        <!-- Left: Basic Info -->
+        <div class="form-col">
+          <div class="form-group">
+            <label for="cat-name">
+              Category Name <span class="required">*</span>
+            </label>
+            <input 
+              id="cat-name"
+              name="name" 
+              type="text"
+              [(ngModel)]="categoryForm.name" 
+              placeholder="e.g. Cardiology & Heart Health" 
+              required
+              autocomplete="off"
+              [class.invalid]="categoryFormElement.submitted && !categoryForm.name.trim()">
+            <small *ngIf="categoryFormElement.submitted && !categoryForm.name.trim()" class="error-msg">Category name is required</small>
+          </div>
+
+          <div class="form-group">
+            <label for="cat-desc">
+              Description <span class="hint">(Optional summary shown on patient portal)</span>
+            </label>
+            <textarea 
+              id="cat-desc"
+              name="description" 
+              [(ngModel)]="categoryForm.description" 
+              placeholder="Brief summary of health topics and conditions covered under this category..."
+              rows="3"
+              maxlength="280"></textarea>
+            <small class="char-count">{{ (categoryForm.description?.length || 0) }}/280</small>
+          </div>
+        </div>
+
+        <!-- Right: Color & Display Order -->
+        <div class="form-col">
+          <div class="form-group">
+            <label>Color Identity</label>
+            <div class="color-palette-wrap">
+              <div class="color-presets">
+                <button 
+                  type="button"
+                  *ngFor="let c of colorPresets"
+                  class="color-swatch"
+                  [style.background-color]="c"
+                  [class.is-selected]="categoryForm.color === c"
+                  (click)="selectColor(c)"
+                  [title]="c">
+                  <i class="material-icons" *ngIf="categoryForm.color === c">check</i>
+                </button>
+              </div>
+
+              <div class="custom-color-row">
+                <input 
+                  type="color" 
+                  name="customColor" 
+                  [(ngModel)]="categoryForm.color" 
+                  class="color-native-picker"
+                  aria-label="Custom color picker">
+                <span class="custom-color-hex">{{ categoryForm.color }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="cat-order">
+              Display Sequence Order <span class="hint">(Lower numbers appear first)</span>
+            </label>
+            <input 
+              id="cat-order"
+              name="displayOrder" 
+              type="number"
+              min="0"
+              [(ngModel)]="categoryForm.displayOrder" 
+              placeholder="0">
+          </div>
+        </div>
+      </div>
+
+      <div class="editor-actions">
+        <button class="btn-secondary" type="button" (click)="cancelEdit()" [disabled]="isSaving">
+          Cancel
+        </button>
+        <button class="btn-primary" type="submit" [disabled]="isSaving || !categoryForm.name.trim()">
+          <i class="material-icons">{{ isSaving ? 'hourglass_empty' : 'save' }}</i>
+          <span>{{ isSaving ? 'Saving...' : (editingCategory ? 'Update Category' : 'Create Category') }}</span>
+        </button>
+      </div>
+    </form>
+  </section>
+
+  <!-- ═════════════════════════════════════════════════════════
+       SEARCH & SORT TOOLBAR
+  ══════════════════════════════════════════════════════════ -->
+  <section class="toolbar-section" *ngIf="!isLoading && categories.length > 0">
+    <div class="search-input-wrap">
+      <i class="material-icons search-icon">search</i>
+      <input 
+        type="text" 
+        [(ngModel)]="searchQuery" 
+        (ngModelChange)="onSearchChange()" 
+        placeholder="Filter categories by name or description..."
+        aria-label="Search categories">
+      <button *ngIf="searchQuery" class="clear-search" (click)="clearSearch()">
+        <i class="material-icons">close</i>
+      </button>
+    </div>
+
+    <div class="sort-controls">
+      <span class="sort-lbl">Sort by:</span>
+      <button class="sort-btn" [class.is-active]="sortBy === 'order'" (click)="setSort('order')">
+        Display Order
+      </button>
+      <button class="sort-btn" [class.is-active]="sortBy === 'name'" (click)="setSort('name')">
+        Name (A-Z)
+      </button>
+      <button class="sort-btn" [class.is-active]="sortBy === 'blogs'" (click)="setSort('blogs')">
+        Articles Count
+      </button>
+    </div>
+  </section>
+
+  <!-- ═════════════════════════════════════════════════════════
+       LOADING SKELETON
+  ══════════════════════════════════════════════════════════ -->
+  <div *ngIf="isLoading" class="loading-grid">
+    <div class="skeleton-card" *ngFor="let i of [1,2,3,4,5,6]"></div>
   </div>
 
-  <ng-container *ngIf="isEditorOpen">
-    <form class="category-editor" (ngSubmit)="saveCategory()">
-      <h2>{{ editingCategory ? 'Edit Category' : 'Add Category' }}</h2>
-      <input name="name" [(ngModel)]="categoryForm.name" placeholder="Category name" required>
-      <input name="description" [(ngModel)]="categoryForm.description" placeholder="Description">
-      <input name="color" [(ngModel)]="categoryForm.color" type="color" aria-label="Category color">
-      <input name="displayOrder" [(ngModel)]="categoryForm.displayOrder" type="number" min="0" placeholder="Display order">
-      <button class="btn-primary" type="submit" [disabled]="isSaving">{{ isSaving ? 'Saving...' : 'Save Category' }}</button>
-      <button class="btn-secondary" type="button" (click)="cancelEdit()">Cancel</button>
-    </form>
-  </ng-container>
+  <!-- ═════════════════════════════════════════════════════════
+       CATEGORIES GRID
+  ══════════════════════════════════════════════════════════ -->
+  <div *ngIf="!isLoading">
+    <div class="categories-grid" *ngIf="filteredCategories.length > 0; else noCategoriesView">
+      <div class="category-card" *ngFor="let category of filteredCategories; trackBy: trackByFn">
+        <!-- Top color accent header -->
+        <div class="category-card__accent" [style.background-color]="category.color || '#2563eb'"></div>
 
-  <ng-container *ngIf="isLoading">
-    <div class="loading">Loading...</div>
-  </ng-container>
+        <div class="category-card__body">
+          <div class="category-card__head">
+            <div class="category-card__icon" [style.background-color]="(category.color || '#2563eb') + '18'" [style.color]="category.color || '#2563eb'">
+              <i class="material-icons">folder</i>
+            </div>
+            
+            <div class="category-card__tags">
+              <span class="tag-order" title="Display Order">#{{ category.displayOrder !== undefined ? category.displayOrder : 0 }}</span>
+              <span class="tag-count" [style.background-color]="(category.color || '#2563eb') + '15'" [style.color]="category.color || '#2563eb'">
+                {{ category.blogCount || 0 }} {{ (category.blogCount === 1) ? 'article' : 'articles' }}
+              </span>
+            </div>
+          </div>
 
-  <ng-container *ngIf="!isLoading">
-    <div class="categories-grid" *ngIf="categories.length; else categoryEmpty">
-      <div class="category-card" *ngFor="let category of categories; trackBy: trackByFn">
-        <div class="category-color" [style.background-color]="category.color"></div>
-        <div class="category-content">
-          <h3>{{ category.name }}</h3>
-          <p>{{ category.description }}</p>
-          <span class="blog-count">{{ (category.blogCount || 0) }} blogs</span>
-        </div>
-        <div class="category-actions">
-          <button class="btn-icon" (click)="startEdit(category)">
-            <i class="material-icons">edit</i>
-          </button>
-          <button class="btn-icon" (click)="deleteCategory(category)">
-            <i class="material-icons">delete</i>
-          </button>
+          <h3 class="category-card__name" [title]="category.name">{{ category.name }}</h3>
+          <p class="category-card__slug" *ngIf="category.slug">/{{ category.slug }}</p>
+          <p class="category-card__desc">{{ category.description || 'No description provided for this medical category.' }}</p>
+
+          <div class="category-card__footer">
+            <span class="category-card__status">Active in Directory</span>
+
+            <div class="category-card__actions">
+              <button class="btn-action btn-edit" (click)="startEdit(category)" title="Edit category">
+                <i class="material-icons">edit</i>
+                <span>Edit</span>
+              </button>
+              <button class="btn-action btn-delete" (click)="deleteCategory(category)" title="Delete category">
+                <i class="material-icons">delete</i>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-    <ng-template #categoryEmpty><div class="empty-state"><i class="material-icons">category</i><h3>No categories yet</h3><p>Create a category to organise your blog content.</p><button class="btn-primary" (click)="startCreate()">Add first category</button></div></ng-template>
-  </ng-container>
+
+    <!-- Empty State -->
+    <ng-template #noCategoriesView>
+      <div class="empty-state">
+        <div class="empty-icon-wrap">
+          <i class="material-icons">category</i>
+        </div>
+        <h3>{{ searchQuery ? 'No matching categories found' : 'No Categories Created Yet' }}</h3>
+        <p>{{ searchQuery ? 'Try adjusting your search terms.' : 'Create categories to organize your health guides, treatment articles, and wellness topics.' }}</p>
+        <button *ngIf="searchQuery" class="btn-primary" (click)="clearSearch()">
+          <i class="material-icons">clear</i>
+          <span>Clear Search Filter</span>
+        </button>
+        <button *ngIf="!searchQuery" class="btn-primary" (click)="startCreate()">
+          <i class="material-icons">add</i>
+          <span>Add First Category</span>
+        </button>
+      </div>
+    </ng-template>
+  </div>
+
 </div>

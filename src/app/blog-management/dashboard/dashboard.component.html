@@ -1,144 +1,337 @@
 <div class="dashboard-container">
-  <!-- Header -->
-  <div class="page-header">
-    <h1>Blog Dashboard</h1>
-    <button class="btn-refresh" (click)="refresh()">
+
+  <!-- ═════════════════════════════════════════════════════════
+       PAGE HEADER & EXECUTIVE ACTIONS
+  ══════════════════════════════════════════════════════════ -->
+  <header class="page-header">
+    <div class="header-copy">
+      <span class="eyebrow">EDITORIAL OPERATIONS</span>
+      <h1>Blog Analytics & Content Overview</h1>
+      <p>Real-time publication metrics, topic distribution, and reader engagement analytics.</p>
+    </div>
+
+    <div class="header-actions">
+      <button class="btn-secondary btn-refresh" (click)="refresh()" [disabled]="isLoading" title="Refresh Dashboard Data">
+        <i class="material-icons" [class.rotating]="isLoading">refresh</i>
+        <span>{{ isLoading ? 'Refreshing...' : 'Refresh' }}</span>
+      </button>
+
+      <a routerLink="/blogs/create" class="btn-primary">
+        <i class="material-icons">add</i>
+        <span>New Article</span>
+      </a>
+    </div>
+  </header>
+
+  <!-- ═════════════════════════════════════════════════════════
+       LOADING STATE (SKELETON)
+  ══════════════════════════════════════════════════════════ -->
+  <div *ngIf="isLoading && !analytics" class="dashboard-loading">
+    <div class="skeleton-kpi-grid">
+      <div class="skeleton-kpi" *ngFor="let i of [1,2,3,4,5,6]"></div>
+    </div>
+    <div class="skeleton-grid">
+      <div class="skeleton-card"></div>
+      <div class="skeleton-card"></div>
+    </div>
+  </div>
+
+  <!-- ═════════════════════════════════════════════════════════
+       ERROR STATE
+  ══════════════════════════════════════════════════════════ -->
+  <div *ngIf="error && !isLoading" class="error-container">
+    <div class="error-icon-wrap">
+      <i class="material-icons">error_outline</i>
+    </div>
+    <h3>Unable to Load Analytics</h3>
+    <p>{{ error }}</p>
+    <button class="btn-primary" (click)="refresh()">
       <i class="material-icons">refresh</i>
-      Refresh
+      Try Again
     </button>
   </div>
 
-  <!-- Loading State -->
-  <div *ngIf="isLoading" class="loading-container">
-    <div class="spinner"></div>
-    <p>Loading dashboard...</p>
-  </div>
-
-  <!-- Error State -->
-  <div *ngIf="error && !isLoading" class="error-container">
-    <i class="material-icons">error_outline</i>
-    <p>{{ error }}</p>
-    <button class="btn-retry" (click)="refresh()">Try Again</button>
-  </div>
-
-  <!-- Dashboard Content -->
+  <!-- ═════════════════════════════════════════════════════════
+       DASHBOARD CONTENT
+  ══════════════════════════════════════════════════════════ -->
   <div *ngIf="!isLoading && !error && analytics" class="dashboard-content">
-    
-    <!-- Stats Cards -->
-    <div class="stats-grid">
-      <div *ngFor="let stat of stats; trackBy: trackByFn" class="stat-card" [style.border-left-color]="stat.color">
-        <div class="stat-icon" [style.background-color]="stat.color + '20'">
-          <i class="material-icons" [style.color]="stat.color">{{ stat.icon }}</i>
+
+    <!-- KPI Metrics Grid -->
+    <section class="stats-grid" aria-label="Key Performance Indicators">
+      <div *ngFor="let stat of stats; trackBy: trackByFn" class="stat-card">
+        <div class="stat-top">
+          <div class="stat-icon-wrap" [style.background-color]="stat.bg" [style.color]="stat.color">
+            <i class="material-icons">{{ stat.icon }}</i>
+          </div>
+          <span class="stat-trend-tag" [style.color]="stat.color" [style.background-color]="stat.bg">
+            {{ stat.trend }}
+          </span>
         </div>
-        <div class="stat-content">
-          <h3>{{ stat.value | number }}</h3>
-          <p>{{ stat.title }}</p>
+
+        <div class="stat-body">
+          <span class="stat-title">{{ stat.title }}</span>
+          <h2 class="stat-val">{{ stat.value | number }}</h2>
+          <span class="stat-subtitle">{{ stat.subtitle }}</span>
         </div>
+      </div>
+    </section>
+
+    <!-- Content Status Distribution Strip -->
+    <div class="pipeline-card" *ngIf="analytics.totalBlogs > 0">
+      <div class="pipeline-header">
+        <div class="pipeline-info">
+          <span class="pipeline-title">Publication Pipeline Status</span>
+          <span class="pipeline-meta">{{ analytics.totalBlogs }} total articles recorded across all states</span>
+        </div>
+        <div class="pipeline-legend">
+          <span class="legend-item"><span class="legend-dot dot-published"></span> Published ({{ getPublishedPercent() }}%)</span>
+          <span class="legend-item"><span class="legend-dot dot-draft"></span> Drafts ({{ getDraftPercent() }}%)</span>
+          <span class="legend-item"><span class="legend-dot dot-scheduled"></span> Scheduled ({{ getScheduledPercent() }}%)</span>
+        </div>
+      </div>
+      <div class="pipeline-bar">
+        <div class="segment segment-published" [style.width.%]="getPublishedPercent()" [title]="'Published: ' + analytics.publishedBlogs"></div>
+        <div class="segment segment-draft" [style.width.%]="getDraftPercent()" [title]="'Drafts: ' + analytics.draftBlogs"></div>
+        <div class="segment segment-scheduled" [style.width.%]="getScheduledPercent()" [title]="'Scheduled: ' + analytics.scheduledBlogs"></div>
       </div>
     </div>
 
-    <!-- Top Categories & Tags -->
-    <div class="content-grid">
+    <!-- Content Breakdown Grid (Top Categories & Top Tags) -->
+    <section class="content-grid">
       
-      <!-- Top Categories -->
-      <div class="card">
-        <div class="card-header">
-          <h2>Top Categories</h2>
+      <!-- Top Categories Card -->
+      <div class="dash-card">
+        <div class="dash-card__header">
+          <div class="dash-card__header-info">
+            <div class="dash-card__icon-badge category-badge-icon">
+              <i class="material-icons">category</i>
+            </div>
+            <div>
+              <h3>Category Dominance</h3>
+              <p>Top clinical topics by article distribution</p>
+            </div>
+          </div>
+          <a routerLink="/blogs/categories" class="dash-card__link">
+            Manage ({{ totalCategoriesCount }})
+            <i class="material-icons">chevron_right</i>
+          </a>
         </div>
-        <div class="card-body">
-          <div *ngIf="analytics.topCategories && analytics.topCategories.length > 0; else noCategories" class="list">
-            <div *ngFor="let category of analytics.topCategories; trackBy: trackByFn" class="list-item">
-              <div class="category-info">
-                <span class="category-name">{{ category.name }}</span>
-                <span class="category-count">{{ category.blogCount }} blogs</span>
+
+        <div class="dash-card__body">
+          <div *ngIf="analytics.topCategories && analytics.topCategories.length > 0; else noCategories" class="category-list">
+            <div *ngFor="let category of analytics.topCategories; trackBy: trackByFn" class="category-row">
+              <div class="category-main">
+                <div class="category-label-group">
+                  <span class="category-dot" [style.background-color]="category.color || '#2563eb'"></span>
+                  <span class="category-name">{{ category.name }}</span>
+                </div>
+                <div class="category-counts">
+                  <span class="category-num"><strong>{{ category.blogCount || 0 }}</strong> articles</span>
+                  <span class="category-percent" *ngIf="analytics.totalBlogs">
+                    {{ ((category.blogCount / analytics.totalBlogs) * 100).toFixed(0) }}%
+                  </span>
+                </div>
               </div>
-              <div class="category-bar">
-                <div class="category-bar-fill" 
-                     [style.width.%]="(category.blogCount / analytics.totalBlogs) * 100"
-                     [style.background-color]="category.color || '#2196F3'"></div>
+
+              <div class="category-meter">
+                <div class="category-meter-fill"
+                     [style.width.%]="analytics.totalBlogs ? ((category.blogCount / analytics.totalBlogs) * 100) : 0"
+                     [style.background-color]="category.color || '#2563eb'"></div>
               </div>
             </div>
           </div>
           <ng-template #noCategories>
-            <p class="empty-message">No categories yet</p>
+            <div class="empty-state-mini">
+              <i class="material-icons">category</i>
+              <p>No categories defined yet</p>
+              <a routerLink="/blogs/categories" class="btn-link">Add Category</a>
+            </div>
           </ng-template>
         </div>
       </div>
 
-      <!-- Top Tags -->
-      <div class="card">
-        <div class="card-header">
-          <h2>Top Tags</h2>
+      <!-- Top Tags Card -->
+      <div class="dash-card">
+        <div class="dash-card__header">
+          <div class="dash-card__header-info">
+            <div class="dash-card__icon-badge tag-badge-icon">
+              <i class="material-icons">label</i>
+            </div>
+            <div>
+              <h3>Popular Search Tags</h3>
+              <p>Keywords driving patient discovery & indexing</p>
+            </div>
+          </div>
+          <a routerLink="/blogs/tags" class="dash-card__link">
+            Manage Tags
+            <i class="material-icons">chevron_right</i>
+          </a>
         </div>
-        <div class="card-body">
+
+        <div class="dash-card__body">
           <div *ngIf="analytics.topTags && analytics.topTags.length > 0; else noTags" class="tag-cloud">
-            <span *ngFor="let tag of analytics.topTags; trackBy: trackByFn" 
-                  class="tag-chip" 
-                  [style.background-color]="tag.color || '#E0E0E0'">
-              {{ tag.name }} ({{ tag.blogCount }})
-            </span>
+            <div *ngFor="let tag of analytics.topTags; trackBy: trackByFn" 
+                 class="tag-pill"
+                 [style.border-color]="(tag.color || '#2563eb') + '40'">
+              <span class="tag-dot" [style.background-color]="tag.color || '#2563eb'"></span>
+              <span class="tag-name">{{ tag.name }}</span>
+              <span class="tag-count">{{ tag.blogCount }}</span>
+            </div>
           </div>
           <ng-template #noTags>
-            <p class="empty-message">No tags yet</p>
+            <div class="empty-state-mini">
+              <i class="material-icons">label_outline</i>
+              <p>No tags attached to blogs yet</p>
+              <a routerLink="/blogs/tags" class="btn-link">Add Tag</a>
+            </div>
           </ng-template>
         </div>
       </div>
-    </div>
 
-    <!-- Most Viewed Blogs -->
-    <div class="card">
-      <div class="card-header">
-        <h2>Most Viewed Blogs</h2>
+    </section>
+
+    <!-- ═════════════════════════════════════════════════════════
+         HIGH IMPACT & MOST VIEWED ARTICLES TABLE
+    ══════════════════════════════════════════════════════════ -->
+    <section class="dash-card table-card">
+      
+      <!-- Table Header & Controls -->
+      <div class="dash-card__header table-controls-header">
+        <div>
+          <h3>High Impact & Most Viewed Content</h3>
+          <p>Top medical articles ranked by reader engagement and views</p>
+        </div>
+
+        <!-- Filter & Search Toolbar -->
+        <div class="table-toolbar">
+          <!-- Status Filter Tabs -->
+          <div class="filter-tabs">
+            <button class="filter-tab" [class.is-active]="activeStatusFilter === 'all'" (click)="setFilter('all')">
+              All ({{ recentBlogs.length }})
+            </button>
+            <button class="filter-tab" [class.is-active]="activeStatusFilter === 'published'" (click)="setFilter('published')">
+              Published
+            </button>
+            <button class="filter-tab" [class.is-active]="activeStatusFilter === 'draft'" (click)="setFilter('draft')">
+              Drafts
+            </button>
+            <button class="filter-tab" [class.is-active]="activeStatusFilter === 'scheduled'" (click)="setFilter('scheduled')">
+              Scheduled
+            </button>
+          </div>
+
+          <!-- Search Input -->
+          <div class="search-box">
+            <i class="material-icons search-icon">search</i>
+            <input type="text"
+                   [(ngModel)]="searchQuery"
+                   (ngModelChange)="onSearchChange()"
+                   placeholder="Filter by title, author, topic..."
+                   aria-label="Filter articles">
+            <button *ngIf="searchQuery" class="clear-search" (click)="clearSearch()">
+              <i class="material-icons">close</i>
+            </button>
+          </div>
+        </div>
       </div>
-      <div class="card-body">
-        <div *ngIf="recentBlogs && recentBlogs.length > 0; else noBlogs" class="table-container">
-          <table class="data-table">
+
+      <!-- Table Body -->
+      <div class="dash-card__body no-padding">
+        <div *ngIf="filteredBlogs && filteredBlogs.length > 0; else noBlogs" class="table-responsive">
+          <table class="sa-table">
             <thead>
               <tr>
-                <th>Title</th>
-                <th>Category</th>
-                <th>Author</th>
-                <th>Views</th>
-                <th>Status</th>
-                <th>Published</th>
+                <th class="th-rank">#</th>
+                <th class="th-title">Article Title</th>
+                <th class="th-category">Topic</th>
+                <th class="th-author">Author / Reviewer</th>
+                <th class="th-views">Impressions</th>
+                <th class="th-status">Status</th>
+                <th class="th-date">Published</th>
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let blog of recentBlogs; trackBy: trackByFn">
-                <td>
-                  <div class="blog-title-cell">
-                    <img *ngIf="blog.featuredImage" 
+              <tr *ngFor="let blog of filteredBlogs; let i = index; trackBy: trackByFn">
+                <!-- Rank -->
+                <td class="td-rank">
+                  <span class="rank-badge" [class.rank-top]="i < 3">{{ i + 1 }}</span>
+                </td>
+
+                <!-- Title Cell -->
+                <td class="td-title">
+                  <div class="article-cell">
+                    <img *ngIf="blog.featuredImage || blog.thumbnail" 
                          [src]="blog.thumbnail || blog.featuredImage" 
                          alt="" 
-                         class="blog-thumbnail">
-                    <span>{{ blog.title }}</span>
+                         class="article-thumb"
+                         loading="lazy">
+                    <div *ngIf="!blog.featuredImage && !blog.thumbnail" class="article-thumb-fallback">
+                      <i class="material-icons">article</i>
+                    </div>
+                    <div class="article-meta">
+                      <span class="article-title" [title]="blog.title">{{ blog.title }}</span>
+                      <span class="article-slug" *ngIf="blog.slug">/{{ blog.slug }}</span>
+                    </div>
                   </div>
                 </td>
-                <td>
-                  <span class="category-badge" 
-                        [style.background-color]="blog.category?.color || '#E0E0E0'">
+
+                <!-- Category -->
+                <td class="td-category">
+                  <span class="category-chip" *ngIf="blog.category?.name">
+                    <span class="chip-dot" [style.background-color]="blog.category?.color || '#2563eb'"></span>
                     {{ blog.category?.name }}
                   </span>
+                  <span *ngIf="!blog.category?.name" class="text-muted">—</span>
                 </td>
-                <td>{{ blog.author?.name }}</td>
-                <td>
-                  <strong>{{ blog.views | number }}</strong>
+
+                <!-- Author -->
+                <td class="td-author">
+                  <div class="author-cell" *ngIf="blog.author?.name">
+                    <div class="author-avatar-sm">
+                      {{ blog.author?.name ? blog.author.name.charAt(0) : 'D' }}
+                    </div>
+                    <span class="author-name">{{ blog.author.name }}</span>
+                  </div>
+                  <span *ngIf="!blog.author?.name" class="text-muted">—</span>
                 </td>
-                <td>
-                  <span class="status-badge" [class]="'status-' + blog.status">
-                    {{ blog.status }}
+
+                <!-- Views -->
+                <td class="td-views">
+                  <div class="views-cell">
+                    <strong class="views-val">{{ formatNumber(blog.views || 0) }}</strong>
+                    <div class="views-bar-wrap">
+                      <div class="views-bar-fill" [style.width.%]="getViewBarWidth(blog.views)"></div>
+                    </div>
+                  </div>
+                </td>
+
+                <!-- Status -->
+                <td class="td-status">
+                  <span class="status-pill" [class]="'status-' + (blog.status || 'published')">
+                    <span class="status-dot"></span>
+                    {{ blog.status || 'published' }}
                   </span>
                 </td>
-                <td>{{ blog.publishDate | date:'mediumDate' }}</td>
+
+                <!-- Date -->
+                <td class="td-date">
+                  <span class="date-val">{{ (blog.publishDate || blog.createdAt) | date:'mediumDate' }}</span>
+                </td>
               </tr>
             </tbody>
           </table>
         </div>
+
         <ng-template #noBlogs>
-          <p class="empty-message">No blogs yet</p>
+          <div class="empty-state-table">
+            <i class="material-icons">find_in_page</i>
+            <h4>No matching articles found</h4>
+            <p>{{ searchQuery ? 'Try adjusting your search terms or filter.' : 'Publish articles to begin tracking reader analytics.' }}</p>
+          </div>
         </ng-template>
       </div>
-    </div>
+
+    </section>
 
   </div>
 </div>

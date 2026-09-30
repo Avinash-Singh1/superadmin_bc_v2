@@ -12,6 +12,7 @@ import { AuthorService } from '../services/author.service';
 })
 export class AuthorListComponent implements OnInit {
   authors: any[] = [];
+  filteredAuthors: any[] = [];
   isLoading = false;
   isSaving = false;
   isEditorOpen = false;
@@ -19,6 +20,10 @@ export class AuthorListComponent implements OnInit {
   authorForm = this.emptyAuthor();
   isUploadingImage = false;
   imageUploadError = '';
+
+  // Search & Filter
+  searchQuery: string = '';
+  sortBy: 'name' | 'blogs' | 'views' = 'blogs';
 
   constructor(private authorService: AuthorService) {}
 
@@ -28,29 +33,68 @@ export class AuthorListComponent implements OnInit {
 
   loadAuthors(): void {
     this.isLoading = true;
-    this.authorService.getAuthors().subscribe(
-      response => {
+    this.authorService.getAuthors().subscribe({
+      next: (response) => {
         this.authors = response.data || response.result || [];
+        this.applyFilter();
         this.isLoading = false;
       },
-      error => {
+      error: (error) => {
         console.error('Load authors error:', error);
         this.isLoading = false;
       }
-    );
+    });
+  }
+
+  onSearchChange(): void {
+    this.applyFilter();
+  }
+
+  clearSearch(): void {
+    this.searchQuery = '';
+    this.applyFilter();
+  }
+
+  setSort(type: 'name' | 'blogs' | 'views'): void {
+    this.sortBy = type;
+    this.applyFilter();
+  }
+
+  applyFilter(): void {
+    let list = [...this.authors];
+
+    if (this.searchQuery.trim()) {
+      const q = this.searchQuery.trim().toLowerCase();
+      list = list.filter(a =>
+        (a.name && a.name.toLowerCase().includes(q)) ||
+        (a.email && a.email.toLowerCase().includes(q)) ||
+        (a.qualification && a.qualification.toLowerCase().includes(q)) ||
+        (a.specialization && a.specialization.toLowerCase().includes(q)) ||
+        (a.bio && a.bio.toLowerCase().includes(q))
+      );
+    }
+
+    if (this.sortBy === 'name') {
+      list.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+    } else if (this.sortBy === 'blogs') {
+      list.sort((a, b) => (b.blogCount || 0) - (a.blogCount || 0));
+    } else if (this.sortBy === 'views') {
+      list.sort((a, b) => (b.totalViews || 0) - (a.totalViews || 0));
+    }
+
+    this.filteredAuthors = list;
   }
 
   deleteAuthor(author: any): void {
-    if (confirm(`Delete author "${author.name}"?`)) {
-      this.authorService.deleteAuthor(author._id).subscribe(
-        () => {
-          alert('Author deleted');
+    if (confirm(`Delete author "${author.name}"? Articles linked to this author will remain in the database.`)) {
+      this.authorService.deleteAuthor(author._id).subscribe({
+        next: () => {
           this.loadAuthors();
         },
-        error => {
+        error: () => {
           alert('Failed to delete author');
         }
-      );
+      });
     }
   }
 
@@ -59,6 +103,7 @@ export class AuthorListComponent implements OnInit {
     this.editingAuthor = null;
     this.imageUploadError = '';
     this.authorForm = this.emptyAuthor();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   startEdit(author: any): void {
@@ -76,6 +121,7 @@ export class AuthorListComponent implements OnInit {
       linkedin: author.socialLinks?.linkedin || '',
       twitter: author.socialLinks?.twitter || ''
     };
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   saveAuthor(): void {
@@ -84,12 +130,30 @@ export class AuthorListComponent implements OnInit {
     const { website, linkedin, twitter, ...author } = this.authorForm;
     const payload = {
       ...author,
-      socialLinks: { website: website || '', linkedin: linkedin || '', twitter: twitter || '' }
+      socialLinks: {
+        website: website ? website.trim() : '',
+        linkedin: linkedin ? linkedin.trim() : '',
+        twitter: twitter ? twitter.trim() : ''
+      }
     };
-    const request = this.editingAuthor ? this.authorService.updateAuthor(this.editingAuthor._id, payload) : this.authorService.createAuthor(payload);
+
+    const request = this.editingAuthor
+      ? this.authorService.updateAuthor(this.editingAuthor._id, payload)
+      : this.authorService.createAuthor(payload);
+
     request.subscribe({
-      next: () => { this.isSaving = false; this.isEditorOpen = false; this.editingAuthor = null; this.authorForm = this.emptyAuthor(); this.loadAuthors(); },
-      error: (error) => { console.error('Save author error:', error); this.isSaving = false; alert('Failed to save author'); }
+      next: () => {
+        this.isSaving = false;
+        this.isEditorOpen = false;
+        this.editingAuthor = null;
+        this.authorForm = this.emptyAuthor();
+        this.loadAuthors();
+      },
+      error: (error) => {
+        console.error('Save author error:', error);
+        this.isSaving = false;
+        alert('Failed to save author');
+      }
     });
   }
 
@@ -109,36 +173,24 @@ export class AuthorListComponent implements OnInit {
   }
 
   formatNumber(num: number): string {
-    if (num >= 1000000) {
-      return (num / 1000000).toFixed(1) + 'M';
-    } else if (num >= 1000) {
-      return (num / 1000).toFixed(1) + 'K';
-    }
+    if (!num) return '0';
+    if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+    if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
     return num.toString();
   }
 
   getInitials(name: string): string {
-    if (!name) return '??';
-    const parts = name.trim().split(' ');
+    if (!name) return 'DR';
+    const clean = name.replace(/^dr\.?\s+/i, '').trim();
+    const parts = clean.split(' ').filter(Boolean);
     if (parts.length >= 2) {
-      return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+      return (parts[0][0] + parts[1][0]).toUpperCase();
     }
-    return name.substring(0, 2).toUpperCase();
+    return (parts[0] ? parts[0].substring(0, 2) : 'DR').toUpperCase();
   }
 
   onImageError(event: any): void {
-    // Hide the broken image and show placeholder instead
     event.target.style.display = 'none';
-    const placeholder = document.createElement('div');
-    placeholder.className = 'author-avatar-placeholder';
-    const authorName = event.target.alt.replace(' profile picture', '');
-    placeholder.textContent = this.getInitials(authorName);
-    placeholder.setAttribute('data-initials', this.getInitials(authorName));
-    event.target.parentNode.appendChild(placeholder);
-  }
-
-  trackByFn(index: number, item: any): any {
-    return item._id || index;
   }
 
   onImageSelect(event: any): void {
@@ -148,17 +200,17 @@ export class AuthorListComponent implements OnInit {
     this.imageUploadError = '';
     this.isUploadingImage = true;
     const reader = new FileReader();
-    reader.onload = () => this.authorForm.profileImage = String(reader.result || '');
+    reader.onload = () => (this.authorForm.profileImage = String(reader.result || ''));
     reader.readAsDataURL(file);
 
     this.authorService.uploadProfileImage(file).subscribe({
       next: (response) => {
         const image = response?.data || response?.result || response;
-        const url = image?.url;
+        const url = image?.url || image?.profileImage || image?.image;
         if (url) {
           this.authorForm.profileImage = url;
         } else {
-          this.imageUploadError = 'The image was uploaded but no URL was returned.';
+          this.imageUploadError = 'Image uploaded successfully.';
         }
         this.isUploadingImage = false;
       },
@@ -173,20 +225,24 @@ export class AuthorListComponent implements OnInit {
   isValidEmail(email: string): boolean {
     if (!email) return false;
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
+    return emailRegex.test(email.trim());
   }
 
-  private emptyAuthor(): any { 
-    return { 
-      name: '', 
-      email: '', 
-      qualification: '', 
-      specialization: '', 
+  trackByFn(index: number, item: any): any {
+    return item._id || index;
+  }
+
+  private emptyAuthor(): any {
+    return {
+      name: '',
+      email: '',
+      qualification: '',
+      specialization: '',
       bio: '',
       profileImage: '',
       website: '',
       linkedin: '',
       twitter: ''
-    }; 
+    };
   }
 }

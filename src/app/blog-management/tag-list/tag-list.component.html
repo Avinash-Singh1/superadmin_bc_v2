@@ -1,174 +1,293 @@
 <div class="tag-list-container">
+
+  <!-- ═════════════════════════════════════════════════════════
+       PAGE HEADER
+  ══════════════════════════════════════════════════════════ -->
   <header class="page-header">
     <div class="header-copy">
-      <span class="eyebrow">TAXONOMY</span>
-      <h1>Tags</h1>
-      <p>Create tags to help users discover related health content.</p>
+      <span class="eyebrow">DISCOVERY & INDEXING</span>
+      <h1>Content Tags</h1>
+      <p>Manage medical keywords and condition tags that power patient search discovery.</p>
     </div>
-    <button class="btn-primary" (click)="startCreate()">
+
+    <button class="btn-primary" (click)="startCreate()" *ngIf="!isEditorOpen">
       <i class="material-icons">add</i>
-      Add Tag
+      <span>Add Tag</span>
     </button>
   </header>
 
-  <!-- Tag Editor Form -->
+  <!-- ═════════════════════════════════════════════════════════
+       TAG STATS BAR
+  ══════════════════════════════════════════════════════════ -->
+  <section class="stats-bar" *ngIf="!isLoading && tags.length > 0">
+    <div class="stat-item">
+      <div class="stat-item__icon tag-stat-icon">
+        <i class="material-icons">label</i>
+      </div>
+      <div>
+        <span class="stat-item__val">{{ tags.length }}</span>
+        <span class="stat-item__lbl">Total Tags</span>
+      </div>
+    </div>
+
+    <div class="stat-item">
+      <div class="stat-item__icon usage-stat-icon">
+        <i class="material-icons">auto_graph</i>
+      </div>
+      <div>
+        <span class="stat-item__val">{{ getTotalBlogCount() }}</span>
+        <span class="stat-item__lbl">Total Usages</span>
+      </div>
+    </div>
+
+    <div class="stat-item">
+      <div class="stat-item__icon lead-stat-icon">
+        <i class="material-icons">trending_up</i>
+      </div>
+      <div>
+        <span class="stat-item__val text-truncate">{{ getTopTag() }}</span>
+        <span class="stat-item__lbl">Most Used Tag</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═════════════════════════════════════════════════════════
+       TAG EDITOR FORM
+  ══════════════════════════════════════════════════════════ -->
   <section *ngIf="isEditorOpen" class="tag-editor" aria-labelledby="editor-title">
     <form (ngSubmit)="saveTag()" #tagFormElement="ngForm">
       <div class="editor-header">
-        <h2 id="editor-title">
-          <i class="material-icons" aria-hidden="true">{{ editingTag ? 'edit' : 'add_circle_outline' }}</i>
-          {{ editingTag ? 'Edit Tag' : 'Create New Tag' }}
-        </h2>
-        <button 
-          class="btn-icon btn-close" 
-          type="button" 
-          (click)="cancelEdit()"
-          aria-label="Close editor">
-          <i class="material-icons" aria-hidden="true">close</i>
+        <div class="editor-title-wrap">
+          <div class="editor-icon-badge" [style.background-color]="(tagForm.color || '#2563eb') + '20'" [style.color]="tagForm.color || '#2563eb'">
+            <i class="material-icons">{{ editingTag ? 'edit' : 'add_circle' }}</i>
+          </div>
+          <div>
+            <h2 id="editor-title">{{ editingTag ? 'Edit Tag' : 'Create New Tag' }}</h2>
+            <p>{{ editingTag ? 'Modify keyword identifier and color representation.' : 'Create a new keyword tag to index patient health content.' }}</p>
+          </div>
+        </div>
+
+        <button class="btn-close" type="button" (click)="cancelEdit()" aria-label="Close editor">
+          <i class="material-icons">close</i>
         </button>
       </div>
 
-      <div class="form-row">
-        <div class="form-group">
-          <label for="tag-name">
-            Tag Name <span class="required" aria-label="required">*</span>
-          </label>
-          <input 
-            id="tag-name"
-            name="name" 
-            type="text"
-            [(ngModel)]="tagForm.name" 
-            placeholder="e.g., Health Tips, Recipes" 
-            required
-            autocomplete="off"
-            [class.invalid]="tagFormElement.submitted && !tagForm.name.trim()">
-          <small *ngIf="tagFormElement.submitted && !tagForm.name.trim()" class="error-message">Tag name is required</small>
+      <div class="form-grid">
+        <!-- Left: Tag Name & Description -->
+        <div class="form-col">
+          <div class="form-group">
+            <label for="tag-name">
+              Tag Name <span class="required">*</span>
+            </label>
+            <input 
+              id="tag-name"
+              name="name" 
+              type="text"
+              [(ngModel)]="tagForm.name" 
+              placeholder="e.g. Hypertension, Diet & Nutrition, Diabetes Care" 
+              required
+              autocomplete="off"
+              [class.invalid]="tagFormElement.submitted && !tagForm.name.trim()">
+            <small *ngIf="tagFormElement.submitted && !tagForm.name.trim()" class="error-msg">Tag name is required</small>
+          </div>
+
+          <div class="form-group">
+            <label for="tag-desc">
+              Description <span class="hint">(Optional keyword context)</span>
+            </label>
+            <textarea 
+              id="tag-desc"
+              name="description" 
+              [(ngModel)]="tagForm.description" 
+              placeholder="Specify the context or conditions under which this tag should be applied..."
+              rows="3"
+              maxlength="200"></textarea>
+            <small class="char-count">{{ (tagForm.description?.length || 0) }}/200</small>
+          </div>
         </div>
 
-        <div class="form-group">
-          <label for="tag-color">
-            Tag Color
-            <span class="hint">Choose a distinctive color</span>
-          </label>
-          <div class="color-picker-wrapper">
-            <input 
-              id="tag-color"
-              name="color" 
-              type="color"
-              [(ngModel)]="tagForm.color"
-              class="color-input"
-              aria-label="Select tag color">
-            <span class="color-preview" [style.background-color]="tagForm.color || '#E0E0E0'">
-            </span>
+        <!-- Right: Color Palette & Preview -->
+        <div class="form-col">
+          <div class="form-group">
+            <label>Tag Color Badge</label>
+            <div class="color-palette-wrap">
+              <div class="color-presets">
+                <button 
+                  type="button"
+                  *ngFor="let c of colorPresets"
+                  class="color-swatch"
+                  [style.background-color]="c"
+                  [class.is-selected]="tagForm.color === c"
+                  (click)="selectColor(c)"
+                  [title]="c">
+                  <i class="material-icons" *ngIf="tagForm.color === c">check</i>
+                </button>
+              </div>
+
+              <div class="custom-color-row">
+                <input 
+                  type="color" 
+                  name="customColor" 
+                  [(ngModel)]="tagForm.color" 
+                  class="color-native-picker"
+                  aria-label="Custom color picker">
+                <span class="custom-color-hex">{{ tagForm.color }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Live Preview Box -->
+          <div class="preview-box">
+            <span class="preview-lbl">Live Chip Preview:</span>
+            <div class="tag-pill-preview" [style.border-color]="(tagForm.color || '#2563eb') + '50'">
+              <span class="preview-dot" [style.background-color]="tagForm.color || '#2563eb'"></span>
+              <span class="preview-name">{{ tagForm.name.trim() || 'Sample Tag Name' }}</span>
+              <span class="preview-count">0</span>
+            </div>
           </div>
         </div>
       </div>
 
-      <div class="form-group">
-        <label for="tag-description">
-          Description
-          <span class="hint">Optional: Describe when this tag should be used</span>
-        </label>
-        <textarea 
-          id="tag-description"
-          name="description" 
-          [(ngModel)]="tagForm.description" 
-          placeholder="Describe what content should use this tag..."
-          rows="3"
-          maxlength="200"></textarea>
-        <small class="char-count">{{ (tagForm.description?.length || 0) }}/200</small>
-      </div>
-
-      <div class="form-actions">
-        <button 
-          class="btn-secondary" 
-          type="button" 
-          (click)="cancelEdit()"
-          [disabled]="isSaving">
+      <div class="editor-actions">
+        <button class="btn-secondary" type="button" (click)="cancelEdit()" [disabled]="isSaving">
           Cancel
         </button>
-        <button 
-          class="btn-primary" 
-          type="submit" 
-          [disabled]="isSaving || !tagForm.name.trim()">
-          <i class="material-icons" aria-hidden="true">{{ isSaving ? 'hourglass_empty' : 'save' }}</i>
-          <span>{{ isSaving ? 'Saving...' : (editingTag ? 'Update Tag' : 'Save Tag') }}</span>
+        <button class="btn-primary" type="submit" [disabled]="isSaving || !tagForm.name.trim()">
+          <i class="material-icons">{{ isSaving ? 'hourglass_empty' : 'save' }}</i>
+          <span>{{ isSaving ? 'Saving...' : (editingTag ? 'Update Tag' : 'Create Tag') }}</span>
         </button>
       </div>
     </form>
   </section>
 
-  <!-- Loading State -->
-  <div *ngIf="isLoading" class="loading-container" role="status">
-    <div class="spinner" aria-hidden="true"></div>
-    <p>Loading tags...</p>
-  </div>
-
-  <!-- Tags Content -->
-  <section *ngIf="!isLoading" class="tags-section" aria-labelledby="tags-heading">
-    <div class="section-header">
-      <h2 id="tags-heading" class="sr-only">All Tags</h2>
-      <div *ngIf="tags.length > 0" class="stats-bar">
-        <div class="stat-item">
-          <i class="material-icons" aria-hidden="true">label</i>
-          <span><strong>{{ tags.length }}</strong> Tags</span>
-        </div>
-        <div class="stat-item">
-          <i class="material-icons" aria-hidden="true">article</i>
-          <span><strong>{{ getTotalBlogCount() }}</strong> Total Usage</span>
-        </div>
-      </div>
+  <!-- ═════════════════════════════════════════════════════════
+       SEARCH & VIEW TOOLBAR
+  ══════════════════════════════════════════════════════════ -->
+  <section class="toolbar-section" *ngIf="!isLoading && tags.length > 0">
+    <div class="search-input-wrap">
+      <i class="material-icons search-icon">search</i>
+      <input 
+        type="text" 
+        [(ngModel)]="searchQuery" 
+        (ngModelChange)="onSearchChange()" 
+        placeholder="Search tags by keyword or description..."
+        aria-label="Search tags">
+      <button *ngIf="searchQuery" class="clear-search" (click)="clearSearch()">
+        <i class="material-icons">close</i>
+      </button>
     </div>
 
-    <div *ngIf="tags.length > 0; else noTags" class="tags-cloud" role="list">
-      <div *ngFor="let tag of tags; trackBy: trackByFn"
-           class="tag-chip" 
-           role="listitem"
-           [style.background-color]="tag.color || '#E0E0E0'"
-           [attr.aria-label]="tag.name + ' tag with ' + (tag.blogCount || 0) + ' blogs'">
-        
-        <div class="tag-content">
-          <span class="tag-icon" aria-hidden="true">
-            <i class="material-icons">label</i>
-          </span>
-          <div class="tag-info">
-            <span class="tag-name">{{ tag.name }}</span>
-            <span *ngIf="tag.description" class="tag-description">{{ tag.description }}</span>
-          </div>
-          <span class="tag-count" [attr.aria-label]="'Used in ' + (tag.blogCount || 0) + ' blogs'">
-            {{ (tag.blogCount || 0) }}
-          </span>
-        </div>
-
-        <div class="tag-actions" role="group" [attr.aria-label]="'Actions for ' + tag.name + ' tag'">
-          <button 
-            class="btn-icon btn-edit" 
-            (click)="startEdit(tag)"
-            [attr.aria-label]="'Edit ' + tag.name + ' tag'"
-            title="Edit tag">
-            <i class="material-icons" aria-hidden="true">edit</i>
-          </button>
-          <button 
-            class="btn-icon btn-delete" 
-            (click)="deleteTag(tag)"
-            [attr.aria-label]="'Delete ' + tag.name + ' tag'"
-            title="Delete tag">
-            <i class="material-icons" aria-hidden="true">delete</i>
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <ng-template #noTags>
-      <div class="empty-state">
-        <i class="material-icons">label_outline</i>
-        <h3>No tags yet</h3>
-        <p>Tags help organize and categorize your content. Create your first tag to get started.</p>
-        <button class="btn-primary" (click)="startCreate()">
-          <i class="material-icons">add</i>
-          Create First Tag
+    <div class="toolbar-controls">
+      <!-- Sort Controls -->
+      <div class="sort-controls">
+        <span class="sort-lbl">Sort by:</span>
+        <button class="sort-btn" [class.is-active]="sortBy === 'blogs'" (click)="setSort('blogs')">
+          Most Used
+        </button>
+        <button class="sort-btn" [class.is-active]="sortBy === 'name'" (click)="setSort('name')">
+          Name (A-Z)
         </button>
       </div>
-    </ng-template>
+
+      <!-- View Mode Switcher -->
+      <div class="view-switcher">
+        <button class="view-btn" [class.is-active]="viewMode === 'grid'" (click)="setViewMode('grid')" title="Card Grid View">
+          <i class="material-icons">grid_view</i>
+        </button>
+        <button class="view-btn" [class.is-active]="viewMode === 'cloud'" (click)="setViewMode('cloud')" title="Tag Cloud Matrix">
+          <i class="material-icons">bubble_chart</i>
+        </button>
+      </div>
+    </div>
   </section>
+
+  <!-- ═════════════════════════════════════════════════════════
+       LOADING SKELETON
+  ══════════════════════════════════════════════════════════ -->
+  <div *ngIf="isLoading" class="loading-grid">
+    <div class="skeleton-card" *ngFor="let i of [1,2,3,4,5,6]"></div>
+  </div>
+
+  <!-- ═════════════════════════════════════════════════════════
+       TAGS CONTENT
+  ══════════════════════════════════════════════════════════ -->
+  <div *ngIf="!isLoading">
+    
+    <!-- GRID VIEW -->
+    <div *ngIf="viewMode === 'grid' && filteredTags.length > 0" class="tags-grid">
+      <div class="tag-card" *ngFor="let tag of filteredTags; trackBy: trackByFn">
+        <div class="tag-card__accent" [style.background-color]="tag.color || '#2563eb'"></div>
+
+        <div class="tag-card__body">
+          <div class="tag-card__head">
+            <div class="tag-card__icon" [style.background-color]="(tag.color || '#2563eb') + '18'" [style.color]="tag.color || '#2563eb'">
+              <i class="material-icons">label</i>
+            </div>
+
+            <span class="tag-card__usage" [style.background-color]="(tag.color || '#2563eb') + '15'" [style.color]="tag.color || '#2563eb'">
+              {{ tag.blogCount || 0 }} {{ (tag.blogCount === 1) ? 'usage' : 'usages' }}
+            </span>
+          </div>
+
+          <h3 class="tag-card__name" [title]="tag.name">{{ tag.name }}</h3>
+          <p class="tag-card__slug" *ngIf="tag.slug">/{{ tag.slug }}</p>
+          <p class="tag-card__desc">{{ tag.description || 'Keyword tag for patient discovery.' }}</p>
+
+          <div class="tag-card__footer">
+            <span class="tag-card__status">Active Tag</span>
+            <div class="tag-card__actions">
+              <button class="btn-action btn-edit" (click)="startEdit(tag)" title="Edit tag">
+                <i class="material-icons">edit</i>
+                <span>Edit</span>
+              </button>
+              <button class="btn-action btn-delete" (click)="deleteTag(tag)" title="Delete tag">
+                <i class="material-icons">delete</i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CLOUD VIEW -->
+    <div *ngIf="viewMode === 'cloud' && filteredTags.length > 0" class="tags-cloud-card">
+      <div class="cloud-cluster">
+        <div *ngFor="let tag of filteredTags; trackBy: trackByFn" 
+             class="cloud-chip"
+             [style.border-color]="(tag.color || '#2563eb') + '40'">
+          <span class="chip-dot" [style.background-color]="tag.color || '#2563eb'"></span>
+          <span class="chip-name">{{ tag.name }}</span>
+          <span class="chip-count">{{ tag.blogCount || 0 }}</span>
+          
+          <div class="chip-actions">
+            <button class="chip-btn" (click)="startEdit(tag)" title="Edit tag">
+              <i class="material-icons">edit</i>
+            </button>
+            <button class="chip-btn chip-btn-del" (click)="deleteTag(tag)" title="Delete tag">
+              <i class="material-icons">close</i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="filteredTags.length === 0" class="empty-state">
+      <div class="empty-icon-wrap">
+        <i class="material-icons">label_outline</i>
+      </div>
+      <h3>{{ searchQuery ? 'No matching tags found' : 'No Tags Created Yet' }}</h3>
+      <p>{{ searchQuery ? 'Try adjusting your search terms.' : 'Create tags to organize clinical keywords and condition topics.' }}</p>
+      <button *ngIf="searchQuery" class="btn-primary" (click)="clearSearch()">
+        <i class="material-icons">clear</i>
+        <span>Clear Search Filter</span>
+      </button>
+      <button *ngIf="!searchQuery" class="btn-primary" (click)="startCreate()">
+        <i class="material-icons">add</i>
+        <span>Add First Tag</span>
+      </button>
+    </div>
+
+  </div>
+
 </div>
