@@ -1,0 +1,173 @@
+<div class="teleconsult-monitor-page">
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="header-left">
+      <div class="title-row">
+        <h1 class="page-title">Live Teleconsultation Monitor</h1>
+        <span class="live-pill">
+          <span class="live-dot"></span> LIVE
+        </span>
+      </div>
+      <p class="page-subtitle">Real-time oversight of active doctor-patient WebRTC calls, waiting queues, and emergency controls.</p>
+    </div>
+
+    <div class="header-actions">
+      <button class="btn-refresh" [class.active]="autoRefreshEnabled" (click)="toggleAutoRefresh()">
+        <svg class="btn-svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+        {{ autoRefreshEnabled ? 'Auto-refresh: ON (5s)' : 'Auto-refresh: PAUSED' }}
+      </button>
+      <button class="btn-primary" (click)="fetchActiveSessions()">
+        <svg class="btn-svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg> Refresh Now
+      </button>
+    </div>
+  </div>
+
+  <!-- Real-time Metrics Deck -->
+  <div class="metrics-grid">
+    <div class="metric-card active-card">
+      <div class="metric-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m22 8-6 4 6 4V8Z"/><rect width="14" height="12" x="2" y="6" rx="2"/></svg>
+      </div>
+      <div class="metric-info">
+        <span class="metric-label">Active Calls</span>
+        <h2 class="metric-val">{{ totalActive }}</h2>
+      </div>
+    </div>
+
+    <div class="metric-card waiting-card">
+      <div class="metric-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 22h14M5 2h14m-2 2v5l-5 5 5 5v5M7 4v5l5 5-5 5v5"/></svg>
+      </div>
+      <div class="metric-info">
+        <span class="metric-label">Patients in Waiting Rooms</span>
+        <h2 class="metric-val">{{ totalWaiting }}</h2>
+      </div>
+    </div>
+
+    <div class="metric-card gmeet-card">
+      <div class="metric-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10zM12 8v4M12 16h.01"/></svg>
+      </div>
+      <div class="metric-info">
+        <span class="metric-label">Google Meet Fallbacks</span>
+        <h2 class="metric-val">{{ totalFallback }}</h2>
+      </div>
+    </div>
+
+    <div class="metric-card health-card">
+      <div class="metric-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12.55a11 11 0 0 1 14.08 0M1.42 9a16 16 0 0 1 21.16 0M8.53 16.11a6 6 0 0 1 6.95 0M12 20h.01"/></svg>
+      </div>
+      <div class="metric-info">
+        <span class="metric-label">Signaling Gateway</span>
+        <h2 class="metric-val text-green">ONLINE</h2>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sessions Data Table -->
+  <div class="sessions-container">
+    <div class="table-header-bar">
+      <h3>Active Sessions & Queues ({{ sessions.length }})</h3>
+      <span class="subtext">Auto-synced with MongoDB & Socket.IO signaling broker</span>
+    </div>
+
+    <div class="loading-state" *ngIf="loading && !sessions.length">
+      <div class="spinner"></div>
+      <p>Fetching active consultations...</p>
+    </div>
+
+    <div class="empty-state" *ngIf="!loading && !sessions.length">
+      <svg class="empty-svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.5"><path d="m22 8-6 4 6 4V8Z"/><rect width="14" height="12" x="2" y="6" rx="2"/></svg>
+      <h3>No Active Teleconsultations</h3>
+      <p>There are currently no patients in waiting rooms or active calls in progress.</p>
+    </div>
+
+    <div class="table-responsive" *ngIf="sessions.length">
+      <table class="monitor-table">
+        <thead>
+          <tr>
+            <th>Status</th>
+            <th>Appointment / Room</th>
+            <th>Doctor</th>
+            <th>Patient</th>
+            <th>Mode</th>
+            <th>Duration</th>
+            <th>In-Call Rx / Files</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let s of sessions">
+            <td>
+              <span class="status-badge" [ngClass]="'status--' + s.status.toLowerCase()">
+                <span class="dot"></span>
+                {{ s.status }}
+              </span>
+            </td>
+            <td>
+              <div class="room-info">
+                <strong>#{{ s.appointmentId }}</strong>
+                <span class="room-id" title="Session ID">{{ s.sessionId || s.roomId }}</span>
+              </div>
+            </td>
+            <td>
+              <div class="participant-info">
+                <strong>Dr. {{ s.doctorName || 'Doctor' }}</strong>
+                <span class="sub-id">ID: {{ s.doctorId || 'N/A' }}</span>
+              </div>
+            </td>
+            <td>
+              <div class="participant-info">
+                <strong>{{ s.patientName || 'Patient' }}</strong>
+                <span class="sub-id">ID: {{ s.patientId || 'Guest' }}</span>
+              </div>
+            </td>
+            <td>
+              <span class="mode-badge" [class.fallback]="!!s.googleMeetUrl">
+                <svg *ngIf="!s.googleMeetUrl" class="mode-svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m16 3 4 4-4 4M20 7H4M8 21l-4-4 4-4M4 17h16"/></svg>
+                <svg *ngIf="s.googleMeetUrl" class="mode-svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m22 8-6 4 6 4V8Z"/><rect width="14" height="12" x="2" y="6" rx="2"/></svg>
+                {{ s.googleMeetUrl ? 'Google Meet Fallback' : 'WebRTC P2P' }}
+              </span>
+            </td>
+            <td>
+              <span class="duration-counter">
+                {{ formatDuration(s.connectedAt || s.patientJoinedAt) }}
+              </span>
+            </td>
+            <td>
+              <div class="in-call-stats">
+                <span class="stat-item" [class.highlight]="s.recordsCount">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l7.93-7.93"/></svg> {{ s.recordsCount || 0 }} files
+                </span>
+                <span class="stat-item" [class.rx-done]="s.prescriptionIssued">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                  {{ s.prescriptionIssued ? 'Rx Issued' : 'Pending' }}
+                </span>
+              </div>
+            </td>
+            <td>
+              <div class="table-actions">
+                <button
+                  *ngIf="s.googleMeetUrl"
+                  class="btn-icon"
+                  title="Copy Fallback Google Meet URL"
+                  (click)="copyLink(s.googleMeetUrl)"
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+                </button>
+                <button
+                  class="btn-danger-sm"
+                  title="Superadmin Emergency Force-End"
+                  (click)="forceEndSession(s)"
+                >
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg> Terminate
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

@@ -4,6 +4,7 @@ import { CommonModule, DatePipe } from '@angular/common';
 import { AppointmentRoutingModule } from './appointment-routing.module';
 import { AppointmentListComponent } from './appointment-list/appointment-list.component';
 import { ProfileVisitsComponent } from './profile-visits/profile-visits.component';
+import { TeleconsultationMonitorComponent } from './teleconsultation-monitor/teleconsultation-monitor.component';
 import { ThemeWrapperModule } from '../theme-wrapper/theme-wrapper.module';
 import { MaterialModule } from '../material/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -13,7 +14,8 @@ import { NgxPaginationModule } from 'ngx-pagination';
 @NgModule({
   declarations: [
     AppointmentListComponent,
-    ProfileVisitsComponent
+    ProfileVisitsComponent,
+    TeleconsultationMonitorComponent
   ],
   imports: [
     CommonModule,
