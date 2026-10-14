@@ -40,6 +40,7 @@ export class AppointmentListComponent implements OnInit {
     "Locality",
     "City",
     "BloodGroup",
+    "MeetLink",
   ];
   dataSource: any;
   page = 1;

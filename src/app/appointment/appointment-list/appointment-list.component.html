@@ -358,6 +358,38 @@
           </td>
         </ng-container>
 
+        <!-- Google Meet / Join Call Column -->
+        <ng-container matColumnDef="MeetLink">
+          <th mat-header-cell *matHeaderCellDef class="col-meet">
+            Meet Link
+          </th>
+          <td mat-cell *matCellDef="let element" class="col-meet">
+            <ng-container *ngIf="element?.videoMeetingUrl || element?.meetLink; else noMeetLink">
+              <a
+                class="btn-join-call"
+                [href]="element?.videoMeetingUrl || element?.meetLink"
+                target="_blank"
+                rel="noopener noreferrer"
+                title="Join Google Meet Call"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <polygon points="23 7 16 12 23 17 23 7"/>
+                  <rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
+                </svg>
+                <span>Join Call</span>
+              </a>
+            </ng-container>
+            <ng-template #noMeetLink>
+              <span class="badge-pending-meet" *ngIf="element?.consultationType === 'video'">
+                Pending
+              </span>
+              <span class="text-na" *ngIf="element?.consultationType !== 'video'">
+                &mdash;
+              </span>
+            </ng-template>
+          </td>
+        </ng-container>
+
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
         <tr mat-row *matRowDef="let row; columns: displayedColumns
           | paginate: { itemsPerPage: itemsPerPage, currentPage: page, totalItems: totalLength }; let i = index"
