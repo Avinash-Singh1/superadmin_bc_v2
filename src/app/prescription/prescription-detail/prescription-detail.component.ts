@@ -70,7 +70,7 @@ export class PrescriptionDetailComponent implements OnInit {
     if (printContent) {
       const printWindow = window.open('', '_blank', 'height=900,width=900');
       if (printWindow) {
-        printWindow.document.write('<!DOCTYPE html><html><head><title>Prescription - BookCure.in</title>');
+        printWindow.document.write('<!DOCTYPE html><html><head><title>Prescription - DigiOPD.com</title>');
         printWindow.document.write('<style>');
         printWindow.document.write(`
           * { box-sizing: border-box; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
@@ -271,7 +271,7 @@ export class PrescriptionDetailComponent implements OnInit {
       this.prescription?.doctorDetails?.hospitalName ||
       this.prescription?.clinicDetails?.name ||
       this.prescription?.hospitalDetails?.name ||
-      'Bookcure Health'
+      'DigiOPD Health'
     );
   }
 
