@@ -541,9 +541,10 @@ export class HomeComponent implements OnInit {
               surgerydata[i]?.source ? surgerydata[i]?.source : "N/A",
               surgerydata[i]?.name ? surgerydata[i]?.name : "N/A",
               surgerydata[i]?.phone ? surgerydata[i]?.phone : "N/A",
-              surgerydata[i]?.surgeryMasterName
-                ? surgerydata[i]?.surgeryMasterName
-                : "N/A",
+              (surgerydata[i]?.treatmentName ||
+                surgerydata[i]?.treatmentType ||
+                surgerydata[i]?.surgeryMasterName ||
+                surgerydata[i]?.surgeryName) ?? "N/A",
               surgerydata[i]?.city ? surgerydata[i]?.city : "N/A",
             ]);
           }

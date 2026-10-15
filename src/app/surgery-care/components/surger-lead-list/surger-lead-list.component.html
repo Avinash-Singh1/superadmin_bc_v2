@@ -157,11 +157,11 @@
           </td>
         </ng-container>
 
-        <!-- Surgery Type -->
-        <ng-container matColumnDef="surgeryMasterName">
+        <!-- Surgery / Treatment Type -->
+        <ng-container matColumnDef="treatmentName">
           <th mat-header-cell *matHeaderCellDef class="col-header">Treatment</th>
           <td mat-cell *matCellDef="let element" class="col-data">
-            <span class="surgery-tag">{{ (element.surgeryMasterName | titlecase) ?? "N/A" }}</span>
+            <span class="surgery-tag">{{ ((element.treatmentName || element.treatmentType || element.surgeryMasterName || element.surgeryName) | titlecase) || "N/A" }}</span>
           </td>
         </ng-container>
 

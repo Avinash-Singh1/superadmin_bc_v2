@@ -49,6 +49,7 @@ export class SurgerLeadListComponent implements OnInit {
   sourceList: any = [
     { name: "Website", id: "website" },
     { name: "Facebook", id: "facebook" },
+    { name: "Doctor Search Page", id: "doctor-search-page" },
   ];
   claimedUserType: { [key: number]: string } = {
     1: "Admin",
@@ -59,7 +60,7 @@ export class SurgerLeadListComponent implements OnInit {
     "source",
     "name",
     "phone",
-    "surgeryMasterName",
+    "treatmentName",
     "city",
     "claimByUserType",
     "claimedDate",
@@ -339,7 +340,7 @@ export class SurgerLeadListComponent implements OnInit {
                 source: item.source ?? "N/A",
                 name: item.name ?? "N/A",
                 phone: item.phone ?? "N/A",
-                surgeryMasterName: item.surgeryMasterName ?? "N/A",
+                treatmentName: (item.treatmentName || item.treatmentType || item.surgeryMasterName || item.surgeryName) ?? "N/A",
                 city: item.city ?? "N/A",
                 claimByUserType: item.claimByUserType ?? "N/A",
                 claimedDate:
