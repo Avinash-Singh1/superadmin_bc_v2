@@ -1,73 +1,96 @@
 <main class="editor-modal">
-  <header
-    class="editor-modal-header text-24 font-600 d-flex justify-content-between align-items-center"
-  >
-    <span>Edit</span>
-    <div class="cursor-pointer" (click)="matdialogRef.close()">
-      <img src="assets/images/svg/close.svg" alt="" />
+  <!-- Header -->
+  <header class="modal-header-bar">
+    <div class="header-left">
+      <div class="header-icon-wrap">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M11 5H6a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2v-5"/>
+          <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+        </svg>
+      </div>
+      <div>
+        <h2 class="header-title">Edit Section</h2>
+        <span class="header-subtitle">{{ data?.title || 'Content Editor' }}</span>
+      </div>
     </div>
+    <button type="button" class="btn-close-modal" (click)="matdialogRef.close()">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+      </svg>
+    </button>
   </header>
-  <form [formGroup]="editorForm">
-    <mat-dialog-content class="editor-modal-container">
-      <div class="d-flex flex-column gap-3">
-        <label class="text-18 font-600" htmlFor="title-input">Title</label>
-        <input
-          type="text"
-          class="title-input form-control"
-          id="title-input"
-          placeholder="Title"
-          formControlName="title"
-        />
+
+  <!-- Body -->
+  <div class="modal-body">
+    <form [formGroup]="editorForm">
+      <!-- Title Field -->
+      <div class="field">
+        <label class="field__label">Title</label>
+        <input type="text" class="field__input" placeholder="Section title" formControlName="title" />
+        <span class="field__error" *ngIf="editorForm.get('title')?.touched && editorForm.get('title')?.invalid">
+          Title is required (min 3 chars)
+        </span>
       </div>
-      <div class="text-18 font-600">Description</div>
-      <div class="d-flex gap-2">
-        <div
-          class="text-18 font-600 border px-2 py-1 cursor-pointer"
-          (click)="htmlEditor = false"
-          [ngClass]="{ active: !htmlEditor }"
-        >
-          Text Editor
+
+      <!-- Editor Mode Toggle -->
+      <div class="editor-section">
+        <div class="editor-toggle">
+          <button type="button" class="toggle-btn" [class.toggle-btn--active]="!htmlEditor" (click)="htmlEditor = false">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+            </svg>
+            Visual Editor
+          </button>
+          <button type="button" class="toggle-btn" [class.toggle-btn--active]="htmlEditor" (click)="htmlEditor = true">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>
+            </svg>
+            HTML Editor
+          </button>
         </div>
-        <div
-          class="text-18 font-600 border px-2 py-1 cursor-pointer"
-          (click)="htmlEditor = true"
-          [ngClass]="{ active: htmlEditor }"
-        >
-          HTML Editor
+
+        <!-- Visual Editor -->
+        <div class="NgxEditor__Wrapper" *ngIf="!htmlEditor">
+          <ngx-editor-menu
+            (change)="onEditorContentChange($event)"
+            [editor]="editor"
+            [toolbar]="toolbar"
+            [customMenuRef]="customMenu"
+          ></ngx-editor-menu>
+          <ng-template #customMenu>
+            <div class="svg-icon-button" (click)="onInsertImage()">
+              <svg-icon src="assets/images/svg/gallery-add.svg"></svg-icon>
+            </div>
+          </ng-template>
+          <ngx-editor
+            [editor]="editor"
+            formControlName="description"
+            outputFormat="html"
+            [placeholder]="'Start typing your content...'"
+          ></ngx-editor>
         </div>
+
+        <!-- HTML Editor -->
+        <div *ngIf="htmlEditor">
+          <textarea placeholder="Paste or write HTML content here..." class="html-editor" rows="10"
+            formControlName="description"></textarea>
+        </div>
+        <span class="field__error" *ngIf="editorForm.get('description')?.touched && editorForm.get('description')?.invalid">
+          Content description is required (min 10 chars)
+        </span>
       </div>
-      <div class="NgxEditor__Wrapper" *ngIf="!htmlEditor">
-        <ngx-editor-menu
-          (change)="onEditorContentChange($event)"
-          [editor]="editor"
-          [toolbar]="toolbar"
-          [customMenuRef]="customMenu"
-        >
-        </ngx-editor-menu>
-        <ng-template #customMenu>
-          <div class="svg-icon-button" (click)="onInsertImage()">
-            <svg-icon src="assets/images/svg/gallery-add.svg"></svg-icon>
-          </div>
-          <!-- <app-custom-menu [editor]="editor"></app-custom-menu> -->
-        </ng-template>
-        <ngx-editor
-          [editor]="editor"
-          formControlName="description"
-          [placeholder]="'Type here'"
-        >
-        </ngx-editor>
-      </div>
-      <div class="" *ngIf="htmlEditor">
-        <textarea
-          placeholder="Type html content"
-          class="w-100 html-textarea"
-          rows="8"
-          formControlName="description"
-        ></textarea>
-      </div>
-    </mat-dialog-content>
-  </form>
-  <mat-dialog-actions>
-    <button class="save" (click)="onSave()">Save</button>
-  </mat-dialog-actions>
+    </form>
+  </div>
+
+  <!-- Footer -->
+  <footer class="modal-footer">
+    <button type="button" class="btn-cancel" (click)="matdialogRef.close()">Cancel</button>
+    <button type="button" class="btn-save" (click)="onSave()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="20 6 9 17 4 12"/>
+      </svg>
+      Save Changes
+    </button>
+  </footer>
 </main>

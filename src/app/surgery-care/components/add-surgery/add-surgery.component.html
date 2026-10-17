@@ -1,5 +1,5 @@
 <main class="add-surgery-page">
-  <!-- â”€â”€ Page Header â”€â”€ -->
+  <!-- Page Header -->
   <header class="page-header">
     <div class="header-left">
       <div class="header-icon-wrap">
@@ -32,7 +32,7 @@
     </div>
   </header>
 
-  <!-- â”€â”€ Tab Navigation â”€â”€ -->
+  <!-- Tab Navigation -->
   <nav class="tab-bar">
     <button type="button" class="tab-item" [class.active]="activeTab === 'content'" (click)="activeTab = 'content'">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -55,15 +55,13 @@
     </button>
   </nav>
 
-  <!-- â”€â”€ Body â”€â”€ -->
+  <!-- Body -->
   <form [formGroup]="surgeryForm" class="page-body">
     <div class="body-layout">
-      <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
-      <!--  MAIN CONTENT AREA                  -->
-      <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+      <!-- MAIN CONTENT AREA -->
       <section class="main-area">
 
-        <!-- â”€â”€ TAB: Content â”€â”€ -->
+        <!-- TAB: Content -->
         <div *ngIf="activeTab === 'content'" class="tab-content fade-in">
 
           <!-- Hero Section (Component 0) -->
@@ -208,7 +206,7 @@
           </div>
         </div>
 
-        <!-- â”€â”€ TAB: Treatment Info â”€â”€ -->
+        <!-- TAB: Treatment Info -->
         <div *ngIf="activeTab === 'treatment'" class="tab-content fade-in">
 
           <!-- Treatment Content Blocks -->
@@ -338,7 +336,7 @@
           </div>
         </div>
 
-        <!-- â”€â”€ TAB: Settings (SEO & E-E-A-T) â”€â”€ -->
+        <!-- TAB: Settings (SEO & E-E-A-T) -->
         <div *ngIf="activeTab === 'settings'" class="tab-content fade-in">
 
           <!-- Medical Reviewer -->
@@ -464,9 +462,7 @@
 
       </section>
 
-      <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
-      <!--  SIDEBAR                            -->
-      <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+      <!-- SIDEBAR -->
       <aside class="sidebar">
 
         <!-- SEO Settings -->

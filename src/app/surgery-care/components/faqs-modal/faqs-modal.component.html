@@ -1,79 +1,77 @@
-<main class="settings-add-header">
-  <header class="font-600 text-24 py-3">
-    {{ "FAQs" }}
+<main class="faq-modal">
+  <!-- Header -->
+  <header class="modal-header-bar">
+    <div class="header-left">
+      <div class="header-icon-wrap">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+          <line x1="12" y1="17" x2="12.01" y2="17"/>
+        </svg>
+      </div>
+      <div>
+        <h2 class="header-title">{{ data?.edit ? 'Edit FAQ' : 'Add FAQ' }}</h2>
+        <span class="header-subtitle">Frequently asked question entry</span>
+      </div>
+    </div>
+    <button type="button" class="btn-close-modal" (click)="matdialogRef.close()">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+      </svg>
+    </button>
   </header>
-  <mat-dialog-content class="settings-add-content">
-    <form [formGroup]="faqForm" class="d-flex flex-column gap-4">
-      <div class="form-item d-flex flex-column gap-2">
-        <label htmlFor="" class="font-600">
-          {{ "Question" }}
-          <span class="required-hint">*</span>
+
+  <!-- Body -->
+  <div class="modal-body">
+    <form [formGroup]="faqForm">
+      <div class="field">
+        <label class="field__label">
+          Question <span class="required">*</span>
         </label>
-        <input
-          nectarError
-          type="text"
-          formControlName="question"
-          class="form-input w-100"
-          placeholder="Question"
-        />
-        <div
-          class="error-hint"
-          *ngIf="control['question'].touched && control['question'].errors?.['required']"
-        >
+        <input nectarError type="text" formControlName="question" class="field__input"
+          placeholder="e.g. How long does recovery take?" />
+        <div class="error-hint" *ngIf="control['question'].touched && control['question'].errors?.['required']">
           Question is required.
         </div>
-        <div
-          class="error-hint"
-          *ngIf="control['question'].touched && (control['question'].errors?.['minlength'] || control['question'].errors?.['maxlength'])"
-        >
+        <div class="error-hint" *ngIf="control['question'].touched && (control['question'].errors?.['minlength'] || control['question'].errors?.['maxlength'])">
           Question must be between 10 to 200 characters.
         </div>
       </div>
-      <div class="form-item d-flex flex-column gap-2">
-        <label htmlFor="" class="font-600">
-          {{ "Answer" }}
-          <span class="required-hint">*</span>
-        </label>
 
-        <input
-          nectarError
-          type="text"
-          formControlName="answer"
-          class="form-input w-100"
-          placeholder="Answer"
-        />
-        <div
-          class="error-hint"
-          *ngIf="control['answer'].touched && control['answer'].errors?.['required']"
-        >
+      <div class="field">
+        <label class="field__label">
+          Answer <span class="required">*</span>
+        </label>
+        <textarea nectarError formControlName="answer" class="field__textarea"
+          placeholder="Provide a clear, concise answer..." rows="4"></textarea>
+        <div class="error-hint" *ngIf="control['answer'].touched && control['answer'].errors?.['required']">
           Answer is required.
         </div>
-        <div
-          class="error-hint"
-          *ngIf="control['answer'].touched && (control['answer'].errors?.['minlength'] || control['answer'].errors?.['maxlength'])"
-        >
+        <div class="error-hint" *ngIf="control['answer'].touched && (control['answer'].errors?.['minlength'] || control['answer'].errors?.['maxlength'])">
           Answer must be between 2 to 500 characters.
         </div>
       </div>
     </form>
-  </mat-dialog-content>
-  <mat-dialog-actions class="settings-add">
-    <div
-      class="buttongroup d-flex justify-content-between gap-6 border-top-style w-100"
-    >
-      <div>
-        <button class="delete" *ngIf="data.edit" (click)="onDelete()">
-          <span class="">
-            {{ "Delete" }}
-          </span>
-        </button>
-      </div>
-      <div class="d-flex gap-4">
-        <button type="button" class="cancel" (click)="matdialogRef.close()">
-          Cancel
-        </button>
-        <button class="save" (click)="onSubmit()">Save</button>
-      </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="modal-footer">
+    <div class="footer-left">
+      <button *ngIf="data?.edit" type="button" class="btn-delete" (click)="onDelete()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+          <path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+        </svg>
+        Delete
+      </button>
     </div>
-  </mat-dialog-actions>
+    <div class="footer-right">
+      <button type="button" class="btn-cancel" (click)="matdialogRef.close()">Cancel</button>
+      <button type="button" class="btn-save" (click)="onSubmit()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+        {{ data?.edit ? 'Update' : 'Add FAQ' }}
+      </button>
+    </div>
+  </footer>
 </main>

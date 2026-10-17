@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component } from "@angular/core";
 import { MatDialogRef } from "@angular/material/dialog";
 import { ToastrService } from "ngx-toastr";
 import { ApiService } from "src/app/shared/api.service";
@@ -14,21 +14,31 @@ export class ImageUploadModalComponent {
     private toastr: ToastrService,
     public matdialogRef: MatDialogRef<ImageUploadModalComponent>
   ) {}
-  acceptedFileType = ["image/jpeg", "image/jpg", "image/png"];
+
+  acceptedFileType = ["image/jpeg", "image/jpg", "image/png", "image/svg+xml"];
   url!: string;
   submitted: boolean = false;
+
   onFileUpload(event: any) {
-    console.log(event);
     const file = event?.target?.files?.[0];
+    if (!file) {
+      return;
+    }
     if (!this.acceptedFileType.includes(file.type)) {
-      this.toastr.error("Please upload file in pdf, jpeg, jpg or png format");
+      this.toastr.error("Please upload file in jpeg, jpg, png or svg format");
       return;
     }
     this.apiService.fileUpload(file).subscribe({
       next: (res: any) => {
-        const { uri } = res.result.uri;
+        const uri =
+          res?.data?.url ||
+          res?.result?.uri?.uri ||
+          res?.result?.uri ||
+          res?.result?.url;
         this.url = uri;
-        // this.matdialogRef.close(uri);
+      },
+      error: (err: any) => {
+        this.toastr.error("File upload failed. Please try again.");
       },
     });
   }

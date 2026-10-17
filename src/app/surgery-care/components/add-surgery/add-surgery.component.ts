@@ -31,7 +31,7 @@ export class AddSurgeryComponent implements OnInit {
     private activatedRoute: ActivatedRoute
   ) {}
   surgeryForm!: UntypedFormGroup;
-  acceptedFileType = ["image/jpeg", "image/jpg", "image/png"];
+  acceptedFileType = ["image/jpeg", "image/jpg", "image/png", "image/svg+xml"];
   activeAccordion!: string;
   departmentList: any = [];
   surgeryList: any = [];
@@ -217,13 +217,13 @@ export class AddSurgeryComponent implements OnInit {
     if (event.target.files?.length) {
       const file = event.target.files[0];
       if (!this.acceptedFileType.includes(file.type)) {
-        this.toastr.error("Please upload file in pdf, jpeg, jpg or png format");
+        this.toastr.error("Please upload file in pdf, jpeg, jpg, png or svg format");
         event.target.value = '';
         return;
       }
       this.apiService.fileUpload(file).subscribe({
         next: (res: any) => {
-          const { uri } = res.result.uri;
+          const uri = res?.data?.url || res?.result?.uri?.uri || res?.result?.uri || res?.result?.url;
           if (uri) {
             this.onDelete(i, j);
             this.imageArray(i).insert(j, new UntypedFormControl(uri));
@@ -236,8 +236,16 @@ export class AddSurgeryComponent implements OnInit {
   onSubmit() {
     this.surgeryForm.markAllAsTouched();
     if (this.surgeryForm.valid) {
+      const payload = { ...this.surgeryForm.value };
+      // Convert comma-separated strings to arrays
+      payload.alternativeNames = payload.alternativeNames
+        ? String(payload.alternativeNames).split(',').map((s: string) => s.trim()).filter(Boolean)
+        : [];
+      payload.tags = payload.tags
+        ? String(payload.tags).split(',').map((s: string) => s.trim()).filter(Boolean)
+        : [];
       this.apiService
-        .Postdata(URLConstant.addSurgery, this.surgeryForm.value, {})
+        .Postdata(URLConstant.addSurgery, payload, {})
         .subscribe({
           next: (res: any) => {
             this.toastr.success("Surgery added successfully.");
@@ -245,17 +253,40 @@ export class AddSurgeryComponent implements OnInit {
           },
           error: (error: any) => {
             console.log(error.message);
-
             this.toastr.error(error.message);
           },
         });
+    } else {
+      const invalidFields: string[] = [];
+      const controls = this.surgeryForm.controls;
+      for (const name in controls) {
+        if (controls[name].invalid) {
+          if (name === 'components') {
+            const comps = this.componentArray;
+            comps.controls.forEach((group: any, idx: number) => {
+              if (group.invalid) {
+                const subfields: string[] = [];
+                for (const subname in group.controls) {
+                  if (group.controls[subname].invalid) {
+                    subfields.push(subname);
+                  }
+                }
+                invalidFields.push(`Component ${idx + 1} (${subfields.join(', ')})`);
+              }
+            });
+          } else {
+            invalidFields.push(name);
+          }
+        }
+      }
+      this.toastr.error("Please fill in all required fields: " + invalidFields.join(', '));
     }
   }
   validateImagesArray(): ValidatorFn {
     return (control: AbstractControl): { [key: string]: any } | null => {
       const formArray = control as UntypedFormArray;
       const valid = formArray.controls.some(
-        (control) => control.value.trim() !== ""
+        (ctrl) => ctrl.value != null && typeof ctrl.value === 'string' && ctrl.value.trim() !== ""
       );
       return valid ? null : { imagesRequired: true };
     };
@@ -412,8 +443,10 @@ export class AddSurgeryComponent implements OnInit {
     faqDialog.afterClosed().subscribe((res: any) => {
 
       if (res) {
-        if ((res?.delete && i == 0) || i) {
-          this.faqArray.removeAt(i);
+        if (res?.delete) {
+          if (i !== undefined && i !== null) {
+            this.faqArray.removeAt(i);
+          }
           return;
         }
         if (edit) {

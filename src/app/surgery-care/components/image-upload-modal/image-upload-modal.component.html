@@ -1,6 +1,7 @@
 <main class="position-relative d-flex flex-column gap-3">
   <header>Insert Image</header>
   <button
+    type="button"
     class="svg-icon-button position-absolute top-3 right-3"
     (click)="matdialogRef.close()"
   >
@@ -11,19 +12,20 @@
   >
     <p *ngIf="url" class="text-center m-0">{{ url }}</p>
 
-    <button (click)="fileUpload.click()">Browse</button>
-    <p *ngIf="!url && submitted">Please select image</p>
+    <button type="button" (click)="fileUpload.click()">Browse</button>
+    <p *ngIf="!url && submitted" class="text-danger">Please select image</p>
     <input
       type="file"
-      accept="image/png,image/jpeg,image/jpg"
+      accept="image/png,image/jpeg,image/jpg,image/svg+xml"
       style="display: none"
       #fileUpload
       (change)="onFileUpload($event)"
     />
   </div>
   <div class="button-group d-flex justify-content-end gap-3 align-items-center">
-    <button>Cancel</button>
+    <button type="button" (click)="matdialogRef.close()">Cancel</button>
     <button
+      type="button"
       class="insert"
       (click)="submitted = true; url ? matdialogRef.close(url) : false"
     >

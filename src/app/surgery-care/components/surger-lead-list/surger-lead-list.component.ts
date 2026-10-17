@@ -339,21 +339,27 @@ export class SurgerLeadListComponent implements OnInit {
                 source: item.source ?? "N/A",
                 name: item.name ?? "N/A",
                 phone: item.phone ?? "N/A",
-                surgeryMasterName: item.surgeryMasterName ?? "N/A",
+                surgeryMasterName:
+                  item.surgeryMasterName ||
+                  item.treatmentName ||
+                  item.treatmentType ||
+                  "N/A",
                 city: item.city ?? "N/A",
                 claimByUserType: item.claimByUserType ?? "N/A",
-                claimedDate:
-                  this.datePipe.transform(
-                    item.createdAt,
-                    "dd/MM/yyyy, hh:mm:ss"
-                  ) ?? "N/A",
-                status: item.source ?? "N/A",
-                followUpDate:
-                  this.datePipe.transform(
-                    item.createdAt,
-                    "dd/MM/yyyy, hh:mm:ss"
-                  ) ?? "N/A",
-                comments: item.comments,
+                claimedDate: item.claimedDate
+                  ? this.datePipe.transform(
+                      item.claimedDate,
+                      "dd/MM/yyyy, hh:mm:ss"
+                    ) ?? "N/A"
+                  : "N/A",
+                status: this.statusList[item.status] ?? item.status ?? "N/A",
+                followUpDate: item.followUpDate
+                  ? this.datePipe.transform(
+                      item.followUpDate,
+                      "dd/MM/yyyy, hh:mm:ss"
+                    ) ?? "N/A"
+                  : "N/A",
+                comments: item.comments || "N/A",
               };
             });
             this.downloadCSV(downloadData);

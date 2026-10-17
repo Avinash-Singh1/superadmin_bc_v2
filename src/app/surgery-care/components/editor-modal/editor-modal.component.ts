@@ -1,12 +1,13 @@
 import { Component, Inject, OnDestroy, OnInit } from "@angular/core";
-import { UntypedFormBuilder, UntypedFormGroup } from "@angular/forms";
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from "@angular/forms";
 import {
   MAT_DIALOG_DATA,
   MatDialog,
   MatDialogRef,
 } from "@angular/material/dialog";
-import { Editor, Toolbar, Validators } from "ngx-editor";
+import { Editor, Toolbar } from "ngx-editor";
 import { ImageUploadModalComponent } from "../image-upload-modal/image-upload-modal.component";
+
 @Component({
   selector: "app-editor-modal",
   templateUrl: "./editor-modal.component.html",
@@ -19,14 +20,17 @@ export class EditorModalComponent implements OnInit, OnDestroy {
     public matdialogRef: MatDialogRef<EditorModalComponent>,
     private matdialog: MatDialog
   ) {}
+
   editorForm!: UntypedFormGroup;
   editor: Editor = new Editor({ history: true, keyboardShortcuts: true });
   html: string = "";
   htmlEditor: boolean = false;
   getdata: any;
+
   ngOnInit(): void {
     this.validateForm();
   }
+
   onInsertImage() {
     const imageModal = this.matdialog.open(ImageUploadModalComponent, {
       width: "360px",
@@ -37,6 +41,7 @@ export class EditorModalComponent implements OnInit, OnDestroy {
       }
     });
   }
+
   toolbar: Toolbar = [
     ["bold", "underline", "italic"],
     ["strike"],
@@ -49,10 +54,11 @@ export class EditorModalComponent implements OnInit, OnDestroy {
     ["horizontal_rule"],
     [],
   ];
+
   validateForm() {
     this.editorForm = this.fb.group({
       title: [
-        this.data.title,
+        this.data?.title || "",
         [
           Validators.required,
           Validators.minLength(3),
@@ -60,25 +66,27 @@ export class EditorModalComponent implements OnInit, OnDestroy {
         ],
       ],
       description: [
-        this.data.description,
+        this.data?.description || "",
         [Validators.required, Validators.minLength(10)],
       ],
     });
   }
+
   onSave() {
-    console.log(this.editorForm);
+    this.editorForm.markAllAsTouched();
+    if (this.editorForm.invalid) {
+      return;
+    }
     this.matdialogRef.close({
       edit: true,
       ...this.data,
       ...this.editorForm.value,
     });
   }
+
   ngOnDestroy(): void {
     this.editor.destroy();
   }
-  editorContent: string = ""; // Initialize with some default content
 
-  onEditorContentChange(content: any): void {
-    console.log("Editor content changed:", content);
-  }
+  onEditorContentChange(content: any): void {}
 }
