@@ -118,6 +118,40 @@
       </div>
     </div>
 
+    <!-- Medical Verification Edit Access (Admin Control) -->
+    <div class="info-section edit-permission-section" style="margin-top: 16px; padding: 14px 18px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+        <div>
+          <h4 style="margin: 0 0 4px 0; font-size: 14px; font-weight: 600; color: #1e293b;">Medical Verification Edit Permission</h4>
+          <p style="margin: 0; font-size: 12px; color: #64748b;">
+            When enabled, doctor can update their medical verification, registration details, and profile photo in the doctor dashboard.
+          </p>
+        </div>
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <span
+            style="font-size: 12px; font-weight: 600; padding: 3px 8px; border-radius: 4px;"
+            [style.background]="viewDetail?.isMedicalVerificationEditable ? '#dcfce7' : '#f1f5f9'"
+            [style.color]="viewDetail?.isMedicalVerificationEditable ? '#166534' : '#64748b'"
+            [style.border]="viewDetail?.isMedicalVerificationEditable ? '1px solid #86efac' : '1px solid #cbd5e1'"
+          >
+            {{ viewDetail?.isMedicalVerificationEditable ? 'Editable: Enabled' : 'Editable: Disabled (Locked)' }}
+          </span>
+          <button
+            type="button"
+            class="btn-action"
+            [style.background]="viewDetail?.isMedicalVerificationEditable ? '#fee2e2' : '#dbeafe'"
+            [style.color]="viewDetail?.isMedicalVerificationEditable ? '#991b1b' : '#1d4ed8'"
+            [style.border]="viewDetail?.isMedicalVerificationEditable ? '1px solid #fca5a5' : '1px solid #bfdbfe'"
+            style="padding: 6px 14px; border-radius: 6px; font-weight: 600; font-size: 12px; cursor: pointer;"
+            (click)="toggleMedicalVerificationEdit()"
+            [disabled]="isTogglingEdit"
+          >
+            {{ viewDetail?.isMedicalVerificationEditable ? 'Disable Edit' : 'Enable Edit' }}
+          </button>
+        </div>
+      </div>
+    </div>
+
   </div>
 </div>
 

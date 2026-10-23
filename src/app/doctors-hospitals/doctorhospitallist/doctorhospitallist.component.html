@@ -232,9 +232,27 @@
             <td>{{ element?.createdAt | date:'dd MMM yyyy' }}</td>
             <!-- Request Status -->
             <td>
-              <span class="status-badge" [ngClass]="{'pending': element?.approvalStatus == 1, 'approved': element?.approvalStatus == 2, 'rejected': element?.approvalStatus == 3}">
-                {{ element?.approvalStatus == 1 ? 'Pending' : element?.approvalStatus == 2 ? 'Approved' : element?.approvalStatus == 3 ? 'Rejected' : 'N/A' }}
-              </span>
+              <div style="display: flex; flex-direction: column; gap: 4px; align-items: flex-start;">
+                <span class="status-badge" [ngClass]="{'pending': element?.approvalStatus == 1, 'approved': element?.approvalStatus == 2, 'rejected': element?.approvalStatus == 3}">
+                  {{ element?.approvalStatus == 1 ? 'Pending' : element?.approvalStatus == 2 ? 'Approved' : element?.approvalStatus == 3 ? 'Rejected' : 'N/A' }}
+                </span>
+                <button
+                  type="button"
+                  style="border: none; background: transparent; padding: 0; cursor: pointer; text-align: left;"
+                  (click)="toggleMedicalVerificationEdit(element); $event.stopPropagation();"
+                  [title]="element?.isMedicalVerificationEditable ? 'Doctor can edit medical verification. Click to disable/lock.' : 'Doctor cannot edit medical verification. Click to enable edit.'"
+                >
+                  <span
+                    style="font-size: 11px; padding: 2px 7px; border-radius: 4px; font-weight: 600; display: inline-flex; align-items: center; gap: 4px;"
+                    [style.background]="element?.isMedicalVerificationEditable ? '#dcfce7' : '#f1f5f9'"
+                    [style.color]="element?.isMedicalVerificationEditable ? '#15803d' : '#64748b'"
+                    [style.border]="element?.isMedicalVerificationEditable ? '1px solid #bbf7d0' : '1px solid #cbd5e1'"
+                  >
+                    <span style="display: inline-block; width: 6px; height: 6px; border-radius: 50%;" [style.background]="element?.isMedicalVerificationEditable ? '#22c55e' : '#94a3b8'"></span>
+                    {{ element?.isMedicalVerificationEditable ? 'Edit: Allowed' : 'Edit: Locked' }}
+                  </span>
+                </button>
+              </div>
             </td>
             <!-- Toggle -->
             <td class="col-toggle">
@@ -256,6 +274,13 @@
                 <button mat-menu-item (click)="addDoctor('Edit', element?.userId, page)">
                   <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="margin-right:8px"><path d="M11.5 2.5l2 2-8 8H3.5v-2l8-8z" stroke="#666" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                   Edit
+                </button>
+                <button mat-menu-item (click)="toggleMedicalVerificationEdit(element)">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:8px">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                  </svg>
+                  {{ element?.isMedicalVerificationEditable ? 'Lock Medical Verification' : 'Enable Verification Edit' }}
                 </button>
                 <button mat-menu-item (click)="deleteDoctor(element?.userId, 'doctor')" class="delete-action">
                   <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="margin-right:8px"><path d="M3 4.5h10M6 4.5V3a1 1 0 011-1h2a1 1 0 011 1v1.5M12 4.5l-.5 8a1.5 1.5 0 01-1.5 1.5H6a1.5 1.5 0 01-1.5-1.5L4 4.5" stroke="#e53935" stroke-width="1.2" stroke-linecap="round"/></svg>
@@ -353,9 +378,27 @@
             <td>{{ element?.joiningDate | date:'dd MMM yyyy' }}</td>
             <!-- Request Status -->
             <td>
-              <span class="status-badge" [ngClass]="{'pending': element?.approvalStatus == 1, 'approved': element?.approvalStatus == 2, 'rejected': element?.approvalStatus == 3}">
-                {{ element?.approvalStatus == 1 ? 'Pending' : element?.approvalStatus == 2 ? 'Approved' : element?.approvalStatus == 3 ? 'Rejected' : 'N/A' }}
-              </span>
+              <div style="display: flex; flex-direction: column; gap: 4px; align-items: flex-start;">
+                <span class="status-badge" [ngClass]="{'pending': element?.approvalStatus == 1, 'approved': element?.approvalStatus == 2, 'rejected': element?.approvalStatus == 3}">
+                  {{ element?.approvalStatus == 1 ? 'Pending' : element?.approvalStatus == 2 ? 'Approved' : element?.approvalStatus == 3 ? 'Rejected' : 'N/A' }}
+                </span>
+                <button
+                  type="button"
+                  style="border: none; background: transparent; padding: 0; cursor: pointer; text-align: left;"
+                  (click)="toggleMedicalVerificationEdit(element); $event.stopPropagation();"
+                  [title]="element?.isMedicalVerificationEditable ? 'Doctor can edit medical verification. Click to disable/lock.' : 'Doctor cannot edit medical verification. Click to enable edit.'"
+                >
+                  <span
+                    style="font-size: 11px; padding: 2px 7px; border-radius: 4px; font-weight: 600; display: inline-flex; align-items: center; gap: 4px;"
+                    [style.background]="element?.isMedicalVerificationEditable ? '#dcfce7' : '#f1f5f9'"
+                    [style.color]="element?.isMedicalVerificationEditable ? '#15803d' : '#64748b'"
+                    [style.border]="element?.isMedicalVerificationEditable ? '1px solid #bbf7d0' : '1px solid #cbd5e1'"
+                  >
+                    <span style="display: inline-block; width: 6px; height: 6px; border-radius: 50%;" [style.background]="element?.isMedicalVerificationEditable ? '#22c55e' : '#94a3b8'"></span>
+                    {{ element?.isMedicalVerificationEditable ? 'Edit: Allowed' : 'Edit: Locked' }}
+                  </span>
+                </button>
+              </div>
             </td>
             <!-- Toggle -->
             <td class="col-toggle">

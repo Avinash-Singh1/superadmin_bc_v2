@@ -77,6 +77,7 @@ export class URLConstant {
   public static reviewManagementDetail = "v1/reviews/admin/manage";
   public static activeInactiveDoctor = "v1/doctor/admin-active-inactive";
   public static bulkActiveInactiveDoctors = "v1/doctor/admin-bulk-active-inactive";
+  public static toggleMedicalVerificationEdit = "v1/doctor/admin-toggle-medical-verification-edit";
   public static viewReviewApproved = "v1/admin/feedbacks-details";
   public static deleteApprovedReview = "v1/admin/feedbacks";
   public static hardDeleteFeedback = "v1/admin/feedbacks/hard-delete";
@@ -180,6 +181,11 @@ export class URLConstant {
   public static addDoctorHospital = "v1/hospital/hospital-add-doctor-admin";
   public static specialityList = "v1/hospital/speciality-admin";
   public static procedureList = "v1/hospital/procedure-admin";
+
+  // Support Tickets
+  public static supportTicketsList = "v1/admin/support-tickets";
+  public static supportTicketDetail = "v1/admin/support-tickets/"; // append :id
+  public static supportTicketStatus = "v1/admin/support-tickets/"; // append :id/status
 
   //not in use
   public static deleteAccount = "v1/hospital/hospital-delete-account";

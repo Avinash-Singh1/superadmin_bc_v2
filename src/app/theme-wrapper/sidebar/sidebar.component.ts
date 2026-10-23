@@ -54,6 +54,11 @@ export class SidebarComponent {
       routerLink: `/${ROUTE_CONSTANT.THEME}/${ROUTE_CONSTANT.KYC}`,
     },
     {
+      label: "Support Tickets",
+      icon: "assets/images/svg/approval.svg",
+      routerLink: `/${ROUTE_CONSTANT.THEME}/${ROUTE_CONSTANT.SUPPORT_TICKETS}`,
+    },
+    {
       label: "REQUEST_FOR_APPROVAL",
       icon: "assets/images/svg/approval.svg",
       routerLink: `/${ROUTE_CONSTANT.THEME}/${ROUTE_CONSTANT.REQUEST_APPROVAL}`,

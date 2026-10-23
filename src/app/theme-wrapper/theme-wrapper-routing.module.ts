@@ -124,6 +124,13 @@ const routes: Routes = [
           ),
       },
       {
+        path: ROUTE_CONSTANT.SUPPORT_TICKETS,
+        loadChildren: () =>
+          import("../support-tickets/support-tickets.module").then(
+            (m) => m.SupportTicketsModule
+          ),
+      },
+      {
         path: "",
         redirectTo: ROUTE_CONSTANT.DASHBOARD,
         pathMatch: "full",

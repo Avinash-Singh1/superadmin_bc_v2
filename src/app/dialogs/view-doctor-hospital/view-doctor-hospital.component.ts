@@ -164,4 +164,29 @@ fullViewProof(img:any){
 }
 
 }
+
+isTogglingEdit = false;
+toggleMedicalVerificationEdit() {
+  if (this.isTogglingEdit) return;
+  const targetStatus = !this.viewDetail?.isMedicalVerificationEditable;
+  const doctorId = this.getVIewId || this.viewDetail?.userId || this.viewDetail?._id;
+  if (!doctorId) return;
+
+  this.isTogglingEdit = true;
+  const param = { doctorId };
+  const data = { isMedicalVerificationEditable: targetStatus };
+
+  this.apiService.patchData(URLConstant.toggleMedicalVerificationEdit, data, param).subscribe({
+    next: (res: any) => {
+      this.isTogglingEdit = false;
+      if (this.viewDetail) {
+        this.viewDetail.isMedicalVerificationEditable = targetStatus;
+      }
+    },
+    error: (err: any) => {
+      this.isTogglingEdit = false;
+      console.error('Failed to toggle medical verification edit:', err);
+    }
+  });
+}
 }

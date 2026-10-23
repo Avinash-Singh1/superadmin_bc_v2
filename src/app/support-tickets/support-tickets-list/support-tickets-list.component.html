@@ -1,0 +1,340 @@
+<div class="tickets-admin-container">
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="header-text">
+      <h2>Doctor Support & Modification Tickets</h2>
+      <p>Review support requests raised by doctors, enable medical verification edits, and manage ticket resolution.</p>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-refresh" (click)="getSupportTickets()" title="Refresh List">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="23 4 23 10 17 10"></polyline>
+          <polyline points="1 20 1 14 7 14"></polyline>
+          <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+        </svg>
+        Refresh
+      </button>
+    </div>
+  </div>
+
+  <!-- Metric Counters -->
+  <div class="metrics-row">
+    <div class="metric-card" [class.active-metric]="selectedStatus === 'ALL'" (click)="onFilterStatus('ALL')">
+      <div class="metric-icon total-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+      </div>
+      <div class="metric-data">
+        <div class="metric-num">{{ stats.total }}</div>
+        <div class="metric-label">Total Tickets</div>
+      </div>
+    </div>
+
+    <div class="metric-card" [class.active-metric]="selectedStatus === 'OPEN'" (click)="onFilterStatus('OPEN')">
+      <div class="metric-icon open-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+      </div>
+      <div class="metric-data">
+        <div class="metric-num">{{ stats.open }}</div>
+        <div class="metric-label">Pending / Open</div>
+      </div>
+    </div>
+
+    <div class="metric-card" [class.active-metric]="selectedStatus === 'IN_PROGRESS'" (click)="onFilterStatus('IN_PROGRESS')">
+      <div class="metric-icon progress-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"></path></svg>
+      </div>
+      <div class="metric-data">
+        <div class="metric-num">{{ stats.inProgress }}</div>
+        <div class="metric-label">In Progress</div>
+      </div>
+    </div>
+
+    <div class="metric-card" [class.active-metric]="selectedStatus === 'RESOLVED'" (click)="onFilterStatus('RESOLVED')">
+      <div class="metric-icon resolved-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+      </div>
+      <div class="metric-data">
+        <div class="metric-num">{{ stats.resolved }}</div>
+        <div class="metric-label">Resolved</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filter & Search Toolbar -->
+  <div class="table-container-card">
+    <div class="filter-toolbar">
+      <div class="filter-left">
+        <!-- Status Tabs -->
+        <div class="tab-pills">
+          <button
+            class="tab-pill"
+            [class.active]="selectedStatus === 'ALL'"
+            (click)="onFilterStatus('ALL')"
+          >
+            All
+          </button>
+          <button
+            class="tab-pill"
+            [class.active]="selectedStatus === 'OPEN'"
+            (click)="onFilterStatus('OPEN')"
+          >
+            Open ({{ stats.open }})
+          </button>
+          <button
+            class="tab-pill"
+            [class.active]="selectedStatus === 'IN_PROGRESS'"
+            (click)="onFilterStatus('IN_PROGRESS')"
+          >
+            In Progress ({{ stats.inProgress }})
+          </button>
+          <button
+            class="tab-pill"
+            [class.active]="selectedStatus === 'RESOLVED'"
+            (click)="onFilterStatus('RESOLVED')"
+          >
+            Resolved ({{ stats.resolved }})
+          </button>
+          <button
+            class="tab-pill"
+            [class.active]="selectedStatus === 'REJECTED'"
+            (click)="onFilterStatus('REJECTED')"
+          >
+            Rejected ({{ stats.rejected }})
+          </button>
+        </div>
+
+        <!-- Category Dropdown -->
+        <div class="category-select-wrap">
+          <select [(ngModel)]="selectedCategory" (change)="onCategoryChange()" class="select-input">
+            <option *ngFor="let cat of categories" [value]="cat.value">
+              {{ cat.label }}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Search Input -->
+      <div class="search-input-wrap">
+        <input
+          type="text"
+          placeholder="Search Doctor, Ticket ID, Subject..."
+          [(ngModel)]="searchQuery"
+          (keyup.enter)="onSearch()"
+          class="search-input"
+        />
+        <button *ngIf="searchQuery" class="btn-clear" (click)="clearSearch()">×</button>
+        <button class="btn-search" (click)="onSearch()">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Table -->
+    <div class="table-responsive">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Ticket ID</th>
+            <th>Doctor Details</th>
+            <th>Category</th>
+            <th>Subject & Details</th>
+            <th>Priority</th>
+            <th>Status</th>
+            <th>Date Created</th>
+            <th class="text-right">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Loading row -->
+          <tr *ngIf="loading">
+            <td colspan="8" class="text-center py-4">
+              <div class="spinner-border text-primary" role="status">
+                <span class="sr-only">Loading tickets...</span>
+              </div>
+            </td>
+          </tr>
+
+          <!-- Empty row -->
+          <tr *ngIf="!loading && tickets.length === 0">
+            <td colspan="8" class="text-center py-4 text-muted">
+              No support tickets found matching the selected filters.
+            </td>
+          </tr>
+
+          <!-- Data rows -->
+          <tr *ngFor="let ticket of tickets | paginate: { itemsPerPage: size, currentPage: page, totalItems: totalCount }">
+            <td>
+              <span class="ticket-id-badge">{{ ticket.ticketId }}</span>
+            </td>
+            <td>
+              <div class="doctor-info-cell">
+                <span class="doc-name">{{ ticket.doctorName || 'Doctor' }}</span>
+                <span class="doc-contact" *ngIf="ticket.doctorEmail">{{ ticket.doctorEmail }}</span>
+                <span class="doc-contact" *ngIf="ticket.doctorPhone">{{ ticket.doctorPhone }}</span>
+              </div>
+            </td>
+            <td>
+              <span class="category-chip" [class.cat-med]="ticket.category === 'MEDICAL_VERIFICATION_EDIT'">
+                {{ getCategoryLabel(ticket.category) }}
+              </span>
+            </td>
+            <td>
+              <div class="subject-desc-cell">
+                <span class="subject-title">{{ ticket.subject }}</span>
+                <span class="desc-preview">{{ ticket.description | slice:0:80 }}{{ ticket.description.length > 80 ? '...' : '' }}</span>
+              </div>
+            </td>
+            <td>
+              <span [ngClass]="getPriorityClass(ticket.priority)">
+                {{ ticket.priority }}
+              </span>
+            </td>
+            <td>
+              <span [ngClass]="getStatusClass(ticket.status)">
+                <span class="status-dot"></span>
+                {{ ticket.status }}
+              </span>
+            </td>
+            <td class="date-cell">
+              {{ ticket.createdAt | date:'mediumDate' }}
+              <span class="time-sub">{{ ticket.createdAt | date:'shortTime' }}</span>
+            </td>
+            <td class="text-right">
+              <div class="action-buttons-group">
+                <!-- Quick Enable Medical Edit Button if category is medical verification & still open -->
+                <button
+                  *ngIf="ticket.category === 'MEDICAL_VERIFICATION_EDIT' && ticket.status !== 'RESOLVED'"
+                  class="btn-quick-unlock"
+                  title="Unlock Verification & Resolve"
+                  (click)="quickResolveAndEnableEdit(ticket, $event)"
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 9.9-1"></path></svg>
+                  Unlock & Resolve
+                </button>
+
+                <!-- Review / Update Modal Trigger -->
+                <button
+                  class="btn-review"
+                  (click)="openTicketModal(ticket)"
+                >
+                  Review / Update
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    <div class="table-footer" *ngIf="totalCount > size">
+      <pagination-controls
+        (pageChange)="pageChanged($event)"
+        previousLabel="Previous"
+        nextLabel="Next"
+      ></pagination-controls>
+    </div>
+  </div>
+</div>
+
+<!-- ================= REVIEW & UPDATE TICKET MODAL ================= -->
+<div class="st-modal-backdrop" *ngIf="showModal && selectedTicket" (click)="onBackdropClick($event)">
+  <div class="st-modal-card" (click)="$event.stopPropagation()">
+    <div class="st-modal-header">
+      <div class="header-badge-row">
+        <span class="modal-ticket-id">{{ selectedTicket.ticketId }}</span>
+        <span [ngClass]="getStatusClass(selectedTicket.status)">
+          <span class="status-dot"></span>
+          {{ selectedTicket.status }}
+        </span>
+      </div>
+      <button type="button" class="modal-close-btn" (click)="closeTicketModal()" aria-label="Close">×</button>
+    </div>
+
+    <div class="st-modal-body">
+      <!-- Doctor Profile Card -->
+      <div class="doctor-profile-box">
+        <div class="doc-icon-avatar">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+        </div>
+        <div class="doc-profile-details">
+          <h4>{{ selectedTicket.doctorName || 'Doctor' }}</h4>
+          <p>
+            <span *ngIf="selectedTicket.doctorEmail">📧 {{ selectedTicket.doctorEmail }}</span>
+            <span *ngIf="selectedTicket.doctorPhone"> &nbsp;|&nbsp; 📞 {{ selectedTicket.doctorPhone }}</span>
+          </p>
+        </div>
+      </div>
+
+      <!-- Ticket Details -->
+      <div class="ticket-info-section">
+        <h3 class="ticket-subject-heading">{{ selectedTicket.subject }}</h3>
+        <div class="info-chips-row">
+          <span class="chip-item"><strong>Category:</strong> {{ getCategoryLabel(selectedTicket.category) }}</span>
+          <span class="chip-item"><strong>Priority:</strong> {{ selectedTicket.priority }}</span>
+          <span class="chip-item"><strong>Created:</strong> {{ selectedTicket.createdAt | date:'medium' }}</span>
+          <span class="chip-item" *ngIf="selectedTicket.resolvedAt"><strong>Resolved:</strong> {{ selectedTicket.resolvedAt | date:'medium' }}</span>
+        </div>
+
+        <div class="message-label">Doctor Request / Message:</div>
+        <div class="message-content-box">
+          {{ selectedTicket.description }}
+        </div>
+      </div>
+
+      <hr class="section-divider" />
+
+      <!-- Admin Status & Action Controls -->
+      <div class="admin-controls-section">
+        <h4 class="controls-heading">Update Ticket Status</h4>
+
+        <div class="form-row">
+          <div class="form-group-half">
+            <label class="form-label">Ticket Status <span class="req">*</span></label>
+            <select [(ngModel)]="modalStatus" class="form-select-control">
+              <option value="OPEN">Pending / Open</option>
+              <option value="IN_PROGRESS">In Progress</option>
+              <option value="RESOLVED">Resolved / Completed</option>
+              <option value="REJECTED">Rejected</option>
+              <option value="CLOSED">Closed</option>
+            </select>
+          </div>
+
+          <!-- Medical Verification Edit Toggle if category is MEDICAL_VERIFICATION_EDIT -->
+          <div class="form-group-half" *ngIf="selectedTicket.category === 'MEDICAL_VERIFICATION_EDIT'">
+            <label class="form-label">Medical Verification Permission</label>
+            <div class="checkbox-control-box">
+              <label class="checkbox-label">
+                <input
+                  type="checkbox"
+                  [(ngModel)]="modalEnableMedicalEdit"
+                />
+                <span class="checkbox-text">
+                  <strong>Enable Doctor Edit Access</strong>
+                  <small>Doctor will be permitted to edit their medical verification component</small>
+                </span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group-full">
+          <label class="form-label">Admin Resolution Notes / Remarks</label>
+          <textarea
+            rows="3"
+            [(ngModel)]="modalAdminRemarks"
+            placeholder="Enter reason, instructions, or resolution notes visible to the doctor..."
+            class="form-textarea-control"
+          ></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="st-modal-footer">
+      <button type="button" class="btn btn-cancel" (click)="closeTicketModal()" [disabled]="isUpdating">Cancel</button>
+      <button type="button" class="btn btn-save" (click)="saveTicketStatus()" [disabled]="isUpdating">
+        {{ isUpdating ? 'Saving...' : 'Save Changes' }}
+      </button>
+    </div>
+  </div>
+</div>

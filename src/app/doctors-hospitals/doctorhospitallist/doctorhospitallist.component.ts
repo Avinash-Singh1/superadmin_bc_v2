@@ -705,6 +705,35 @@ export class DoctorhospitallistComponent implements OnInit {
       });
   }
 
+  toggleMedicalVerificationEdit(element: any) {
+    const targetStatus = !element?.isMedicalVerificationEditable;
+    const doctorId = element?.userId || element?._id;
+    if (!doctorId) {
+      this.toastr.error("Doctor ID not found.");
+      return;
+    }
+    const param = { doctorId };
+    const data = { isMedicalVerificationEditable: targetStatus };
+
+    this.apiservice
+      .patchData(URLConstant.toggleMedicalVerificationEdit, data, param)
+      .subscribe({
+        next: (res: any) => {
+          element.isMedicalVerificationEditable = targetStatus;
+          const docName = element?.doctorDetails?.fullName || "Doctor";
+          if (targetStatus) {
+            this.toastr.success(`Medical verification editing enabled for ${docName}.`);
+          } else {
+            this.toastr.info(`Medical verification editing locked for ${docName}.`);
+          }
+        },
+        error: (err: any) => {
+          console.error("Error toggling medical verification edit permission:", err);
+          this.toastr.error("Failed to update medical verification edit permission.");
+        },
+      });
+  }
+
   updateDoctorsBySpecialization(status: 2 | 5): void {
     if (!this.specializationParam.length || this.bulkStatusUpdating) return;
 
