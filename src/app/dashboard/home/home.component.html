@@ -180,7 +180,7 @@
           </div>
           <div class="activity-details">
             <span class="activity-name">{{ lead?.name || "N/A" }}</span>
-            <span class="activity-sub">{{ lead?.surgeryMasterName }} · {{ lead?.city }}</span>
+            <span class="activity-sub">{{ ((lead?.treatmentName || lead?.treatmentType || lead?.surgeryMasterName || lead?.surgeryName) | titlecase) || 'Treatment' }} · {{ lead?.city }}</span>
           </div>
           <div class="activity-time">
             <span>{{ lead?.createdAt | date: "MMM d" }}</span>

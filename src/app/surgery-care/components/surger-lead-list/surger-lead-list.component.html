@@ -5,7 +5,10 @@
     <div class="stat-card stat-today" [class.active]="control['typeOfList'].value == 1" (click)="onChangeList(1)">
       <div class="stat-icon">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+          <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+          <line x1="16" y1="2" x2="16" y2="6" />
+          <line x1="8" y1="2" x2="8" y2="6" />
+          <line x1="3" y1="10" x2="21" y2="10" />
         </svg>
       </div>
       <div class="stat-content">
@@ -16,7 +19,8 @@
     <div class="stat-card stat-upcoming" [class.active]="control['typeOfList'].value == 2" (click)="onChangeList(2)">
       <div class="stat-icon">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+          <circle cx="12" cy="12" r="10" />
+          <polyline points="12 6 12 12 16 14" />
         </svg>
       </div>
       <div class="stat-content">
@@ -27,7 +31,10 @@
     <div class="stat-card stat-total" [class.active]="control['typeOfList'].value == 3" (click)="onChangeList(3)">
       <div class="stat-icon">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+          <circle cx="9" cy="7" r="4" />
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+          <path d="M16 3.13a4 4 0 0 1 0 7.75" />
         </svg>
       </div>
       <div class="stat-content">
@@ -42,37 +49,29 @@
     <form class="toolbar-inner" [formGroup]="filterForm">
       <div class="toolbar-left">
         <div class="search-box">
-          <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9a9a9a" stroke-width="2">
-            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9a9a9a"
+            stroke-width="2">
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
           </svg>
-          <input
-            type="text"
-            class="search-input"
-            placeholder="Search by name, phone, lead ID..."
-            formControlName="search"
-          />
+          <input type="text" class="search-input" placeholder="Search by name, phone, lead ID..."
+            formControlName="search" />
         </div>
       </div>
       <div class="toolbar-right">
-        <button
-          [matMenuTriggerFor]="filterMenu"
-          (menuOpened)="onFilterMenuOpen()"
-          type="button"
-          class="toolbar-btn filter-btn"
-        >
+        <button [matMenuTriggerFor]="filterMenu" (menuOpened)="onFilterMenuOpen()" type="button"
+          class="toolbar-btn filter-btn">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+            <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
           </svg>
           Filters
           <span class="filter-badge" *ngIf="activeFilterCount > 0">{{ activeFilterCount }}</span>
         </button>
-        <button
-          [matMenuTriggerFor]="importMenu"
-          type="button"
-          class="toolbar-btn export-btn"
-        >
+        <button [matMenuTriggerFor]="importMenu" type="button" class="toolbar-btn export-btn">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+            <polyline points="7 10 12 15 17 10" />
+            <line x1="12" y1="15" x2="12" y2="3" />
           </svg>
           Export
         </button>
@@ -90,8 +89,10 @@
           <th mat-header-cell *matHeaderCellDef class="col-header" (click)="onSorting('leadId')">
             <span class="header-content">
               Lead ID
-              <svg class="sort-icon" [class.asc]="control['sort'].value == 'leadId' && control['sortOrder'].value == 'ASC'" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M12 5v14M5 12l7-7 7 7"/>
+              <svg class="sort-icon"
+                [class.asc]="control['sort'].value == 'leadId' && control['sortOrder'].value == 'ASC'" width="14"
+                height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 5v14M5 12l7-7 7 7" />
               </svg>
             </span>
           </th>
@@ -105,8 +106,10 @@
           <th mat-header-cell *matHeaderCellDef class="col-header" (click)="onSorting('timeDate')">
             <span class="header-content">
               Date & Time
-              <svg class="sort-icon" [class.asc]="control['sort'].value == 'timeDate' && control['sortOrder'].value == 'ASC'" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M12 5v14M5 12l7-7 7 7"/>
+              <svg class="sort-icon"
+                [class.asc]="control['sort'].value == 'timeDate' && control['sortOrder'].value == 'ASC'" width="14"
+                height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 5v14M5 12l7-7 7 7" />
               </svg>
             </span>
           </th>
@@ -133,8 +136,10 @@
           <th mat-header-cell *matHeaderCellDef class="col-header" (click)="onSorting('name')">
             <span class="header-content">
               Patient
-              <svg class="sort-icon" [class.asc]="control['sort'].value == 'name' && control['sortOrder'].value == 'ASC'" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M12 5v14M5 12l7-7 7 7"/>
+              <svg class="sort-icon"
+                [class.asc]="control['sort'].value == 'name' && control['sortOrder'].value == 'ASC'" width="14"
+                height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 5v14M5 12l7-7 7 7" />
               </svg>
             </span>
           </th>
@@ -157,11 +162,12 @@
           </td>
         </ng-container>
 
-        <!-- Surgery Type -->
-        <ng-container matColumnDef="surgeryMasterName">
+        <!-- Surgery / Treatment Type -->
+        <ng-container matColumnDef="treatmentName">
           <th mat-header-cell *matHeaderCellDef class="col-header">Treatment</th>
           <td mat-cell *matCellDef="let element" class="col-data">
-            <span class="surgery-tag">{{ ((element.surgeryMasterName || element.treatmentName || element.treatmentType) | titlecase) || "N/A" }}</span>
+            <span class="surgery-tag">{{ ((element.surgeryMasterName || element.treatmentName || element.treatmentType)
+              | titlecase) || "N/A" }}</span>
           </td>
         </ng-container>
 
@@ -170,15 +176,18 @@
           <th mat-header-cell *matHeaderCellDef class="col-header" (click)="onSorting('city')">
             <span class="header-content">
               Location
-              <svg class="sort-icon" [class.asc]="control['sort'].value == 'city' && control['sortOrder'].value == 'ASC'" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M12 5v14M5 12l7-7 7 7"/>
+              <svg class="sort-icon"
+                [class.asc]="control['sort'].value == 'city' && control['sortOrder'].value == 'ASC'" width="14"
+                height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 5v14M5 12l7-7 7 7" />
               </svg>
             </span>
           </th>
           <td mat-cell *matCellDef="let element" class="col-data">
             <span class="location-text" *ngIf="element.city">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#243ffa" stroke-width="2">
-                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                <circle cx="12" cy="10" r="3" />
               </svg>
               {{ element.city }}
             </span>
@@ -190,23 +199,16 @@
         <ng-container matColumnDef="claimByUserType">
           <th mat-header-cell *matHeaderCellDef class="col-header">Claimed By</th>
           <td mat-cell *matCellDef="let element" class="col-data">
-            <div
-              class="dropdown-trigger"
-              [mat-menu-trigger-for]="claimedUser"
-              #userTypeMenuButton
-            >
-              <span [class.placeholder]="!element?.claimByUserType">{{ claimedUserType[element?.claimByUserType] || "Select" }}</span>
+            <div class="dropdown-trigger" [mat-menu-trigger-for]="claimedUser" #userTypeMenuButton>
+              <span [class.placeholder]="!element?.claimByUserType">{{ claimedUserType[element?.claimByUserType] ||
+                "Select" }}</span>
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                <polyline points="6 9 12 15 18 9"/>
+                <polyline points="6 9 12 15 18 9" />
               </svg>
             </div>
             <mat-menu #claimedUser="matMenu" class="lead-dropdown-menu">
-              <button
-                [style.minWidth.px]="userTypeMenuButton.offsetWidth"
-                mat-menu-item
-                *ngFor="let userType of claimedUserType | keyvalue"
-                (click)="onClaimed(userType.key, element._id)"
-              >
+              <button [style.minWidth.px]="userTypeMenuButton.offsetWidth" mat-menu-item
+                *ngFor="let userType of claimedUserType | keyvalue" (click)="onClaimed(userType.key, element._id)">
                 {{ userType.value }}
               </button>
             </mat-menu>
@@ -218,8 +220,10 @@
           <th mat-header-cell *matHeaderCellDef class="col-header" (click)="onSorting('claimedDate')">
             <span class="header-content">
               Claimed Date
-              <svg class="sort-icon" [class.asc]="control['sort'].value == 'claimedDate' && control['sortOrder'].value == 'ASC'" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M12 5v14M5 12l7-7 7 7"/>
+              <svg class="sort-icon"
+                [class.asc]="control['sort'].value == 'claimedDate' && control['sortOrder'].value == 'ASC'" width="14"
+                height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 5v14M5 12l7-7 7 7" />
               </svg>
             </span>
           </th>
@@ -236,26 +240,19 @@
         <ng-container matColumnDef="status">
           <th mat-header-cell *matHeaderCellDef class="col-header">Status</th>
           <td mat-cell *matCellDef="let element; let i = index" class="col-data">
-            <div
-              class="status-pill"
-              [ngClass]="'status-' + element.status"
-              [mat-menu-trigger-for]="statusMenu"
-              #statusMenuTrigger
-            >
+            <div class="status-pill" [ngClass]="'status-' + element.status" [mat-menu-trigger-for]="statusMenu"
+              #statusMenuTrigger>
               <span class="status-dot"></span>
               {{ statusList[element.status] || "Invalid" }}
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                <polyline points="6 9 12 15 18 9"/>
+                <polyline points="6 9 12 15 18 9" />
               </svg>
             </div>
             <mat-menu #statusMenu="matMenu" class="lead-dropdown-menu status-dropdown">
-              <button
-                [style.minWidth.px]="statusMenuTrigger.offsetWidth"
-                mat-menu-item
+              <button [style.minWidth.px]="statusMenuTrigger.offsetWidth" mat-menu-item
                 *ngFor="let status of statusList | keyvalue; let i = index"
                 (click)="onChangeStatus(status.key, element._id, i)"
-                [ngClass]="{ 'menu-selected': status.key == element.status }"
-              >
+                [ngClass]="{ 'menu-selected': status.key == element.status }">
                 <span class="menu-status-dot" [ngClass]="'dot-' + status.key"></span>
                 {{ status.value }}
               </button>
@@ -267,32 +264,51 @@
         <ng-container matColumnDef="followUpDate">
           <th mat-header-cell *matHeaderCellDef class="col-header">Follow Up</th>
           <td mat-cell *matCellDef="let element" class="col-data">
-            <div
-              class="dropdown-trigger followup-trigger"
-              [mat-menu-trigger-for]="followUpDateMenu"
-              #followUpDateMenuButton
-            >
+            <div class="dropdown-trigger followup-trigger" [mat-menu-trigger-for]="followUpDateMenu"
+              #followUpDateMenuButton>
               <span *ngIf="element.followUpDate">{{ element.followUpDate | date : "dd MMM yyyy" }}</span>
               <span *ngIf="!element.followUpDate" class="placeholder">Set date</span>
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                <polyline points="6 9 12 15 18 9"/>
+                <polyline points="6 9 12 15 18 9" />
               </svg>
             </div>
             <mat-menu #followUpDateMenu="matMenu" class="lead-dropdown-menu">
-              <button mat-menu-item (click)="onSetFollowUpDate(2, element._id)" [style.minWidth.px]="followUpDateMenuButton.offsetWidth">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#243ffa" stroke-width="2" style="margin-right:8px"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              <button mat-menu-item (click)="onSetFollowUpDate(2, element._id)"
+                [style.minWidth.px]="followUpDateMenuButton.offsetWidth">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#243ffa" stroke-width="2"
+                  style="margin-right:8px">
+                  <circle cx="12" cy="12" r="10" />
+                  <polyline points="12 6 12 12 16 14" />
+                </svg>
                 In 2 days
               </button>
-              <button mat-menu-item (click)="onSetFollowUpDate(7, element._id)" [style.minWidth.px]="followUpDateMenuButton.offsetWidth">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#243ffa" stroke-width="2" style="margin-right:8px"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              <button mat-menu-item (click)="onSetFollowUpDate(7, element._id)"
+                [style.minWidth.px]="followUpDateMenuButton.offsetWidth">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#243ffa" stroke-width="2"
+                  style="margin-right:8px">
+                  <circle cx="12" cy="12" r="10" />
+                  <polyline points="12 6 12 12 16 14" />
+                </svg>
                 In 7 days
               </button>
-              <button mat-menu-item (click)="onSetFollowUpDate(15, element._id)" [style.minWidth.px]="followUpDateMenuButton.offsetWidth">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#243ffa" stroke-width="2" style="margin-right:8px"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              <button mat-menu-item (click)="onSetFollowUpDate(15, element._id)"
+                [style.minWidth.px]="followUpDateMenuButton.offsetWidth">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#243ffa" stroke-width="2"
+                  style="margin-right:8px">
+                  <circle cx="12" cy="12" r="10" />
+                  <polyline points="12 6 12 12 16 14" />
+                </svg>
                 In 15 days
               </button>
-              <button mat-menu-item (click)="onSelectDate(element._id, element.followUpDate)" [style.minWidth.px]="followUpDateMenuButton.offsetWidth">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#243ffa" stroke-width="2" style="margin-right:8px"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              <button mat-menu-item (click)="onSelectDate(element._id, element.followUpDate)"
+                [style.minWidth.px]="followUpDateMenuButton.offsetWidth">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#243ffa" stroke-width="2"
+                  style="margin-right:8px">
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                  <line x1="16" y1="2" x2="16" y2="6" />
+                  <line x1="8" y1="2" x2="8" y2="6" />
+                  <line x1="3" y1="10" x2="21" y2="10" />
+                </svg>
                 Select date
               </button>
             </mat-menu>
@@ -306,18 +322,19 @@
             <div class="comment-cell" (click)="onAddComment(element._id, element.comments)">
               <span class="comment-text" *ngIf="element.comments">{{ element.comments }}</span>
               <span class="comment-placeholder" *ngIf="!element.comments">Add comment...</span>
-              <svg class="edit-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+              <svg class="edit-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
               </svg>
             </div>
-            <span class="read-more-link" (click)="readMore(element.comments)" *ngIf="element?.comments?.length > 50">Read more</span>
+            <span class="read-more-link" (click)="readMore(element.comments)"
+              *ngIf="element?.comments?.length > 50">Read more</span>
           </td>
         </ng-container>
 
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr
-          mat-row
-          *matRowDef="
+        <tr mat-row *matRowDef="
             let row;
             columns: displayedColumns
               | paginate
@@ -327,18 +344,17 @@
                     totalItems: totalItems
                   };
             let i = index
-          "
-        ></tr>
+          "></tr>
       </table>
 
       <!-- Empty State -->
       <div class="empty-state" *ngIf="totalItems == 0 && control['size'].value > totalItems">
         <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#c3c3c3" stroke-width="1.5">
-          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-          <polyline points="14 2 14 8 20 8"/>
-          <line x1="16" y1="13" x2="8" y2="13"/>
-          <line x1="16" y1="17" x2="8" y2="17"/>
-          <polyline points="10 9 9 9 8 9"/>
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+          <polyline points="14 2 14 8 20 8" />
+          <line x1="16" y1="13" x2="8" y2="13" />
+          <line x1="16" y1="17" x2="8" y2="17" />
+          <polyline points="10 9 9 9 8 9" />
         </svg>
         <h3>No leads found</h3>
         <p>There are no surgery leads matching your current filters.</p>
@@ -348,24 +364,18 @@
     <!-- Pagination -->
     <div class="pagination-wrapper" *ngIf="totalItems > 0">
       <span class="pagination-info">
-        Showing {{ ((control['page'].value - 1) * control['size'].value) + 1 }}â€“{{ (control['page'].value * control['size'].value) > totalItems ? totalItems : (control['page'].value * control['size'].value) }} of {{ totalItems }} leads
+        Showing {{ ((control['page'].value - 1) * control['size'].value) + 1 }}â€“{{ (control['page'].value *
+        control['size'].value) > totalItems ? totalItems : (control['page'].value * control['size'].value) }} of {{
+        totalItems }} leads
       </span>
-      <pagination-controls
-        (pageChange)="onPageChange($event)"
-        previousLabel="&lsaquo;"
-        nextLabel="&rsaquo;"
-      ></pagination-controls>
+      <pagination-controls (pageChange)="onPageChange($event)" previousLabel="&lsaquo;"
+        nextLabel="&rsaquo;"></pagination-controls>
     </div>
   </section>
 </main>
 
 <!-- Filter Menu -->
-<mat-menu
-  #filterMenu="matMenu"
-  class="surgery-lead-filter"
-  xPosition="after"
-  (closed)="onFilterMenuClosed()"
->
+<mat-menu #filterMenu="matMenu" class="surgery-lead-filter" xPosition="after" (closed)="onFilterMenuClosed()">
   <form [formGroup]="filterForm">
     <div class="filter-header" (click)="$event.stopPropagation()">
       <span>Filters</span>
@@ -423,8 +433,12 @@
 <!-- Export Menu -->
 <mat-menu #importMenu="matMenu" class="lead-dropdown-menu">
   <button mat-menu-item style="min-width: 160px" (click)="onCSVExport()">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#243ffa" stroke-width="2" style="margin-right:8px">
-      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#243ffa" stroke-width="2"
+      style="margin-right:8px">
+      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+      <polyline points="14 2 14 8 20 8" />
+      <line x1="16" y1="13" x2="8" y2="13" />
+      <line x1="16" y1="17" x2="8" y2="17" />
     </svg>
     Export as CSV
   </button>

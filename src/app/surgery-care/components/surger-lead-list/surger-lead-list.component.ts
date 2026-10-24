@@ -49,6 +49,7 @@ export class SurgerLeadListComponent implements OnInit {
   sourceList: any = [
     { name: "Website", id: "website" },
     { name: "Facebook", id: "facebook" },
+    { name: "Doctor Search Page", id: "doctor-search-page" },
   ];
   claimedUserType: { [key: number]: string } = {
     1: "Admin",
@@ -59,7 +60,7 @@ export class SurgerLeadListComponent implements OnInit {
     "source",
     "name",
     "phone",
-    "surgeryMasterName",
+    "treatmentName",
     "city",
     "claimByUserType",
     "claimedDate",
@@ -245,18 +246,18 @@ export class SurgerLeadListComponent implements OnInit {
         break;
     }
   }
-  todayCount:any;
-  upcomingCount:any
+  todayCount: any;
+  upcomingCount: any
   getSurgeryLeadList() {
     const payload = this.generatePayload();
     this.apiService
       .Postdata(URLConstant.surgeryLeadList, payload, {})
       .subscribe({
         next: (res: any) => {
-          this.todayCount=res?.result?.todayCount
-          this.upcomingCount=res?.result?.upcomingCount
+          this.todayCount = res?.result?.todayCount
+          this.upcomingCount = res?.result?.upcomingCount
           const { count, data } = res.result?.enquiryList;
-          count? ((this.totalItems = count), (this.dataSource.data = data)): ((this.totalItems = 0), (this.dataSource.data = []));
+          count ? ((this.totalItems = count), (this.dataSource.data = data)) : ((this.totalItems = 0), (this.dataSource.data = []));
         },
       });
   }
@@ -348,16 +349,16 @@ export class SurgerLeadListComponent implements OnInit {
                 claimByUserType: item.claimByUserType ?? "N/A",
                 claimedDate: item.claimedDate
                   ? this.datePipe.transform(
-                      item.claimedDate,
-                      "dd/MM/yyyy, hh:mm:ss"
-                    ) ?? "N/A"
+                    item.claimedDate,
+                    "dd/MM/yyyy, hh:mm:ss"
+                  ) ?? "N/A"
                   : "N/A",
                 status: this.statusList[item.status] ?? item.status ?? "N/A",
                 followUpDate: item.followUpDate
                   ? this.datePipe.transform(
-                      item.followUpDate,
-                      "dd/MM/yyyy, hh:mm:ss"
-                    ) ?? "N/A"
+                    item.followUpDate,
+                    "dd/MM/yyyy, hh:mm:ss"
+                  ) ?? "N/A"
                   : "N/A",
                 comments: item.comments || "N/A",
               };
@@ -420,14 +421,14 @@ export class SurgerLeadListComponent implements OnInit {
         },
       });
   }
-  readMore(data:any){
+  readMore(data: any) {
     const commentDialog = this.matdialog.open(ReadMoreComponent, {
       panelClass: "comment-modal-container",
       autoFocus: false,
       width: "720px",
       height: "500px",
       data: {
-       data:data 
+        data: data
       },
     });
   }
