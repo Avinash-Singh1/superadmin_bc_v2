@@ -113,8 +113,8 @@ export class AppointmentListComponent implements OnInit {
     },
   ];
   appointmentStatus = [
-    { content: 'Pending', value: 0, color: '#f0ad4e' },
-    { content: 'Completed', value: 1, color: '#28a745' },
+    { content: 'Booked', value: 0, color: '#28a745' },
+    { content: 'Completed', value: 1, color: '#20c997' },
     { content: 'Cancelled', value: -1, color: '#dc3545' },
     { content: 'Rescheduled', value: -2, color: '#2196f3' },
   ];
@@ -453,6 +453,7 @@ export class AppointmentListComponent implements OnInit {
       status: this.value,
       search: this.search.value,
       gender: this.filterGenderValue,
+      excludeVisited: true,
     };
     let param = { ...data, ...this.sortBy };
     Object.keys(param).forEach((key) => {
@@ -466,7 +467,21 @@ export class AppointmentListComponent implements OnInit {
     });
     this.apiservice.Postdata(URLConstant.appointmentList, "", param).subscribe(
       (res: any) => {
-        this.dataSource = res?.result?.data;
+        const rawList = res?.result?.data || [];
+        this.dataSource = rawList.filter((item: any) => {
+          if (item?.status === 2 || item?.status === 3) return false;
+          if (item?.status === -1) {
+            const r = (item?.reason || '').toLowerCase();
+            if (
+              r.includes('payment') ||
+              r.includes('checkout') ||
+              r.includes('verification_failed')
+            ) {
+              return false;
+            }
+          }
+          return true;
+        });
         this.totalLength = res?.result?.count;
         for (let i = 0; i < this.dataSource.length; i++) {
           this.dataSource[i]["name"] =
@@ -517,6 +532,7 @@ export class AppointmentListComponent implements OnInit {
       status: this.value,
       search: this.search.value,
       gender: this.filterGenderValue,
+      excludeVisited: true,
     };
     Object.keys(param).forEach((key) => {
       if (
@@ -530,10 +546,21 @@ export class AppointmentListComponent implements OnInit {
     this.apiservice
       .Postdata(URLConstant.appointmentList, "", param)
       .subscribe((res: any) => {
-        this.result = res?.result?.data;
+        this.result = res?.result?.data || [];
         for (let i = 0; i < this.result.length; i++) {
           const statusVal = this.result[i]?.status;
-          const statusText = statusVal == 0 ? 'Pending'
+          if (statusVal === 2 || statusVal === 3) continue;
+          if (statusVal === -1) {
+            const r = (this.result[i]?.reason || '').toLowerCase();
+            if (
+              r.includes('payment') ||
+              r.includes('checkout') ||
+              r.includes('verification_failed')
+            ) {
+              continue;
+            }
+          }
+          const statusText = statusVal == 0 ? 'Booked'
             : statusVal == 1 ? 'Completed'
             : statusVal == -1 ? 'Cancelled'
             : statusVal == -2 ? 'Rescheduled' : '';
@@ -577,6 +604,7 @@ export class AppointmentListComponent implements OnInit {
       status: this.value,
       search: this.search.value,
       gender: this.filterGenderValue,
+      excludeVisited: true,
     };
     Object.keys(param).forEach((key) => {
       if (param[key] === null || param[key] === undefined || param[key] === "") {
@@ -586,10 +614,21 @@ export class AppointmentListComponent implements OnInit {
     this.apiservice
       .Postdata(URLConstant.appointmentList, "", param)
       .subscribe((res: any) => {
-        this.result = res?.result?.data;
+        this.result = res?.result?.data || [];
         for (let i = 0; i < this.result.length; i++) {
           const statusVal = this.result[i]?.status;
-          const statusText = statusVal == 0 ? 'Pending'
+          if (statusVal === 2 || statusVal === 3) continue;
+          if (statusVal === -1) {
+            const r = (this.result[i]?.reason || '').toLowerCase();
+            if (
+              r.includes('payment') ||
+              r.includes('checkout') ||
+              r.includes('verification_failed')
+            ) {
+              continue;
+            }
+          }
+          const statusText = statusVal == 0 ? 'Booked'
             : statusVal == 1 ? 'Completed'
             : statusVal == -1 ? 'Cancelled'
             : statusVal == -2 ? 'Rescheduled' : '';
