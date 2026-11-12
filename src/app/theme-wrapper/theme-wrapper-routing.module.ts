@@ -28,6 +28,13 @@ const routes: Routes = [
           ),
       },
       {
+        path: ROUTE_CONSTANT.PRE_ONBOARD_DOCTORS,
+        loadChildren: () =>
+          import("../pre-onboard-doctors/pre-onboard-doctors.module").then(
+            (v) => v.PreOnboardDoctorsModule
+          ),
+      },
+      {
         path: ROUTE_CONSTANT.REQUEST_APPROVAL,
         loadChildren: () =>
           import("../request-approval/request-approval.module").then(

@@ -107,13 +107,13 @@
       <!-- 2. Doctor Information & Date/Rx Card -->
       <div class="rx-doc-info-row">
         <div class="rx-doc-left">
-          <h2 class="rx-doc-name">Dr. {{ getDoctorName() }}</h2>
+          <h2 class="rx-doc-name">Dr. {{ getDoctorCleanName() }}</h2>
           <div class="rx-doc-quals">
             {{ getDoctorQualification() || 'MBBS' }}
             <span *ngIf="getDoctorSpecialization()">({{ getDoctorSpecialization() }})</span>
           </div>
-          <div class="rx-doc-reg">
-            Reg. No: {{ getDoctorRegNo() || 'N/A' }}
+          <div class="rx-doc-reg" *ngIf="getDoctorRegNo()">
+            Reg. No: {{ getDoctorRegNo() }}
           </div>
         </div>
 
@@ -388,14 +388,15 @@
             <img *ngIf="getDoctorStampUrl()" [src]="getDoctorStampUrl()" alt="Doctor Stamp" class="rx-stamp-img" />
             <div class="rx-sig-wrap">
               <div class="rx-sig-handwriting" *ngIf="!getDoctorSignatureUrl()">
-                Dr. {{ getDoctorName() }}
+                Dr. {{ getDoctorCleanName() }}
               </div>
               <img *ngIf="getDoctorSignatureUrl()" [src]="getDoctorSignatureUrl()" alt="Doctor Signature" class="rx-sig-img" />
             </div>
           </div>
           <div class="rx-sig-line"></div>
           <div class="rx-sig-title">Authorized Signature</div>
-          <div class="rx-sig-doc-detail">Dr. {{ getDoctorName() }}<span *ngIf="getDoctorQualification()">, {{ getDoctorQualification() }}</span></div>
+          <div class="rx-sig-doc-detail">Dr. {{ getDoctorCleanName() }}<span *ngIf="getDoctorQualification()">, {{ getDoctorQualification() }}</span></div>
+          <div class="rx-sig-reg" *ngIf="getDoctorRegNo()">Reg. No: {{ getDoctorRegNo() }}</div>
           <div class="rx-sig-clinic">DIGIOPD HEALTH</div>
         </div>
       </div>

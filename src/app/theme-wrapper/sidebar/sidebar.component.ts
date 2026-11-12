@@ -49,6 +49,11 @@ export class SidebarComponent {
       routerLink: `/${ROUTE_CONSTANT.THEME}/${ROUTE_CONSTANT.DOCTOR_HOSPITAL}`,
     },
     {
+      label: "Pre-onboard Doctors",
+      icon: "assets/images/svg/doctors.svg",
+      routerLink: `/${ROUTE_CONSTANT.THEME}/${ROUTE_CONSTANT.PRE_ONBOARD_DOCTORS}`,
+    },
+    {
       label: "Doctor KYC",
       icon: "assets/images/svg/settings.svg",
       routerLink: `/${ROUTE_CONSTANT.THEME}/${ROUTE_CONSTANT.KYC}`,

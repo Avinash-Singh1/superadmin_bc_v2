@@ -4,6 +4,7 @@ export const ROUTE_CONSTANT = {
   APPOINTMENT: "appointment",
   PATIENT: "patient",
   DOCTOR_HOSPITAL: "doctor-hospital",
+  PRE_ONBOARD_DOCTORS: "pre-onboard-doctors",
   REQUEST_APPROVAL: "request-approval",
   DELETE_REJECT_INACTIVE: "delete-reject-inactive",
   REVIEW: "review",

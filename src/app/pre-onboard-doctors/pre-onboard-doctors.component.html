@@ -1,0 +1,229 @@
+<div class="pre-onboard-page">
+  <!-- Top Stat Metrics Header -->
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-icon kpi-icon--blue">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      </div>
+      <div class="kpi-info">
+        <span class="kpi-label">Total Pre-onboarded</span>
+        <h3 class="kpi-value">{{ unclaimedCount + claimedCount }}</h3>
+        <span class="kpi-sub">Google Maps Sourced</span>
+      </div>
+    </div>
+
+    <div class="kpi-card kpi-card--highlight">
+      <div class="kpi-icon kpi-icon--amber">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      </div>
+      <div class="kpi-info">
+        <span class="kpi-label">Pending Claim</span>
+        <h3 class="kpi-value kpi-value--amber">{{ unclaimedCount }}</h3>
+        <span class="kpi-sub"><span class="pulse-dot"></span> Slots locked until claim</span>
+      </div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-icon kpi-icon--green">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+      </div>
+      <div class="kpi-info">
+        <span class="kpi-label">Claimed Profiles</span>
+        <h3 class="kpi-value kpi-value--green">{{ claimedCount }}</h3>
+        <span class="kpi-sub">Verified by doctor via OTP</span>
+      </div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-icon kpi-icon--purple">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+      </div>
+      <div class="kpi-info">
+        <span class="kpi-label">Consultation Mode</span>
+        <h3 class="kpi-value">Video OPD</h3>
+        <span class="kpi-sub">Auto virtual clinic setup</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Page Main Card -->
+  <div class="content-card">
+    <!-- Card Toolbar -->
+    <div class="card-toolbar">
+      <!-- Left: Tab Pills -->
+      <div class="tab-pills">
+        <button type="button" class="tab-pill" [class.active]="activeTab === 'UNCLAIMED'" (click)="setTab('UNCLAIMED')">
+          <span class="status-indicator status-indicator--amber"></span>
+          Pending Claim
+          <span class="pill-badge">{{ unclaimedCount }}</span>
+        </button>
+        <button type="button" class="tab-pill" [class.active]="activeTab === 'CLAIMED'" (click)="setTab('CLAIMED')">
+          <span class="status-indicator status-indicator--green"></span>
+          Claimed Profiles
+          <span class="pill-badge">{{ claimedCount }}</span>
+        </button>
+        <button type="button" class="tab-pill" [class.active]="activeTab === 'ALL'" (click)="setTab('ALL')">
+          All Pre-onboarded
+          <span class="pill-badge">{{ unclaimedCount + claimedCount }}</span>
+        </button>
+      </div>
+
+      <!-- Right: Search, Refresh, Add Button -->
+      <div class="toolbar-actions">
+        <!-- Search Input -->
+        <div class="search-input-wrap">
+          <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" [formControl]="search" placeholder="Search doctor, city, specialization..." />
+          <button *ngIf="search.value" class="clear-search-btn" (click)="search.setValue('')" aria-label="Clear">✕</button>
+        </div>
+
+        <!-- Refresh Button -->
+        <button type="button" class="btn-secondary-action" (click)="refresh()" [disabled]="isLoading" title="Refresh list">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" [class.spin]="isLoading"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+        </button>
+
+        <!-- Onboard Doctor Button -->
+        <button type="button" class="btn-primary-action" (click)="openAddDoctorDialog()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          + Pre-onboard Doctor
+        </button>
+      </div>
+    </div>
+
+    <!-- Info Notice Bar for Pending Tab -->
+    <div class="notice-bar" *ngIf="activeTab === 'UNCLAIMED'">
+      <div class="notice-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      </div>
+      <div class="notice-text">
+        <strong>Live on Patient Portal:</strong> These doctor profiles are live with a prominent <em>"Claim Profile"</em> banner. Booking slots remain disabled until the doctor verifies their mobile number.
+      </div>
+    </div>
+
+    <!-- Table Content -->
+    <div class="table-responsive">
+      <div class="table-loader-wrap" *ngIf="isLoading">
+        <div class="modern-spinner"></div>
+        <p>Loading pre-onboarded doctors...</p>
+      </div>
+
+      <table class="modern-table" *ngIf="!isLoading">
+        <thead>
+          <tr>
+            <th>Doctor Profile</th>
+            <th>Specialization</th>
+            <th>City / Location</th>
+            <th>Experience</th>
+            <th>Consultation Fee</th>
+            <th>Status</th>
+            <th>Created</th>
+            <th class="th-actions">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let doc of doctors | paginate: { itemsPerPage: pageSize, currentPage: page, totalItems: totalDoctors }">
+            <!-- Doctor Details -->
+            <td>
+              <div class="doc-cell">
+                <div class="avatar-wrap">
+                  <img *ngIf="doc?.profilePic" [src]="doc?.profilePic" alt="" class="doc-avatar" />
+                  <div *ngIf="!doc?.profilePic" class="avatar-fallback">
+                    {{ getInitials(doc?.fullName) }}
+                  </div>
+                  <span class="avatar-verified-badge" title="Medical Council Listed">✓</span>
+                </div>
+                <div class="doc-meta">
+                  <span class="doc-name">{{ doc?.fullName }}</span>
+                  <a [href]="getDoctorPublicUrl(doc)" target="_blank" class="doc-slug-pill" title="View Public Page">
+                    <span>{{ doc?.profileSlug || doc?.doctorId }}</span>
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                  </a>
+                </div>
+              </div>
+            </td>
+
+            <!-- Specialization -->
+            <td>
+              <div class="spec-wrap">
+                <span class="spec-pill" *ngFor="let s of (doc?.specialization || ['Dentist'])">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                  {{ s }}
+                </span>
+              </div>
+            </td>
+
+            <!-- Location -->
+            <td>
+              <span class="city-pill">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2.2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                {{ doc?.city || 'Faridabad' }}
+              </span>
+            </td>
+
+            <!-- Experience -->
+            <td>
+              <span class="exp-text">{{ doc?.experience || 5 }}+ Years</span>
+            </td>
+
+            <!-- Fee / Mode -->
+            <td>
+              <span class="fee-pill">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+                ₹{{ doc?.videoFee || 500 }}
+              </span>
+            </td>
+
+            <!-- Status -->
+            <td>
+              <span class="status-badge status-badge--pending" *ngIf="!doc?.isClaimed">
+                <span class="pulse-indicator"></span>
+                Pending Claim
+              </span>
+              <span class="status-badge status-badge--claimed" *ngIf="doc?.isClaimed">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                Claimed ({{ doc?.claimedByPhone || doc?.phone }})
+              </span>
+            </td>
+
+            <!-- Created Date -->
+            <td>
+              <span class="date-text">{{ doc?.createdAt | date: 'dd MMM yyyy' }}</span>
+            </td>
+
+            <!-- Actions -->
+            <td class="td-actions">
+              <button type="button" class="icon-action-btn icon-action-btn--primary" (click)="viewPublicProfile(doc)" title="Open profile in patient app">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+              </button>
+              <button type="button" class="icon-action-btn" (click)="copyClaimLink(doc)" title="Copy public link">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              </button>
+            </td>
+          </tr>
+
+          <!-- Empty State -->
+          <tr *ngIf="doctors.length === 0">
+            <td colspan="8" class="empty-state-cell">
+              <div class="empty-state">
+                <div class="empty-icon-wrap">
+                  <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.8"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
+                </div>
+                <h4>No Doctors Found</h4>
+                <p>Start onboarding doctors from Google Maps with pre-set video timings and claim profile capability.</p>
+                <button type="button" class="btn-primary-action" (click)="openAddDoctorDialog()">
+                  + Onboard Your First Doctor
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Table Pagination Footer -->
+    <div class="pagination-bar" *ngIf="totalDoctors > pageSize">
+      <span class="pagination-info">Showing {{ doctors.length }} of {{ totalDoctors }} doctors</span>
+      <pagination-controls (pageChange)="pageChanged($event)" previousLabel="Prev" nextLabel="Next"></pagination-controls>
+    </div>
+  </div>
+</div>

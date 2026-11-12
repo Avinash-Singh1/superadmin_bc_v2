@@ -46,6 +46,8 @@ export class URLConstant {
   public static importDoctorList = "v1/common/import/doctor";
   public static importHospitalList = "v1/common/import/hospital";
   public static addDoctor = "v1/doctor/admin-add-doctor";
+  public static adminPreOnboardDoctor = "v1/doctor/admin-pre-onboard-doctor";
+  public static adminPreOnboardedList = "v1/doctor/admin-pre-onboarded-list";
   public static editDoctor = "v1/doctor/admin-edit-doctor";
   public static deleteDoctor = "v1/doctor/admin-delete-doctor";
   public static deletepatient = "v1/doctor/admin-delete-doctor-patient";

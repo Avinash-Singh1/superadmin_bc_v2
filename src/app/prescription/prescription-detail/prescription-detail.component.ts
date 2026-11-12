@@ -147,6 +147,7 @@ export class PrescriptionDetailComponent implements OnInit {
           .rx-sig-line { border-bottom: 1.5px solid #0f4c81; width: 100%; margin-bottom: 5px; }
           .rx-sig-title { font-size: 12.5px; font-weight: 800; color: #0a2540; }
           .rx-sig-doc-detail { font-size: 11.5px; color: #475569; margin-top: 1px; }
+          .rx-sig-reg { font-size: 11px; font-weight: 600; color: #0a2540; margin-top: 1px; }
           .rx-sig-clinic { font-size: 10.5px; font-weight: 700; color: #0284c7; letter-spacing: 0.5px; margin-top: 1px; }
           .rx-bottom-footer { border-top: 1.5px solid #e2e8f0; padding-top: 10px; display: flex; justify-content: space-between; align-items: center; position: relative; margin-top: 16px; z-index: 1; }
           .rx-footer-tagline { font-size: 12px; font-weight: 500; color: #64748b; letter-spacing: 1.5px; }
@@ -290,6 +291,12 @@ export class PrescriptionDetailComponent implements OnInit {
     return this.prescription?.doctorDetails?.name || 'N/A';
   }
 
+  getDoctorCleanName(): string {
+    const name = this.getDoctorName();
+    if (!name || name === 'N/A') return 'Doctor';
+    return name.replace(/^(?:(?:Dr\.?|Doctor)\s*)+/i, '').trim() || name;
+  }
+
   getDoctorQualification(): string {
     return this.prescription?.doctorDetails?.qualification || '';
   }
@@ -299,7 +306,19 @@ export class PrescriptionDetailComponent implements OnInit {
   }
 
   getDoctorRegNo(): string {
-    return this.prescription?.doctorDetails?.regNo || '';
+    const r =
+      this.prescription?.doctorDetails?.regNo ||
+      this.prescription?.doctorDetails?.registrationNumber;
+    if (r) return r;
+    if (typeof this.prescription?.doctorId === 'object') {
+      const doc = this.prescription.doctorId as any;
+      if (doc?.regNo) return doc.regNo;
+      if (doc?.registrationNumber) return doc.registrationNumber;
+      if (Array.isArray(doc?.medicalRegistration) && doc.medicalRegistration.length > 0) {
+        return doc.medicalRegistration[0]?.registrationNumber || doc.medicalRegistration[0]?.registrationNo || '';
+      }
+    }
+    return '';
   }
 
   getDoctorPhone(): string {

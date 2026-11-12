@@ -1,0 +1,148 @@
+<div class="pre-onboard-modal">
+  <div class="modal-header">
+    <div class="modal-title-box">
+      <h2 class="modal-title">Pre-onboard Doctor (Google Maps Listing)</h2>
+      <p class="modal-subtitle">Quickly onboard a doctor with Video Consultation. Doctor will claim profile via mobile OTP.</p>
+    </div>
+    <button type="button" class="close-btn" (click)="close()" aria-label="Close">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+
+  <form [formGroup]="doctorForm" (ngSubmit)="onSubmit()" class="modal-body">
+    <!-- Notice Banner -->
+    <div class="info-alert">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+      <div>
+        <strong>No Medical Proofs Required Now:</strong> Medical Council registration and Identity proof will be uploaded directly by the doctor upon claiming this profile.
+      </div>
+    </div>
+
+    <div class="form-grid">
+      <!-- Full Name -->
+      <div class="form-group col-span-2">
+        <label class="form-label">Doctor Full Name <span class="required">*</span></label>
+        <input type="text" formControlName="fullName" class="form-control" placeholder="e.g. Dr. Ramesh Sharma" />
+        <span class="error-text" *ngIf="doctorForm.get('fullName')?.touched && doctorForm.get('fullName')?.invalid">Doctor name is required.</span>
+      </div>
+
+      <!-- Specialization -->
+      <div class="form-group">
+        <label class="form-label">Specialization <span class="required">*</span></label>
+        <select formControlName="specialization" class="form-control">
+          <option value="" disabled>Select Specialization</option>
+          <option *ngFor="let spec of specializationList" [value]="spec?._id">{{ spec?.name }}</option>
+        </select>
+        <span class="error-text" *ngIf="doctorForm.get('specialization')?.touched && doctorForm.get('specialization')?.invalid">Please select a specialization.</span>
+      </div>
+
+      <!-- Experience -->
+      <div class="form-group">
+        <label class="form-label">Experience (Years) <span class="required">*</span></label>
+        <input type="number" formControlName="experience" class="form-control" placeholder="e.g. 10" min="0" />
+      </div>
+
+      <!-- City -->
+      <div class="form-group">
+        <label class="form-label">City <span class="required">*</span></label>
+        <input type="text" formControlName="city" class="form-control" placeholder="e.g. Amritsar" list="cityOptions" />
+        <datalist id="cityOptions">
+          <option *ngFor="let c of cityList" [value]="c?.name || c?.city"></option>
+        </datalist>
+        <span class="error-text" *ngIf="doctorForm.get('city')?.touched && doctorForm.get('city')?.invalid">City is required.</span>
+      </div>
+
+      <!-- Locality -->
+      <div class="form-group">
+        <label class="form-label">Locality / Area</label>
+        <input type="text" formControlName="locality" class="form-control" placeholder="e.g. Ranjit Avenue, Court Road" />
+      </div>
+
+      <!-- Video Fee -->
+      <div class="form-group">
+        <label class="form-label">Video Consultation Fee (₹) <span class="required">*</span></label>
+        <input type="number" formControlName="videoConsultationFees" class="form-control" placeholder="500" min="0" />
+      </div>
+
+      <!-- Phone (Optional from Google Maps) -->
+      <div class="form-group">
+        <label class="form-label">Clinic Contact Phone (Optional)</label>
+        <input type="text" formControlName="phone" class="form-control" placeholder="e.g. 9876543210 (Doctor can verify their own on claim)" />
+      </div>
+
+      <!-- Profile Image -->
+      <div class="form-group col-span-2">
+        <label class="form-label">Doctor Profile Photo</label>
+        <div class="photo-uploader">
+          <div class="preview-box" *ngIf="previewImage">
+            <img [src]="previewImage" alt="Preview" class="preview-img" />
+            <button type="button" class="remove-img-btn" (click)="removeImage()" title="Remove photo">✕</button>
+          </div>
+          <div class="upload-controls" *ngIf="!previewImage">
+            <input type="file" (change)="onImageSelected($event)" accept="image/*" id="doctorPhotoInput" class="hidden-file-input" />
+            <label for="doctorPhotoInput" class="upload-trigger-btn">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              {{ isUploading ? 'Uploading Image...' : 'Upload Doctor Photo' }}
+            </label>
+            <span class="upload-hint">PNG, JPG up to 5MB (leave empty to use default avatar)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bio / About -->
+      <div class="form-group col-span-2">
+        <label class="form-label">About / Bio (Optional)</label>
+        <textarea formControlName="about" class="form-control" rows="2" placeholder="Brief summary of doctor's clinical practice and background..."></textarea>
+      </div>
+    </div>
+
+    <!-- Available Timings Section -->
+    <div class="timings-section">
+      <div class="timings-header">
+        <div>
+          <h3 class="section-title">Available Video Consultation Timings</h3>
+          <p class="section-subtitle">These timings will be displayed on the doctor's profile on the patient app (booking disabled until claimed).</p>
+        </div>
+        <span class="badge-video">Video Only</span>
+      </div>
+
+      <div class="days-list">
+        <div class="day-row" *ngFor="let day of days">
+          <label class="day-checkbox-label">
+            <input type="checkbox" [checked]="day.enabled" (change)="toggleDay(day)" />
+            <span class="day-name">{{ day.dayLabel }}</span>
+          </label>
+
+          <div class="day-slots" *ngIf="day.enabled">
+            <div class="slot-pill">
+              <span class="slot-label">Morning:</span>
+              <input type="text" [(ngModel)]="day.morningFrom" [ngModelOptions]="{standalone: true}" class="time-input" />
+              <span>to</span>
+              <input type="text" [(ngModel)]="day.morningTo" [ngModelOptions]="{standalone: true}" class="time-input" />
+            </div>
+            <div class="slot-pill">
+              <span class="slot-label">Evening:</span>
+              <input type="text" [(ngModel)]="day.eveningFrom" [ngModelOptions]="{standalone: true}" class="time-input" />
+              <span>to</span>
+              <input type="text" [(ngModel)]="day.eveningTo" [ngModelOptions]="{standalone: true}" class="time-input" />
+            </div>
+          </div>
+
+          <div class="day-closed" *ngIf="!day.enabled">
+            <span>Unavailable / Closed</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="modal-footer">
+      <button type="button" class="btn-secondary" (click)="close()">Cancel</button>
+      <button type="submit" class="btn-primary" [disabled]="isSubmitting || isUploading">
+        <span *ngIf="!isSubmitting">Save & Publish Doctor</span>
+        <span *ngIf="isSubmitting">Publishing...</span>
+      </button>
+    </div>
+  </form>
+</div>
+
