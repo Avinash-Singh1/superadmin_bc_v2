@@ -35,12 +35,13 @@ export class AppointmentListComponent implements OnInit {
     "Gender",
     "Mobile",
     "Email",
+    "Specialization",
     "Age",
     "HospitalName",
     "Locality",
     "City",
+    "ConsultationType",
     "BloodGroup",
-    "MeetLink",
   ];
   dataSource: any;
   page = 1;
@@ -71,14 +72,113 @@ export class AppointmentListComponent implements OnInit {
   filterGenderOpen: boolean = true;
   filterStatusOpen: boolean = true;
   filterDateOpen: boolean = true;
+  filterSpecOpen: boolean = true;
   filterGenderValue: any = '';
   filterStatusValue: any = '';
+  filterSpecializationValue: string = '';
+  specSearchTerm: string = '';
+  specializations: any[] = [];
   activeFilterCount: number = 0;
+
+  get filteredSpecializations(): any[] {
+    if (!this.specSearchTerm || !this.specSearchTerm.trim()) {
+      return this.specializations;
+    }
+    const q = this.specSearchTerm.trim().toLowerCase();
+    return this.specializations.filter((s: any) =>
+      (s?.name || '').toLowerCase().includes(q)
+    );
+  }
+
+  loadSpecializations() {
+    this.apiservice.GetData(URLConstant.specialization, '').subscribe({
+      next: (res: any) => {
+        this.specializations = res?.result?.data || [];
+      },
+      error: (err: any) => {
+        console.error('Failed to load specializations', err);
+      }
+    });
+  }
+
+  selectSpecializationFilter(id: string) {
+    if (this.filterSpecializationValue === id) {
+      this.filterSpecializationValue = '';
+    } else {
+      this.filterSpecializationValue = id || '';
+    }
+  }
+
+  getSpecialization(element: any): string {
+    if (!element) return "N/A";
+    if (element.primarySpecialization && element.primarySpecialization !== "N/A") {
+      return element.primarySpecialization;
+    }
+    if (Array.isArray(element.specializationNames) && element.specializationNames.length > 0) {
+      const filtered = element.specializationNames.filter(Boolean);
+      if (filtered.length > 0) return filtered.join(", ");
+    }
+    if (Array.isArray(element.specialization) && element.specialization.length > 0) {
+      const names = element.specialization
+        .map((s: any) => (typeof s === "string" ? s : s?.name))
+        .filter(Boolean);
+      if (names.length > 0) return names.join(", ");
+    }
+    if (typeof element.specialization === "string" && element.specialization.trim()) {
+      return element.specialization.trim();
+    }
+    if (typeof element.specializationName === "string" && element.specializationName.trim()) {
+      return element.specializationName.trim();
+    }
+    return "N/A";
+  }
 
   genderOptions = [
     { label: 'Male', value: 1 },
     { label: 'Female', value: 2 },
   ];
+
+  toggleFilterPanel() {
+    this.showFilterPanel = !this.showFilterPanel;
+  }
+
+  closeFilterPanel() {
+    this.showFilterPanel = false;
+  }
+
+  toggleFilterSection(section: string) {
+    if (section === 'date') this.filterDateOpen = !this.filterDateOpen;
+    if (section === 'status') this.filterStatusOpen = !this.filterStatusOpen;
+    if (section === 'gender') this.filterGenderOpen = !this.filterGenderOpen;
+    if (section === 'specialization') this.filterSpecOpen = !this.filterSpecOpen;
+  }
+
+  selectGenderFilter(val: any) {
+    this.filterGenderValue = val;
+  }
+
+  selectStatusFilter(val: any) {
+    this.filterStatusValue = val;
+    this.value = val;
+  }
+
+  applyFilters() {
+    this.disableResetFilter = true;
+    this.page = 1;
+    this.patientList('', '', '', true);
+    this.downloadPatient();
+    this.showFilterPanel = false;
+    this.countActiveFilters();
+  }
+
+  countActiveFilters() {
+    let count = 0;
+    if (this.toDate || this.fromDate) count++;
+    if (this.value !== '' && this.value !== undefined) count++;
+    if (this.filterGenderValue !== '' && this.filterGenderValue !== undefined) count++;
+    if (this.filterSpecializationValue !== '' && this.filterSpecializationValue !== undefined) count++;
+    this.activeFilterCount = count;
+  }
 
   ageLimit = [
     {
@@ -113,10 +213,11 @@ export class AppointmentListComponent implements OnInit {
     },
   ];
   appointmentStatus = [
-    { content: 'Pending', value: 0, color: '#f0ad4e' },
-    { content: 'Completed', value: 1, color: '#28a745' },
+    { content: 'Booked', value: 0, color: '#28a745' },
+    { content: 'Completed', value: 1, color: '#20c997' },
     { content: 'Cancelled', value: -1, color: '#dc3545' },
     { content: 'Rescheduled', value: -2, color: '#2196f3' },
+
   ];
   genders = [
     {
@@ -193,55 +294,16 @@ export class AppointmentListComponent implements OnInit {
     public apiservice: ApiService,
     public fb: UntypedFormBuilder,
     public datepipe: DatePipe
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.patientList("", "", "");
     this.patientListForm();
     this.downloadPatient();
+    this.loadSpecializations();
     this.search.valueChanges
       .pipe(debounceTime(500), distinctUntilChanged())
       .subscribe((val) => this.searchFunction(val));
-  }
-
-  toggleFilterPanel() {
-    this.showFilterPanel = !this.showFilterPanel;
-  }
-
-  closeFilterPanel() {
-    this.showFilterPanel = false;
-  }
-
-  toggleFilterSection(section: string) {
-    if (section === 'date') this.filterDateOpen = !this.filterDateOpen;
-    if (section === 'status') this.filterStatusOpen = !this.filterStatusOpen;
-    if (section === 'gender') this.filterGenderOpen = !this.filterGenderOpen;
-  }
-
-  selectGenderFilter(val: any) {
-    this.filterGenderValue = val;
-  }
-
-  selectStatusFilter(val: any) {
-    this.filterStatusValue = val;
-    this.value = val;
-  }
-
-  applyFilters() {
-    this.disableResetFilter = true;
-    this.page = 1;
-    this.patientList('', '', '', true);
-    this.downloadPatient();
-    this.showFilterPanel = false;
-    this.countActiveFilters();
-  }
-
-  countActiveFilters() {
-    let count = 0;
-    if (this.toDate || this.fromDate) count++;
-    if (this.value !== '' && this.value !== undefined) count++;
-    if (this.filterGenderValue !== '' && this.filterGenderValue !== undefined) count++;
-    this.activeFilterCount = count;
   }
 
   patientListForm() {
@@ -298,7 +360,6 @@ export class AppointmentListComponent implements OnInit {
         (el: any) => parseInt(el.value) == parseInt(type)
       );
       this.ageLimit[index].selected = false;
-      console.log(this.ageLimit);
       this.ageParam.findIndex((ele: any) => {
         if (ele === event.source.value) {
           let ages = this.ageParam.indexOf(ele);
@@ -334,7 +395,6 @@ export class AppointmentListComponent implements OnInit {
   oldDate = new Date();
   day = new Date(this.oldDate.setDate(this.oldDate.getDate() - 1));
   selectedDates(event: any, value: any, getValue: any) {
-    console.log(event);
     switch (true) {
       case event?.value == "yesterday" || event == "yesterday": {
         this.day.setHours(0);
@@ -453,6 +513,8 @@ export class AppointmentListComponent implements OnInit {
       status: this.value,
       search: this.search.value,
       gender: this.filterGenderValue,
+      specialization: this.filterSpecializationValue,
+      excludeVisited: true,
     };
     let param = { ...data, ...this.sortBy };
     Object.keys(param).forEach((key) => {
@@ -466,8 +528,8 @@ export class AppointmentListComponent implements OnInit {
     });
     this.apiservice.Postdata(URLConstant.appointmentList, "", param).subscribe(
       (res: any) => {
-        this.dataSource = res?.result?.data;
-        this.totalLength = res?.result?.count;
+        this.dataSource = res?.result?.data || [];
+        this.totalLength = res?.result?.count || 0;
         for (let i = 0; i < this.dataSource.length; i++) {
           this.dataSource[i]["name"] =
             this.dataSource[i]?.patientName?.split(" ");
@@ -507,6 +569,15 @@ export class AppointmentListComponent implements OnInit {
   }
 
   result: any;
+
+  getConsultationTypeText(consultationType: any): string {
+    if (!consultationType) return 'N/A';
+    const type = typeof consultationType === 'string' ? consultationType.toLowerCase() : consultationType;
+    if (type === 'video' || type === 2) return 'Video Consultation';
+    if (type === 'inclinic' || type === 'in-clinic' || type === 1) return 'In-Clinic';
+    return 'N/A';
+  }
+
   downloadPatient() {
     this.result = "";
     this.data = [];
@@ -517,6 +588,8 @@ export class AppointmentListComponent implements OnInit {
       status: this.value,
       search: this.search.value,
       gender: this.filterGenderValue,
+      specialization: this.filterSpecializationValue,
+      excludeVisited: true,
     };
     Object.keys(param).forEach((key) => {
       if (
@@ -533,10 +606,15 @@ export class AppointmentListComponent implements OnInit {
         this.result = res?.result?.data;
         for (let i = 0; i < this.result.length; i++) {
           const statusVal = this.result[i]?.status;
-          const statusText = statusVal == 0 ? 'Pending'
+          if (statusVal === 3 || statusVal === 2) continue;
+          const statusText = statusVal == 0 ? 'Booked'
             : statusVal == 1 ? 'Completed'
-            : statusVal == -1 ? 'Cancelled'
-            : statusVal == -2 ? 'Rescheduled' : '';
+              : statusVal == 2 ? 'Processing'
+
+                  : statusVal == -1 ? 'Cancelled'
+                    : statusVal == -2 ? 'Rescheduled' : 'Unknown';
+          const consultationType = this.getConsultationTypeText(this.result[i]?.consultationType);
+          const specialization = this.getSpecialization(this.result[i]);
           this.data.push([
             this.result[i]?.createdAt,
             this.result[i]?.slot,
@@ -544,10 +622,12 @@ export class AppointmentListComponent implements OnInit {
             this.result[i]?.patientGender == 1 ? "Male" : "Female",
             this.result[i]?.patientPhone,
             this.result[i]?.doctorName,
+            specialization,
             this.result[i]?.doctorPhone,
             this.result[i]?.establishmentName,
             this.result[i]?.establishmentLocality,
             this.result[i]?.establishmentCity,
+            consultationType,
             statusText,
           ]);
         }
@@ -560,10 +640,12 @@ export class AppointmentListComponent implements OnInit {
     "Patient Gender",
     "Patient Phone",
     "Doctor Name",
+    "Specialization",
     "Doctor Phone",
     "Hospital Name",
     "Hospital Locality",
     "Hospital City",
+    "Consultation Type",
     "Status",
   ];
 
@@ -577,6 +659,8 @@ export class AppointmentListComponent implements OnInit {
       status: this.value,
       search: this.search.value,
       gender: this.filterGenderValue,
+      specialization: this.filterSpecializationValue,
+      excludeVisited: true,
     };
     Object.keys(param).forEach((key) => {
       if (param[key] === null || param[key] === undefined || param[key] === "") {
@@ -589,10 +673,15 @@ export class AppointmentListComponent implements OnInit {
         this.result = res?.result?.data;
         for (let i = 0; i < this.result.length; i++) {
           const statusVal = this.result[i]?.status;
-          const statusText = statusVal == 0 ? 'Pending'
+          if (statusVal === 3 || statusVal === 2) continue;
+          const statusText = statusVal == 0 ? 'Booked'
             : statusVal == 1 ? 'Completed'
-            : statusVal == -1 ? 'Cancelled'
-            : statusVal == -2 ? 'Rescheduled' : '';
+              : statusVal == 2 ? 'Processing'
+
+                  : statusVal == -1 ? 'Cancelled'
+                    : statusVal == -2 ? 'Rescheduled' : 'Unknown';
+          const consultationType = this.getConsultationTypeText(this.result[i]?.consultationType);
+          const specialization = this.getSpecialization(this.result[i]);
           this.data.push([
             this.result[i]?.createdAt,
             this.result[i]?.slot,
@@ -600,10 +689,12 @@ export class AppointmentListComponent implements OnInit {
             this.result[i]?.patientGender == 1 ? "Male" : "Female",
             this.result[i]?.patientPhone,
             this.result[i]?.doctorName,
+            specialization,
             this.result[i]?.doctorPhone,
             this.result[i]?.establishmentName,
             this.result[i]?.establishmentLocality,
             this.result[i]?.establishmentCity,
+            consultationType,
             statusText,
           ]);
         }
@@ -653,6 +744,8 @@ export class AppointmentListComponent implements OnInit {
     this.value = '';
     this.filterGenderValue = '';
     this.filterStatusValue = '';
+    this.filterSpecializationValue = '';
+    this.specSearchTerm = '';
     this.selectedEndDate = false;
     this.activeFilterCount = 0;
     this.patientList('', '', '');

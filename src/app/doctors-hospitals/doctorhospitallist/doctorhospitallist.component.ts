@@ -1,3 +1,4 @@
+import { ExportDoctorDialogComponent, ExportDoctorResult } from "src/app/dialogs/export-doctor-dialog/export-doctor-dialog.component";
 import { Component, ElementRef, OnInit, ViewChild } from "@angular/core";
 import { UntypedFormBuilder, UntypedFormControl } from "@angular/forms";
 import { MatDialog } from "@angular/material/dialog";
@@ -26,10 +27,10 @@ export interface PeriodicElement {
 
 const ELEMENT_DATA: PeriodicElement[] = [];
 @Component({
-  selector: "app-doctorhospitallist",
-  templateUrl: "./doctorhospitallist.component.html",
-  styleUrls: ["./doctorhospitallist.component.scss"],
-})
+    selector: "app-doctorhospitallist",
+    templateUrl: "./doctorhospitallist.component.html",
+    styleUrls: ["./doctorhospitallist.component.scss"],
+    })
 export class DoctorhospitallistComponent implements OnInit {
   baseurl = environment.BASE_URL;
   hospitalExportedHeader = [
@@ -116,10 +117,40 @@ export class DoctorhospitallistComponent implements OnInit {
   filterForm: any;
   pageSizeOptions = [10, 25, 50, 100];
   showFilterPanel = false;
+  bulkStatusUpdating: boolean = false;
   filterSpecOpen = true;
   filterHospTypeOpen = true;
+  filterOwnershipOpen = true;
   filterCitiesOpen = true;
-  bulkStatusUpdating = false;
+  filterGenderOpen = true;
+  filterFeesOpen = true;
+  filterStatusOpen = true;
+  filterActiveOpen = true;
+  filterSourceOpen = true;
+
+  // Rich Filter State
+  genderParam: number | null = null;
+  ownershipParam: string | null = null;
+  minFeesParam: number | null = null;
+  maxFeesParam: number | null = null;
+  selectedFeePreset: string | null = null;
+  approvalStatusParam: number | null = null;
+  statusParam: number | null = null;
+  signupSourceParam: string | null = null;
+
+  specSearchText: string = "";
+  citySearchText: string = "";
+
+  feePresets = [
+    { label: "Free (₹0)", min: 0, max: 0 },
+    { label: "₹1 - ₹500", min: 1, max: 500 },
+    { label: "₹501 - ₹1,000", min: 501, max: 1000 },
+    { label: "₹1,001 - ₹2,000", min: 1001, max: 2000 },
+    { label: "₹2,000+", min: 2001, max: null },
+  ];
+
+  signupSources = ["Android App", "Web App", "Admin Portal"];
+
   specialization = [
     "Dental",
     "Orthopaedics",
@@ -137,6 +168,14 @@ export class DoctorhospitallistComponent implements OnInit {
     "Nagpur",
     "Kolkata",
     "Chennai",
+    "Pune",
+    "Hyderabad",
+    "Ahmedabad",
+    "Jaipur",
+    "Lucknow",
+    "Chandigarh",
+    "Indore",
+    "Bhopal",
   ];
   hospitals = [
     "Clinic",
@@ -159,11 +198,10 @@ export class DoctorhospitallistComponent implements OnInit {
   ngOnInit(): void {
     this.filterGroup();
     this.doctorList("", "");
-    this.downloadDoctorList();
-    this.downloadHospitalList();
     this.hospitalList("");
     this.specializationList();
     this.typeOfHospitalList();
+    this.getCityList();
     this.getSampleArr();
     this.getSampleHospitalArr();
     this.search.valueChanges
@@ -198,8 +236,92 @@ export class DoctorhospitallistComponent implements OnInit {
     let count = 0;
     if (this.specializationParam?.length) count += this.specializationParam.length;
     if (this.hospitalParam?.length) count += this.hospitalParam.length;
+    if (this.hospitalsList && this.ownershipParam !== null) count += 1;
     if (this.citiesParam?.length) count += this.citiesParam.length;
+    if (this.genderParam !== null) count += 1;
+    if (this.minFeesParam !== null || this.maxFeesParam !== null) count += 1;
+    if (this.approvalStatusParam !== null) count += 1;
+    if (this.statusParam !== null) count += 1;
+    if (this.signupSourceParam !== null) count += 1;
     return count;
+  }
+
+  get activeFilters(): Array<{ type: string; label: string; value: any }> {
+    const list: Array<{ type: string; label: string; value: any }> = [];
+    if (this.doctorsList && this.specializationParam?.length) {
+      this.specializationParam.forEach((id: any) => {
+        const item = this.OccupationList?.find((o: any) => o._id === id);
+        if (item) list.push({ type: 'spec', label: `Spec: ${item.name}`, value: id });
+      });
+    }
+    if (this.hospitalsList && this.hospitalParam?.length) {
+      this.hospitalParam.forEach((id: any) => {
+        const item = this.typeOfHospital?.find((h: any) => h._id === id);
+        if (item) list.push({ type: 'hospitalType', label: `Type: ${item.name}`, value: id });
+      });
+    }
+    if (this.hospitalsList && this.ownershipParam !== null) {
+      const ownLabel =
+        this.ownershipParam === 'own'
+          ? 'Own Hospital'
+          : this.ownershipParam === 'visit'
+          ? 'Visit Hospital'
+          : 'Standalone Hospital';
+      list.push({ type: 'ownership', label: `Category: ${ownLabel}`, value: this.ownershipParam });
+    }
+    if (this.citiesParam?.length) {
+      this.citiesParam.forEach((city: string) => {
+        list.push({ type: 'city', label: `City: ${city}`, value: city });
+      });
+    }
+    if (this.doctorsList && this.genderParam !== null) {
+      const gLabel = this.genderParam === 1 ? 'Male' : this.genderParam === 2 ? 'Female' : 'Other';
+      list.push({ type: 'gender', label: `Gender: ${gLabel}`, value: this.genderParam });
+    }
+    if (this.doctorsList && (this.minFeesParam !== null || this.maxFeesParam !== null)) {
+      let feeLabel = 'Fees: ';
+      if (this.selectedFeePreset) {
+        feeLabel += this.selectedFeePreset;
+      } else if (this.minFeesParam !== null && this.maxFeesParam !== null) {
+        feeLabel += `₹${this.minFeesParam} - ₹${this.maxFeesParam}`;
+      } else if (this.minFeesParam !== null) {
+        feeLabel += `₹${this.minFeesParam}+`;
+      } else if (this.maxFeesParam !== null) {
+        feeLabel += `Up to ₹${this.maxFeesParam}`;
+      }
+      list.push({ type: 'fees', label: feeLabel, value: null });
+    }
+    if (this.approvalStatusParam !== null) {
+      const statusLabel =
+        this.approvalStatusParam === 1
+          ? 'Pending'
+          : this.approvalStatusParam === 2
+          ? 'Approved'
+          : 'Rejected';
+      list.push({ type: 'approvalStatus', label: `Status: ${statusLabel}`, value: this.approvalStatusParam });
+    }
+    if (this.statusParam !== null) {
+      const activeLabel = this.statusParam === 2 ? 'Active' : 'Inactive';
+      list.push({ type: 'status', label: `Account: ${activeLabel}`, value: this.statusParam });
+    }
+    if (this.doctorsList && this.signupSourceParam !== null) {
+      list.push({ type: 'signupSource', label: `Source: ${this.signupSourceParam}`, value: this.signupSourceParam });
+    }
+    return list;
+  }
+
+  get filteredSpecializations(): any[] {
+    if (!this.OccupationList) return [];
+    if (!this.specSearchText?.trim()) return this.OccupationList;
+    const term = this.specSearchText.trim().toLowerCase();
+    return this.OccupationList.filter((s: any) => s?.name?.toLowerCase().includes(term));
+  }
+
+  get filteredCities(): string[] {
+    if (!this.cities) return [];
+    if (!this.citySearchText?.trim()) return this.cities;
+    const term = this.citySearchText.trim().toLowerCase();
+    return this.cities.filter((c: string) => c?.toLowerCase().includes(term));
   }
 
   get doctorShowingFrom(): number {
@@ -228,7 +350,90 @@ export class DoctorhospitallistComponent implements OnInit {
   toggleFilterSection(section: string) {
     if (section === 'specialization') this.filterSpecOpen = !this.filterSpecOpen;
     else if (section === 'hospitalType') this.filterHospTypeOpen = !this.filterHospTypeOpen;
+    else if (section === 'ownership') this.filterOwnershipOpen = !this.filterOwnershipOpen;
     else if (section === 'cities') this.filterCitiesOpen = !this.filterCitiesOpen;
+    else if (section === 'gender') this.filterGenderOpen = !this.filterGenderOpen;
+    else if (section === 'fees') this.filterFeesOpen = !this.filterFeesOpen;
+    else if (section === 'status') this.filterStatusOpen = !this.filterStatusOpen;
+    else if (section === 'accountStatus') this.filterActiveOpen = !this.filterActiveOpen;
+    else if (section === 'source') this.filterSourceOpen = !this.filterSourceOpen;
+  }
+
+  selectGender(gender: number | null) {
+    this.genderParam = this.genderParam === gender ? null : gender;
+  }
+
+  selectOwnership(type: string | null) {
+    this.ownershipParam = this.ownershipParam === type ? null : type;
+  }
+
+  setOwnershipQuickFilter(type: string | null) {
+    this.ownershipParam = type;
+    this.pageOfHospital = 1;
+    this.hospitalList('');
+  }
+
+  selectFeePreset(preset: any) {
+    if (this.selectedFeePreset === preset.label) {
+      this.selectedFeePreset = null;
+      this.minFeesParam = null;
+      this.maxFeesParam = null;
+    } else {
+      this.selectedFeePreset = preset.label;
+      this.minFeesParam = preset.min;
+      this.maxFeesParam = preset.max;
+    }
+  }
+
+  onCustomFeeMinChange(val: any) {
+    this.selectedFeePreset = null;
+    this.minFeesParam = val !== '' && val !== null ? Number(val) : null;
+  }
+
+  onCustomFeeMaxChange(val: any) {
+    this.selectedFeePreset = null;
+    this.maxFeesParam = val !== '' && val !== null ? Number(val) : null;
+  }
+
+  selectApprovalStatus(status: number | null) {
+    this.approvalStatusParam = this.approvalStatusParam === status ? null : status;
+  }
+
+  selectAccountStatus(status: number | null) {
+    this.statusParam = this.statusParam === status ? null : status;
+  }
+
+  selectSignupSource(src: string | null) {
+    this.signupSourceParam = this.signupSourceParam === src ? null : src;
+  }
+
+  removeFilter(filter: any) {
+    if (filter.type === 'spec') {
+      const item = this.OccupationList?.find((o: any) => o._id === filter.value);
+      if (item) item.selected = false;
+      this.specializationParam = this.specializationParam.filter((id: any) => id !== filter.value);
+    } else if (filter.type === 'hospitalType') {
+      const item = this.typeOfHospital?.find((h: any) => h._id === filter.value);
+      if (item) item.selected = false;
+      this.hospitalParam = this.hospitalParam.filter((id: any) => id !== filter.value);
+    } else if (filter.type === 'ownership') {
+      this.ownershipParam = null;
+    } else if (filter.type === 'city') {
+      this.citiesParam = this.citiesParam.filter((c: string) => c !== filter.value);
+    } else if (filter.type === 'gender') {
+      this.genderParam = null;
+    } else if (filter.type === 'fees') {
+      this.minFeesParam = null;
+      this.maxFeesParam = null;
+      this.selectedFeePreset = null;
+    } else if (filter.type === 'approvalStatus') {
+      this.approvalStatusParam = null;
+    } else if (filter.type === 'status') {
+      this.statusParam = null;
+    } else if (filter.type === 'signupSource') {
+      this.signupSourceParam = null;
+    }
+    this.applyFilters();
   }
 
   toggleSpecChip(spec: any) {
@@ -264,8 +469,18 @@ export class DoctorhospitallistComponent implements OnInit {
     this.specializationParam = [];
     this.hospitalParam = [];
     this.citiesParam = [];
-    if (this.OccupationList) this.OccupationList.forEach((s: any) => s.selected = false);
-    if (this.typeOfHospital) this.typeOfHospital.forEach((h: any) => h.selected = false);
+    this.genderParam = null;
+    this.minFeesParam = null;
+    this.maxFeesParam = null;
+    this.selectedFeePreset = null;
+    this.approvalStatusParam = null;
+    this.statusParam = null;
+    this.signupSourceParam = null;
+    this.ownershipParam = null;
+    this.specSearchText = "";
+    this.citySearchText = "";
+    if (this.OccupationList) this.OccupationList.forEach((s: any) => (s.selected = false));
+    if (this.typeOfHospital) this.typeOfHospital.forEach((h: any) => (h.selected = false));
   }
   resetAllFilters() {
     this.clearAllFilters();
@@ -337,11 +552,11 @@ export class DoctorhospitallistComponent implements OnInit {
   }
 
   deleteDoctor(id: string, type: string, establishmentId?: string) {
-    // When deleting from the hospital list, an establishment-owning row should
-    // soft-delete just that establishment, not the whole hospital account.
+    // When deleting from hospital list, we're actually deleting the establishment
+    // not the entire user account, unless explicitly specified
     const actualType = type === "hospital" && establishmentId ? "establishment" : type;
     const actualId = type === "hospital" && establishmentId ? establishmentId : id;
-
+    
     this.dialogRef = this.dialog.open(DeleteConfirmationComponent, {
       data: {
         id: actualId,
@@ -394,11 +609,9 @@ export class DoctorhospitallistComponent implements OnInit {
     }
 
     if (value == "hospital" && event?.checked == true) {
-      console.log(this.typeOfHospital, "=-=-=-=-=-=-=-");
       let index = this.typeOfHospital.findIndex(
         (el: any) => el?._id == event?.source?.value
       );
-      console.log("uu", this.typeOfHospital[index]?.selected);
       this.typeOfHospital[index].selected = true;
       this.hospitalParam.push(event.source?.value);
     } else if (value == "hospital" && event?.checked == false) {
@@ -423,6 +636,12 @@ export class DoctorhospitallistComponent implements OnInit {
       specialization: this.specializationParam.join(),
       cities: this.citiesParam.join(),
       search: this.search.value,
+      gender: this.genderParam,
+      minFees: this.minFeesParam,
+      maxFees: this.maxFeesParam,
+      approvalStatus: this.approvalStatusParam,
+      status: this.statusParam,
+      signupSource: this.signupSourceParam,
     };
     let data = { ...param, ...this.sortBy };
     Object.keys(data).forEach((key) => {
@@ -453,6 +672,9 @@ export class DoctorhospitallistComponent implements OnInit {
       hospitalType: this.hospitalParam.join(),
       city: this.citiesParam.join(),
       search: this.search.value,
+      approvalStatus: this.approvalStatusParam,
+      status: this.statusParam,
+      ownershipType: this.ownershipParam,
     };
     let param = { ...data, ...this.sortByHospital };
 
@@ -517,6 +739,34 @@ export class DoctorhospitallistComponent implements OnInit {
       });
   }
 
+  getCityList() {
+    this.apiservice
+      .GetData(URLConstant.cityList, "")
+      .subscribe(
+        (res: any) => {
+          const list = Array.isArray(res?.result?.data)
+            ? res.result.data
+            : Array.isArray(res?.result)
+            ? res.result
+            : Array.isArray(res?.data)
+            ? res.data
+            : [];
+          if (list.length > 0) {
+            const fetched = list
+              .map((c: any) => (typeof c === "string" ? c : c?.name)?.trim())
+              .filter((n: any) => Boolean(n));
+            if (fetched.length > 0) {
+              const combined = Array.from(new Set([...this.cities, ...fetched]));
+              this.cities = combined.sort((a, b) => a.localeCompare(b));
+            }
+          }
+        },
+        () => {
+          // Use current default list
+        }
+      );
+  }
+
   //sort data
 
   sortData(sortBy: any) {
@@ -569,6 +819,82 @@ export class DoctorhospitallistComponent implements OnInit {
     }
   }
   result: any;
+
+  openExportDoctorDialog(): void {
+    const dialogRef = this.dialog.open(ExportDoctorDialogComponent, {
+      width: "540px",
+      panelClass: "custom-export-dialog",
+      data: {},
+    });
+
+    dialogRef.afterClosed().subscribe((result: ExportDoctorResult | null) => {
+      if (result) {
+        this.streamExportDoctors(result);
+      }
+    });
+  }
+
+  streamExportDoctors(options: ExportDoctorResult): void {
+    this.loader.start();
+    this.toastr.info("Preparing your doctors CSV export...", "Export Started");
+
+    const params: any = {
+      exportType: options.exportType,
+      specialization: this.specializationParam?.length ? this.specializationParam.join() : undefined,
+      cities: this.citiesParam?.length ? this.citiesParam.join() : undefined,
+      search: this.search?.value || undefined,
+      gender: this.genderParam || undefined,
+      minFees: this.minFeesParam || undefined,
+      maxFees: this.maxFeesParam || undefined,
+      approvalStatus: this.approvalStatusParam !== undefined && this.approvalStatusParam !== null ? this.approvalStatusParam : undefined,
+      status: this.statusParam !== undefined && this.statusParam !== null ? this.statusParam : undefined,
+      signupSource: this.signupSourceParam || undefined,
+    };
+
+    if (options.exportType === "dateRange") {
+      params.startDate = options.startDate;
+      params.endDate = options.endDate;
+    }
+
+    // Clean undefined/null/empty keys
+    Object.keys(params).forEach((key) => {
+      if (params[key] === null || params[key] === undefined || params[key] === "") {
+        delete params[key];
+      }
+    });
+
+    this.apiservice.DownloadBlob(URLConstant.exportDoctors, params).subscribe({
+      next: (blob: any) => {
+        this.loader.stop();
+        if (!blob || blob.size === 0) {
+          this.toastr.warning("No doctors found for the selected criteria.", "Export Empty");
+          return;
+        }
+
+        const filename =
+          options.exportType === "dateRange" && options.startDate && options.endDate
+            ? `Doctors_Export_${options.startDate}_to_${options.endDate}.csv`
+            : `Doctors_Export_All_${new Date().toISOString().slice(0, 10)}.csv`;
+
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+
+        this.toastr.success("Doctors CSV exported successfully!", "Success");
+      },
+      error: (err: any) => {
+        this.loader.stop();
+        console.error("Export error:", err);
+        this.toastr.error("Failed to export doctors. Please try again.", "Export Failed");
+      },
+    });
+  }
+
   downloadDoctorList(param?: any) {
     this.data = [];
     this.result = "";
@@ -577,6 +903,12 @@ export class DoctorhospitallistComponent implements OnInit {
       specialization: this.specializationParam.join(),
       cities: this.citiesParam.join(),
       search: this.search.value,
+      gender: this.genderParam,
+      minFees: this.minFeesParam,
+      maxFees: this.maxFeesParam,
+      approvalStatus: this.approvalStatusParam,
+      status: this.statusParam,
+      signupSource: this.signupSourceParam,
     };
     Object.keys(data).forEach((key) => {
       if (data[key] === null || data[key] === undefined || data[key] === "") {
@@ -597,6 +929,9 @@ export class DoctorhospitallistComponent implements OnInit {
               this.result[i]?.education?.[0]?.degree,
               this.result[i]?.doctorDetails?.phone,
               this.result[i]?.email,
+              this.extractProofUrls(this.result[i]?.medicalProof) || "N/A",
+              this.extractProofUrls(this.result[i]?.identityProof) || "N/A",
+              this.result[i]?.signupSource || "Web App",
               this.result[i]?.createdAt,
             ]);
           }
@@ -614,6 +949,9 @@ export class DoctorhospitallistComponent implements OnInit {
       hospitalType: this.hospitalParam.join(),
       city: this.citiesParam.join(),
       search: this.search.value,
+      approvalStatus: this.approvalStatusParam,
+      status: this.statusParam,
+      ownershipType: this.ownershipParam,
     };
     Object.keys(data).forEach((key) => {
       if (data[key] === null || data[key] === undefined || data[key] === "") {
@@ -663,46 +1001,46 @@ export class DoctorhospitallistComponent implements OnInit {
     "Degree",
     "Mobile",
     "Email",
+    "Medical Proof",
+    "Identity Proof URL",
+    "Source",
     "Joining Date",
   ];
+
+  extractProofUrls(proof: any): string {
+    if (!proof) return "";
+    if (typeof proof === "string") return proof;
+    if (Array.isArray(proof)) {
+      return proof
+        .map((p: any) => {
+          if (!p) return "";
+          if (typeof p === "string") return p.trim();
+          return (p.url || "").trim();
+        })
+        .filter((url: string) => !!url)
+        .join(", ");
+    }
+    if (typeof proof === "object" && proof.url) {
+      return String(proof.url).trim();
+    }
+    return "";
+  }
 
   activeInactiveHospital(status: any, id: any) {
     let param = {
       userId: id,
     };
-    this.apiservice.DeleteData(URLConstant.deleteHospital, param).subscribe(
-      (res: any) => {
-        this.toastr.success("Hospital has been marked for deletion");
-        this.hospitalList("");
-      },
-      (error: any) => {
-        this.toastr.error(error?.message || "Failed to update hospital status");
-      }
-    );
-  }
-  activeInactiveDoctor(status: any, id: any) {
-    let param = {
-      doctorId: id,
-    };
-    let data = {
-      isVerified:
-        status == 2
-          ? 5
-          : status == 5
-          ? 2
-          : status == 4
-          ? 2
-          : status == 3
-          ? 2
-          : status == 1
-          ? 2
-          : 5,
-    };
     this.apiservice
-      .patchData(URLConstant.activeInactiveDoctor, data, param)
-      .subscribe((res: any) => {
-        this.doctorList("", "");
-      });
+      .DeleteData(URLConstant.deleteHospital, param)
+      .subscribe(
+        (res: any) => {
+          this.toastr.success('Hospital has been marked for deletion');
+          this.hospitalList('');
+        },
+        (error: any) => {
+          this.toastr.error(error?.message || 'Failed to update hospital status');
+        }
+      );
   }
 
   toggleMedicalVerificationEdit(element: any) {
@@ -767,6 +1105,31 @@ export class DoctorhospitallistComponent implements OnInit {
           this.loader.stop();
           this.bulkStatusUpdating = false;
         },
+      });
+  }
+
+  activeInactiveDoctor(status: any, id: any) {
+    let param = {
+      doctorId: id,
+    };
+    let data = {
+      isVerified:
+        status == 2
+          ? 5
+          : status == 5
+          ? 2
+          : status == 4
+          ? 2
+          : status == 3
+          ? 2
+          : status == 1
+          ? 2
+          : 5,
+    };
+    this.apiservice
+      .patchData(URLConstant.activeInactiveDoctor, data, param)
+      .subscribe((res: any) => {
+        this.doctorList("", "");
       });
   }
 
@@ -1057,7 +1420,6 @@ export class DoctorhospitallistComponent implements OnInit {
     this.file = event.target.files[0];
     const formData = new FormData();
     formData.append("file", this.file, this.file.name);
-    console.log(formData);
     this.uploadFile.nativeElement.value = "";
     this.loader.start();
 
@@ -1080,8 +1442,11 @@ export class DoctorhospitallistComponent implements OnInit {
       });
   }
   redirectToDoctorDetails(details: any) {
-    let city = this.createSlug(details.localityDetails?.[0]?.address?.city);
-    const url = `${this.baseurl}${city}/doctor/${details.profileSlug}`;
+    const rawCity = details?.city || details?.localityDetails?.[0]?.address?.city || '';
+    const rawSlug = details?.profileSlug || details?.doctorDetails?.profileSlug || '';
+    if (!rawCity || !rawSlug) return;
+    let city = this.createSlug(rawCity);
+    const url = `${this.baseurl}${city}/doctor/${rawSlug}`;
     window.open(url, "_blank");
   }
 

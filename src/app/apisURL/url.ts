@@ -22,6 +22,10 @@ export class URLConstant {
   public static payoutsInitiate = "v1/admin/payouts";
   public static payoutsMark = "v1/admin/payouts/";            // append :id/mark
   public static payoutsCancel = "v1/admin/payouts/";          // append :id/cancel
+  public static payoutsInvoice = "v1/admin/payouts/";         // append :id/invoice
+  public static payoutsInvoicePreview = "v1/admin/payouts/";  // append :id/invoice/preview
+  public static payoutsInvoiceDownload = "v1/admin/payouts/"; // append :id/invoice/download
+  public static payoutsInvoiceReissue = "v1/admin/payouts/";  // append :id/invoice/reissue
 
   // Reconciliation reports
   public static reportsSummary = "v1/admin/reports/summary";
@@ -42,6 +46,7 @@ export class URLConstant {
   public static patientList = "v1/patient/admin";
   public static patientMedicalReports = "v1/medical-reports/admin/patient";
   public static doctorList = "v1/doctor/admin-doctor-list";
+  public static exportDoctors = "v1/doctor/admin-doctor-export";
   public static hospitalList = "v1/hospital/admin/list";
   public static importDoctorList = "v1/common/import/doctor";
   public static importHospitalList = "v1/common/import/hospital";
@@ -74,6 +79,12 @@ export class URLConstant {
   public static changeStatusHospital = "v1/hospital/admin-action-hospital";
   public static deletedpatientDoctorHospital =
     "v1/admin/get-all-user-type-status";
+  public static recycleBinList = "v1/admin/recycle-bin";
+  public static recycleBinRestore = "v1/admin/recycle-bin/restore/"; // append :id
+  public static recycleBinDeletePatient = "v1/admin/delete-users/"; // append :id
+  public static recycleBinDeleteDoctor = "v1/admin/delete-doctor-users/"; // append :id
+  public static recycleBinDeleteHospital = "v1/admin/delete-hospital-users/"; // append :id
+  public static recycleBinDeleteEstablishment = "v1/admin/delete-establishment-users/"; // append :id
   public static review = "v1/admin/feedbacks";
   public static reviewManagement = "v1/reviews/admin/manage/list";
   public static reviewManagementDetail = "v1/reviews/admin/manage";
@@ -188,6 +199,13 @@ export class URLConstant {
   public static supportTicketsList = "v1/admin/support-tickets";
   public static supportTicketDetail = "v1/admin/support-tickets/"; // append :id
   public static supportTicketStatus = "v1/admin/support-tickets/"; // append :id/status
+
+  // Push Notifications
+  public static pushNotificationBroadcast = "v1/push-notification/broadcast";
+  public static pushNotificationSendToUser = "v1/push-notification/send-to-user";
+  public static pushNotificationSendToSegment = "v1/push-notification/send-to-segment";
+  public static pushNotificationUsers = "v1/push-notification/users";
+  public static pushNotificationHistory = "v1/push-notification/history";
 
   //not in use
   public static deleteAccount = "v1/hospital/hospital-delete-account";

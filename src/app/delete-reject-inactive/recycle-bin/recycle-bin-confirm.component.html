@@ -1,0 +1,22 @@
+<div class="rb-confirm">
+  <div class="rb-confirm__header">
+    <h3>{{ data.title }}</h3>
+    <button type="button" class="rb-confirm__close" (click)="cancel()" aria-label="Close">&times;</button>
+  </div>
+  <div class="rb-confirm__body">
+    <p>{{ data.message }}</p>
+  </div>
+  <div class="rb-confirm__footer">
+    <button type="button" class="rb-confirm__btn rb-confirm__btn--cancel" (click)="cancel()" [disabled]="isBusy">
+      Cancel
+    </button>
+    <button
+      type="button"
+      class="rb-confirm__btn"
+      [ngClass]="data.confirmClass === 'primary' ? 'rb-confirm__btn--primary' : 'rb-confirm__btn--danger'"
+      (click)="confirm()"
+      [disabled]="isBusy">
+      {{ data.confirmLabel }}
+    </button>
+  </div>
+</div>

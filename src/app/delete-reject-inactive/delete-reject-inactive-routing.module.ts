@@ -4,31 +4,51 @@ import { DeleteRejectInactiveWrapperComponent } from './delete-reject-inactive-w
 import { DeletedComponent } from './deleted/deleted.component';
 import { RejectedComponent } from './rejected/rejected.component';
 import { InactiveComponent } from './inactive/inactive.component';
+import { RecycleBinComponent } from './recycle-bin/recycle-bin.component';
 
 const routes: Routes = [
   {
-    path:'',
-    component:DeleteRejectInactiveWrapperComponent,
-    children:[
+    path: '',
+    component: DeleteRejectInactiveWrapperComponent,
+    children: [
       {
-        path:'',
-        component:DeletedComponent
+        path: '',
+        component: RecycleBinComponent,
       },
       {
-        path:'rejected',
-        component:RejectedComponent
+        path: 'recycle-bin',
+        component: RecycleBinComponent,
       },
       {
-        path:'inactive',
-        component:InactiveComponent
-      }
-    ]
+        path: 'legacy/deleted',
+        component: DeletedComponent,
+      },
+      {
+        path: 'legacy/rejected',
+        component: RejectedComponent,
+      },
+      {
+        path: 'legacy/inactive',
+        component: InactiveComponent,
+      },
+      {
+        path: 'deleted',
+        component: DeletedComponent,
+      },
+      {
+        path: 'rejected',
+        component: RejectedComponent,
+      },
+      {
+        path: 'inactive',
+        component: InactiveComponent,
+      },
+    ],
   },
-  
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class DeleteRejectInactiveRoutingModule { }
+export class DeleteRejectInactiveRoutingModule {}

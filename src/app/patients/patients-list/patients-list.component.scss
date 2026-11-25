@@ -1,3 +1,5 @@
+@use "sass:color";
+
 @import "../../../assets/scss/main.scss";
 
 // ── Page Layout ──
@@ -106,7 +108,7 @@
   background: $purple;
   border-color: $purple;
   color: $white;
-  &:hover { background: darken($purple, 6%); }
+  &:hover { background: color.adjust($purple, $lightness: -6%); }
 }
 
 // ── Filter Slide Panel ──
@@ -283,7 +285,7 @@
   color: $white;
   @include font($primaryFont, 600, 13px);
   cursor: pointer;
-  &:hover { background: darken($purple, 6%); }
+  &:hover { background: color.adjust($purple, $lightness: -6%); }
 }
 
 // ── Table Card ──
@@ -311,7 +313,7 @@
 
 table {
   width: 100%;
-  min-width: 960px;
+  min-width: 1400px;
   border-collapse: collapse;
 
   thead tr {
@@ -396,6 +398,19 @@ table {
   max-width: 180px;
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.cell-doctor {
+  @include font($primaryFont, 500, 13px);
+  color: #555;
+}
+.cell-doctor-city {
+  @include font($primaryFont, 400, 13px);
+  color: #777;
+}
+.cell-datetime {
+  @include font($primaryFont, 400, 12px);
+  color: #666;
   white-space: nowrap;
 }
 

@@ -185,6 +185,11 @@ export class SidebarComponent {
       routerLink: `/${ROUTE_CONSTANT.THEME}/${ROUTE_CONSTANT.DELETE_REJECT_INACTIVE}`,
     },
     {
+      label: "Push Notifications",
+      icon: "assets/images/svg/bell.svg",
+      routerLink: `/${ROUTE_CONSTANT.THEME}/${ROUTE_CONSTANT.PUSH_NOTIFICATIONS}`,
+    },
+    {
       label: "SETTINGS",
       icon: "assets/images/svg/settings.svg",
       routerLink: `/${ROUTE_CONSTANT.THEME}/${ROUTE_CONSTANT.SETTINGS}`,

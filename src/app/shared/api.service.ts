@@ -85,4 +85,20 @@ export class ApiService {
       formData
     );
   }
+
+  DownloadBlob(endpoint: string, payload: any) {
+    let params = new HttpParams();
+    if (payload) {
+      Object.keys(payload).forEach((key) => {
+        if (payload[key] !== null && payload[key] !== undefined && payload[key] !== "") {
+          params = params.set(key, payload[key]);
+        }
+      });
+    }
+
+    return this.httpClient.get(`${this.url + endpoint}`, {
+      params: params,
+      responseType: "blob",
+    });
+  }
 }

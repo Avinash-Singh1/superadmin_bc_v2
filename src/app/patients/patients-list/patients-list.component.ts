@@ -208,7 +208,7 @@ export class PatientsListComponent implements OnInit {
   }
 
   // ── Export (fresh fetch) ──
-  header = ["Name", "Gender", "City", "Mobile", "Email", "Age", "Blood Group", "Doctor Name", "Doctor City", "Specialization"];
+  header = ["Name", "Gender", "City", "Mobile", "Email", "Age", "Blood Group", "Doctor Name", "Doctor City", "Specialization", "Created At"];
 
   exportToCSV() {
     const ageParam = this.ageLimit.filter((a) => a.selected).map((a) => a.value).join();
@@ -227,24 +227,24 @@ export class PatientsListComponent implements OnInit {
     });
     this.apiservice.GetData(URLConstant.patientList, param).subscribe((res: any) => {
       const result = res?.result?.data || [];
-      const rows = result.map((r: any) => [
-        r?.fullName || "N/A",
-        r?.gender == 1 ? "Male" : r?.gender == 2 ? "Female" : "N/A",
-        r?.address?.city || "N/A",
-        r?.phone || "N/A",
-        r?.email || "N/A",
-        r?.age || "N/A",
-        this.getBloodGroupLabel(r?.bloodGroup),
-        r?.doctorName || "N/A",
-        r?.doctorCity || "N/A",
-        r?.doctorSpecialization?.join(", ") || "N/A",
-      ]);
-      const wsData = [this.header, ...rows];
-      const ws = XLSX.utils.aoa_to_sheet(wsData);
+      const rows = result.map((r: any) => ({
+        Name: r?.fullName || "N/A",
+        Gender: r?.gender == 1 ? "Male" : r?.gender == 2 ? "Female" : "N/A",
+        City: r?.address?.city || "N/A",
+        Mobile: r?.phone || "N/A",
+        Email: r?.email || "N/A",
+        Age: r?.age || "N/A",
+        "Blood Group": this.getBloodGroupLabel(r?.bloodGroup),
+        "Doctor Name": r?.doctorName || "N/A",
+        "Doctor City": r?.doctorCity || "N/A",
+        "Specialization": r?.doctorSpecialization?.join(", ") || "N/A",
+        "Created At": this.formatDateTime(r?.createdAt),
+      }));
+      const ws = XLSX.utils.json_to_sheet(rows);
       ws['!cols'] = this.header.map((_: string, i: number) => {
         const maxLen = Math.max(
           this.header[i].length,
-          ...rows.map((row: any[]) => String(row[i] || '').length)
+          ...rows.map((row: any) => String(Object.values(row)[i] || '').length)
         );
         return { wch: Math.min(maxLen + 2, 40) };
       });
@@ -252,6 +252,21 @@ export class PatientsListComponent implements OnInit {
       XLSX.utils.book_append_sheet(wb, ws, 'Patients');
       XLSX.writeFile(wb, 'Patient_List.xlsx');
     });
+  }
+
+  formatDateTime(date: any): string {
+    if (!date || date === 'N/A') return 'N/A';
+    try {
+      const d = new Date(date);
+      const day = String(d.getDate()).padStart(2, '0');
+      const month = String(d.getMonth() + 1).padStart(2, '0');
+      const year = d.getFullYear();
+      const hours = String(d.getHours()).padStart(2, '0');
+      const minutes = String(d.getMinutes()).padStart(2, '0');
+      return `${day}/${month}/${year} ${hours}:${minutes}`;
+    } catch {
+      return 'N/A';
+    }
   }
 
   // ── Helpers ──

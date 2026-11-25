@@ -15,16 +15,20 @@ export class DeleteRejectInactiveWrapperComponent implements OnInit, OnDestroy {
   
   deleteRejectInactiveList: any = [
     {
-      link: 'Deleted',
+      link: 'Recycle Bin',
       routerLink: '/theme/delete-reject-inactive'
     },
     {
+      link: 'Deleted',
+      routerLink: '/theme/delete-reject-inactive/legacy/deleted'
+    },
+    {
       link: 'Rejected',
-      routerLink: '/theme/delete-reject-inactive/rejected'
+      routerLink: '/theme/delete-reject-inactive/legacy/rejected'
     },
     {
       link: 'Inactive',
-      routerLink: '/theme/delete-reject-inactive/inactive'
+      routerLink: '/theme/delete-reject-inactive/legacy/inactive'
     },
   ];
   

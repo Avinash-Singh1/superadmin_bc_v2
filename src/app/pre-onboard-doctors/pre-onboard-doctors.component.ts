@@ -22,6 +22,7 @@ export class PreOnboardDoctorsComponent implements OnInit {
   claimedCount = 0;
   page = 1;
   pageSize = 10;
+  pageSizeOptions: number[] = [10, 25, 50, 100];
   search = new FormControl("");
   baseUrl = environment.BASE_URL || "https://digiopd.com/";
 
@@ -89,6 +90,20 @@ export class PreOnboardDoctorsComponent implements OnInit {
   pageChanged(newPage: number): void {
     this.page = newPage;
     this.loadDoctors();
+  }
+
+  onPageSizeChange(size: number): void {
+    this.pageSize = Number(size) || 10;
+    this.page = 1;
+    this.loadDoctors();
+  }
+
+  get showingFrom(): number {
+    return this.totalDoctors ? (this.page - 1) * this.pageSize + 1 : 0;
+  }
+
+  get showingTo(): number {
+    return Math.min(this.page * this.pageSize, this.totalDoctors || 0);
   }
 
   openAddDoctorDialog(): void {

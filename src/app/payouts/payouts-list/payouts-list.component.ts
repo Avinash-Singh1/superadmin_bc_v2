@@ -43,6 +43,7 @@ interface PayoutRow {
   rzpStatus?: string | null;
   paymentIds?: string[];
   walletReverted?: boolean;
+  invoiceId?: string | null;
   createdAt: string;
   processedAt?: string | null;
   initiatedAt?: string | null;
@@ -59,10 +60,10 @@ interface PayoutSummaryTotals {
 }
 
 @Component({
-  selector: "app-payouts-list",
-  templateUrl: "./payouts-list.component.html",
-  styleUrls: ["./payouts-list.component.scss"],
-})
+    selector: "app-payouts-list",
+    templateUrl: "./payouts-list.component.html",
+    styleUrls: ["./payouts-list.component.scss"],
+    })
 export class PayoutsListComponent implements OnInit {
   readonly statuses = ["", "queued", "processing", "processed", "failed", "reversed", "cancelled"];
   readonly modes = ["IMPS", "NEFT", "UPI", "manual"];
@@ -93,6 +94,10 @@ export class PayoutsListComponent implements OnInit {
   selectedDetail: any = null;
   loadingDetail = false;
   acting = false;
+
+  // Invoice actions
+  invoiceLoading: { [payoutId: string]: boolean } = {};
+  reissuingInvoice = false;
 
   // Initiate dialog
   isInitiateModalOpen = false;
@@ -216,6 +221,7 @@ export class PayoutsListComponent implements OnInit {
     this.initiateNotes = "";
     this.initiateUseRzpx = false;
     this.initiateNarration = "";
+    // Pre-populate with eligible rows if available
     if (this.eligibleRows.length > 0) {
       this.doctorSearchResults = this.eligibleRows;
     } else {
@@ -435,6 +441,80 @@ export class PayoutsListComponent implements OnInit {
           this.snack.open("Failed to cancel", "Close", { duration: 3000 });
         },
       });
+  }
+
+  // ── Invoice actions ────────────────────────────────────────────────────
+  previewInvoice(payoutId?: string, event?: Event): void {
+    if (event) { event.stopPropagation(); }
+    const id = payoutId || this.selected?._id;
+    if (!id) return;
+
+    this.invoiceLoading[id] = true;
+    this.api.GetData(URLConstant.payoutsInvoicePreview + id + "/preview", {}).subscribe({
+      next: (res: any) => {
+        this.invoiceLoading[id] = false;
+        const url = res?.result?.url || res?.data?.url;
+        if (url) {
+          window.open(url, "_blank");
+        } else {
+          this.snack.open("Invoice preview URL not available", "Close", { duration: 3000 });
+        }
+      },
+      error: (err: any) => {
+        this.invoiceLoading[id] = false;
+        this.snack.open(err?.message || "Failed to load invoice preview", "Close", { duration: 3000 });
+      },
+    });
+  }
+
+  downloadInvoice(payoutId?: string, event?: Event): void {
+    if (event) { event.stopPropagation(); }
+    const id = payoutId || this.selected?._id;
+    if (!id) return;
+
+    this.invoiceLoading[id] = true;
+    this.api.GetData(URLConstant.payoutsInvoiceDownload + id + "/download", {}).subscribe({
+      next: (res: any) => {
+        this.invoiceLoading[id] = false;
+        const url = res?.result?.url || res?.data?.url;
+        const filename = res?.result?.filename || res?.data?.filename || "invoice.pdf";
+        if (url) {
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = filename;
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+        } else {
+          this.snack.open("Invoice download URL not available", "Close", { duration: 3000 });
+        }
+      },
+      error: (err: any) => {
+        this.invoiceLoading[id] = false;
+        this.snack.open(err?.message || "Failed to download invoice", "Close", { duration: 3000 });
+      },
+    });
+  }
+
+  reissueInvoice(payoutId?: string): void {
+    const id = payoutId || this.selected?._id;
+    if (!id) return;
+    if (!window.confirm("Regenerate and reissue invoice for this payout? This will create a new version of the GST tax invoice.")) {
+      return;
+    }
+
+    this.reissuingInvoice = true;
+    this.api.Postdata(URLConstant.payoutsInvoiceReissue + id + "/reissue", {}, {}).subscribe({
+      next: () => {
+        this.reissuingInvoice = false;
+        this.snack.open("Invoice reissued successfully", "Close", { duration: 3000 });
+        this.refreshAfterAction();
+      },
+      error: (err: any) => {
+        this.reissuingInvoice = false;
+        this.snack.open(err?.message || "Failed to reissue invoice", "Close", { duration: 3000 });
+      },
+    });
   }
 
   private refreshAfterAction(): void {

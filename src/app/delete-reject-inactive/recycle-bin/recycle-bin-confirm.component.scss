@@ -1,0 +1,76 @@
+.rb-confirm {
+  min-width: 360px;
+  max-width: 460px;
+  font-family: inherit;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 22px;
+    border-bottom: 1px solid #eef0f4;
+
+    h3 {
+      margin: 0;
+      font-size: 17px;
+      font-weight: 600;
+      color: #1f2937;
+    }
+  }
+
+  &__close {
+    background: transparent;
+    border: 0;
+    font-size: 24px;
+    line-height: 1;
+    color: #6b7280;
+    cursor: pointer;
+
+    &:hover { color: #111827; }
+  }
+
+  &__body {
+    padding: 20px 22px;
+    color: #374151;
+    font-size: 14px;
+    line-height: 1.5;
+
+    p { margin: 0; }
+  }
+
+  &__footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 14px 22px 18px;
+    border-top: 1px solid #eef0f4;
+  }
+
+  &__btn {
+    padding: 8px 18px;
+    border-radius: 6px;
+    border: 0;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s ease, opacity 0.15s ease;
+
+    &:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    &--cancel {
+      background: #f3f4f6;
+      color: #374151;
+      &:hover:not(:disabled) { background: #e5e7eb; }
+    }
+    &--danger {
+      background: #dc2626;
+      color: #fff;
+      &:hover:not(:disabled) { background: #b91c1c; }
+    }
+    &--primary {
+      background: #2563eb;
+      color: #fff;
+      &:hover:not(:disabled) { background: #1d4ed8; }
+    }
+  }
+}

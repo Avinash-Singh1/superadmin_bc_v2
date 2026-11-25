@@ -1,0 +1,946 @@
+<div class="push-hub">
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <!-- HEADER BANNER                                              -->
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <header class="push-hub__header">
+    <div class="push-hub__header-bg"></div>
+    <div class="push-hub__header-content">
+      <div class="push-hub__header-main">
+        <div class="push-hub__icon-wrapper">
+          <mat-icon>notifications_active</mat-icon>
+        </div>
+        <div class="push-hub__header-text">
+          <h1>Push Notification Dispatcher</h1>
+          <p>Send instant announcements and targeted messages to mobile & web app users via Firebase Cloud Messaging</p>
+        </div>
+      </div>
+
+      <div class="push-hub__badges">
+        <div class="push-hub__badge">
+          <span class="pulse-dot"></span>
+          <mat-icon class="badge-icon">cloud_queue</mat-icon>
+          <span>FCM Gateway Connected</span>
+        </div>
+        <div class="push-hub__badge">
+          <mat-icon class="badge-icon">devices</mat-icon>
+          <span>Android • iOS • Web</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <!-- ALERTS (SUCCESS / ERROR)                                   -->
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <div *ngIf="successMessage" class="push-hub__alert push-hub__alert--success" role="alert">
+    <mat-icon class="alert-icon">check_circle</mat-icon>
+    <div class="alert-body">
+      <strong>Success!</strong>
+      <span>{{ successMessage }}</span>
+    </div>
+    <button type="button" class="alert-dismiss" (click)="successMessage = ''" aria-label="Dismiss alert">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <div *ngIf="errorMessage" class="push-hub__alert push-hub__alert--error" role="alert">
+    <mat-icon class="alert-icon">error_outline</mat-icon>
+    <div class="alert-body">
+      <strong>Error:</strong>
+      <span>{{ errorMessage }}</span>
+    </div>
+    <button type="button" class="alert-dismiss" (click)="errorMessage = ''" aria-label="Dismiss alert">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <!-- MAIN WORKSPACE: COMPOSER + LIVE PREVIEW                   -->
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <div class="push-hub__layout">
+
+    <!-- ── LEFT COLUMN: TABS & FORM COMPOSER ──────────────── -->
+    <div class="push-hub__composer-card">
+
+      <!-- Navigation Tabs -->
+      <nav class="push-hub__nav-tabs">
+        <button
+          type="button"
+          class="push-hub__tab-btn"
+          [class.active]="selectedTab === 0"
+          (click)="selectedTab = 0; clearMessages()">
+          <mat-icon>campaign</mat-icon>
+          <span>Broadcast to All</span>
+          <span class="tab-pill">All Users</span>
+        </button>
+
+        <button
+          type="button"
+          class="push-hub__tab-btn"
+          [class.active]="selectedTab === 1"
+          (click)="selectedTab = 1; clearMessages()">
+          <mat-icon>person_search</mat-icon>
+          <span>Send to User</span>
+          <span class="tab-pill" [class.tab-pill--active]="selectedUser">
+            {{ selectedUser ? '1 Selected' : 'Search' }}
+          </span>
+        </button>
+
+        <button
+          type="button"
+          class="push-hub__tab-btn"
+          [class.active]="selectedTab === 2"
+          (click)="selectedTab = 2; clearMessages()">
+          <mat-icon>groups</mat-icon>
+          <span>Send to Segment</span>
+          <span class="tab-pill" [class.tab-pill--active]="selectedSegmentUsers.length > 0">
+            {{ selectedSegmentUsers.length }} Selected
+          </span>
+        </button>
+      </nav>
+
+      <!-- Quick Template Presets -->
+      <div class="push-hub__presets">
+        <span class="presets-label">
+          <mat-icon>auto_awesome</mat-icon>
+          Quick Presets:
+        </span>
+        <div class="presets-scroll">
+          <button
+            *ngFor="let template of presetTemplates"
+            type="button"
+            class="preset-chip"
+            (click)="applyPreset(template)">
+            <mat-icon class="preset-icon">{{ template.icon }}</mat-icon>
+            <span>{{ template.label }}</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- ════════════════════════════════════════════════════ -->
+      <!-- TAB 0: BROADCAST FORM                                -->
+      <!-- ════════════════════════════════════════════════════ -->
+      <div *ngIf="selectedTab === 0" class="composer-body">
+        <div class="tab-intro">
+          <div class="intro-icon intro-icon--broadcast">
+            <mat-icon>cell_tower</mat-icon>
+          </div>
+          <div>
+            <h3>Broadcast Message</h3>
+            <p>Dispatches a global notification to <strong>every registered device token</strong> (Patients & Doctors).</p>
+          </div>
+        </div>
+
+        <form [formGroup]="broadcastForm" (ngSubmit)="sendBroadcast()" class="form-grid">
+          <!-- Title -->
+          <div class="form-group">
+            <div class="form-group__label-row">
+              <label for="broadcast-title">Notification Title <span class="req">*</span></label>
+              <span class="char-count" [class.limit-warn]="(broadcastForm.get('title')?.value?.length || 0) > 180">
+                {{ broadcastForm.get('title')?.value?.length || 0 }} / 200
+              </span>
+            </div>
+            <div class="input-wrap" [class.input-error]="broadcastForm.get('title')?.touched && broadcastForm.get('title')?.invalid">
+              <mat-icon class="input-icon">title</mat-icon>
+              <input
+                id="broadcast-title"
+                type="text"
+                formControlName="title"
+                placeholder="e.g. 📢 Important Update: New Consultations Available"
+                maxlength="200"
+              />
+            </div>
+            <div *ngIf="broadcastForm.get('title')?.touched && broadcastForm.get('title')?.invalid" class="field-error">
+              Title is required (maximum 200 characters).
+            </div>
+          </div>
+
+          <!-- Body -->
+          <div class="form-group">
+            <div class="form-group__label-row">
+              <label for="broadcast-body">Notification Message <span class="req">*</span></label>
+              <span class="char-count" [class.limit-warn]="(broadcastForm.get('body')?.value?.length || 0) > 900">
+                {{ broadcastForm.get('body')?.value?.length || 0 }} / 1000
+              </span>
+            </div>
+            <div class="input-wrap input-wrap--textarea" [class.input-error]="broadcastForm.get('body')?.touched && broadcastForm.get('body')?.invalid">
+              <mat-icon class="input-icon textarea-icon">chat_bubble_outline</mat-icon>
+              <textarea
+                id="broadcast-body"
+                formControlName="body"
+                rows="4"
+                placeholder="Enter detailed message content here..."
+                maxlength="1000">
+              </textarea>
+            </div>
+            <div *ngIf="broadcastForm.get('body')?.touched && broadcastForm.get('body')?.invalid" class="field-error">
+              Message body is required (maximum 1000 characters).
+            </div>
+          </div>
+
+          <!-- Image URL -->
+          <div class="form-group">
+            <div class="form-group__label-row">
+              <label for="broadcast-image">Banner Image URL <span class="opt">(Optional)</span></label>
+            </div>
+            <div class="input-wrap" [class.input-error]="broadcastForm.get('imageUrl')?.touched && broadcastForm.get('imageUrl')?.invalid">
+              <mat-icon class="input-icon">image</mat-icon>
+              <input
+                id="broadcast-image"
+                type="url"
+                formControlName="imageUrl"
+                placeholder="https://example.com/promotions/banner.jpg"
+              />
+              <button
+                *ngIf="broadcastForm.get('imageUrl')?.value"
+                type="button"
+                class="input-clear"
+                (click)="broadcastForm.patchValue({ imageUrl: '' })">
+                <mat-icon>clear</mat-icon>
+              </button>
+            </div>
+            <div *ngIf="broadcastForm.get('imageUrl')?.touched && broadcastForm.get('imageUrl')?.invalid" class="field-error">
+              Please enter a valid HTTP/HTTPS image URL (JPG, PNG, WEBP, GIF).
+            </div>
+          </div>
+
+          <!-- Device Type -->
+          <div class="form-group">
+            <div class="form-group__label-row">
+              <label>Target Platform <span class="opt">(Optional)</span></label>
+            </div>
+            <div class="platform-chip-row">
+              <button
+                *ngFor="let dev of deviceTypeOptions"
+                type="button"
+                class="platform-chip"
+                [class.active]="broadcastForm.get('deviceType')?.value === dev.value"
+                (click)="broadcastForm.patchValue({ deviceType: dev.value })">
+                {{ dev.label }}
+              </button>
+            </div>
+          </div>
+
+          <!-- Form Actions -->
+          <div class="form-actions">
+            <button
+              type="button"
+              class="btn btn--outline"
+              (click)="clearActiveForm()"
+              [disabled]="loading">
+              <mat-icon>restart_alt</mat-icon>
+              Reset
+            </button>
+
+            <button
+              type="submit"
+              class="btn btn--primary"
+              [disabled]="broadcastForm.invalid || loading">
+              <mat-progress-spinner *ngIf="loading" diameter="18" mode="indeterminate" class="btn-spinner"></mat-progress-spinner>
+              <mat-icon *ngIf="!loading">send</mat-icon>
+              <span>{{ loading ? 'Broadcasting...' : 'Send Broadcast Notification' }}</span>
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- ════════════════════════════════════════════════════ -->
+      <!-- TAB 1: SEND TO USER (WITH AUTOSUGGESTION)            -->
+      <!-- ════════════════════════════════════════════════════ -->
+      <div *ngIf="selectedTab === 1" class="composer-body">
+        <div class="tab-intro">
+          <div class="intro-icon intro-icon--user">
+            <mat-icon>person</mat-icon>
+          </div>
+          <div>
+            <h3>Direct User Notification</h3>
+            <p>Search and select a specific patient or doctor by <strong>Name</strong> or <strong>Phone Number</strong>.</p>
+          </div>
+        </div>
+
+        <form [formGroup]="sendToUserForm" (ngSubmit)="sendToUser()" class="form-grid">
+
+          <!-- ── User Search & Selection Area ──────────────── -->
+          <div class="form-group user-picker-group">
+            <div class="form-group__label-row">
+              <label>Target Recipient <span class="req">*</span></label>
+              <span *ngIf="selectedUser" class="recipient-selected-badge">
+                <mat-icon>verified</mat-icon> User Selected
+              </span>
+            </div>
+
+            <!-- Selected User Card View -->
+            <div *ngIf="selectedUser" class="selected-user-card">
+              <div class="user-avatar" [style.background-color]="getAvatarColor(selectedUser.fullName)">
+                {{ getUserInitials(selectedUser.fullName) }}
+              </div>
+              <div class="user-details">
+                <div class="user-name-row">
+                  <h4 class="user-fullname">{{ selectedUser.fullName }}</h4>
+                  <span class="role-badge" [ngClass]="getUserRoleClass(selectedUser.userTypeLabel)">
+                    {{ selectedUser.userTypeLabel || 'User' }}
+                  </span>
+                </div>
+                <div class="user-meta-row">
+                  <span class="user-phone">
+                    <mat-icon class="meta-icon">phone</mat-icon>
+                    {{ selectedUser.countryCode || '+91' }} {{ selectedUser.phone || 'No phone' }}
+                  </span>
+                  <span class="user-id-code">
+                    <mat-icon class="meta-icon">fingerprint</mat-icon>
+                    ID: {{ selectedUser._id }}
+                  </span>
+                </div>
+              </div>
+              <button
+                type="button"
+                class="btn-change-user"
+                (click)="onClearSelectedUser()"
+                title="Change or re-select user">
+                <mat-icon>swap_horiz</mat-icon>
+                <span>Change</span>
+              </button>
+            </div>
+
+            <!-- User Search Bar (Shown when no user is selected) -->
+            <div *ngIf="!selectedUser" class="user-search-container">
+              <div class="role-filter-row">
+                <button
+                  *ngFor="let r of roleFilters"
+                  type="button"
+                  class="role-filter-chip"
+                  [class.active]="userRoleFilter === r.value"
+                  (click)="onUserRoleFilterChange(r.value)">
+                  {{ r.label }}
+                </button>
+              </div>
+              <div class="input-wrap user-search-input-wrap" [class.input-wrap--focused]="userSearchFocus">
+                <mat-icon class="input-icon">person_search</mat-icon>
+                <input
+                  type="text"
+                  [formControl]="userSearchControl"
+                  (focus)="userSearchFocus = true"
+                  placeholder="Type user name or phone number to search..."
+                  autocomplete="off"
+                />
+                <mat-progress-spinner
+                  *ngIf="userSearching"
+                  diameter="18"
+                  mode="indeterminate"
+                  class="search-spinner">
+                </mat-progress-spinner>
+                <button
+                  *ngIf="userSearchControl.value && !userSearching"
+                  type="button"
+                  class="input-clear"
+                  (click)="userSearchControl.setValue('')">
+                  <mat-icon>clear</mat-icon>
+                </button>
+              </div>
+
+              <!-- Autosuggestion Dropdown List -->
+              <div class="user-suggestions-panel">
+                <div class="suggestions-header">
+                  <span>{{ userSearchResults.length > 0 ? 'Suggested Users' : (userSearching ? 'Searching...' : 'No users found') }}</span>
+                  <small *ngIf="userSearchResults.length > 0">Click to select recipient</small>
+                </div>
+
+                <div class="suggestions-list">
+                  <div
+                    *ngFor="let user of userSearchResults"
+                    class="suggestion-item"
+                    (click)="onSelectUser(user)">
+                    <div class="user-avatar user-avatar--sm" [style.background-color]="getAvatarColor(user.fullName)">
+                      {{ getUserInitials(user.fullName) }}
+                    </div>
+                    <div class="suggestion-info">
+                      <div class="suggestion-top">
+                        <span class="suggestion-name">{{ user.fullName }}</span>
+                        <span class="role-badge role-badge--sm" [ngClass]="getUserRoleClass(user.userTypeLabel)">
+                          {{ user.userTypeLabel || 'User' }}
+                        </span>
+                      </div>
+                      <div class="suggestion-bottom">
+                        <span class="suggestion-phone">
+                          <mat-icon class="mini-icon">phone</mat-icon>
+                          {{ user.countryCode || '+91' }} {{ user.phone }}
+                        </span>
+                        <span class="suggestion-id">ID: {{ user._id.substring(0, 10) }}...</span>
+                      </div>
+                    </div>
+                    <mat-icon class="select-arrow-icon">chevron_right</mat-icon>
+                  </div>
+
+                  <div *ngIf="!userSearching && userSearchResults.length === 0" class="no-results-box">
+                    <mat-icon>search_off</mat-icon>
+                    <span>No users match "{{ userSearchControl.value }}". Try another name or phone number.</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div *ngIf="sendToUserForm.get('userId')?.touched && sendToUserForm.get('userId')?.invalid && !selectedUser" class="field-error">
+              Please search and select a user recipient from the suggestions.
+            </div>
+          </div>
+
+          <!-- Title -->
+          <div class="form-group">
+            <div class="form-group__label-row">
+              <label for="user-title">Notification Title <span class="req">*</span></label>
+              <span class="char-count" [class.limit-warn]="(sendToUserForm.get('title')?.value?.length || 0) > 180">
+                {{ sendToUserForm.get('title')?.value?.length || 0 }} / 200
+              </span>
+            </div>
+            <div class="input-wrap" [class.input-error]="sendToUserForm.get('title')?.touched && sendToUserForm.get('title')?.invalid">
+              <mat-icon class="input-icon">title</mat-icon>
+              <input
+                id="user-title"
+                type="text"
+                formControlName="title"
+                placeholder="e.g. Your Consultation is Confirmed"
+                maxlength="200"
+              />
+            </div>
+            <div *ngIf="sendToUserForm.get('title')?.touched && sendToUserForm.get('title')?.invalid" class="field-error">
+              Title is required (maximum 200 characters).
+            </div>
+          </div>
+
+          <!-- Body -->
+          <div class="form-group">
+            <div class="form-group__label-row">
+              <label for="user-body">Notification Message <span class="req">*</span></label>
+              <span class="char-count" [class.limit-warn]="(sendToUserForm.get('body')?.value?.length || 0) > 900">
+                {{ sendToUserForm.get('body')?.value?.length || 0 }} / 1000
+              </span>
+            </div>
+            <div class="input-wrap input-wrap--textarea" [class.input-error]="sendToUserForm.get('body')?.touched && sendToUserForm.get('body')?.invalid">
+              <mat-icon class="input-icon textarea-icon">chat_bubble_outline</mat-icon>
+              <textarea
+                id="user-body"
+                formControlName="body"
+                rows="4"
+                placeholder="Enter personal notification message..."
+                maxlength="1000">
+              </textarea>
+            </div>
+            <div *ngIf="sendToUserForm.get('body')?.touched && sendToUserForm.get('body')?.invalid" class="field-error">
+              Message body is required (maximum 1000 characters).
+            </div>
+          </div>
+
+          <!-- Image URL -->
+          <div class="form-group">
+            <div class="form-group__label-row">
+              <label for="user-image">Banner Image URL <span class="opt">(Optional)</span></label>
+            </div>
+            <div class="input-wrap" [class.input-error]="sendToUserForm.get('imageUrl')?.touched && sendToUserForm.get('imageUrl')?.invalid">
+              <mat-icon class="input-icon">image</mat-icon>
+              <input
+                id="user-image"
+                type="url"
+                formControlName="imageUrl"
+                placeholder="https://example.com/user-attachment.jpg"
+              />
+              <button
+                *ngIf="sendToUserForm.get('imageUrl')?.value"
+                type="button"
+                class="input-clear"
+                (click)="sendToUserForm.patchValue({ imageUrl: '' })">
+                <mat-icon>clear</mat-icon>
+              </button>
+            </div>
+            <div *ngIf="sendToUserForm.get('imageUrl')?.touched && sendToUserForm.get('imageUrl')?.invalid" class="field-error">
+              Please enter a valid HTTP/HTTPS image URL (JPG, PNG, WEBP, GIF).
+            </div>
+          </div>
+
+          <!-- Device Type -->
+          <div class="form-group">
+            <div class="form-group__label-row">
+              <label>Target Platform <span class="opt">(Optional)</span></label>
+            </div>
+            <div class="platform-chip-row">
+              <button
+                *ngFor="let dev of deviceTypeOptions"
+                type="button"
+                class="platform-chip"
+                [class.active]="sendToUserForm.get('deviceType')?.value === dev.value"
+                (click)="sendToUserForm.patchValue({ deviceType: dev.value })">
+                {{ dev.label }}
+              </button>
+            </div>
+          </div>
+
+          <!-- Form Actions -->
+          <div class="form-actions">
+            <button
+              type="button"
+              class="btn btn--outline"
+              (click)="clearActiveForm()"
+              [disabled]="loading">
+              <mat-icon>restart_alt</mat-icon>
+              Reset
+            </button>
+
+            <button
+              type="submit"
+              class="btn btn--primary"
+              [disabled]="sendToUserForm.invalid || loading">
+              <mat-progress-spinner *ngIf="loading" diameter="18" mode="indeterminate" class="btn-spinner"></mat-progress-spinner>
+              <mat-icon *ngIf="!loading">send</mat-icon>
+              <span>{{ loading ? 'Sending...' : 'Send to User' }}</span>
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- ════════════════════════════════════════════════════ -->
+      <!-- TAB 2: SEND TO SEGMENT (MULTI-USER PICKER)           -->
+      <!-- ════════════════════════════════════════════════════ -->
+      <div *ngIf="selectedTab === 2" class="composer-body">
+        <div class="tab-intro">
+          <div class="intro-icon intro-icon--segment">
+            <mat-icon>group_add</mat-icon>
+          </div>
+          <div>
+            <h3>User Segment Notification</h3>
+            <p>Select multiple targeted users by <strong>Name</strong> or <strong>Phone Number</strong> without manually typing IDs.</p>
+          </div>
+        </div>
+
+        <form [formGroup]="sendToSegmentForm" (ngSubmit)="sendToSegment()" class="form-grid">
+
+          <!-- ── Multi-User Picker Container ────────────────── -->
+          <div class="form-group segment-picker-group">
+            <div class="form-group__label-row">
+              <label>Select Target Recipients <span class="req">*</span></label>
+              <div class="segment-counter-actions">
+                <span class="selected-count-badge" [class.selected-count-badge--has]="selectedSegmentUsers.length > 0">
+                  {{ selectedSegmentUsers.length }} User{{ selectedSegmentUsers.length === 1 ? '' : 's' }} Selected
+                </span>
+                <button
+                  *ngIf="selectedSegmentUsers.length > 0"
+                  type="button"
+                  class="btn-text-action btn-text-action--danger"
+                  (click)="onClearAllSegmentUsers()">
+                  Clear All
+                </button>
+              </div>
+            </div>
+
+            <!-- Selected Users Chips Container -->
+            <div *ngIf="selectedSegmentUsers.length > 0" class="selected-chips-box">
+              <div
+                *ngFor="let user of selectedSegmentUsers"
+                class="user-chip-pill">
+                <span class="chip-avatar" [style.background-color]="getAvatarColor(user.fullName)">
+                  {{ getUserInitials(user.fullName) }}
+                </span>
+                <div class="chip-text">
+                  <span class="chip-name">{{ user.fullName }}</span>
+                  <span class="chip-phone">{{ user.phone }}</span>
+                </div>
+                <button
+                  type="button"
+                  class="chip-remove"
+                  (click)="onRemoveSegmentUser(user._id)"
+                  aria-label="Remove user">
+                  <mat-icon>close</mat-icon>
+                </button>
+              </div>
+            </div>
+
+            <!-- Search & Add Bar -->
+            <div class="segment-search-box">
+              <div class="role-filter-row">
+                <button
+                  *ngFor="let r of roleFilters"
+                  type="button"
+                  class="role-filter-chip"
+                  [class.active]="segmentRoleFilter === r.value"
+                  (click)="onSegmentRoleFilterChange(r.value)">
+                  {{ r.label }}
+                </button>
+              </div>
+              <div class="input-wrap user-search-input-wrap" [class.input-wrap--focused]="segmentSearchFocus">
+                <mat-icon class="input-icon">person_search</mat-icon>
+                <input
+                  type="text"
+                  [formControl]="segmentSearchControl"
+                  (focus)="segmentSearchFocus = true"
+                  placeholder="Search user by name or phone to add to segment..."
+                  autocomplete="off"
+                />
+                <mat-progress-spinner
+                  *ngIf="segmentSearching"
+                  diameter="18"
+                  mode="indeterminate"
+                  class="search-spinner">
+                </mat-progress-spinner>
+                <button
+                  *ngIf="segmentSearchControl.value && !segmentSearching"
+                  type="button"
+                  class="input-clear"
+                  (click)="segmentSearchControl.setValue('')">
+                  <mat-icon>clear</mat-icon>
+                </button>
+              </div>
+
+              <!-- Segment Search Suggestions with Quick Add -->
+              <div class="user-suggestions-panel segment-suggestions-panel">
+                <div class="suggestions-header">
+                  <span>{{ segmentSearchResults.length > 0 ? 'Search Results' : (segmentSearching ? 'Searching...' : 'No users found') }}</span>
+                  <div class="suggestions-header-actions" *ngIf="segmentSearchResults.length > 0">
+                    <button
+                      type="button"
+                      class="btn-text-action"
+                      (click)="onSelectAllSegmentResults()">
+                      + Add All Visible ({{ segmentSearchResults.length }})
+                    </button>
+                  </div>
+                </div>
+
+                <div class="suggestions-list suggestions-list--segment">
+                  <div
+                    *ngFor="let user of segmentSearchResults"
+                    class="suggestion-item suggestion-item--segment"
+                    [class.suggestion-item--selected]="isUserSelectedInSegment(user._id)"
+                    (click)="onToggleSegmentUser(user)">
+                    <div class="user-avatar user-avatar--sm" [style.background-color]="getAvatarColor(user.fullName)">
+                      {{ getUserInitials(user.fullName) }}
+                    </div>
+                    <div class="suggestion-info">
+                      <div class="suggestion-top">
+                        <span class="suggestion-name">{{ user.fullName }}</span>
+                        <span class="role-badge role-badge--sm" [ngClass]="getUserRoleClass(user.userTypeLabel)">
+                          {{ user.userTypeLabel || 'User' }}
+                        </span>
+                      </div>
+                      <div class="suggestion-bottom">
+                        <span class="suggestion-phone">
+                          <mat-icon class="mini-icon">phone</mat-icon>
+                          {{ user.countryCode || '+91' }} {{ user.phone }}
+                        </span>
+                        <span class="suggestion-id">ID: {{ user._id.substring(0, 10) }}...</span>
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      class="btn-add-tag"
+                      [class.btn-add-tag--added]="isUserSelectedInSegment(user._id)">
+                      <mat-icon>{{ isUserSelectedInSegment(user._id) ? 'check' : 'add' }}</mat-icon>
+                      <span>{{ isUserSelectedInSegment(user._id) ? 'Added' : 'Add' }}</span>
+                    </button>
+                  </div>
+
+                  <div *ngIf="!segmentSearching && segmentSearchResults.length === 0" class="no-results-box">
+                    <mat-icon>search_off</mat-icon>
+                    <span>No users match "{{ segmentSearchControl.value }}". Try another name or phone number.</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Advanced Manual ID Paste Fallback Toggle -->
+            <div class="manual-id-toggle-row">
+              <button
+                type="button"
+                class="btn-toggle-manual"
+                (click)="showManualSegmentIds = !showManualSegmentIds">
+                <mat-icon>{{ showManualSegmentIds ? 'keyboard_arrow_up' : 'keyboard_arrow_down' }}</mat-icon>
+                <span>{{ showManualSegmentIds ? 'Hide Direct ID Paste Option' : 'Advanced: Paste Comma-Separated User IDs' }}</span>
+              </button>
+            </div>
+
+            <div *ngIf="showManualSegmentIds" class="manual-ids-container">
+              <div class="input-wrap input-wrap--textarea">
+                <textarea
+                  [formControl]="manualIdsControl"
+                  rows="2"
+                  placeholder="Paste comma-separated 24-character ObjectIds (e.g. 64a3f..., 64b2c...)">
+                </textarea>
+              </div>
+              <div class="manual-ids-actions">
+                <small>Auto-syncs with selected users list above.</small>
+                <button
+                  type="button"
+                  class="btn btn--sm btn--outline"
+                  (click)="onManualIdsApply()">
+                  Apply ID List
+                </button>
+              </div>
+            </div>
+
+            <div *ngIf="sendToSegmentForm.get('userIds')?.touched && sendToSegmentForm.get('userIds')?.invalid && selectedSegmentUsers.length === 0" class="field-error">
+              Please select at least one user recipient for the segment.
+            </div>
+          </div>
+
+          <!-- Title -->
+          <div class="form-group">
+            <div class="form-group__label-row">
+              <label for="segment-title">Notification Title <span class="req">*</span></label>
+              <span class="char-count" [class.limit-warn]="(sendToSegmentForm.get('title')?.value?.length || 0) > 180">
+                {{ sendToSegmentForm.get('title')?.value?.length || 0 }} / 200
+              </span>
+            </div>
+            <div class="input-wrap" [class.input-error]="sendToSegmentForm.get('title')?.touched && sendToSegmentForm.get('title')?.invalid">
+              <mat-icon class="input-icon">title</mat-icon>
+              <input
+                id="segment-title"
+                type="text"
+                formControlName="title"
+                placeholder="e.g. 🎉 Special Healthcare Benefit for You"
+                maxlength="200"
+              />
+            </div>
+            <div *ngIf="sendToSegmentForm.get('title')?.touched && sendToSegmentForm.get('title')?.invalid" class="field-error">
+              Title is required (maximum 200 characters).
+            </div>
+          </div>
+
+          <!-- Body -->
+          <div class="form-group">
+            <div class="form-group__label-row">
+              <label for="segment-body">Notification Message <span class="req">*</span></label>
+              <span class="char-count" [class.limit-warn]="(sendToSegmentForm.get('body')?.value?.length || 0) > 900">
+                {{ sendToSegmentForm.get('body')?.value?.length || 0 }} / 1000
+              </span>
+            </div>
+            <div class="input-wrap input-wrap--textarea" [class.input-error]="sendToSegmentForm.get('body')?.touched && sendToSegmentForm.get('body')?.invalid">
+              <mat-icon class="input-icon textarea-icon">chat_bubble_outline</mat-icon>
+              <textarea
+                id="segment-body"
+                formControlName="body"
+                rows="4"
+                placeholder="Enter message for this group of users..."
+                maxlength="1000">
+              </textarea>
+            </div>
+            <div *ngIf="sendToSegmentForm.get('body')?.touched && sendToSegmentForm.get('body')?.invalid" class="field-error">
+              Message body is required (maximum 1000 characters).
+            </div>
+          </div>
+
+          <!-- Image URL -->
+          <div class="form-group">
+            <div class="form-group__label-row">
+              <label for="segment-image">Banner Image URL <span class="opt">(Optional)</span></label>
+            </div>
+            <div class="input-wrap" [class.input-error]="sendToSegmentForm.get('imageUrl')?.touched && sendToSegmentForm.get('imageUrl')?.invalid">
+              <mat-icon class="input-icon">image</mat-icon>
+              <input
+                id="segment-image"
+                type="url"
+                formControlName="imageUrl"
+                placeholder="https://example.com/segment-banner.jpg"
+              />
+              <button
+                *ngIf="sendToSegmentForm.get('imageUrl')?.value"
+                type="button"
+                class="input-clear"
+                (click)="sendToSegmentForm.patchValue({ imageUrl: '' })">
+                <mat-icon>clear</mat-icon>
+              </button>
+            </div>
+            <div *ngIf="sendToSegmentForm.get('imageUrl')?.touched && sendToSegmentForm.get('imageUrl')?.invalid" class="field-error">
+              Please enter a valid HTTP/HTTPS image URL (JPG, PNG, WEBP, GIF).
+            </div>
+          </div>
+
+          <!-- Device Type -->
+          <div class="form-group">
+            <div class="form-group__label-row">
+              <label>Target Platform <span class="opt">(Optional)</span></label>
+            </div>
+            <div class="platform-chip-row">
+              <button
+                *ngFor="let dev of deviceTypeOptions"
+                type="button"
+                class="platform-chip"
+                [class.active]="sendToSegmentForm.get('deviceType')?.value === dev.value"
+                (click)="sendToSegmentForm.patchValue({ deviceType: dev.value })">
+                {{ dev.label }}
+              </button>
+            </div>
+          </div>
+
+          <!-- Form Actions -->
+          <div class="form-actions">
+            <button
+              type="button"
+              class="btn btn--outline"
+              (click)="clearActiveForm()"
+              [disabled]="loading">
+              <mat-icon>restart_alt</mat-icon>
+              Reset
+            </button>
+
+            <button
+              type="submit"
+              class="btn btn--primary"
+              [disabled]="sendToSegmentForm.invalid || loading">
+              <mat-progress-spinner *ngIf="loading" diameter="18" mode="indeterminate" class="btn-spinner"></mat-progress-spinner>
+              <mat-icon *ngIf="!loading">send</mat-icon>
+              <span>{{ loading ? 'Sending...' : 'Send to ' + selectedSegmentUsers.length + ' User(s)' }}</span>
+            </button>
+          </div>
+        </form>
+      </div>
+
+    </div>
+
+    <!-- ── RIGHT COLUMN: INTERACTIVE DEVICE LIVE PREVIEW ───── -->
+    <aside class="push-hub__preview-panel">
+      <div class="device-preview-card">
+        <div class="preview-header">
+          <div class="preview-title-row">
+            <mat-icon class="preview-sparkle">phone_iphone</mat-icon>
+            <h4>Live Device Simulator</h4>
+          </div>
+          <div class="preview-controls">
+            <button
+              type="button"
+              class="preview-toggle-btn"
+              [class.active]="previewPlatform === 'android'"
+              (click)="previewPlatform = 'android'"
+              title="Android notification style">
+              Android
+            </button>
+            <button
+              type="button"
+              class="preview-toggle-btn"
+              [class.active]="previewPlatform === 'ios'"
+              (click)="previewPlatform = 'ios'"
+              title="iOS lockscreen banner style">
+              iOS
+            </button>
+          </div>
+        </div>
+
+        <div class="preview-recipient-banner">
+          <mat-icon class="target-icon">gps_fixed</mat-icon>
+          <div class="target-text">
+            <span class="target-sub">TARGET AUDIENCE</span>
+            <span class="target-name">{{ currentTargetSummary }}</span>
+          </div>
+        </div>
+
+        <!-- Phone Shell Mockup -->
+        <div class="phone-shell" [ngClass]="'phone-shell--' + previewPlatform">
+          <!-- Status Bar -->
+          <div class="phone-status-bar">
+            <span class="phone-time">9:41</span>
+            <div class="phone-notch"></div>
+            <div class="phone-icons">
+              <mat-icon class="mini-status-icon">signal_cellular_4_bar</mat-icon>
+              <mat-icon class="mini-status-icon">wifi</mat-icon>
+              <mat-icon class="mini-status-icon">battery_full</mat-icon>
+            </div>
+          </div>
+
+          <!-- Notification Banner Bubble -->
+          <div class="phone-notification-bubble" [ngClass]="'phone-notification-bubble--' + previewPlatform">
+            <div class="bubble-header">
+              <div class="bubble-app-brand">
+                <div class="app-icon-badge">
+                  <mat-icon>local_hospital</mat-icon>
+                </div>
+                <span class="app-name">Nectar Plus</span>
+                <span class="bullet">•</span>
+                <span class="time-ago">now</span>
+              </div>
+              <mat-icon class="expand-icon">expand_more</mat-icon>
+            </div>
+
+            <div class="bubble-body">
+              <h5 class="bubble-title">{{ currentTitle }}</h5>
+              <p class="bubble-text">{{ currentBody }}</p>
+            </div>
+
+            <!-- Banner Image Preview if valid -->
+            <div *ngIf="currentImageUrl" class="bubble-image-container">
+              <img
+                [src]="currentImageUrl"
+                alt="Notification banner"
+                (error)="imageLoadError = true"
+                (load)="imageLoadError = false"
+                [class.img-hidden]="imageLoadError"
+              />
+              <div *ngIf="imageLoadError" class="image-error-tag">
+                <mat-icon>broken_image</mat-icon>
+                <span>Image URL failed to load</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Phone Footer Bar -->
+          <div class="phone-home-indicator"></div>
+        </div>
+
+        <!-- Meta Information Card -->
+        <div class="preview-meta-box">
+          <div class="meta-item">
+            <span class="meta-label">Payload Type</span>
+            <span class="meta-val">{{ selectedTab === 0 ? 'Global Broadcast' : (selectedTab === 1 ? 'Direct FCM Push' : 'Multicast Segment') }}</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Priority</span>
+            <span class="meta-val meta-val--high">High (Immediate)</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Rich Media</span>
+            <span class="meta-val">{{ currentImageUrl ? 'Image Attached' : 'Text Only' }}</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <!-- RECENT DISPATCH HISTORY                                    -->
+  <!-- ══════════════════════════════════════════════════════════ -->
+  <section class="push-hub__history-card">
+    <div class="history-header">
+      <div class="history-title-wrap">
+        <mat-icon>history</mat-icon>
+        <div>
+          <h3>Recent Dispatches</h3>
+          <p>Latest push notifications sent from the admin console</p>
+        </div>
+      </div>
+      <button type="button" class="btn btn--sm btn--outline" (click)="loadHistory()" [disabled]="historyLoading">
+        <mat-icon>refresh</mat-icon>
+        <span>{{ historyLoading ? 'Refreshing...' : 'Refresh' }}</span>
+      </button>
+    </div>
+
+    <div *ngIf="historyLoading && historyItems.length === 0" class="history-empty">
+      <mat-progress-spinner diameter="24" mode="indeterminate"></mat-progress-spinner>
+      <span>Loading dispatch history...</span>
+    </div>
+
+    <div *ngIf="!historyLoading && historyItems.length === 0" class="history-empty">
+      <mat-icon>notifications_none</mat-icon>
+      <span>No push notifications dispatched yet.</span>
+    </div>
+
+    <div *ngIf="historyItems.length > 0" class="history-list">
+      <div *ngFor="let item of historyItems" class="history-row">
+        <div class="history-row__main">
+          <div class="history-row__top">
+            <span class="history-badge" [ngClass]="'history-badge--' + item.targetType">
+              {{ item.targetType === 'broadcast' ? 'Broadcast' : (item.targetType === 'user' ? 'Direct User' : 'Segment (' + item.recipientsCount + ')') }}
+            </span>
+            <h5 class="history-row__title">{{ item.title }}</h5>
+          </div>
+          <p class="history-row__body">{{ item.body }}</p>
+        </div>
+        <span class="history-row__time">{{ item.createdAt | date: 'dd MMM yyyy, h:mm a' }}</span>
+      </div>
+    </div>
+  </section>
+</div>

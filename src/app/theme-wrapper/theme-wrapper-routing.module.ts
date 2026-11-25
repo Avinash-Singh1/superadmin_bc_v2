@@ -124,6 +124,13 @@ const routes: Routes = [
           ),
       },
       {
+        path: ROUTE_CONSTANT.PUSH_NOTIFICATIONS,
+        loadChildren: () =>
+          import("../push-notifications/push-notifications.module").then(
+            (m) => m.PushNotificationsModule
+          ),
+      },
+      {
         path: "blog-management",
         loadChildren: () =>
           import("../blog-management/blog-management.module").then(

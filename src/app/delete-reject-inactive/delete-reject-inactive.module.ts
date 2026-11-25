@@ -6,6 +6,8 @@ import { DeleteRejectInactiveWrapperComponent } from './delete-reject-inactive-w
 import { DeletedComponent } from './deleted/deleted.component';
 import { RejectedComponent } from './rejected/rejected.component';
 import { InactiveComponent } from './inactive/inactive.component';
+import { RecycleBinComponent } from './recycle-bin/recycle-bin.component';
+import { RecycleBinConfirmComponent } from './recycle-bin/recycle-bin-confirm.component';
 import { MaterialModule } from '../material/material';
 import { ThemeWrapperModule } from '../theme-wrapper/theme-wrapper.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -19,7 +21,8 @@ import { MatIconModule } from '@angular/material/icon';
     DeletedComponent,
     RejectedComponent,
     InactiveComponent,
-    
+    RecycleBinComponent,
+    RecycleBinConfirmComponent,
   ],
   imports: [
     CommonModule,
@@ -29,9 +32,8 @@ import { MatIconModule } from '@angular/material/icon';
     FormsModule,
     ReactiveFormsModule,
     MatIconModule,
-    NgxPaginationModule
+    NgxPaginationModule,
   ],
-  providers: [GlobalsearchService]
-
+  providers: [GlobalsearchService],
 })
-export class DeleteRejectInactiveModule { }
+export class DeleteRejectInactiveModule {}

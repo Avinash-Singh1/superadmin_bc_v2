@@ -253,6 +253,23 @@
               <div class="meta-item" *ngIf="p.razorpayUtr">
                 <span class="mono-sm">UTR: {{ p.razorpayUtr }}</span>
               </div>
+              <div class="po-card__inv-btn-wrap" *ngIf="p.status === 'processed' || p.invoiceId">
+                <button
+                  type="button"
+                  class="po-card__btn-inv"
+                  title="Download Tax Invoice"
+                  (click)="downloadInvoice(p._id, $event)"
+                  [disabled]="invoiceLoading[p._id]">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                    <polyline points="10 9 9 9 8 9"></polyline>
+                  </svg>
+                  <span>Invoice</span>
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -314,6 +331,66 @@
                 <div class="kv" *ngIf="selected.processedAt"><span class="kv__label">Processed</span><span class="kv__val">{{ selected.processedAt | date:'dd MMM yyyy, hh:mm a' }}</span></div>
                 <div class="kv"><span class="kv__label">Wallet reverted</span><span class="kv__val">{{ selected.walletReverted ? 'Yes' : 'No' }}</span></div>
                 <div class="kv kv--err" *ngIf="selected.failureReason"><span class="kv__label">Failure</span><span class="kv__val kv__val--err">{{ selected.failureReason }}</span></div>
+              </div>
+            </div>
+            <!-- Tax Invoice Section -->
+            <div class="detail-section invoice-section" *ngIf="selected.status === 'processed' || selected.invoiceId || selectedDetail?.invoice">
+              <div class="detail-section__label">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                Tax Invoice
+              </div>
+              <div class="po-invoice-box">
+                <div class="po-invoice-box__header">
+                  <div class="po-invoice-box__icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                  </div>
+                  <div class="po-invoice-box__meta">
+                    <div class="po-invoice-box__num">{{ selectedDetail?.invoice?.invoiceNumber || 'Tax Invoice Available' }}</div>
+                    <div class="po-invoice-box__sub">
+                      <span *ngIf="selectedDetail?.invoice">SAC 998399 · GST {{ selectedDetail.invoice.isIntraState ? 'CGST+SGST (18%)' : 'IGST (18%)' }} · v{{ selectedDetail.invoice.version || 1 }}</span>
+                      <span *ngIf="!selectedDetail?.invoice">GST Commission Invoice for this payout</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="po-invoice-tax-grid" *ngIf="selectedDetail?.invoice">
+                  <div class="kv"><span class="kv__label">Taxable Value</span><span class="kv__val">{{ formatPaise(selectedDetail.invoice.taxableValue) }}</span></div>
+                  <div class="kv"><span class="kv__label">Total Tax</span><span class="kv__val">{{ formatPaise((selectedDetail.invoice.cgstAmount || 0) + (selectedDetail.invoice.sgstAmount || 0) + (selectedDetail.invoice.igstAmount || 0)) }}</span></div>
+                  <div class="kv"><span class="kv__label">Invoice Total</span><span class="kv__val font-semibold">{{ formatPaise(selectedDetail.invoice.totalPayable) }}</span></div>
+                  <div class="kv"><span class="kv__label">Issued Date</span><span class="kv__val">{{ selectedDetail.invoice.invoiceDate | date:'dd MMM yyyy' }}</span></div>
+                </div>
+                <div class="po-invoice-box__actions">
+                  <button
+                    type="button"
+                    class="btn-inv-action btn-inv-action--preview"
+                    [disabled]="invoiceLoading[selected._id]"
+                    (click)="previewInvoice(selected._id, $event)"
+                  >
+                    <svg *ngIf="!invoiceLoading[selected._id]" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                    <span *ngIf="invoiceLoading[selected._id]" class="btn-inv-spinner"></span>
+                    View Invoice
+                  </button>
+                  <button
+                    type="button"
+                    class="btn-inv-action btn-inv-action--download"
+                    [disabled]="invoiceLoading[selected._id]"
+                    (click)="downloadInvoice(selected._id, $event)"
+                  >
+                    <svg *ngIf="!invoiceLoading[selected._id]" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    <span *ngIf="invoiceLoading[selected._id]" class="btn-inv-spinner"></span>
+                    Download PDF
+                  </button>
+                  <button
+                    type="button"
+                    class="btn-inv-action btn-inv-action--reissue"
+                    [disabled]="reissuingInvoice"
+                    (click)="reissueInvoice(selected._id)"
+                    title="Regenerate/Reissue GST invoice"
+                  >
+                    <svg *ngIf="!reissuingInvoice" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+                    <span *ngIf="reissuingInvoice" class="btn-inv-spinner"></span>
+                    Reissue
+                  </button>
+                </div>
               </div>
             </div>
             <!-- KYC snapshot -->

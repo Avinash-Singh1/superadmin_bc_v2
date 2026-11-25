@@ -1,0 +1,230 @@
+<div class="export-dialog-card">
+  <!-- Dialog Header -->
+  <div class="dialog-header">
+    <div class="header-main">
+      <div class="badge-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+          <path d="M12 3v12m0 0l-4-4m4 4l4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M4 17v3a2 2 0 002 2h12a2 2 0 002-2v-3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="header-text">
+        <h2 class="dialog-title">Export Doctors Directory</h2>
+        <p class="dialog-subtitle">Generate and download structured CSV records</p>
+      </div>
+    </div>
+    <button type="button" class="btn-close" (click)="closeModal()" aria-label="Close dialog">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+        <path d="M6 18L18 6M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+  </div>
+
+  <!-- Dialog Body -->
+  <div class="dialog-body">
+    <!-- Scope Selection Tiles -->
+    <div class="section-heading">
+      <span class="step-badge">1</span>
+      <span>Choose Export Scope</span>
+    </div>
+
+    <div class="scope-grid">
+      <!-- Option 1: Export All -->
+      <div 
+        class="scope-tile" 
+        [class.selected]="exportType === 'all'" 
+        (click)="setExportType('all')">
+        <div class="tile-top">
+          <div class="tile-icon-wrap" [class.active-icon]="exportType === 'all'">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+              <ellipse cx="12" cy="5" rx="9" ry="3" stroke="currentColor" stroke-width="1.8"/>
+              <path d="M21 12c0 1.66-4.03 3-9 3s-9-1.34-9-3" stroke="currentColor" stroke-width="1.8"/>
+              <path d="M3 5v14c0 1.66 4.03 3 9 3s9-1.34 9-3V5" stroke="currentColor" stroke-width="1.8"/>
+            </svg>
+          </div>
+          <span class="scope-tag" *ngIf="exportType === 'all'">Selected</span>
+        </div>
+        <div class="tile-body">
+          <h3 class="tile-title">All Doctors</h3>
+          <p class="tile-desc">Export the entire doctor database across all registration dates.</p>
+        </div>
+        <div class="tile-radio">
+          <div class="radio-outer">
+            <div class="radio-inner" *ngIf="exportType === 'all'"></div>
+          </div>
+          <span class="radio-label">Full Directory Export</span>
+        </div>
+      </div>
+
+      <!-- Option 2: Date Range -->
+      <div 
+        class="scope-tile" 
+        [class.selected]="exportType === 'dateRange'" 
+        (click)="setExportType('dateRange')">
+        <div class="tile-top">
+          <div class="tile-icon-wrap" [class.active-icon]="exportType === 'dateRange'">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+              <rect x="3" y="4" width="18" height="18" rx="3" stroke="currentColor" stroke-width="1.8"/>
+              <path d="M16 2v4M8 2v4M3 10h18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+              <circle cx="8" cy="15" r="1.2" fill="currentColor"/>
+              <circle cx="12" cy="15" r="1.2" fill="currentColor"/>
+              <circle cx="16" cy="15" r="1.2" fill="currentColor"/>
+            </svg>
+          </div>
+          <span class="scope-tag" *ngIf="exportType === 'dateRange'">Selected</span>
+        </div>
+        <div class="tile-body">
+          <h3 class="tile-title">Date Range</h3>
+          <p class="tile-desc">Filter by specific doctor account registration (creation) date.</p>
+        </div>
+        <div class="tile-radio">
+          <div class="radio-outer">
+            <div class="radio-inner" *ngIf="exportType === 'dateRange'"></div>
+          </div>
+          <span class="radio-label">Filtered Date Range</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Date Range Picker Details -->
+    <div class="date-range-panel" *ngIf="exportType === 'dateRange'">
+      <div class="section-heading-small">
+        <span class="step-badge">2</span>
+        <span>Select Date Boundaries</span>
+      </div>
+
+      <!-- Quick Presets -->
+      <div class="presets-bar">
+        <button 
+          type="button" 
+          class="preset-button" 
+          [class.active]="activePreset === 'today'" 
+          (click)="applyPreset('today')">
+          Today
+        </button>
+        <button 
+          type="button" 
+          class="preset-button" 
+          [class.active]="activePreset === 'last7'" 
+          (click)="applyPreset('last7')">
+          Last 7 Days
+        </button>
+        <button 
+          type="button" 
+          class="preset-button" 
+          [class.active]="activePreset === 'last30'" 
+          (click)="applyPreset('last30')">
+          Last 30 Days
+        </button>
+        <button 
+          type="button" 
+          class="preset-button" 
+          [class.active]="activePreset === 'thisMonth'" 
+          (click)="applyPreset('thisMonth')">
+          This Month
+        </button>
+        <button 
+          type="button" 
+          class="preset-button" 
+          [class.active]="activePreset === 'last90'" 
+          (click)="applyPreset('last90')">
+          Last 90 Days
+        </button>
+      </div>
+
+      <!-- Dual Date Inputs: From and To -->
+      <div class="dual-inputs-card">
+        <!-- From Field -->
+        <div class="date-field-group" (click)="fromPicker.open()">
+          <span class="input-tag">From Date</span>
+          <div class="field-interactive-row">
+            <mat-form-field appearance="outline" class="styled-mat-field">
+              <input 
+                matInput 
+                [matDatepicker]="fromPicker" 
+                [(ngModel)]="startDate" 
+                [max]="endDate || maxDate"
+                (dateChange)="onDateChange()" 
+                placeholder="DD/MM/YYYY" 
+                readonly>
+              <mat-datepicker-toggle matIconSuffix [for]="fromPicker"></mat-datepicker-toggle>
+              <mat-datepicker #fromPicker></mat-datepicker>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <!-- Connector Arrow -->
+        <div class="arrow-divider">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+            <path d="M5 12h14M13 6l6 6-6 6" stroke="#999" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+
+        <!-- To Field -->
+        <div class="date-field-group" (click)="toPicker.open()">
+          <span class="input-tag">To Date</span>
+          <div class="field-interactive-row">
+            <mat-form-field appearance="outline" class="styled-mat-field">
+              <input 
+                matInput 
+                [matDatepicker]="toPicker" 
+                [(ngModel)]="endDate" 
+                [min]="startDate"
+                [max]="maxDate"
+                (dateChange)="onDateChange()" 
+                placeholder="DD/MM/YYYY" 
+                readonly>
+              <mat-datepicker-toggle matIconSuffix [for]="toPicker"></mat-datepicker-toggle>
+              <mat-datepicker #toPicker></mat-datepicker>
+            </mat-form-field>
+          </div>
+        </div>
+      </div>
+
+      <!-- Selected Summary Banner -->
+      <div class="selection-banner" *ngIf="startDate && endDate">
+        <div class="banner-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+            <path d="M22 11.08V12a10 10 0 11-5.93-9.14" stroke="#45197c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M22 4L12 14.01l-3-3" stroke="#45197c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="banner-text">
+          <span>Range: <strong>{{ startDate | date:'dd/MM/yyyy' }}</strong> &mdash; <strong>{{ endDate | date:'dd/MM/yyyy' }}</strong></span>
+          <span class="days-chip">{{ selectedDaysCount }} {{ selectedDaysCount === 1 ? 'day' : 'days' }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Info Notice Banner for Export All -->
+    <div class="info-card" *ngIf="exportType === 'all'">
+      <div class="info-icon">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+          <circle cx="12" cy="12" r="10" stroke="#45197c" stroke-width="1.8"/>
+          <path d="M12 16v-4M12 8h.01" stroke="#45197c" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="info-text">
+        Streamed export includes verified, pending, and active doctor records, including qualifications, contact details, specializations, and council registrations.
+      </div>
+    </div>
+  </div>
+
+  <!-- Dialog Footer Actions -->
+  <div class="dialog-footer">
+    <button type="button" class="btn-secondary" (click)="closeModal()">
+      Cancel
+    </button>
+    <button 
+      type="button" 
+      class="btn-primary" 
+      [disabled]="isExportDisabled" 
+      (click)="confirmExport()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+        <path d="M12 3v12m0 0l-4-4m4 4l4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M4 17v3a2 2 0 002 2h12a2 2 0 002-2v-3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      <span>{{ exportType === 'all' ? 'Export All Doctors (CSV)' : 'Export Selected Range (CSV)' }}</span>
+    </button>
+  </div>
+</div>
